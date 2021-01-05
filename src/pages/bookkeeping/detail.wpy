@@ -1,0 +1,120 @@
+<template lang='wxml'>
+  <view >
+    <view class="empty"></view>
+      <view class="container">
+      <view class="title">
+        <view>
+          <image class="icon" src="{{ statement.categoryIcon }}"></image>
+          <text>{{ statement.categoryTitle }}</text>
+        </view>
+        <text class="{{statement.type}}">{{ statement.type == 'expend' ? '-' : '+' }} {{ statement.amount }}</text>
+      </view>
+
+      <view class="column">
+        <view>
+          <view class="iconfont jz-icon-fenlei"></view>
+          <text>分类</text>
+        </view>
+        <text>{{ statement.category }}</text>
+      </view>
+
+      <view class="column">
+        <view>
+          <view class="iconfont jz-icon-qianbao"></view>
+          <text>账户</text>
+        </view>
+        <text>{{ statement.asset }}</text>
+      </view>
+
+      <view class="column">
+        <view>
+          <view class="iconfont jz-icon-50"></view>
+          <text>使用后账户余额</text>
+        </view>
+        <text>{{ statement.residue }}</text>
+      </view>
+
+      <view class="column">
+        <view>
+          <view class="iconfont jz-icon-shijian"></view>
+          <text>时间</text>
+        </view>
+        <text>{{ statement.time }}</text>
+      </view>
+
+      <view class="column" wx:if="{{ statement.location != null && statement.location != '' }}">
+        <view>
+          <view class="iconfont jz-icon-address"></view>
+          <text>坐标</text>
+        </view>
+        <text>{{ statement.location }}</text>
+      </view>
+
+      <view class="column" wx:if="{{ statement.description != null && statement.description != '' }}">
+        <view>
+          <view class="iconfont jz-icon-remark"></view>
+          <text>描述</text>
+        </view>
+        <text>{{ statement.description }}</text>
+      </view>
+
+    </view>
+    <view class="button-groups">
+      <view class="delete-button" @tap="handlerDel">
+        <view class="iconfont icon-delete-note"></view>
+        <text>删除</text>
+      </view>
+      <view class="edit-button" @tap="handlerEdit">
+        <view class="iconfont icon-edit-note"></view>
+        <text>编辑</text>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy'
+import tip from '@/utils/tip'
+export default class Detail extends wepy.page {
+  config = {
+    navigationBarTitleText: '账单详情'
+  }
+  data = {
+    id: 0,
+    statement:
+    {
+      id: 1,
+      category: '生活-数码',
+      categoryIcon: '',
+      categoryTitle: '数码',
+      description: '买电脑',
+      time: '2020-11-01 01:26:30',
+      asset: '虚拟账户-微信',
+      residue: -400,
+      type: 'expend',
+      location: '广东广州白云区',
+      amount: 300
+    }
+  }
+  onLoad (options) {
+    this.id = options.id
+    if (this.id === undefined) {
+      wepy.navigateBack({
+        delta: 1
+      })
+    }
+  }
+  methods = {
+    async handlerDel() {
+      await tip.confirm('是否删除该条账单？', {}, '提示')
+      console.log('删除')
+    },
+    handlerEdit() {
+      wepy.navigateTo({
+        url: `/pages/bookkeeping/edit?id=${this.id}`
+      })
+    }
+  }
+}
+</script>
+<style lang='scss' src='@/public/styles/bookkeeping/detail.scss'></style>

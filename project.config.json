@@ -1,0 +1,13 @@
+{
+  "description": "Memoyu Bookkeeping app",
+  "setting": {
+    "urlCheck": true,
+    "es6": false,
+    "postcss": false,
+    "minified": false
+  },
+  "compileType": "miniprogram",
+  "appid": "touristappid",
+  "projectname": "mbill",
+  "miniprogramRoot": "./dist"
+}

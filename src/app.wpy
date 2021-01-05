@@ -1,0 +1,119 @@
+<script>
+import wepy from 'wepy'
+import 'wepy-async-function'
+
+import { setStore } from 'wepy-redux'
+import configStore from './store'
+
+const store = configStore()
+setStore(store)
+
+export default class extends wepy.app {
+  config = {
+    pages: [
+      'pages/bookkeeping/index',
+      'pages/bookkeeping/create',
+      'pages/bookkeeping/detail',
+      'pages/bookkeeping/edit',
+      'pages/bookkeeping/chose_category',
+      'pages/bookkeeping/chose_asset',
+      'pages/detail/index',
+      'pages/statistics/index',
+      'pages/statistics/statement_list',
+      'pages/profile/index',
+      'pages/profile/login',
+      'pages/profile/budget',
+      'pages/profile/asset_manage',
+      'pages/profile/advance_list',
+      'pages/profile/asset_category',
+      'pages/profile/statement_category',
+      'pages/profile/about'
+    ],
+    window: {
+      backgroundTextStyle: 'light',
+      navigationBarBackgroundColor: '#fff',
+      navigationBarTitleText: 'MBill',
+      navigationBarTextStyle: 'black'
+    },
+    tabBar: {
+      backgroundColor: '#fff',
+      color: '#000000',
+      selectedColor: '#be6868',
+      list: [
+        {
+          pagePath: 'pages/bookkeeping/index',
+          iconPath: 'public/icons/tabbar/bookkeeping.png',
+          selectedIconPath: 'public/icons/tabbar/bookkeeping_select.png',
+          text: '记账'
+        },
+        {
+          pagePath: 'pages/detail/index',
+          iconPath: 'public/icons/tabbar/detail.png',
+          selectedIconPath: 'public/icons/tabbar/detail_select.png',
+          text: '明细'
+        },
+        {
+          pagePath: 'pages/statistics/index',
+          iconPath: 'public/icons/tabbar/statistics.png',
+          selectedIconPath: 'public/icons/tabbar/statistics_select.png',
+          text: '统计'
+        },
+        {
+          pagePath: 'pages/profile/index',
+          iconPath: 'public/icons/tabbar/profile.png',
+          selectedIconPath: 'public/icons/tabbar/profile_select.png',
+          text: '我'
+        }
+      ]
+    },
+    permission: {
+      'scope.userLocation': {
+        'desc': '您的位置信息将用于记录账的地理位置'
+      }
+    }
+  }
+
+  globalData = {
+    userInfo: null
+  }
+
+  constructor () {
+    super()
+    this.use('requestfix')
+  }
+
+  onLaunch() {
+    this.testAsync()
+  }
+
+  sleep (s) {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        resolve('promise resolved')
+      }, s * 1000)
+    })
+  }
+
+  async testAsync () {
+    const data = await this.sleep(3)
+    console.log(data)
+  }
+
+  getUserInfo(cb) {
+    const that = this
+    if (this.globalData.userInfo) {
+      return this.globalData.userInfo
+    }
+    wepy.getUserInfo({
+      success (res) {
+        that.globalData.userInfo = res.userInfo
+        cb && cb(res.userInfo)
+      }
+    })
+  }
+}
+</script>
+<style lang='less'>
+@import "/public/styles/iconfont.wxss";
+@import '/public/styles/common.less';
+</style>

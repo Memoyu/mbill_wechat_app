@@ -1,0 +1,15 @@
+<template lang="wxml">
+  <view class="container">
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+
+  export default class AssetCategory extends wepy.page {
+    config = {
+      navigationBarTitleText: '资产分类'
+    }
+  }
+</script>
+<style lang="scss" src="@/public/styles/profile/asset_ategory.scss"></style>

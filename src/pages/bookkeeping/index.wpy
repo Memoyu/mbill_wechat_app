@@ -1,0 +1,103 @@
+<template lang="wxml">
+  <view class='container'>
+    <view class='header'>
+      <image class='bg' src='{{ header.bg_avatar }}'></image>
+      <view class='level-2'>
+        <view class='fs14'>
+          <text>{{ header.position_1_human_name }}</text>
+        </view>
+        <view class='fs21 today-expend'>{{ header.position_1_amount }}</view>
+        <view class='overflow-hide'>
+          <view class='pull-left fs14'>{{ header.position_2_human_name }} {{ header.position_2_amount }}</view>
+          <view
+            class='pull-right fs14'
+          >{{ header.position_3_human_name }} {{ header.position_3_amount }}</view>
+        </view>
+      </view>
+    </view>
+    
+    <view class="bookkeeping-btn">
+      <view class="mine-bookkeeping-btn btn-shadow" @tap="handleAddBookkeeping" >
+          <i class="iconfont icon-write writeicon"></i>
+      </view>
+    </view>
+
+    <view class="bookkeeping-container">
+      <view class="bookkeeping-title">今日消费</view>
+      <view class="bookkeeping-list" wx-if="{{ list.length > 0 }}">
+        <repeat for="{{ list }}" key="index" index="index" item="item">
+          <BookkeepingItem :bookkeeping.sync="item"></BookkeepingItem>
+        </repeat>
+      </view>
+    </view>
+
+    <view wx:if="{{ list.length == 0 }}">
+        <empty :title.sync="emptyTitle"></empty>
+    </view>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy'
+import Empty from '@/components/empty'
+import BookkeepingItem from '@/components/bookkeeping/bookkeepingItem'
+export default class Bookkeeping extends wepy.page {
+  config = {
+    navigationBarTitleText: '记账'
+  }
+
+  data = {
+    emptyTitle: '今天没有账目噢！',
+    list: [
+      {
+        id: 1,
+        icon_path: '',
+        category: '数码',
+        description: '买电脑',
+        timeStr: '11-01 01:26',
+        asset: '微信',
+        type: 1,
+        money: 300
+      },
+      {
+        id: 2,
+        icon_path: '',
+        category: '出行',
+        description: '买电脑',
+        timeStr: '11-01 01:26',
+        asset: '微信',
+        type: 1,
+        money: 300.89
+      }
+    ],
+    header: {
+      bg_avatar:
+        'https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=3450861976,2725681869&fm=26&gp=0.jpg',
+      position_1_human_name: '今日支出',
+      position_1_amount: '40.00',
+      position_2_human_name: '本月支出',
+      position_2_amount: '200.45',
+      position_3_human_name: '剩余预算',
+      position_3_amount: '200.00'
+    },
+    budgetHeader: {
+      budget: '0.00',
+      month_expend: '0.00',
+      percentage: '0',
+      color: '#FF2929'
+    }
+  }
+  components = {
+    empty: Empty,
+    BookkeepingItem
+  }
+  methods = {
+    handleAddBookkeeping () {
+      wepy.navigateTo({
+        url: `/pages/bookkeeping/create`
+      })
+    }
+  }
+}
+</script>
+<style lang='scss' src='@/public/styles/bookkeeping/index.scss'></style>

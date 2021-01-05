@@ -1,0 +1,220 @@
+<template lang='wxml'>
+  <form class="formSubmit">
+      <view class="container">
+        <view class="column money">
+          <text>金额</text>
+          <input class="money-input {{ statement.type }}" placeholder="0.00" placeholder-class="{{ statement.type }}" bindinput="handleAmountInput" name="amount" type="digit" value="{{ statement.amount }}"/>
+         </view>
+        <view class="column" @tap="redirectChoseCategory">
+          <text>分类</text>
+          <text type="digit" class="align-right">{{ statement.category_name }}</text>
+          <input hidden name="category_id" value="{{ statement.category_id }}"/>
+        </view>
+
+        <view class="frequent-use" wx:if="{{ categories_labels.length > 0 }}">
+          <text>猜你想用：</text>
+          <text class="label" wx:for="{{ categories_labels }}" wx:key="key" @tap="setCategory({{item}})">{{ item.name }}</text>
+        </view>
+
+        <view class="column" @tap="redirectChoseAsset">
+          <text>账户</text>
+          <text class="align-right">{{ statement.asset_name }}</text>
+          <input hidden name="asset_id" value="{{ statement.asset_id }}"/>
+        </view>
+
+        <view class="frequent-use" wx:if="{{ assets_labels.length > 0 }}">
+          <text>猜你想用：</text>
+          <text class="label" wx:for="{{ assets_labels }}" wx:key="key" @tap="setAsset({{ item }})">{{ item.name }}</text>
+        </view>
+        
+        <view class="column">
+          <text>日期</text>
+          <view class="quick-use">
+            <text class="label" @tap="quickSetDate('-2')">前天</text>
+            <text class="label" @tap="quickSetDate('-1')">昨天</text>
+            <text class="label" @tap="quickSetDate('0')">今天</text>
+          </view>
+          <picker mode="date" start="2017-01-01" bindchange="dateChange">
+            <text>{{ statement.date }}</text>
+          </picker>
+          <input hidden name="date" value="{{ statement.date }}"/>
+          <input hidden name="time" value="{{ statement.time }}"/>
+        </view>
+
+        <view class="column location-column">
+          <text style="flex: 1">地点</text>
+          <view>
+            <input name="location" type="text" value="{{ statement.address }}"/>
+            <switch checked="{{ switchCheck }}" bindchange="getLocation"/>
+
+            <input class="input-hidden" name="nation" value="{{ nation }}"/>
+            <input class="input-hidden" name="province" value="{{ province }}"/>
+            <input class="input-hidden" name="city" value="{{ city }}"/>
+            <input class="input-hidden" name="district" value="{{ district }}"/>
+            <input class="input-hidden" name="street" value="{{ street }}"/>
+          </view>
+        </view>
+        
+        <view class="column">
+          <text>备注</text>
+          <input class="remark" type="text" name="description" bindinput="handleDescInput" value="{{ statement.description }}" placeholder="本笔账单的简单说明"/>
+        </view>
+        </view>
+        
+        <view class="btn-save">
+          <button wx:if="{{ !submiting }}" formType="submit">保存</button>
+          <button wx:else>保存中...</button>
+          <input hidden name="type" value="{{ statement.type }}"/>
+        </view>
+  </form>
+</template>
+
+<script>
+import wepy from 'wepy'
+import Util from '@/utils/util.js'
+import Session from '@/utils/session'
+import QQMapWX from '@/utils/qqmap-wx-jssdk.js'
+
+import { mapKey } from '@/utils/host'
+
+export default class Statement extends wepy.component {
+  props = {
+    statement: {
+      type: Object,
+      default () {
+        return {
+          id: 0,
+          type: 'expend',
+          category_id: 0,
+          asset_id: 0,
+          amount: '',
+          description: '',
+          date: '',
+          address: '',
+          time: '',
+          category_name: '请选择分类',
+          asset_name: '请选择账户'
+        }
+      }
+    },
+    submiting: {
+      type: Boolean,
+      default: false
+    },
+    type: String
+  }
+  data = {
+    nation: '',
+    province: '',
+    city: '',
+    district: '',
+    street: '',
+    assets_labels: [
+      {id: 1, name: '支付宝'},
+      {id: 2, name: '微信'}
+    ],
+    categories_labels: [
+      {id: 1, name: '地铁'},
+      {id: 2, name: '一日三餐'}
+    ],
+    switchCheck: Session.get('getLocationSwitch') || false
+  }
+
+  onLoad() {
+    console.log(this.type)
+    this.statement.type = this.type
+    if (this.statement.id === 0) {
+      this.initTodayDate()// 初始化日期为今天
+      if (this.switchCheck) this.setLocation()
+    }
+  }
+
+  initTodayDate() {
+    const myDate = new Date()
+    let year = myDate.getFullYear()
+    let month = myDate.getMonth() + 1
+    let day = myDate.getDate()
+    if (month < 10) month = `0${month}`
+    if (day < 10) day = `0${day}`
+    this.statement.date = [year, month, day].join('-')
+    this.statement.time = Util.getCurrentTime()
+  }
+
+  setLocation () { // 获取地址
+    this.qqmapSDK = new QQMapWX({
+      key: mapKey
+    })
+    wx.getLocation({
+      type: 'gcj02', // 返回可以用于wx.openLocation的经纬度
+      success: (result) => {
+        this.qqmapSDK.reverseGeocoder({
+          location: {
+            latitude: result.latitude,
+            longitude: result.longitude
+          }, // 坐标
+          success: (res) => {
+            const addressComponent = res.result.address_component
+            this.nation = addressComponent.nation
+            this.province = addressComponent.province
+            this.city = addressComponent.city
+            this.district = addressComponent.district
+            this.street = addressComponent.street
+            this.statement.address = res.result.address
+            this.$apply()
+          }
+        })
+      }
+    })
+  }
+
+  methods = {
+    // 分类选择
+    redirectChoseCategory () {
+      wx.navigateTo({ url: `/pages/bookkeeping/chose_category?type=${this.statement.type}` })
+    },
+    // 账户选择
+    redirectChoseAsset () {
+      wx.navigateTo({ url: `/pages/bookkeeping/chose_asset?type=${this.statement.type}` })
+    },
+    setCategory (category) {
+      this.statement.category_id = category.id
+      this.statement.category_name = category.name
+      console.log(this.statement)
+    },
+    setAsset (asset) {
+      this.statement.asset_id = asset.id
+      this.statement.asset_name = asset.name
+    },
+    dateChange({ detail }) {
+      this.statement.date = detail.value
+    },
+    quickSetDate (between) {
+      const today = new Date()
+      let date = today
+      if (between === '-1') {
+        date = new Date(today.getTime() - 24 * 60 * 60 * 1000)
+      } else if (between === '-2') {
+        date = new Date(today.getTime() - 2 * 24 * 60 * 60 * 1000)
+      }
+      const year = date.getFullYear()
+      let month = date.getMonth() + 1
+      let day = date.getDate()
+      if (month < 10) month = '0' + month
+      if (day < 10) day = '0' + day
+      this.statement.date = [year, month, day].join('-')
+    },
+    getLocation (e) {
+      const locationSwitch = e.detail.value
+      Session.set('getLocationSwitch', locationSwitch)
+      if (locationSwitch) {
+        this.setLocation()
+      } else {
+        // 关闭获取地理位置
+        this.statement.address = ''
+        this.$apply()
+      }
+    }
+  }
+}
+</script>
+<style lang='scss' src='@/public/styles/components/bookkeeping/statement.scss'></style>

@@ -1,0 +1,15 @@
+<template lang="wxml">
+  <view class="container">
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+
+  export default class Budget extends wepy.page {
+    config = {
+      navigationBarTitleText: '预算管理'
+    }
+  }
+</script>
+<style lang="scss" src="@/public/styles/profile/budget.scss"></style>

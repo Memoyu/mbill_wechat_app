@@ -1,0 +1,125 @@
+<template lang="wxml">
+  <view class="category-component">
+    <view wx:if="{{ frequent.length > 0 }}">
+      <view class="header fs14">常用</view>
+      <repeat for="{{frequent}}" key="index" index="index" item="child">
+        <category :category.sync="child" @choseItem.user="setCategory"></category>
+      </repeat>
+    </view>
+
+    <view wx:for="{{ list }}" wx:key="index">
+      <view class="header fs14">{{ item.name }}</view>
+      <repeat for="{{item.childs}}" key="index" index="index" item="child">
+        <category :category.sync="child" @choseItem.user="setCategory"></category>
+      </repeat>
+    </view>
+
+    <navigator url="/pages/categories/category_form?type={{ type }}">
+      <view class="add-wallet">
+        <text class="fs16">添加分类</text>
+      </view>
+    </navigator>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import Category from '@/components/core/category_item'
+  export default class ChoseCategory extends wepy.page {
+    config = {
+      navigationBarTitleText: '选择分类'
+    }
+    data = {
+      frequent: [],
+      last: null,
+      list: [
+        {
+          name: '餐饮',
+          childs: [
+            {
+              id: 1,
+              name: '一日三餐',
+              iconPath: ''
+            },
+            {
+              id: 2,
+              name: '宵夜',
+              iconPath: ''
+            }
+          ]
+        },
+        {
+          name: '通勤',
+          childs: [
+            {
+              id: 3,
+              name: '公交',
+              iconPath: ''
+            },
+            {
+              id: 4,
+              name: '地铁',
+              iconPath: ''
+            }
+          ]
+        }
+      ],
+      type: 'expend',
+      already_load: false
+    }
+
+    components = {
+      category: Category
+    }
+
+    onLoad (options) {
+      this.type = options.type
+    }
+    onShow () {
+      this.getCategory()
+    }
+
+    methods = {
+      setCategory (category) {
+        const pages = getCurrentPages()// eslint-disable-line
+        const prevPage = pages[pages.length - 2]
+        console.log(pages)
+        if (this.type === 'expend') {
+          prevPage.$Expend$setCategory(category)
+        } else {
+          prevPage.$Income$setCategory(category)
+        }
+        wepy.navigateBack({
+          delta: 1
+        })
+      }
+    }
+    async getCategory() {}
+    computed = {
+      showLast () {
+        return this.last == null
+      }
+    }
+  }
+</script>
+<style lang="scss" src="@/public/styles/bookkeeping/chose_category.scss"></style>
+<style lang="scss">
+  .category-component {
+    > view {
+      overflow: hidden;
+    }
+  }
+  .add-wallet {
+    display:flex;
+    justify-content:center;
+    padding:8rpx 0;
+    color:#999;
+    margin:8rpx 0;
+  }
+  .add-wallet image {
+    width:50rpx;
+    height:50rpx;
+    display:inline-block;
+    margin-right:8rpx;
+  }
+</style>

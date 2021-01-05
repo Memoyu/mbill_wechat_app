@@ -1,0 +1,28 @@
+<template lang="wxml">
+  <view class="column" @tap="choseAsset('{{ asset }}')">
+    <view class="category">
+      <image class='ljt-icon' src="{{ asset.iconPath }}"></image>
+      <text class="category-name fs16">{{ asset.name }}</text>
+       <text class="money">（¥{{ item.amount }}）</text>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  export default class AssetItem extends wepy.component {
+    props = {
+      asset: {
+        type: Object,
+        default: {}
+      }
+    };
+
+    methods = {
+      choseAsset (asset) {
+        this.$emit('choseItem', asset)
+      }
+    }
+  }
+</script>
+<style lang="scss" src="@/public/styles/bookkeeping/chose_category.scss"></style>

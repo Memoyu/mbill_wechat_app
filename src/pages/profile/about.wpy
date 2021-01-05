@@ -1,0 +1,15 @@
+<template lang="wxml">
+  <view class="container">
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+
+  export default class About extends wepy.page {
+    config = {
+      navigationBarTitleText: '关于'
+    }
+  }
+</script>
+<style lang="scss" src="@/public/styles/profile/about.scss"></style>

@@ -1,0 +1,41 @@
+@import '../_variable.scss';
+.wallet-header {
+    height: 130rpx;
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    padding:10px 20px;
+    color: $primaryColor;
+    border-radius: 15rpx;
+    box-shadow:4rpx 8rpx 12rpx #ccc;
+    .toptitle-text{
+        margin-bottom: 3rpx;
+        font-size: 25rpx;
+    }
+    .bottom-text{
+        font-size: 38rpx;
+        font-weight: bold;
+    }
+}
+.bookkeeping-container {
+    .bookkeeping-list {
+        margin-bottom: 40rpx;
+        > .surplus {
+        text-align: center;
+        > text {
+            font-size: 24rpx;
+            padding:0 12rpx;
+        }
+        }
+        > .total {
+        text-align: right;
+        margin:0 32rpx;
+        > text {
+            font-size: 24rpx;
+            &:first-child {
+            padding-right: 16rpx;
+            }
+        }
+        }
+    } 
+}

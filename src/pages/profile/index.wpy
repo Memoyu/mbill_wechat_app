@@ -1,0 +1,101 @@
+<template lang="wxml">
+  <view class="container">
+    <view class="header" :class="{'no-login': !user.already_login}">
+      <view class="main-container">
+        <view class="user-section" @tap="redirect('/pages/settings/user_info')">
+          <view class="user">
+            <view>
+              <image src="{{ user.avatar_url }}" ></image>
+            </view>
+          </view>
+          <view class="user-info">
+            <view style="font-size: 16px">{{ user.name }}</view>
+            <view class="text-grey">{{ sayHello }}</view>
+          </view>
+        </view>
+      </view>
+    </view>
+    
+    <view class="bottom-container">
+        <view class="func-btn">
+            <view @tap="redirect('/pages/profile/asset_manage')">
+                <view>
+                    <image src="../../public/icons/profile/asset_manage.png"></image>
+                </view>
+                <view>资产管理</view>
+            </view>
+
+            <view @tap="redirect('/pages/profile/advance_list')">
+                <view>
+                    <image src="../../public/icons/profile/advance_list.png"></image>
+                </view>
+                <view>预购清单</view>
+            </view>
+        </view>
+            <!-- 功能列表 -->
+        <view class="setting">
+            <i-cell-group>
+              <i-cell 
+                title="预算管理"
+                is-link url="/pages/profile/budget">
+              </i-cell>
+                <i-cell 
+                title="资产分类管理"
+                is-link url="/pages/profile/asset_category">
+                </i-cell>
+                
+                <i-cell 
+                title="支出分类管理" 
+                is-link url="/pages/profile/statement_category?type=expend">
+                </i-cell>
+                
+                <i-cell 
+                title="收入分类管理" 
+                is-link url="/pages/profile/statement_category?type=income">
+                </i-cell>
+                <i-cell 
+                title="关于mBill" 
+                is-link url="/pages/profile/about"
+                value="{{ version }}">
+                </i-cell>
+            </i-cell-group>
+        </view>
+        <i-load-more i-class="bottom-text" class="bottom-des" tip="By Memoyu" loading="{{ false }}" />
+    </view>
+</view>
+
+</template>
+
+<script>
+  import wepy from 'wepy'
+
+  export default class Profile extends wepy.page {
+    config = {
+      navigationBarTitleText: '我',
+      'usingComponents': {
+        'i-cell-group': '../../public/iview/cell-group/index',
+        'i-cell': '../../public/iview/cell/index',
+        'i-load-more': '../../public/iview/load-more/index'
+      }
+    }
+
+    data = {
+      user: {
+        name: '访客',
+        bonus_points: 0,
+        avatar_url: '../../public/icons/profile/default_avatar.png',
+        already_login: true
+      },
+      version: ''
+    }
+
+    methods = {
+      redirect (url) {
+        wepy.navigateTo({
+          url: url
+        })
+      }
+    }
+  }
+</script>
+<style lang="scss" src="@/public/styles/profile/index.scss"></style>

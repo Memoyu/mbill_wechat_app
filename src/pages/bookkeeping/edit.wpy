@@ -1,0 +1,63 @@
+<template lang="wxml">
+  <view class="container">
+     <view class="comonent-list">
+        <Expend
+          :statement.sync="statement"
+          :type="expend"
+          @submit.user="submit"
+          wx:if="{{ current == 'expend' }}"
+        />
+
+        <Income
+          :statement.sync="statement"
+          :type="income"
+          @submit.user="submit"
+          wx:if="{{ current == 'income' }}"
+        />
+
+        <Transfer
+          :statement.sync="statement"
+          @submit.user="submit"
+          wx:if="{{ current == 'transfer' }}"
+        />
+
+        <Repayment
+          :statement.sync="statement"
+          @submit.user="submit"
+          wx:if="{{ current == 'repayment' }}"
+        />
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import Statement from '@/components/bookkeeping/statement'
+  import Transfer from '@/components/bookkeeping/transfer'
+  import Repayment from '@/components/bookkeeping/repayment'
+  export default class Edit extends wepy.page {
+    config = {
+      navigationBarTitleText: '编辑账单'
+    }
+
+    data = {
+      current: 'expend',
+      statement: {},
+      expend: 'expend',
+      income: 'income'
+    }
+
+    components = {
+      'Expend': Statement,
+      'Income': Statement,
+      Transfer,
+      Repayment
+    }
+
+    methods = {
+      async submit (statement) {
+      }
+    }
+  }
+</script>
+<style lang='scss' src='@/public/styles/bookkeeping/edit.scss'></style>

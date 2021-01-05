@@ -1,0 +1,15 @@
+<template lang="wxml">
+  <view class="container">
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+
+  export default class Login extends wepy.page {
+    config = {
+      navigationBarTitleText: '登陆'
+    }
+  }
+</script>
+<style lang="scss" src="@/public/styles/profile/login.scss"></style>

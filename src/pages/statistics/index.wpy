@@ -1,0 +1,351 @@
+<template lang="wxml">
+  <view class="container">
+    <view class="controller" :class="{'no-login': !already_login}" hidden="{{!already_login}}">
+      <view class="time-filter">
+        <view class="month-filter">
+          <!-- <view>2019 年 01 月</view> -->
+          <view class="iconfont icon-arrow-left" @tap="setDate('prev')"></view>
+          <view class="month">{{ year }} 年 {{ month }} 月</view>
+          <view class="iconfont icon-arrow-right" @tap="setDate('next')"></view>
+        </view>
+      </view>
+
+      <view class="chart-container">
+        <view class="title">当月资产状况</view>
+        <view class="chart-amount">
+          <view>
+            <view class="amount">{{ header.expend_count }}</view>
+            <view class="small-text">总支出</view>
+            <view class="percent-rise {{ header.expend_rise }}">同期{{ header.expend_rise == 'income' ? '增长' : '下降' }} {{ header.expend_percent }}%</view>
+          </view>
+
+          <view>
+            <view class="amount">{{ header.income_count }}</view>
+            <view class="small-text">总收入</view>
+            <view class="percent-rise {{ header.income_rise }}">同期{{ header.income_rise == 'income' ? '增长' : '下降' }} {{ header.income_percent }}%</view>
+          </view>
+
+          <view>
+            <view class="amount">{{ header.surplus_count }}</view>
+            <view class="small-text">结余</view>
+            <view class="percent-rise {{ header.surplus_rise }}">同期{{ header.surplus_rise == 'income' ? '增长' : '下降' }} {{ header.surplus_percent }}%</view>
+          </view>
+        </view>
+      </view>
+    
+      <view class="chart-container">
+        <view class="title">分类消费</view>
+        <canvas canvas-id="pieCanvas" disable-scroll="true" style="width: 100%; height: 300px;"></canvas>
+      </view>
+
+      <view class="chart-container">
+        <view class="title">周消费曲线</view>
+        <canvas canvas-id="weekExpendCanvas" disable-scroll="true" style="width: 100%; height: 210px;"></canvas>
+      </view>
+
+      <view class="chart-container">
+        <view class="title">近 6 月支出趋势</view>
+        <canvas canvas-id="expendLineCanvas" disable-scroll="true" style="width: 100%; height: 300px;"></canvas>
+      </view>
+
+      <view class="chart-container">
+        <view class="title">近 6 月收入趋势</view>
+        <canvas canvas-id="incomeLineCanvas" disable-scroll="true" style="width: 100%; height: 300px;"></canvas>
+      </view>
+
+      <view class="chart-container">
+        <view class="title">近 6 月结余趋势</view>
+        <canvas canvas-id="surplusLineCanvas" disable-scroll="true" style="width: 100%; height: 300px;"></canvas>
+      </view>
+
+      <view class="chart-container">
+        <view class="title">当月消费分类排行</view>
+        <view class="expend-bars" wx:if="{{ categories.length > 0 }}">
+          <view class="item" wx:for="{{ categories }}" style="background-size: {{ item.percent }}% 100%;"  wx:key="key" @tap="redirectTo('{{ item.category_id }}')">
+            <view>
+              <view class="title">{{ item.name }}<text class="percent">{{ item.percent }}%</text></view>
+              <view class="amount">{{ item.amount }}￥</view>
+            </view>
+            <view class="zan-icon zan-icon-arrow"></view>
+          </view>
+        </view>
+      </view>
+    </view>
+    <notLogin wx:if="{{!already_login}}"/>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import wxCharts from '@/utils/wxchart.min.js'
+  import Empty from '@/components/empty'
+  import NotLogin from '@/components/core/not_login'
+  export default class Statistics extends wepy.page {
+    config = {
+      navigationBarTitleText: '统计'
+    }
+
+    data = {
+      already_login: false,
+      chartData: [],
+      header: {},
+      info: {},
+      year: new Date().getFullYear(),
+      month: new Date().getMonth() + 1,
+      categories: [],
+      showFilter: false,
+      emptyTitle: '没有数据噢！'
+    }
+
+    components = {
+      empty: Empty,
+      notLogin: NotLogin
+    }
+
+    methods = {
+      setDate (type) {
+        type === 'next' ? this.nextMonth() : this.prevMonth()
+        this.initChart()
+      },
+      redirectTo (id) {
+        wepy.navigateTo({
+          url: `/pages/statistics/statement_list?year=${this.year}&month=${this.month}&category_id=${id}`
+        })
+      }
+    }
+    async onShow() {
+      this.info = await wx.getSystemInfo()
+      this.initChart()
+    }
+
+    initChart () {
+      this.getHeader()
+      this.getWeekChartData()
+      this.getPieData()
+      this.getLineChartData()
+      this.getCategoriesData()
+    }
+
+    nextMonth () {
+      if (this.month === 12) {
+        this.year += 1
+        this.month = 1
+      } else {
+        this.month += 1
+      }
+    }
+
+    prevMonth () {
+      if (this.month === 1) {
+        this.year -= 1
+        this.month = 12
+      } else {
+        this.month -= 1
+      }
+    }
+
+    async getHeader () {
+      const data = {
+        data: {
+          expend_count: 3,
+          expend_rise: 'income',
+          expend_percent: 30,
+          income_count: 10,
+          income_rise: 'income',
+          income_percent: 40,
+          surplus_count: 20,
+          surplus_rise: 'income',
+          surplus_percent: 50
+        }
+      }
+      this.header = data.data
+      this.$apply()
+    }
+
+    async getWeekChartData () {
+      const data = {weeks: ['2012', '2013', '2014', '2015', '2016', '2017'], data: [70, 40, 65, 100, 34, 18]}
+      if (data.weeks.length > 0) {
+        /* eslint-disable no-new */
+        new wxCharts({
+          canvasId: 'weekExpendCanvas',
+          type: 'line',
+          categories: data.weeks,
+          series: [{
+            name: '每周消费',
+            data: data.data
+          }],
+          yAxis: {
+            title: '消费金额 (元)',
+            min: 0
+          },
+          extra: {
+            lineStyle: 'curve'
+          },
+          width: 320,
+          height: 200
+        })
+      }
+    }
+
+    async getPieData () {
+      const data = {
+        data: [
+          {
+            name: 'cat1',
+            data: 50
+          },
+          {
+            name: 'cat2',
+            data: 30
+          },
+          {
+            name: 'cat3',
+            data: 1
+          },
+          {
+            name: 'cat4',
+            data: 1
+          },
+          {
+            name: 'cat5',
+            data: 46
+          }
+        ]
+      }
+      if (data.data.length > 0) this.initPieChart(data.data)
+      this.$apply()
+    }
+
+    async getLineChartData () {
+      const data = {
+        months: ['2012', '2013', '2014', '2015', '2016', '2017'],
+        expends: [15, 2, 45, 37, 4, 8],
+        incomes: [15, 2, 45, 37, 4, 8],
+        surplus: [15, 2, 45, 37, 4, 8]
+      }
+      try {
+        if (data.months.length > 0) {
+          this.initLineChart(data)
+        }
+      } catch (e) {
+        console.log(e)
+      }
+    }
+
+    async getCategoriesData () {
+      const data = {
+        data: [
+          {
+            category_id: 1,
+            percent: 40,
+            name: '下午茶',
+            amount: 100
+          },
+          {
+            category_id: 2,
+            percent: 34,
+            name: '烟酒',
+            amount: 82
+          },
+          {
+            category_id: 3,
+            percent: 12,
+            name: '电子产品',
+            amount: 30
+          },
+          {
+            category_id: 4,
+            percent: 10,
+            name: '游戏',
+            amount: 25
+          },
+          {
+            category_id: 5,
+            percent: 0.42,
+            name: '地铁',
+            amount: 1
+          }
+        ]
+      }
+      this.categories = data.data
+      this.$apply()
+    }
+
+    async initPieChart (data) {
+      /* eslint-disable no-new */
+      new wxCharts({
+        canvasId: 'pieCanvas',
+        type: 'pie',
+        series: data,
+        width: this.info.screenWidth,
+        height: 280,
+        legend: true,
+        dataLabel: true
+      })
+    }
+
+    async initLineChart (data) {
+      /* eslint-disable no-new */
+      new wxCharts({
+        canvasId: 'expendLineCanvas',
+        type: 'line',
+        categories: data.months,
+        series: [{
+          name: '支出',
+          data: data.expends,
+          color: '#008000'
+        }],
+        yAxis: {
+          title: '金额',
+          min: 0
+        },
+        extra: {
+          lineStyle: 'curve'
+        },
+        width: this.info.screenWidth,
+        height: 280
+      })
+      /* eslint-disable no-new */
+      new wxCharts({
+        canvasId: 'incomeLineCanvas',
+        type: 'line',
+        categories: data.months,
+        series: [{
+          name: '收入',
+          data: data.incomes,
+          color: '#FF0000'
+        }],
+        yAxis: {
+          title: '金额',
+          min: 0
+        },
+        extra: {
+          lineStyle: 'curve'
+        },
+        width: this.info.screenWidth,
+        height: 280
+      })
+      /* eslint-disable no-new */
+      new wxCharts({
+        canvasId: 'surplusLineCanvas',
+        type: 'line',
+        categories: data.months,
+        series: [{
+          name: '结余',
+          data: data.surplus,
+          color: '#cccccc'
+        }],
+        yAxis: {
+          title: '金额',
+          min: 0
+        },
+        extra: {
+          lineStyle: 'curve'
+        },
+        width: this.info.screenWidth,
+        height: 280
+      })
+    }
+  }
+</script>
+<style lang="scss" src="@/public/styles/statistics/index.scss"></style>

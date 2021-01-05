@@ -1,0 +1,15 @@
+<template lang="wxml">
+  <view class="container">
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+
+  export default class AdvanceList extends wepy.page {
+    config = {
+      navigationBarTitleText: '预购列表'
+    }
+  }
+</script>
+<style lang="scss" src="@/public/styles/profile/advance_list.scss"></style>
