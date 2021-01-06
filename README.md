@@ -11,7 +11,7 @@
 
 **知行合一**
 
-[![](https://img.shields.io/badge/license-MIT-3963bc.svg)](LICENSE)
+[![小程序: wepy (shields.io)](https://img.shields.io/badge/小程序-wepy-blue)](https://github.com/Tencent/wepy)&ensp;[![](https://img.shields.io/badge/license-MIT-3963bc.svg)](LICENSE)
 
 &nbsp;
 
@@ -23,8 +23,9 @@
 
 ## 相关项目
 
-- [ ] 采用.NET5实现的后端服务  [Memoyu/mbill_service](https://github.com/Memoyu/mbill_service)
-- [ ] 采用Blazor+Ant Blazor实现后端管理  [Memoyu/mbill_blazor_admin](https://github.com/Memoyu/mbill_blazor_admin)
+✨[采用.NET5实现的后端服务 - Memoyu/mbill_service](https://github.com/Memoyu/mbill_service)
+
+✨[采用Blazor+Ant Blazor实现后端管理 - Memoyu/mbill_blazor_admin](https://github.com/Memoyu/mbill_blazor_admin)
 
 &nbsp;
 
