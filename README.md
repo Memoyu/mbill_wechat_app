@@ -25,7 +25,7 @@
 
 ✨[采用.NET5实现的后端服务 - Memoyu/mbill_service](https://github.com/Memoyu/mbill_service)
 
-✨[采用Blazor+Ant Blazor实现后端管理 - Memoyu/mbill_blazor_admin](https://github.com/Memoyu/mbill_blazor_admin)
+✨[采用Blazor+Ant Blazor实现后端管理 - Memoyu/mbill_admin_blazor](https://github.com/Memoyu/mbill_admin_blazor)
 
 &nbsp;
 
