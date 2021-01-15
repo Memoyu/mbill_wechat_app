@@ -86,7 +86,7 @@
     }
 
     data = {
-      already_login: false,
+      already_login: true,
       chartData: [],
       header: {},
       info: {},

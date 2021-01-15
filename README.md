@@ -19,6 +19,8 @@
 
 项目为个人记账小程序端实现。
 
+参考设计：[yigger/jiezhang: 基于 wepy 开发的一款纯记账的微信小程序 ](https://github.com/yigger/jiezhang)
+
 &nbsp;
 
 ## 相关项目
@@ -37,6 +39,12 @@
 - [ ] 实现统计效果显示
 - [ ] 优化界面设计
 - [ ] ......
+
+&nbsp;
+
+## 效果演示
+
+![effect](https://github.com/Memoyu/mbill_app/doc/images/effect.png)
 
 &nbsp;
 
