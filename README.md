@@ -44,7 +44,7 @@
 
 ## 效果演示
 
-![effect](https://github.com/Memoyu/mbill_app/doc/images/effect.png)
+![effect](https://github.com/Memoyu/mbill_app/blob/main/doc/images/effect.png)
 
 &nbsp;
 
