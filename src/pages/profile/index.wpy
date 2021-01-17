@@ -1,37 +1,37 @@
 <template lang="wxml">
   <view class="container">
-    <view class="header" :class="{'no-login': !user.already_login}">
+    <view class="header" :class="{'no-login': !already_login}">
       <view class="main-container">
-        <view class="user-section" @tap="redirect('/pages/settings/user_info')">
+        <view class="user-section" @tap="redirect('/pages/profile/user_info')">
           <view class="user">
             <view>
-              <image src="{{ user.avatar_url }}" ></image>
+              <image src="{{ user.avatarUrl }}" ></image>
             </view>
           </view>
           <view class="user-info">
-            <view style="font-size: 16px">{{ user.name }}</view>
+            <view style="font-size: 16px; font-weight: bold">{{ user.nickname }}</view>
             <view class="text-grey">{{ sayHello }}</view>
+          </view>
+        </view>
+        <view class="func-btn">
+          <view @tap="redirect('/pages/profile/asset_manage')">
+            <view>
+                <image src="../../public/icons/profile/asset_manage.png"></image>
+            </view>
+            <view>资产管理</view>
+          </view>
+          <view @tap="redirect('/pages/profile/advance_list')">
+            <view>
+              <image src="../../public/icons/profile/advance_list.png"></image>
+            </view>
+            <view>预购清单</view>
           </view>
         </view>
       </view>
     </view>
-    
-    <view class="bottom-container">
-        <view class="func-btn">
-            <view @tap="redirect('/pages/profile/asset_manage')">
-                <view>
-                    <image src="../../public/icons/profile/asset_manage.png"></image>
-                </view>
-                <view>资产管理</view>
-            </view>
 
-            <view @tap="redirect('/pages/profile/advance_list')">
-                <view>
-                    <image src="../../public/icons/profile/advance_list.png"></image>
-                </view>
-                <view>预购清单</view>
-            </view>
-        </view>
+    <view class="bottom-container">
+       
             <!-- 功能列表 -->
         <view class="setting">
             <i-cell-group>
@@ -62,13 +62,20 @@
         </view>
         <i-load-more i-class="bottom-text" class="bottom-des" tip="By Memoyu" loading="{{ false }}" />
     </view>
+
+    <notLogin wx:if="{{!already_login}}"/>
 </view>
 
 </template>
 
 <script>
   import wepy from 'wepy'
+  import Session from '@/utils/session'
+  import wxRequest from '@/utils/wxRequest'
+  import NotLogin from '@/components/core/not_login'
 
+  const tokenKey = Session.key.token
+  const userInfoKey = Session.key.userInfo
   export default class Profile extends wepy.page {
     config = {
       navigationBarTitleText: '我',
@@ -79,16 +86,46 @@
       }
     }
 
-    data = {
-      user: {
-        name: '访客',
-        bonus_points: 0,
-        avatar_url: '../../public/icons/profile/default_avatar.png',
-        already_login: true
-      },
-      version: ''
+    components = {
+      notLogin: NotLogin
     }
 
+    data = {
+      user: {
+        nickname: '未登录',
+        avatarUrl: '../../public/icons/profile/default_avatar.png'
+      },
+      already_login: false,
+      version: ''
+    }
+    
+    onShow() {
+      this.getUser()
+    }
+
+    async getUser() {
+      const token = Session.getByCache(tokenKey)
+      if (token) { // 如果存在token信息，才回去获取用户信息
+        // console.log(token)
+        var userInfo = Session.getByCache(userInfoKey)
+        // console.log(userInfo)
+        if (!userInfo) {
+          const res = await wxRequest.Get('admin/user/get')
+          if (res !== undefined) {
+            // console.log(res.result)
+            Session.setByCache(userInfoKey, res.result)
+            this.already_login = true
+            this.user = res.result
+          }
+        } else {
+          this.already_login = true
+          this.user = userInfo
+        }
+      } else {
+        this.already_login = false
+      }
+      this.$apply()
+    }
     methods = {
       redirect (url) {
         wepy.navigateTo({

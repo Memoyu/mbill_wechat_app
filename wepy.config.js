@@ -37,6 +37,7 @@ module.exports = {
         'transform-decorators-legacy',
         'transform-object-rest-spread',
         'transform-export-extensions',
+        'syntax-export-extensions'
       ]
     }
   },

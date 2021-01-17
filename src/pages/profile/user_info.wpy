@@ -1,0 +1,61 @@
+<template lang="wxml">
+  <view class="container">
+     <view>
+      <i-cell-group>
+        <i-cell title="ID" value="{{ user.id }}"></i-cell>
+        <i-cell title="头像" bind:click="uploadUserAvatar">
+          <i-avatar slot="footer" src="{{ user.avatarUrl }}" size="default" shape="square"></i-avatar>
+        </i-cell>
+        <i-cell title="用户名" value="{{ user.username }}" ></i-cell>
+        <i-cell title="昵称" value="{{ user.nickname }}"></i-cell>
+        <i-cell title="性别" value="{{ user.gender }}"></i-cell>
+        <i-cell title="邮箱" value="{{ user.email }}天"></i-cell>
+        <i-cell title="手机号码" value="{{ user.phone }}"></i-cell>
+      </i-cell-group>
+    <div class="cancel-login-btn" @tap="signOut()">退出登录</div>
+  </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import wxRequest from '@/utils/wxRequest'
+  import Session from '@/utils/session'
+
+  const tokenKey = Session.key.token
+  const userInfoKey = Session.key.userInfo
+  export default class UserInfo extends wepy.page {
+    config = {
+      navigationBarTitleText: '用户信息',
+      'usingComponents': {
+        'i-cell-group': '../../public/iview/cell-group/index',
+        'i-cell': '../../public/iview/cell/index',
+        'i-avatar': '../../public/iview/avatar/index'
+      }
+    }
+    data = {
+      user: {}
+    }
+
+    onShow() {
+      this.getUser()
+    }
+
+    async getUser() {
+      const res = await wxRequest.Get('admin/user/get')
+      if (res !== null && res !== undefined) {
+        this.user = res.result
+        this.$apply()
+      }
+    }
+    async signOut() {
+      Session.clearByKey(tokenKey)
+      Session.clearByKey(userInfoKey)
+      wx.navigateBack({
+        delta: 1
+      })
+      this.$apply()
+    }
+  }
+</script>
+<style lang="scss" src="@/public/styles/profile/user_info.scss"></style>

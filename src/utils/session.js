@@ -1,19 +1,6 @@
 const KEY = {
-  category: {
-    statementExpendList: '@category_statement_expend@',
-    statementIncomeList: '@category_statement_income@',
-    expendList: '@category_expend_list@',
-    incomeList: '@category_income_list@'
-  },
-  asset: {
-    statementAssets: '@asset_statement@',
-    list: '@asset_list@'
-  },
-  alreadyLogin: '@alreadyLogin@',
-  login: 'weapp_login_session',
-  bgImageKey: '@user_index_bg@',
-  errorKey: '@request_error@',
-  localStatementKey: '@local_statement_cache@'
+  token: '@access_refresh_token@',
+  userInfo: '@user_info@'
 }
 
 module.exports = {
@@ -29,6 +16,31 @@ module.exports = {
 
   clear: function (key) {
     wx.removeStorageSync(key)
+  },
+
+  // 获取缓存,默认缓存时长 1 天
+  getByCache: function (cacheKey) {
+    const cacheValue = wx.getStorageSync(cacheKey)
+    const onday = 86400
+    // console.log(cacheValue)
+    if (cacheValue === null || cacheValue === 'undefined') {
+      return false
+    } else if ((new Date().getTime() - Number.parseInt(cacheValue.createTime)) / 1000 > onday) {
+      return false
+    }
+    return cacheValue.value
+  },
+
+  // 设置缓存
+  setByCache: function (cacheKey, cacheVal) {
+    if (typeof cacheKey !== 'undefined') {
+      if (Array.isArray(cacheVal) && cacheVal.length === 0) return false
+      let localTime = new Date().getTime()
+      wx.setStorageSync(cacheKey, {
+        createTime: localTime,
+        value: cacheVal
+      })
+    }
   },
 
   // 排查为何频繁拉取失败
@@ -61,15 +73,8 @@ module.exports = {
     return wx.getStorageSync(KEY['localStatementKey']) || null
   },
 
-  clearByKey(item) {
-    for (let obj in KEY) {
-      if (obj === item) {
-        for (let cacheKey in KEY[obj]) {
-          wx.removeStorageSync(KEY[obj][cacheKey])
-        }
-        return false
-      }
-    }
+  clearByKey(key) {
+    wx.removeStorageSync(key)
   },
 
   clearAll: function () {

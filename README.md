@@ -1,17 +1,20 @@
 <h1  align="center">
+    <a href="http://memoyu.cn/">
+        <img width="100" height="100" src="https://github.com/Memoyu/Memoyu.Core/blob/master/doc/images/memoyu.png">
+    </a>
+    </br>
+    </br>
      <span  align="center">
  	 	个人记账小程序
      </span>
 </h1>
+<div align="center">
 
-
-
-
-&nbsp;
-
-**知行合一**
+> 知行合一
 
 [![小程序: wepy (shields.io)](https://img.shields.io/badge/小程序-wepy-blue)](https://github.com/Tencent/wepy)&ensp;[![](https://img.shields.io/badge/license-MIT-3963bc.svg)](LICENSE)
+</div>
+
 
 &nbsp;
 

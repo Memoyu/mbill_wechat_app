@@ -9,84 +9,52 @@
           <view class="iconfont icon-arrow-right" @tap="setDate('next')"></view>
         </view>
       </view>
+      <i-tabs current="{{ current }}" color="#2196F3" bindchange="handleChange">
+        <i-tab key="overview" title="总览"></i-tab>
+        <i-tab key="categories" title="分类"></i-tab>
+        <i-tab key="week-trend" title="周趋势"></i-tab>
+        <i-tab key="month-trend" title="月趋势"></i-tab>
+        <i-tab key="rate" title="排行榜"></i-tab>
+			<!-- <i-tab key="photos" title="相册集"></i-tab> -->
+		  </i-tabs>
 
-      <view class="chart-container">
-        <view class="title">当月资产状况</view>
-        <view class="chart-amount">
-          <view>
-            <view class="amount">{{ header.expend_count }}</view>
-            <view class="small-text">总支出</view>
-            <view class="percent-rise {{ header.expend_rise }}">同期{{ header.expend_rise == 'income' ? '增长' : '下降' }} {{ header.expend_percent }}%</view>
-          </view>
-
-          <view>
-            <view class="amount">{{ header.income_count }}</view>
-            <view class="small-text">总收入</view>
-            <view class="percent-rise {{ header.income_rise }}">同期{{ header.income_rise == 'income' ? '增长' : '下降' }} {{ header.income_percent }}%</view>
-          </view>
-
-          <view>
-            <view class="amount">{{ header.surplus_count }}</view>
-            <view class="small-text">结余</view>
-            <view class="percent-rise {{ header.surplus_rise }}">同期{{ header.surplus_rise == 'income' ? '增长' : '下降' }} {{ header.surplus_percent }}%</view>
-          </view>
-        </view>
-      </view>
-    
-      <view class="chart-container">
-        <view class="title">分类消费</view>
-        <canvas canvas-id="pieCanvas" disable-scroll="true" style="width: 100%; height: 300px;"></canvas>
-      </view>
-
-      <view class="chart-container">
-        <view class="title">周消费曲线</view>
-        <canvas canvas-id="weekExpendCanvas" disable-scroll="true" style="width: 100%; height: 210px;"></canvas>
-      </view>
-
-      <view class="chart-container">
-        <view class="title">近 6 月支出趋势</view>
-        <canvas canvas-id="expendLineCanvas" disable-scroll="true" style="width: 100%; height: 300px;"></canvas>
-      </view>
-
-      <view class="chart-container">
-        <view class="title">近 6 月收入趋势</view>
-        <canvas canvas-id="incomeLineCanvas" disable-scroll="true" style="width: 100%; height: 300px;"></canvas>
-      </view>
-
-      <view class="chart-container">
-        <view class="title">近 6 月结余趋势</view>
-        <canvas canvas-id="surplusLineCanvas" disable-scroll="true" style="width: 100%; height: 300px;"></canvas>
-      </view>
-
-      <view class="chart-container">
-        <view class="title">当月消费分类排行</view>
-        <view class="expend-bars" wx:if="{{ categories.length > 0 }}">
-          <view class="item" wx:for="{{ categories }}" style="background-size: {{ item.percent }}% 100%;"  wx:key="key" @tap="redirectTo('{{ item.category_id }}')">
-            <view>
-              <view class="title">{{ item.name }}<text class="percent">{{ item.percent }}%</text></view>
-              <view class="amount">{{ item.amount }}￥</view>
-            </view>
-            <view class="zan-icon zan-icon-arrow"></view>
-          </view>
-        </view>
-      </view>
+      <OverviewComp hidden="{{ current != 'overview' }}" :date.sync="date"></OverviewComp>
+      <CategoryComp hidden="{{ current != 'categories' }}" :date.sync="date"></CategoryComp>
+      <WeekTrendComp hidden="{{ current != 'week-trend' }}"></WeekTrendComp>
+      <MonthTrendComp hidden="{{ current != 'month-trend' }}"></MonthTrendComp>
+      <RateComp hidden="{{ current != 'rate' }}" :date.sync="date"></RateComp>
     </view>
-    <notLogin wx:if="{{!already_login}}"/>
+    <notLogin wx:if="{{!isLogin}}"/>
   </view>
 </template>
 
 <script>
   import wepy from 'wepy'
+  import Session from '@/utils/session'
   import wxCharts from '@/utils/wxchart.min.js'
   import Empty from '@/components/empty'
   import NotLogin from '@/components/core/not_login'
+  import OverviewComp from '@/components/chart/overview'
+  import CategoryComp from '@/components/chart/category'
+  import WeekTrendComp from '@/components/chart/week_trend'
+  import MonthTrendComp from '@/components/chart/month_trend'
+  import RateComp from '@/components/chart/rate'
+
+  const tokenKey = Session.key.token
+  const nowDate = new Date()
   export default class Statistics extends wepy.page {
     config = {
-      navigationBarTitleText: '统计'
+      navigationBarTitleText: '统计',
+      'usingComponents': {
+        'i-tabs': '../../public/iview/tabs/index',
+        'i-tab': '../../public/iview/tab/index'
+      }
     }
 
     data = {
-      already_login: true,
+      current: 'overview',
+      date: `${nowDate.getFullYear()} - ${nowDate.getMonth() + 1}`,
+      isLogin: false,
       chartData: [],
       header: {},
       info: {},
@@ -99,7 +67,32 @@
 
     components = {
       empty: Empty,
-      notLogin: NotLogin
+      notLogin: NotLogin,
+      OverviewComp: OverviewComp,
+      CategoryComp: CategoryComp,
+      WeekTrendComp: WeekTrendComp,
+      MonthTrendComp: MonthTrendComp,
+      RateComp: RateComp
+    }
+
+    computed = {
+      isLogin() {
+        const token = Session.getByCache(tokenKey)
+        if (token) {
+          return true
+        } else {
+          return false
+        }
+      }
+    }
+
+    async onShow() {
+      if (this.isLogin) {
+        console.log(this.isLogin)
+        this.info = await wx.getSystemInfo()
+        this.initChart()
+        this.$apply()
+      }
     }
 
     methods = {
@@ -112,10 +105,6 @@
           url: `/pages/statistics/statement_list?year=${this.year}&month=${this.month}&category_id=${id}`
         })
       }
-    }
-    async onShow() {
-      this.info = await wx.getSystemInfo()
-      this.initChart()
     }
 
     initChart () {

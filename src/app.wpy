@@ -21,6 +21,7 @@ export default class extends wepy.app {
       'pages/statistics/index',
       'pages/statistics/statement_list',
       'pages/profile/index',
+      'pages/profile/user_info',
       'pages/profile/login',
       'pages/profile/budget',
       'pages/profile/asset_manage',
@@ -80,6 +81,7 @@ export default class extends wepy.app {
   constructor () {
     super()
     this.use('requestfix')
+    this.use('promisify')
   }
 
   onLaunch() {
