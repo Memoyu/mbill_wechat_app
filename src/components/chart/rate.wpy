@@ -14,7 +14,7 @@
 
 <script>
 import wepy from 'wepy'
-import wxRequest from '@/utils/wxRequest'
+// import wxRequest from '@/utils/wxRequest'
 import StatementItem from '@/components/bookkeeping/bookkeepingItem'
 export default class CategoryComponent extends wepy.component {
   props = {
@@ -42,8 +42,29 @@ export default class CategoryComponent extends wepy.component {
   }
 
   async getStatements() {
-    const res = await wxRequest.Get('chart/rate', { date: this.date, type: this.current })
-    this.statements = res
+    // const res = await wxRequest.Get('chart/rate', { date: this.date, type: this.current })
+    this.statements = [
+      {
+        id: 1,
+        icon_path: '',
+        category: '数码',
+        description: '买电脑',
+        timeStr: '11-01 01:26',
+        asset: '微信',
+        type: 1,
+        money: 300
+      },
+      {
+        id: 2,
+        icon_path: '',
+        category: '出行',
+        description: '买电脑',
+        timeStr: '11-01 01:26',
+        asset: '微信',
+        type: 1,
+        money: 300.89
+      }
+    ]
     this.$apply()
   }
 

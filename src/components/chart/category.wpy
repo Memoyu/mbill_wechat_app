@@ -19,7 +19,7 @@
 <script>
 import wepy from 'wepy'
 import wxCharts from '@/utils/wxchart.min.js'
-import wxRequest from '@/utils/wxRequest'
+// import wxRequest from '@/utils/wxRequest'
 import StatementItem from '@/components/bookkeeping/bookkeepingItem'
 export default class CategoryComponent extends wepy.component {
   props = {
@@ -42,15 +42,34 @@ export default class CategoryComponent extends wepy.component {
   }
 
   async getStatements() {
-    const res = await wxRequest.Get('chart/category_statements', { date: this.date })
+    // const res = await wxRequest.Get('chart/category_statements', { date: this.date })
+    const res = {data: [{category_id: 1, percent: 30, name: '伙食', format_amount: 40}, {category_id: 2, percent: 40, name: '游戏', format_amount: 40}]}
     this.categories = res.data
     this.$apply()
   }
 
   async getPieData () {
-    const data = await wxRequest.Get('super_chart/get_pie_data', { date: this.date })
+    // const data = await wxRequest.Get('super_chart/get_pie_data', { date: this.date })
+    const data = {data:
+    [{
+      name: 'cat1',
+      data: 50
+    }, {
+      name: 'cat2',
+      data: 30
+    }, {
+      name: 'cat3',
+      data: 1
+    }, {
+      name: 'cat4',
+      data: 1
+    }, {
+      name: 'cat5',
+      data: 46
+    }]}
     this.$apply()
     if (data.data.length > 0) {
+      /* eslint-disable no-new */
       await new wxCharts({
         canvasId: 'pieCanvas',
         type: 'pie',
@@ -59,7 +78,7 @@ export default class CategoryComponent extends wepy.component {
         height: 280,
         legend: true,
         dataLabel: true
-      });
+      })
     }
   }
 

@@ -9,7 +9,7 @@
 <script>
 import wepy from 'wepy'
 import wxCharts from '@/utils/wxchart.min.js'
-import wxRequest from '@/utils/wxRequest'
+// import wxRequest from '@/utils/wxRequest'
 // import StatementItem from '@/components/index/statement'
 export default class MonthTrendComponent extends wepy.component {
   data = {
@@ -27,7 +27,8 @@ export default class MonthTrendComponent extends wepy.component {
   }
 
   async initChart() {
-    const data = await wxRequest.Get('chart/month_trend')
+    // const data = await wxRequest.Get('chart/month_trend')
+    const data = {title: ['2012', '2013', '2014', '2015', '2016', '2017'], data: [15, 20, 45, 37, 4, 80]}
     /* eslint-disable no-new */
     new wxCharts({
       canvasId: 'monthTrend',

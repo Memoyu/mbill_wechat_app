@@ -43,7 +43,7 @@
 <script>
 import wepy from 'wepy'
 import wxCharts from '@/utils/wxchart.min.js'
-import wxRequest from '@/utils/wxRequest'
+// import wxRequest from '@/utils/wxRequest'
 import StatementItem from '@/components/bookkeeping/bookkeepingItem'
 export default class OverviewComponent extends wepy.component {
   props = {
@@ -67,19 +67,43 @@ export default class OverviewComponent extends wepy.component {
   }
 
   async getHeader() {
-    const res = await wxRequest.Get('chart/overview_header', { date: this.date })
+    // const res = await wxRequest.Get('chart/overview_header', { date: this.date })
+    const res = {expend: '20', income: '20', transfer: '20', repay: '20', total: '200'}
     this.header = res
     this.$apply()
   }
 
   async getStatementList() {
-    const res = await wxRequest.Get('chart/overview_statements', { date: this.date })
+    // const res = await wxRequest.Get('chart/overview_statements', { date: this.date })
+    const res = [
+      {
+        id: 1,
+        icon_path: '',
+        category: '数码',
+        description: '买电脑',
+        timeStr: '11-01 01:26',
+        asset: '微信',
+        type: 1,
+        money: 300
+      },
+      {
+        id: 2,
+        icon_path: '',
+        category: '出行',
+        description: '买电脑',
+        timeStr: '11-01 01:26',
+        asset: '微信',
+        type: 1,
+        money: 300.89
+      }
+    ]
     this.statements = res
     this.$apply()
   }
 
   async categoryChart() {
-    const res = await wxRequest.Get('chart/overview_budgets', { date: this.date })
+    // const res = await wxRequest.Get('chart/overview_budgets', { date: this.date })
+    const res = [{category_id: 1, percent: 30, name: '伙食', format_amount: 40}, {category_id: 2, percent: 40, name: '游戏', format_amount: 40}]
     this.categories = res
     this.$apply()
     for (let item of res) {
