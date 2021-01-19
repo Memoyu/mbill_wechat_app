@@ -7,7 +7,7 @@
     </i-tabs>
 
     <repeat for="{{ statements }}" key="index" index="index" item="item">
-      <StatementItem :statement.sync="item"></StatementItem>
+      <StatementItem :bookkeeping.sync="item"></StatementItem>
     </repeat>
   </view>
 </template>

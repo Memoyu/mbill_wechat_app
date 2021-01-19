@@ -34,7 +34,7 @@
     <view class="overview__statements">
       <view class="ovweview-title">账单列表</view>
       <repeat for="{{ statements }}" key="index" index="index" item="item">
-        <StatementItem :statement.sync="item"></StatementItem>
+        <StatementItem :bookkeeping.sync="item"></StatementItem>
       </repeat>
     </view>
   </view>

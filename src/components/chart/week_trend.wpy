@@ -22,8 +22,8 @@ export default class WeekTrendComponent extends wepy.component {
   }
 
   async onLoad() {
-    this.initChart()
     this.info = await wepy.getSystemInfo()
+    this.initChart()
   }
 
   async initChart() {

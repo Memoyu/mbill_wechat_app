@@ -110,7 +110,7 @@
         var userInfo = Session.getByCache(userInfoKey)
         // console.log(userInfo)
         if (!userInfo) {
-          const res = await wxRequest.Get('admin/user/get')
+          const res = await wxRequest.Get('user/get')
           if (res !== undefined) {
             // console.log(res.result)
             Session.setByCache(userInfoKey, res.result)
