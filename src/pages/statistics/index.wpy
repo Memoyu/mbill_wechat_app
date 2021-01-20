@@ -99,10 +99,8 @@
       },
       bindPickerChange({ detail }) {
         this.date = detail.value
-      } 
+      }
     }
-
-
 
     nextMonth () {
       if (this.month === 12) {

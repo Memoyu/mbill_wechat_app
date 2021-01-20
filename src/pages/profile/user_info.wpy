@@ -42,7 +42,7 @@
     }
 
     async getUser() {
-      const res = await wxRequest.Get('admin/user/get')
+      const res = await wxRequest.Get('user/get')
       if (res !== null && res !== undefined) {
         this.user = res.result
         this.$apply()
