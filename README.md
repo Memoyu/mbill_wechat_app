@@ -20,7 +20,7 @@
 
 ## 项目介绍
 
-项目为个人记账小程序端实现。
+项目为个人记账小程序端实现。（2021-01-25：突然发现自己用的是wepy1.6版本，目前正在突突上2.x）
 
 参考设计：[yigger/jiezhang: 基于 wepy 开发的一款纯记账的微信小程序 ](https://github.com/yigger/jiezhang)
 
@@ -30,7 +30,9 @@
 
 ✨[采用.NET5实现的后端服务 - Memoyu/mbill_service](https://github.com/Memoyu/mbill_service)
 
-✨[采用Blazor+Ant Blazor实现后端管理 - Memoyu/mbill_admin_blazor](https://github.com/Memoyu/mbill_admin_blazor)
+✨[采用Blazor+Ant Blazor实现后端管理 - Memoyu/mbill_blazor_admin](https://github.com/Memoyu/mbill_blazor_admin)
+
+✨[采用Xamarin搭建移动客户端App-Memoyu/mbill_xamarin_app](https://github.com/Memoyu/mbill_xamarin_app)
 
 &nbsp;
 
