@@ -20,7 +20,7 @@
 
 ## 项目介绍
 
-项目为个人记账小程序端实现。（2021-01-25：突然发现自己用的是wepy1.6版本，目前正在突突上2.x）
+项目为个人记账小程序端实现。
 
 参考设计：[yigger/jiezhang: 基于 wepy 开发的一款纯记账的微信小程序 ](https://github.com/yigger/jiezhang)
 
@@ -50,6 +50,14 @@
 ## 效果演示
 
 ![effect](https://github.com/Memoyu/mbill_app/blob/main/doc/images/effect.png)
+
+
+
+## TimeLine
+
+`2021-01-25：`突然发现自己用的是wepy1.6版本，目前正在突突上2.x
+
+`2021-01-31：`基本完成WePY 2.x的升级，剩下对基于ECharts的报表实现。
 
 &nbsp;
 
