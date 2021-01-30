@@ -35,7 +35,7 @@ export default class Tips {
       wx.showModal({
         title: title,
         content: text,
-        showCancel: true,
+        showCancel: false,
         success: res => {
           if (res.confirm) {
             resolve(payload)
@@ -50,15 +50,14 @@ export default class Tips {
     })
   }
 
-  static toast(title, icon = 'success') {
-    setTimeout(() => {
-      wx.showToast({
-        title: title,
-        icon: icon,
-        mask: true,
-        duration: 1000
-      })
-    }, 1000)
+  static toast(title, type = 'none', duration = 2000) {
+    let TOAST = { title, duration }
+    if (type === 'smile') {
+      TOAST.image = '/images/smile.png'
+    } else {
+      TOAST.icon = type
+    }
+    wx.showToast(TOAST)
   }
 
   /**

@@ -1,25 +1,73 @@
+<style lang="less">
+// .container {
+//   height: 100%;
+//   display: flex;
+//   flex-direction: column;
+//   align-items: center;
+//   justify-content: space-between;
+//   box-sizing: border-box;
+// }
+@import '~@/assets/styles/iconfont.wxss';
+@import '~@/assets/styles/common.less';
+</style>
+
 <script>
-import wepy from 'wepy'
-import 'wepy-async-function'
+import wepy from '@wepy/core';
+import eventHub from './common/eventHub';
+import wepyRedux from '@wepy/redux';
 
-import { setStore } from 'wepy-redux'
-import configStore from './store'
+wepy.use(wepyRedux);
 
-const store = configStore()
-setStore(store)
 
-export default class extends wepy.app {
-  config = {
+wepy.app({
+  hooks: {
+    // App 级别 hook，对整个 App 生效
+    // 同时存在 Page hook 和 App hook 时，优先执行 Page hook，返回值再交由 App hook 处
+    'before-setData': function (dirty) {
+      // console.log('setData dirty: ', dirty);
+      return dirty;
+    }
+  },
+  globalData: {
+    userInfo: null
+  },
+
+  onLaunch() {
+    this.testAsync();
+    eventHub.$on('app-launch', (...args) => {
+      console.log('app-launch event emitted, the params are:');
+      console.log(args);
+    });
+  },
+
+  methods: {
+
+    sleep (s) {
+      return new Promise((resolve, reject) => {
+        setTimeout(() => {
+          resolve('promise resolved')
+        }, s * 1000)
+      })
+    },
+
+    async testAsync () {
+      let d = await this.sleep(3);
+      console.log(d);
+    }
+  }
+});
+</script>
+<config>
+{
     pages: [
-      'pages/bookkeeping/index',
-      'pages/bookkeeping/create',
-      'pages/bookkeeping/detail',
-      'pages/bookkeeping/edit',
-      'pages/bookkeeping/chose_category',
-      'pages/bookkeeping/chose_asset',
+      'pages/bill/index',
+      'pages/bill/create',
+      'pages/bill/detail',
+      'pages/bill/edit',
+      'pages/bill/chose_category',
+      'pages/bill/chose_asset',
       'pages/detail/index',
       'pages/statistics/index',
-      'pages/statistics/statement_list',
       'pages/profile/index',
       'pages/profile/user_info',
       'pages/profile/login',
@@ -30,6 +78,11 @@ export default class extends wepy.app {
       'pages/profile/statement_category',
       'pages/profile/about'
     ],
+    permission: {
+      'scope.userLocation': {
+        'desc': '您的位置信息将用于获取门店'
+      }
+    },
     window: {
       backgroundTextStyle: 'light',
       navigationBarBackgroundColor: '#fff',
@@ -42,80 +95,30 @@ export default class extends wepy.app {
       selectedColor: '#be6868',
       list: [
         {
-          pagePath: 'pages/bookkeeping/index',
-          iconPath: 'public/icons/tabbar/bookkeeping.png',
-          selectedIconPath: 'public/icons/tabbar/bookkeeping_select.png',
+          pagePath: 'pages/bill/index',
+          iconPath: '/assets/icons/tabbar/bill.png',
+          selectedIconPath: '/assets/icons/tabbar/bill_select.png',
           text: '记账'
         },
         {
           pagePath: 'pages/detail/index',
-          iconPath: 'public/icons/tabbar/detail.png',
-          selectedIconPath: 'public/icons/tabbar/detail_select.png',
+          iconPath: '/assets/icons/tabbar/detail.png',
+          selectedIconPath: '/assets/icons/tabbar/detail_select.png',
           text: '明细'
         },
         {
           pagePath: 'pages/statistics/index',
-          iconPath: 'public/icons/tabbar/statistics.png',
-          selectedIconPath: 'public/icons/tabbar/statistics_select.png',
+          iconPath: '/assets/icons/tabbar/statistics.png',
+          selectedIconPath: '/assets/icons/tabbar/statistics_select.png',
           text: '统计'
         },
         {
           pagePath: 'pages/profile/index',
-          iconPath: 'public/icons/tabbar/profile.png',
-          selectedIconPath: 'public/icons/tabbar/profile_select.png',
+          iconPath: '/assets/icons/tabbar/profile.png',
+          selectedIconPath: '/assets/icons/tabbar/profile_select.png',
           text: '我'
         }
       ]
-    },
-    permission: {
-      'scope.userLocation': {
-        'desc': '您的位置信息将用于记录账的地理位置'
-      }
     }
-  }
-
-  globalData = {
-    userInfo: null
-  }
-
-  constructor () {
-    super()
-    this.use('requestfix')
-    this.use('promisify')
-  }
-
-  onLaunch() {
-    this.testAsync()
-  }
-
-  sleep (s) {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        resolve('promise resolved')
-      }, s * 1000)
-    })
-  }
-
-  async testAsync () {
-    const data = await this.sleep(3)
-    console.log(data)
-  }
-
-  getUserInfo(cb) {
-    const that = this
-    if (this.globalData.userInfo) {
-      return this.globalData.userInfo
-    }
-    wepy.getUserInfo({
-      success (res) {
-        that.globalData.userInfo = res.userInfo
-        cb && cb(res.userInfo)
-      }
-    })
-  }
 }
-</script>
-<style lang='less'>
-@import "/public/styles/iconfont.wxss";
-@import '/public/styles/common.less';
-</style>
+</config>

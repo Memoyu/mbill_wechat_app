@@ -1,0 +1,162 @@
+<style lang='scss'>
+@import '~@/assets/styles/components/bill/transfer.scss';
+</style>
+
+<template lang='wxml'>
+    <view class="container">
+      <view class="column money">
+        <text>金额</text>
+        <input 
+          class="money-input {{ transfer.type }}" 
+          placeholder="0.00" 
+          placeholder-class="{{ transfer.type }}" 
+          v-model=" transfer.amount "/>
+      </view>
+
+      <view class="column transfer-type">
+        <view class="assetSource" @tap="assetSource">{{ assetSourceName }}</view>
+        <view @tap="exchangeAsset" class="iconfont icon-xingzhuang_1 transfer-icon"></view>
+        <view class="assetTarget" @tap="assetTarget">{{ assetTargetName }}</view>
+      </view>
+
+      <view class="column">
+        <text>日期</text>
+        <view class="quick-use">
+          <text class="label" @tap="quickSetDate('-2')">前天</text>
+          <text class="label" @tap="quickSetDate('-1')">昨天</text>
+          <text class="label" @tap="quickSetDate('0')">今天</text>
+        </view>
+        <picker mode="date" start="2017-01-01" bindchange="dateChange">
+          <text>{{ transfer.date }}</text>
+        </picker>
+      </view>
+
+      <view class="column">
+        <text>备注</text>
+        <input 
+          class="pull-right remark" 
+          type="text" 
+          v-model=" transfer.description " 
+          placeholder="本笔账单的简单说明"/>
+      </view>
+
+      <view class="btn-save">
+        <button v-if="!submiting" @tap="reportStatement">保存</button>
+        <button v-else>保存中...</button>
+      </view>
+    </view>
+</template>
+
+<script>
+import wepy from '@wepy/core';
+import Tip from '@/utils/tip';
+import Util from '@/utils/util.js';
+import { mapState } from '@wepy/redux';
+import { SUBMITING } from '@/store/types';
+import store from '@/store';
+
+wepy.component({
+  store,
+  props: {
+    transfer: {
+      type: Object,
+      default() {
+        return {
+          id: 0,
+          type: 'transfer',
+          amount: '',
+          description: '',
+          assetId: 0,
+          targetAssetId: 0,
+          date: Util.getCurrentDate(),
+          time: Util.getCurrentTime()
+        };
+      }
+    }
+  },
+  options: {
+    addGlobalClass: true
+  },
+  data: {
+    assetSourceName: '选择账户',
+    assetTargetName: '选择账户',
+    transferType: 0
+  },
+  computed: {
+    ...mapState({
+      submiting: state => state.bill.statementSubmiting
+    })
+  },
+  methods: {
+    // 选择账户后回调
+    setAsset(asset) {
+      if (this.transferType === 1) {
+        this.assetSourceName = asset.name;
+        this.transfer.assetId = asset.id;
+      } else {
+        this.assetTargetName = asset.name;
+        this.transfer.targetAssetId = asset.id;
+      }
+    },
+    // 赋值还款账户
+    assetSource() {
+      this.transferType = 1;
+      wx.navigateTo({ url: '/pages/bill/chose_asset?type=transfer' });
+    },
+    // 赋值负债账户
+    assetTarget() {
+      this.transferType = 2;
+      wx.navigateTo({ url: '/pages/bill/chose_asset?type=transfer' });
+    },
+    // 对调账户
+    exchangeAsset() {
+      const tmp1 = this.assetSourceName;
+      this.assetSourceName = this.assetTargetName;
+      this.assetTargetName = tmp1;
+
+      const tmp2 = this.transfer.assetId;
+      this.transfer.assetId = this.transfer.targetAssetId;
+      this.transfer.targetAssetId = tmp2;
+    },
+    // 时间改变
+    dateChange({ detail }) {
+      this.transfer.date = detail.value;
+    },
+    // 快速选取时间
+    quickSetDate(between) {
+      const today = new Date();
+      let date = today;
+      if (between === '-1') {
+        date = new Date(today.getTime() - 24 * 60 * 60 * 1000);
+      } else if (between === '-2') {
+        date = new Date(today.getTime() - 2 * 24 * 60 * 60 * 1000);
+      }
+      const year = date.getFullYear();
+      let month = date.getMonth() + 1;
+      let day = date.getDate();
+      if (month < 10) month = '0' + month;
+      if (day < 10) day = '0' + day;
+      this.transfer.date = [year, month, day].join('-');
+    },
+     async reportStatement() {
+      const transfer = this.transfer;
+      console.log(transfer)
+      if (transfer.amount === 0 || transfer.amount === '') {
+        Tip.error('金额不能为零');
+        return false;
+      }
+      if (transfer.assetId === 0) {
+        Tip.error('未选择还款账户');
+        return false;
+      } else if (transfer.targetAssetId === 0) {
+        Tip.error('未选择负债账户');
+        return false;
+      } else if (transfer.assetId === transfer.targetAssetId) {
+        Tip.error('还款账户与负债账户不能相同');
+        return false;
+      }
+      this.$emit('submit', transfer);
+    }
+  }
+});
+</script>

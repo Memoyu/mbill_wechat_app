@@ -1,74 +1,53 @@
+<style lang="scss">
+@import "~@/assets/styles/pages/profile/login.scss";
+</style>
+
 <template lang="wxml">
   <view class="container">
-      <view class="top-image"></view>
+    <view class="top-image"></view>
       <view class="content-body">
-          <view class="input-container">
-            <image
-              mode="widthFix"
-              class="input-image"
-              src="https://static.airbob.org/under-graduate/image/png/login/phone.png"
-            >
-            <input
-              type="text"
-              @input="getUsername"
-              class="input"
-              placeholder="请输用户名"
-              maxlength="50"
-            >
-          </view>
-          <view class="input-container">
-            <image
-              mode="widthFix"
-              class="input-image"
-              src="https://static.airbob.org/under-graduate/image/png/login/password.png"
-            >
-            <input
-              type="{{isShowPassword ? 'text' : 'password'}}"
-              @input="getPassword"
-              class="input"
-              placeholder="请输密码"
-            >
-            <image
-              mode="widthFix"
-              class="input-image"
-              @tap="togglePassword"
-              src="{{isShowPassword ? 'https://static.airbob.org/under-graduate/image/png/login/showpassword.png' : 'https://static.airbob.org/under-graduate/image/png/login/hidepassword.png'}}"
-            >
-          </view>
-          <view class="forget-password" @tap="forgetPassword">忘记密码</view>
-          <view class="login-btn {{isLogining ? 'btn-disabled' : ''}}" @tap="goLogin">登录</view>
+        <view class="input-container">
+          <image mode="widthFix" class="input-image" src="https://static.airbob.org/under-graduate/image/png/login/phone.png"/>
+          <input type="text" bindinput="getUsername" class="input" placeholder="请输用户名" maxlength="50"/>
+        </view>
+        <view class="input-container">
+          <image mode="widthFix" class="input-image" src="https://static.airbob.org/under-graduate/image/png/login/password.png"/>
+          <input type="{{isShowPassword ? 'text' : 'password'}}" bindinput="getPassword" class="input" placeholder="请输密码"/>
+          <image mode="widthFix" class="input-image" v-on:click="togglePassword" src="{{isShowPassword ? 'https://static.airbob.org/under-graduate/image/png/login/showpassword.png' : 'https://static.airbob.org/under-graduate/image/png/login/hidepassword.png'}}" />
+        </view>
+        <view class="forget-password" v-on:click="forgetPassword">忘记密码</view>
+        <view class="login-btn {{isLogining ? 'btn-disabled' : ''}}" v-on:click="goLogin">登录</view>
       </view>
   </view>
 </template>
+<config>
+{
+  navigationBarTitleText: "登陆"
+}
+</config>
 
 <script>
-  import wepy from 'wepy'
+  import wepy from '@wepy/core'
   import Session from '@/utils/session'
   import wxRequest from '@/utils/wxRequest'
 
   const tokenKey = Session.key.token
-  export default class Login extends wepy.page {
-    config = {
-      navigationBarTitleText: '登陆'
-    }
-
-    data = {
+  wepy.page ({
+    data: {
       username: 'admin',
       password: '123456',
       isShowPassword: false,
       isLogining: false
-    }
-
-    computed = {
+    },
+    computed: {
       isLogining() {
         return (
           this.username.trim().length === 0 ||
           this.password.trim().length === 0
         )
       }
-    }
-
-    methods = {
+    },
+    methods: {
       togglePassword() {
         this.isShowPassword = !this.isShowPassword
       },
@@ -82,16 +61,13 @@
 
       },
       async goLogin() {
-        wepy.showLoading({
-          title: '加载中'
-        })
-        const res = await wxRequest.Post('account/login', {username: this.username, password: this.password})
-        if (res.result !== undefined) {
+        await wxRequest.Post('account/login', {username: this.username, password: this.password}).then(res=>{
+          // console.log(res)
           Session.setByCache(tokenKey, res.result)
           wx.navigateBack()
-        }
+        })
       }
     }
-  }
+  });
 </script>
-<style lang="scss" src="@/public/styles/profile/login.scss"></style>
+

@@ -1,87 +1,3 @@
-<template lang="wxml">
-  <view class="category">
-
-    <i-tabs current="{{ current }}" color="#f759ab" bindchange="handleChange">
-      <i-tab key="expend" title="支出"></i-tab>
-      <i-tab key="income" title="收入"></i-tab>
-    </i-tabs>
-
-    <repeat for="{{ statements }}" key="index" index="index" item="item">
-      <StatementItem :bookkeeping.sync="item"></StatementItem>
-    </repeat>
-  </view>
-</template>
-
-<script>
-import wepy from 'wepy'
-// import wxRequest from '@/utils/wxRequest'
-import StatementItem from '@/components/bookkeeping/bookkeepingItem'
-export default class CategoryComponent extends wepy.component {
-  props = {
-    date: String
-  }
-
-  data = {
-    statements: [],
-    current: 'expend'
-  }
-
-  config = {
-    'usingComponents': {
-      'i-tabs': '../../public/iview/tabs/index',
-      'i-tab': '../../public/iview/tab/index'
-    }
-  }
-
-  components = {
-    StatementItem
-  }
-
-  onLoad() {
-    this.getStatements()
-  }
-
-  async getStatements() {
-    // const res = await wxRequest.Get('chart/rate', { date: this.date, type: this.current })
-    this.statements = [
-      {
-        id: 1,
-        icon_path: '',
-        category: '数码',
-        description: '买电脑',
-        timeStr: '11-01 01:26',
-        asset: '微信',
-        type: 1,
-        money: 300
-      },
-      {
-        id: 2,
-        icon_path: '',
-        category: '出行',
-        description: '买电脑',
-        timeStr: '11-01 01:26',
-        asset: '微信',
-        type: 1,
-        money: 300.89
-      }
-    ]
-    this.$apply()
-  }
-
-  methods = {
-    handleChange ({ detail }) {
-      this.current = detail.key
-      this.getStatements()
-    }
-  }
-
-  watch = {
-    date() {
-      this.getStatements()
-    }
-  }
-}
-</script>
 <style lang="scss" scoped>
 .expend-bars {
   .item {
@@ -114,3 +30,81 @@ export default class CategoryComponent extends wepy.component {
   }
 }
 </style>
+
+<template lang="wxml">
+  <view class="category">
+
+    <van-tabs current="{{ current }}" color="#f759ab" bindchange="handleChange($wx)">
+      <van-tab name="expend" title="支出"></van-tab>
+      <van-tab name="income" title="收入"></van-tab>
+    </van-tabs>
+
+    <div v-for=" item,index in statements ">
+      <bill :bill.sync="item"></bill>
+    </div>
+  </view>
+</template>
+
+<config>
+{
+  "usingComponents": {
+    "van-tab": "module:@vant/weapp/lib/tab/index",
+    "van-tabs": "module:@vant/weapp/lib/tabs/index",
+    "bill": "~@/components/bill/bill_item"
+  }
+}
+</config>
+
+<script>
+import wepy from '@wepy/core'
+// import wxRequest from '@/utils/wxRequest'
+
+wepy.component ({
+  props: {
+    date: String
+  },
+  data: {
+    statements: [],
+    current: 'expend'
+  },
+  watch: {
+    date() {
+      this.getStatements()
+    }
+  },
+  ready() {
+    this.getStatements()
+  },
+  methods: {
+    handleChange ({ detail }) {
+      this.current = detail.key
+      this.getStatements()
+    },
+    async getStatements() {
+      // const res = await wxRequest.Get('chart/rate', { date: this.date, type: this.current })
+      this.statements = [
+        {
+          id: 1,
+          icon_path: '',
+          category: '数码',
+          description: '买电脑',
+          timeStr: '11-01 01:26',
+          asset: '微信',
+          type: 1,
+          money: 300
+        },
+        {
+          id: 2,
+          icon_path: '',
+          category: '出行',
+          description: '买电脑',
+          timeStr: '11-01 01:26',
+          asset: '微信',
+          type: 1,
+          money: 300.89
+        }
+      ]
+    }
+  }
+});
+</script>

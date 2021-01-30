@@ -1,7 +1,11 @@
-<template lang="wxml">
+<style lang="scss">
+@import "~@/assets/styles/pages/profile/index.scss";
+</style>
+
+<template>
   <view class="container">
-    <view class="header" :class="{'no-login': !already_login}">
-      <view class="main-container">
+    <view class="header">
+      <view class="main-container {{!already_login?'no-login':''}}">
         <view class="user-section" @tap="redirect('/pages/profile/user_info')">
           <view class="user">
             <view>
@@ -16,123 +20,137 @@
         <view class="func-btn">
           <view @tap="redirect('/pages/profile/asset_manage')">
             <view>
-                <image src="../../public/icons/profile/asset_manage.png"></image>
+                <image src="~@/assets/icons/profile/asset_manage.png"></image>
             </view>
             <view>资产管理</view>
           </view>
           <view @tap="redirect('/pages/profile/advance_list')">
             <view>
-              <image src="../../public/icons/profile/advance_list.png"></image>
+              <image src="~@/assets/icons/profile/advance_list.png"></image>
             </view>
             <view>预购清单</view>
           </view>
         </view>
       </view>
+      <not-login v-if=" !already_login "/>
     </view>
 
     <view class="bottom-container">
-       
             <!-- 功能列表 -->
         <view class="setting">
-            <i-cell-group>
-              <i-cell 
-                title="预算管理"
-                is-link url="/pages/profile/budget">
-              </i-cell>
-                <i-cell 
-                title="资产分类管理"
-                is-link url="/pages/profile/asset_category">
-                </i-cell>
-                
-                <i-cell 
-                title="支出分类管理" 
-                is-link url="/pages/profile/statement_category?type=expend">
-                </i-cell>
-                
-                <i-cell 
-                title="收入分类管理" 
-                is-link url="/pages/profile/statement_category?type=income">
-                </i-cell>
-                <i-cell 
-                title="关于mBill" 
-                is-link url="/pages/profile/about"
-                value="{{ version }}">
-                </i-cell>
-            </i-cell-group>
-        </view>
-        <i-load-more i-class="bottom-text" class="bottom-des" tip="By Memoyu" loading="{{ false }}" />
-    </view>
+          <van-cell-group>
+            <van-cell
+              title-style="font-size: 16px;"
+              title="预算管理"
+              link-type="navigateTo"
+              is-link 
+              url="/pages/profile/budget">
+            </van-cell>
 
-    <notLogin wx:if="{{!already_login}}"/>
-</view>
+            <van-cell
+              title-style="font-size: 16px;"
+              title="资产分类管理"
+              link-type="navigateTo"
+              is-link 
+              url="/pages/profile/asset_category">
+            </van-cell>
+
+            <van-cell
+              title-style="font-size: 16px;"
+              title="支出分类管理"
+              link-type="navigateTo"
+              is-link 
+              url="/pages/profile/statement_category?type=expend">
+            </van-cell>
+
+            <van-cell
+              title-style="font-size: 16px;"
+              title="收入分类管理"
+              link-type="navigateTo"
+              is-link 
+              url="/pages/profile/statement_category?type=income">
+            </van-cell>
+
+            <van-cell
+              title-style="font-size: 16px;"
+              title="关于mBill"
+              is-link 
+              link-type="navigateTo"
+              url="/pages/profile/about"
+              value="{{ version }}">
+            </van-cell>
+          </van-cell-group>
+        </view>
+
+        <van-divider contentPosition="center">Power By Memoyu</van-divider>
+    </view>
+    
+  </view>
 
 </template>
 
+<config>
+{
+  "usingComponents": {
+    "not-login": "~@/components/core/not_login",
+    "van-divider": "module:@vant/weapp/lib/divider/index",
+    "van-cell": "module:@vant/weapp/lib/cell/index",
+    "van-cell-group": "module:@vant/weapp/lib/cell-group/index"
+  },
+  "navigationBarTitleText": "我"
+}
+</config>
+
 <script>
-  import wepy from 'wepy'
-  import Session from '@/utils/session'
-  import wxRequest from '@/utils/wxRequest'
-  import NotLogin from '@/components/core/not_login'
+  import wepy from "@wepy/core"
+  import Session from "@/utils/session"
+  import wxRequest from "@/utils/wxRequest"
 
   const tokenKey = Session.key.token
   const userInfoKey = Session.key.userInfo
-  export default class Profile extends wepy.page {
-    config = {
-      navigationBarTitleText: '我',
-      'usingComponents': {
-        'i-cell-group': '../../public/iview/cell-group/index',
-        'i-cell': '../../public/iview/cell/index',
-        'i-load-more': '../../public/iview/load-more/index'
-      }
-    }
-
-    components = {
-      notLogin: NotLogin
-    }
-
-    data = {
+ wepy.page ({
+    data: {
       user: {
         nickname: '未登录',
-        avatarUrl: '../../public/icons/profile/default_avatar.png'
+        avatarUrl: '../../assets/icons/profile/default_avatar.png'
       },
       already_login: false,
-      version: ''
-    }
-    
+      version: 'v1.0'
+    },
     onShow() {
       this.getUser()
-    }
-
-    async getUser() {
-      const token = Session.getByCache(tokenKey)
-      if (token) { // 如果存在token信息，才回去获取用户信息
+    },
+    
+    methods: {
+      async getUser() {
+        const token = Session.getByCache(tokenKey)
         // console.log(token)
-        var userInfo = Session.getByCache(userInfoKey)
-        // console.log(userInfo)
-        if (!userInfo) {
-          const res = await wxRequest.Get('user/get')
-          if (res !== undefined) {
-            // console.log(res.result)
-            Session.setByCache(userInfoKey, res.result)
+        if (token) { // 如果存在token信息，才回去获取用户信息
+          // console.log(token)
+          var userInfo = Session.getByCache(userInfoKey)
+          // console.log(userInfo)
+          if (!userInfo) {
+            await wxRequest.Get("user/get").then(res=>{
+              // console.log(res.result)
+              Session.setByCache(userInfoKey, res.result)
+              this.already_login = true
+              this.user = res.result
+            })
+          } else {
             this.already_login = true
-            this.user = res.result
+            this.user = userInfo
           }
         } else {
-          this.already_login = true
-          this.user = userInfo
+          this.already_login = false
         }
-      } else {
-        this.already_login = false
-      }
-      this.$apply()
-    }
-    methods = {
+      },
       redirect (url) {
-        wepy.navigateTo({
+        wx.navigateTo({
           url: url
         })
       }
     }
-  }
+  })
 </script>
-<style lang="scss" src="@/public/styles/profile/index.scss"></style>
+
+

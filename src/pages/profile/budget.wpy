@@ -1,15 +1,23 @@
+<style lang="scss">
+@import "~@/assets/styles/pages/profile/budget.scss";
+</style>
+
 <template lang="wxml">
   <view class="container">
   </view>
 </template>
 
-<script>
-  import wepy from 'wepy'
+<config>
+{
+  "usingComponents": {
+  },
+  "navigationBarTitleText": "预算管理"
+}
+</config>
 
-  export default class Budget extends wepy.page {
-    config = {
-      navigationBarTitleText: '预算管理'
-    }
-  }
+<script>
+  import wepy from '@wepy/core'
+
+  wepy.page ({
+  });
 </script>
-<style lang="scss" src="@/public/styles/profile/budget.scss"></style>

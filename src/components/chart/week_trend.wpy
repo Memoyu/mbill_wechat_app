@@ -1,51 +1,28 @@
 <template lang="wxml">
   <view>
     <view style="margin-top: 50px;">
-      <canvas canvas-id="weekTrend" disable-scroll="true" style="width: 100%; height: 300px;"></canvas>
+        周趋势图
     </view>
   </view>
 </template>
 
 <script>
-import wepy from 'wepy'
-import wxCharts from '@/utils/wxchart.min.js'
-// import wxRequest from '@/utils/wxRequest'
-// import StatementItem from '@/components/index/statement'
-export default class WeekTrendComponent extends wepy.component {
-  data = {
+import wepy from '@wepy/core'
+
+wepy.component ({
+  data: {
     categories: [],
     info: {}
-  }
-
-  components = {
-    // StatementItem
-  }
-
-  async onLoad() {
-    this.info = await wepy.getSystemInfo()
+  },
+  async ready() {
+    this.info = await wx.getSystemInfo()
     this.initChart()
+  },
+  methods: {
+    async initChart() {
+      // const data = await wxRequest.Get('chart/week_trend')
+      const data = {title: ['2012', '2013', '2014', '2015', '2016', '2017'], data: [70, 40, 65, 100, 34, 18]}
+    }
   }
-
-  async initChart() {
-    // const data = await wxRequest.Get('chart/week_trend')
-    const data = {title: ['2012', '2013', '2014', '2015', '2016', '2017'], data: [70, 40, 65, 100, 34, 18]}
-    /* eslint-disable no-new */
-    new wxCharts({
-      canvasId: 'weekTrend',
-      type: 'column',
-      categories: data.title,
-      series: [{
-        name: '消费总额度',
-        data: data.data
-      }],
-      yAxis: {
-        format: function (val) {
-          return val + '元'
-        }
-      },
-      width: this.info.screenWidth,
-      height: 300
-    })
-  }
-}
+});
 </script>

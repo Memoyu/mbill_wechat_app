@@ -1,124 +1,117 @@
+<style lang='scss'>
+  @import '~@/assets/styles/pages/statistics/index.scss';
+</style>
+
 <template lang="wxml">
   <view class="container">
     <view class="controller" :class="{'no-login': !isLogin}" hidden="{{!isLogin}}">
       <view class="time-filter">
         <view class="month-filter">
           <!-- <view>2019 年 01 月</view> -->
-          <view class="iconfont icon-arrow-left" @tap="setDate('prev')"></view>
-          <view class="month">{{ year }} 年 {{ month }} 月</view>
-          <view class="iconfont icon-arrow-right" @tap="setDate('next')"></view>
+          <view class="iconfont icon-arrow-left" @tap="prevMonth"></view>
+          <picker class="time-picker" 
+            mode="date" 
+            bindchange="bindPickerChange($wx)"
+            fields="month"
+            value="{{date}}">
+              <view class="month">{{ year }} 年 {{ month }} 月</view>
+          </picker>
+          <view class="iconfont icon-arrow-right" @tap="nextMonth"></view>
         </view>
       </view>
-      <i-tabs current="{{ current }}" bindchange="handleChange">
-        <i-tab key="overview" title="总览"></i-tab>
-        <i-tab key="categories" title="分类"></i-tab>
-        <i-tab key="week-trend" title="周趋势"></i-tab>
-        <i-tab key="month-trend" title="月趋势"></i-tab>
-        <i-tab key="rate" title="排行榜"></i-tab>
-			<!-- <i-tab key="photos" title="相册集"></i-tab> -->
-		  </i-tabs>
+      <van-tabs current="{{ current }}" bindchange="handleChange($wx)">
+        <van-tab name="overview" title="总览"></van-tab>
+        <van-tab name="categories" title="分类"></van-tab>
+        <van-tab name="week-trend" title="周趋势"></van-tab>
+        <van-tab name="month-trend" title="月趋势"></van-tab>
+        <van-tab name="rate" title="排行榜"></van-tab>
+      </van-tabs>
 
-      <OverviewComp hidden="{{ current != 'overview' }}" :date.sync="date"></OverviewComp>
-      <CategoryComp hidden="{{ current != 'categories' }}" :date.sync="date"></CategoryComp>
-      <WeekTrendComp hidden="{{ current != 'week-trend' }}"></WeekTrendComp>
-      <MonthTrendComp hidden="{{ current != 'month-trend' }}"></MonthTrendComp>
-      <RateComp hidden="{{ current != 'rate' }}" :date.sync="date"></RateComp>
+      <overview-comp v-if="current === 'overview'" :date.sync="date"></overview-comp>
+      <category-comp v-if="current === 'categories'" :date.sync="date"></category-comp>
+      <week-trend-comp v-if="current === 'week-trend'"></week-trend-comp>
+      <month-trend-comp v-if=" current === 'month-trend'"></month-trend-comp>
+      <rate-comp v-if="current === 'rate'" :date.sync="date"></rate-comp>
     </view>
-    <notLogin wx:if="{{!isLogin}}"/>
+    <not-login v-if=" !isLogin "/>
   </view>
 </template>
+<config>
+{
+  "usingComponents": {
+    "van-tab": "module:@vant/weapp/lib/tab/index",
+    "van-tabs": "module:@vant/weapp/lib/tabs/index",
+    "empty": "~@/components/core/empty",
+    "not-login": "~@/components/core/not_login",
+    "overview-comp": "~@/components/chart/overview",
+    "category-comp": "~@/components/chart/category",
+    "week-trend-comp": "~@/components/chart/week_trend",
+    "month-trend-comp": "~@/components/chart/month_trend",
+    "rate-comp": "~@/components/chart/rate"
+  },
+  "navigationBarTitleText": "统计"
+}
+</config>
 
 <script>
-  import wepy from 'wepy'
-  import Session from '@/utils/session'
-  import Empty from '@/components/empty'
-  import NotLogin from '@/components/core/not_login'
-  import OverviewComp from '@/components/chart/overview'
-  import CategoryComp from '@/components/chart/category'
-  import WeekTrendComp from '@/components/chart/week_trend'
-  import MonthTrendComp from '@/components/chart/month_trend'
-  import RateComp from '@/components/chart/rate'
+const tokenKey = Session.key.token
+const nowDate = new Date()
+import wepy from '@wepy/core'
+import Session from '@/utils/session'
 
-  const tokenKey = Session.key.token
-  const nowDate = new Date()
-  export default class Statistics extends wepy.page {
-    config = {
-      navigationBarTitleText: '统计',
-      'usingComponents': {
-        'i-tabs': '../../public/iview/tabs/index',
-        'i-tab': '../../public/iview/tab/index'
+wepy.page ({
+  data: {
+    current: 'overview',
+    date: nowDate,
+    isLogin: false,
+    chartData: [],
+    header: {},
+    year: new Date().getFullYear(),
+    month: new Date().getMonth() + 1,
+    categories: [],
+    showFilter: false,
+    emptyTitle: '没有数据噢！'
+  },
+  computed: {
+    isLogin() {
+      const token = Session.getByCache(tokenKey)
+      if (token) {
+        return true
+      } else {
+        return false
       }
     }
-
-    data = {
-      current: 'overview',
-      date: `${nowDate.getFullYear()} - ${nowDate.getMonth() + 1}`,
-      isLogin: false,
-      chartData: [],
-      header: {},
-      info: {},
-      year: new Date().getFullYear(),
-      month: new Date().getMonth() + 1,
-      categories: [],
-      showFilter: false,
-      emptyTitle: '没有数据噢！'
-    }
-
-    components = {
-      empty: Empty,
-      notLogin: NotLogin,
-      OverviewComp: OverviewComp,
-      CategoryComp: CategoryComp,
-      WeekTrendComp: WeekTrendComp,
-      MonthTrendComp: MonthTrendComp,
-      RateComp: RateComp
-    }
-
-    computed = {
-      isLogin() {
-        const token = Session.getByCache(tokenKey)
-        if (token) {
-          return true
+  },
+  methods: {
+     handleChange ({ detail }) {
+        const pages = getCurrentPages()
+        const page = pages[pages.length - 1]
+        page.$wepy.$children = []//清除当前的子组件
+        page.$wepy.$refs = {}
+        this.current = detail.name
+      },
+      bindPickerChange({ detail }) {
+        this.date = new Date(detail.value)
+        console.log(detail)
+        this.year = this.date.getFullYear()
+        this.month = this.date.getMonth() + 1
+      },
+      nextMonth () {
+        if (this.month === 12) {
+          this.year += 1
+          this.month = 1
         } else {
-          return false
+          this.month += 1
+        }
+      },
+      prevMonth () {
+        if (this.month === 1) {
+          this.year -= 1
+          this.month = 12
+        } else {
+          this.month -= 1
         }
       }
     }
-
-    async onShow() {
-      if (this.isLogin) {
-        console.log(this.isLogin)
-        this.info = await wx.getSystemInfo()
-        this.$apply()
-      }
-    }
-
-    methods = {
-      handleChange ({ detail }) {
-        this.current = detail.key
-      },
-      bindPickerChange({ detail }) {
-        this.date = detail.value
-      }
-    }
-
-    nextMonth () {
-      if (this.month === 12) {
-        this.year += 1
-        this.month = 1
-      } else {
-        this.month += 1
-      }
-    }
-
-    prevMonth () {
-      if (this.month === 1) {
-        this.year -= 1
-        this.month = 12
-      } else {
-        this.month -= 1
-      }
-    }
-  }
+});
 </script>
-<style lang="scss" src="@/public/styles/statistics/index.scss"></style>

@@ -1,0 +1,39 @@
+<style lang="scss">
+@import '~@/assets/styles/components/bill/bill_item.scss';
+</style>
+
+<template>
+  <view class="bill" @tap="editStatement('id','{{ bill.id }}')">
+    <view class="information">
+      <view class="icon">
+        <image src="{{ bill.icon_path }}"></image>
+      </view>
+      <view class="st-title">
+        <view class="title">{{ bill.category }}</view>
+        <view class="description" wx:if="{{bill.description}}">{{ bill.description }}</view>
+        <view class="time">{{ bill.timeStr }} · {{ bill.asset }}</view>
+      </view>
+    </view>
+    <view class="amount {{ bill.type }}">
+      {{ bill.money }}
+    </view>
+  </view>
+</template>
+<script>
+import wepy from '@wepy/core'
+wepy.component ({
+  properties: {
+    bill: {
+      type: Object,
+      default: {}
+    }
+  },
+  methods: {
+    editStatement (key, id) {
+      wepy.navigateTo({
+        url: `/pages/bill/detail?${key}=${id}`
+      })
+    }
+  }
+});
+</script>

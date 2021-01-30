@@ -1,27 +1,30 @@
-<template lang="wxml">
-  <view class="column" @tap="choseCategory('{{ category }}')">
+<style lang="scss">
+@import '~@/assets/styles/pages/bill/chose_category.scss';
+</style>
+
+<template>
+  <view class="column" @tap="choseCategory(category)">
     <view class="category">
-      <image class='ljt-icon' src="{{ category.iconPath }}"></image>
+      <image class="ljt-icon" src="{{ category.iconUrl }}"></image>
       <text class="category-name fs16">{{ category.name }}</text>
     </view>
   </view>
 </template>
 
 <script>
-  import wepy from 'wepy'
-  export default class CategoryItem extends wepy.component {
-    props = {
+  import wepy from '@wepy/core'
+  wepy.component ({
+    props: {
       category: {
         type: Object,
         default: {}
       }
-    };
-
-    methods = {
+    },
+    methods: {
       choseCategory (category) {
+        // console.log(category)
         this.$emit('choseItem', category)
       }
     }
-  }
+  })
 </script>
-<style lang="scss" src="@/public/styles/bookkeeping/chose_category.scss"></style>

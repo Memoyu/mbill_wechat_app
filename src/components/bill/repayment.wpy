@@ -1,0 +1,154 @@
+<style lang='scss'>
+@import '~@/assets/styles/components/bill/repayment.scss';
+</style>
+
+<template>
+  <view class="container">
+    <view class="column money">
+      <text>金额</text>
+      <input
+        class="money-input {{ repayment.type }}"
+        placeholder="0.00"
+        placeholder-class="{{ repayment.type }}"
+        type="digit"
+        v-model=" repayment.amount "
+      >
+    </view>
+    <view class="column transfer-type">
+      <view class="assetSource" @tap="assetSource">{{ assetSourceName }}</view>
+      <view class="iconfont icon-to transfer-icon"></view>
+      <view class="assetTarget" @tap="assetTarget">{{ assetTargetName }}</view>
+    </view>
+    <view class="column">
+      <text>日期</text>
+      <view class="quick-use">
+        <text class="label" @tap="quickSetDate('-2')">前天</text>
+        <text class="label" @tap="quickSetDate('-1')">昨天</text>
+        <text class="label" @tap="quickSetDate('0')">今天</text>
+      </view>
+      <picker mode="date" start="2017-01-01" bindchange="dateChange">
+        <text>{{ repayment.date }}</text>
+      </picker>
+    </view>
+    <view class="column">
+      <text>备注</text>
+      <input
+        class="pull-right remark"
+        type="text"
+        v-model=" repayment.description "
+        placeholder="本笔账单的简单说明"
+      >
+    </view>
+    <view class="btn-save">
+      <button v-if="!submiting"  @tap="reportStatement">保存</button>
+      <button v-else>保存中...</button>
+    </view>
+  </view>
+</template>
+
+<script>
+import wepy from '@wepy/core';
+import Tip from '@/utils/tip';
+import Util from '@/utils/util.js';
+import { mapState } from '@wepy/redux';
+import { SUBMITING } from '@/store/types';
+import store from '@/store';
+
+wepy.component({
+  store,
+  props: {
+    repayment: {
+      type: Object,
+      default() {
+        return {
+          id: 0,
+          type: 'repayment',
+          amount: '',
+          description: '',
+          assetId: 0,
+          targetAssetId: 0,
+          date: Util.getCurrentDate(),
+          time: Util.getCurrentTime()
+        };
+      }
+    }
+  },
+  options: {
+    addGlobalClass: true
+  },
+  data: {
+    assetSourceName: '选择还款账户',
+    assetTargetName: '选择负债账户',
+    repaymentType: 0
+  },
+  computed: {
+    ...mapState({
+      submiting: state => state.bill.statementSubmiting
+    })
+  },
+  methods: {
+    // 选择账户后回调
+    setAsset(asset) {
+      if (this.repaymentType === 1) {
+        this.assetSourceName = asset.name;
+        this.repayment.assetId = asset.id;
+      } else {
+        this.assetTargetName = asset.name;
+        this.repayment.targetAssetId = asset.id;
+      }
+    },
+    // 赋值源账户
+    assetSource() {
+      this.repaymentType = 1;
+      wx.navigateTo({
+        url:
+          '/pages/bill/chose_asset?type=repayment&asset_type=deposit&hide_frequent=1'
+      });
+    },
+    // 赋值目标账户
+    assetTarget() {
+      this.repaymentType = 2;
+      wx.navigateTo({
+        url:
+          '/pages/bill/chose_asset?type=repayment&asset_type=debt&hide_frequent=1'
+      });
+    },
+    // 时间改变
+    dateChange({ detail }) {
+      this.repayment.date = detail.value;
+    },
+    // 快速选取时间
+    quickSetDate(between) {
+      const today = new Date();
+      let date = today;
+      if (between === '-1') {
+        date = new Date(today.getTime() - 24 * 60 * 60 * 1000);
+      } else if (between === '-2') {
+        date = new Date(today.getTime() - 2 * 24 * 60 * 60 * 1000);
+      }
+      const year = date.getFullYear();
+      let month = date.getMonth() + 1;
+      let day = date.getDate();
+      if (month < 10) month = '0' + month;
+      if (day < 10) day = '0' + day;
+      this.repayment.date = [year, month, day].join('-');
+    },
+    async reportStatement() {
+      const repayment = this.repayment;
+      if (repayment.amount === 0 || repayment.amount === '') {
+        Tip.error('金额不能为零');
+        return false;
+      }
+      if (repayment.assetId === 0 || repayment.targetAssetId === 0) {
+        Tip.error('未选择转账账户');
+        return false;
+      } else if (repayment.assetId === repayment.targetAssetId) {
+        Tip.error('不能转向同一账户');
+        return false;
+      }
+      this.$emit('submit', repayment);
+    }
+  }
+});
+</script>
+

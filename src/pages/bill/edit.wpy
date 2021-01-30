@@ -1,0 +1,63 @@
+<style lang='scss'>
+@import '~@/assets/styles/pages/bill/edit.scss';
+</style>
+
+<template lang="wxml">
+  <view class="container">
+     <view class="comonent-list">
+        <statement
+          :statement.sync="statement"
+          :type="expend"
+          @submit.user="submit"
+          wx:if="{{ current == 'expend' }}"
+        />
+
+        <statement
+          :statement.sync="statement"
+          :type="income"
+          @submit.user="submit"
+          wx:if="{{ current == 'income' }}"
+        />
+
+        <transfer
+          :statement.sync="statement"
+          @submit.user="submit"
+          wx:if="{{ current == 'transfer' }}"
+        />
+
+        <repayment
+          :statement.sync="statement"
+          @submit.user="submit"
+          wx:if="{{ current == 'repayment' }}"
+        />
+    </view>
+  </view>
+</template>
+
+<config>
+{
+  "usingComponents": {
+    "statement": "~@/components/bill/statement",
+    "transfer": "~@/components/bill/transfer",
+    "repayment": "~@/components/bill/repayment"
+  },
+  "navigationBarTitleText": "编辑账单"
+}
+</config>
+
+<script>
+  import wepy from '@wepy/core'
+
+  wepy.page ({
+    data: {
+      current: 'expend',
+      statement: {},
+      expend: 'expend',
+      income: 'income'
+    },
+    methods: {
+      async submit (statement) {
+      }
+    }
+  });
+</script>

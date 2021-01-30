@@ -1,56 +1,64 @@
+<style lang="scss">
+  @import '~@/assets/styles/pages/detail/index.scss';
+</style>
+
 <template lang="wxml">
   <view class="container">
     <view class="wallet-header">
-      <picker class='time-picker' 
+      <picker class="time-picker" 
         mode="date" 
-        bindchange="bindPickerChange"
+        bindchange="bindPickerChange($wx)"
         fields="month"
         value="{{date}}">
-          <view class="date-view">
-            <text class="toptitle-text">{{dateYear}}</text>
-            <view >
-              <text class="bottom-text">{{dateMonth}}</text>
-              <text class="toptitle-text">月 ▼</text>
-            </view>
+        <view class="date-view">
+          <text class="toptitle-text">{{dateYear}}</text>
+          <view>
+            <text class="bottom-text">{{dateMonth}}</text>
+            <text class="toptitle-text">月 ▼</text>
           </view>
-	    </picker>
+        </view>
+      </picker>
       <view >
         <text class="toptitle-text">收入</text>
         <view >
           <text class="bottom-text">{{icome}}</text>
         </view>
-     </view>
+      </view>
       <view>
         <text class="toptitle-text">支出</text>
         <view >
           <text class="bottom-text">{{expend}}</text>
         </view>
-     </view>
-    </view>
-     <view class="bookkeeping-container">
-      <view class="bookkeeping-list" wx-if="{{ list.length > 0 }}">
-        <repeat for="{{ list }}" key="index" index="index" item="item">
-          <BookkeepingItem :bookkeeping.sync="item"></BookkeepingItem>
-        </repeat>
       </view>
-    </view>
-
-    <view wx:if="{{ list.length == 0 }}">
-        <empty :title.sync="emptyTitle"></empty>
-    </view>
+      </view>
+      <view class="bill-container">
+        <view class="bill-list" wx-if="{{ list.length > 0 }}">
+          <div  v-for="item,index in list">
+            <bill :bill.sync="item"></bill>
+          </div>
+        </view>
+      </view>
+      <view v-if="list.length == 0">
+          <empty :title.sync="emptyTitle"></empty>
+      </view>
   </view>
 </template>
 
+<config>
+{
+  "usingComponents": {
+    "bill": "~@/components/bill/bill_item",
+    "empty": "~@/components/core/empty"
+  },
+  "navigationBarTitleText": "明细"
+}
+</config>
+
 <script>
-import wepy from 'wepy'
-import Empty from '@/components/empty'
-import BookkeepingItem from '@/components/bookkeeping/bookkeepingItem'
+import wepy from '@wepy/core'
 const nowDate = new Date()
-export default class Detail extends wepy.page {
-  config = {
-    navigationBarTitleText: '明细'
-  }
-  data = {
+wepy.page ({
+  data: {
     emptyTitle: '这个月没有账目噢！',
     expend: '0.00',
     icome: '0.00',
@@ -58,29 +66,29 @@ export default class Detail extends wepy.page {
     dateYear: `${nowDate.getFullYear()}年`,
     dateMonth: `${nowDate.getMonth() + 1}`,
     list: [
-      {
-        id: 1,
-        icon_path: '',
-        category: '数码',
-        description: '买电脑',
-        timeStr: '11-01 01:26',
-        asset: '微信',
-        type: 1,
-        money: 300
-      },
-      {
-        id: 2,
-        icon_path: '',
-        category: '出行',
-        description: '买电脑',
-        timeStr: '11-01 01:26',
-        asset: '微信',
-        type: 1,
-        money: 300.89
-      }
+      // {
+      //   id: 1,
+      //   icon_path: '',
+      //   category: '数码',
+      //   description: '买电脑',
+      //   timeStr: '11-01 01:26',
+      //   asset: '微信',
+      //   type: 1,
+      //   money: 300
+      // },
+      // {
+      //   id: 2,
+      //   icon_path: '',
+      //   category: '出行',
+      //   description: '买电脑',
+      //   timeStr: '11-01 01:26',
+      //   asset: '微信',
+      //   type: 1,
+      //   money: 300.89
+      // }
     ]
-  }
-  methods = {
+  },
+  methods: {
     bindPickerChange({ detail }) {
       this.date = new Date(detail.value)
       console.log(detail)
@@ -88,10 +96,5 @@ export default class Detail extends wepy.page {
       this.dateMonth = this.date.getMonth() + 1
     }
   }
-  components = {
-    empty: Empty,
-    BookkeepingItem
-  }
-}
+});
 </script>
-<style lang="scss" src="@/public/styles/detail/index.scss"></style>

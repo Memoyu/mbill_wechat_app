@@ -1,20 +1,15 @@
-const path = require('path');
-var prod = process.env.NODE_ENV === 'production';
+const path = require('path')
+var prod = process.env.NODE_ENV === 'production'
 
 module.exports = {
   wpyExt: '.wpy',
   eslint: true,
   cliLogs: !prod,
+  static: ['src/assets'],
   build: {
-    web: {
-      htmlTemplate: path.join('src', 'index.template.html'),
-      htmlOutput: path.join('web', 'index.html'),
-      jsOutput: path.join('web', 'index.js')
-    }
   },
   resolve: {
     alias: {
-      counter: path.join(__dirname, 'src/components/counter'),
       '@': path.join(__dirname, 'src')
     },
     aliasFields: ['wepy', 'weapp'],
@@ -24,32 +19,26 @@ module.exports = {
     less: {
       compress: prod
     },
-    /*sass: {
+    sass: {
       outputStyle: 'compressed'
-    },*/
+    },
     babel: {
       sourceMap: true,
       presets: [
-        'env'
+        '@babel/preset-env'
       ],
       plugins: [
-        'transform-class-properties',
-        'transform-decorators-legacy',
-        'transform-object-rest-spread',
-        'transform-export-extensions',
-        'syntax-export-extensions'
+        '@wepy/babel-plugin-import-regenerator'
       ]
     }
   },
-  plugins: {
-  },
+  plugins: [],
   appConfig: {
     noPromiseAPI: ['createSelectorQuery']
   }
 }
 
 if (prod) {
-
   // 压缩sass
   // module.exports.compilers['sass'] = {outputStyle: 'compressed'}
 

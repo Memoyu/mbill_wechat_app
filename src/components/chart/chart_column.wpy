@@ -1,5 +1,5 @@
 <template lang="wxml">
-  <view class="tiaomu" wx:for="{{ obj.list }}" @tap="showStatement('{{ obj.id }}')">
+  <view class="tiaomu" v-for="item in obj.list" @tap="showStatement('{{ obj.id }}')">
     <view class="pull-left col999 date-time">
       <view class="fs14">{{ item.day }}</view>
       <view class="fs12">{{ item.detail_day }}</view>
@@ -9,7 +9,7 @@
       <view class="pull-left icon"><image src="{{ item.category_icon }}"></image></view>
       <view class="pull-left title">
         <view class="fs14">{{ item.category }}</view>
-        <view class="fs12 description" wx:if="{{ item.description != null }}">{{ item.description }}</view>
+        <view class="fs12 description" v-if="item.description != null">{{ item.description }}</view>
         <view class="col999 fs12">{{ item.time }} · {{ item.wallet }}</view>
       </view>
     </view>
@@ -18,8 +18,9 @@
 
 <script>
 // 收支统计图表页面所需
-import wepy from 'wepy'
-export default class chartColumn extends wepy.component {
+import wepy from '@wepy/core'
+
+wepy.component ({
   props = {
     obj: {
       type: Array,
@@ -29,14 +30,13 @@ export default class chartColumn extends wepy.component {
       type: Boolean,
       default: false
     }
-  };
-
-  methods = {
+  },
+  methods: {
     showStatement(id) {
-      wepy.navigateTo({
+      wx.navigateTo({
         url: `/pages/statements/detail?id=${id}`
       })
     }
   }
-}
+});
 </script>

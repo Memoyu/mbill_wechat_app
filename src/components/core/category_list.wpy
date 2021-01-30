@@ -1,33 +1,3 @@
-<template lang="wxml">
-  <view wx:for="{{ list }}">
-    <navigator class="category parent-category" url="{{ editUrl }}?id={{ item.id }}&type={{ type }}" >
-      <text class="category-name">{{ item.name }}</text>
-    </navigator>
-
-    <navigator class="category child-category" wx:for="{{ item.childs }}" wx:for-item="child" url="{{ editUrl }}?id={{ child.id }}&type={{ type }}" >
-      <view class="image">
-        <image class='ljt-icon' src="{{ child.icon_url }}"></image>
-      </view>
-      <text class="category-name">{{ child.name }}</text>
-    </navigator>
-  </view>
-</template>
-
-<script>
-// 收入/支出分类列表、资产列表
-import wepy from 'wepy'
-export default class CategoryList extends wepy.component {
-  props = {
-    list: {
-      type: Array,
-      default: []
-    },
-    type: String,
-    editUrl: String
-  };
-}
-</script>
-
 <style lang="less">
 .category {
 	position:relative;
@@ -51,3 +21,33 @@ export default class CategoryList extends wepy.component {
 	font-size:32rpx;
 }
 </style>
+
+<template lang="wxml">
+  <view v-for="item,index in list">
+    <navigator class="category parent-category" url="{{ editUrl }}?id={{ item.id }}&type={{ type }}" >
+      <text class="category-name">{{ item.name }}</text>
+    </navigator>
+    
+    <navigator class="category child-category" v-for="child,index in item.childs" url="{{ editUrl }}?id={{ child.id }}&type={{ type }}" >
+      <view class="image">
+        <image class='ljt-icon' src="{{ child.iconUrl }}"></image>
+      </view>
+      <text class="category-name">{{ child.name }}</text>
+    </navigator>
+  </view>
+</template>
+
+<script>
+// 收入/支出分类列表、资产列表
+import wepy from '@wepy/core'
+wepy.component ({
+  props: {
+    list: {
+      type: Array,
+      default: []
+    },
+    type: String,
+    editUrl: String
+  }
+});
+</script>

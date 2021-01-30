@@ -1,35 +1,3 @@
-<template lang="wxml">
-   <view class="login-message" >
-      <view>
-        <button class="to-login-btn" @tap="redirectTo" >登录</button>
-        <view class="continue" style="font-size: 14px; margin-top: 6px">
-          {{title}}
-        </view>
-      </view>
-    </view>
-</template>
-
-<script>
-// 收入/支出分类列表、资产列表
-import wepy from 'wepy'
-export default class NotLogin extends wepy.component {
-  props = {
-    title: {
-      type: String,
-      default: '亲爱的，请先登陆噢！'
-    }
-  }
-
-  methods = {
-    redirectTo () {
-      wepy.navigateTo({
-        url: `/pages/profile/login`
-      })
-    }
-  }
-}
-</script>
-
 <style lang="less">
 .login-message {
   position: absolute;
@@ -51,3 +19,33 @@ export default class NotLogin extends wepy.component {
   }
 }
 </style>
+
+<template>
+   <view class="login-message" >
+      <view>
+        <button class="to-login-btn" v-on:click="redirectTo" >登录</button>
+        <view class="continue" style="font-size: 14px; margin-top: 6px">
+          {{title}}
+        </view>
+      </view>
+    </view>
+</template>
+
+<script>
+import wepy from '@wepy/core'
+wepy.component ({
+  props: {
+    title: {
+      type: String,
+      default: '亲爱的，请先登陆噢！'
+    }
+  },
+  methods: {
+    redirectTo () {
+      wx.navigateTo({
+        url: `/pages/profile/login`
+      })
+    }
+  }
+});
+</script>

@@ -1,15 +1,24 @@
+<<style lang="scss">
+@import "~@/assets/styles/pages/profile/asset_manage.scss";
+</style>
+
 <template lang="wxml">
   <view class="container">
   </view>
 </template>
 
-<script>
-  import wepy from 'wepy'
+<config>
+{
+  "usingComponents": {
+  },
+  "navigationBarTitleText": "资产管理"
+}
+</config>
 
-  export default class AssetManage extends wepy.page {
-    config = {
-      navigationBarTitleText: '资产管理'
-    }
-  }
+<script>
+  import wepy from '@wepy/core'
+
+  wepy.page ({
+  });
 </script>
-<style lang="scss" src="@/public/styles/profile/asset_manage.scss"></style>
+

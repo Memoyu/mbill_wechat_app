@@ -1,15 +1,24 @@
+<style lang="scss">
+@import "~@/assets/styles/pages/profile/asset_ategory.scss";
+</style>
+
 <template lang="wxml">
   <view class="container">
   </view>
 </template>
 
-<script>
-  import wepy from 'wepy'
+<config>
+{
+  "usingComponents": {
+  },
+  "navigationBarTitleText": "资产分类"
+}
+</config>
 
-  export default class AssetCategory extends wepy.page {
-    config = {
-      navigationBarTitleText: '资产分类'
-    }
-  }
+<script>
+  import wepy from '@wepy/core'
+
+  wepy.page ({
+  });
 </script>
-<style lang="scss" src="@/public/styles/profile/asset_ategory.scss"></style>
+

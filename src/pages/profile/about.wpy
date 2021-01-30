@@ -1,15 +1,24 @@
-<template lang="wxml">
+<style lang="scss">
+@import '~@/assets/styles/pages/profile/about.scss';
+</style>
+
+<template>
   <view class="container">
   </view>
 </template>
 
-<script>
-  import wepy from 'wepy'
+<config>
+{
+  "usingComponents": {
+  },
+  "navigationBarTitleText": "关于"
+}
+</config>
 
-  export default class About extends wepy.page {
-    config = {
-      navigationBarTitleText: '关于'
-    }
-  }
+<script>
+  import wepy from '@wepy/core'
+  wepy.page ({
+  
+  });
 </script>
-<style lang="scss" src="@/public/styles/profile/about.scss"></style>
+

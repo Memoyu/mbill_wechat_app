@@ -1,0 +1,107 @@
+<style lang='scss'>
+@import '~@/assets/styles/pages/bill/index.scss';
+</style>
+
+<template lang="wxml">
+  <view class="container">
+    <view class="header">
+      <image class="bg" src="{{ header.bg_avatar }}"></image>
+      <view class="level-2">
+        <view class="fs14">
+          <text>{{ header.position_1_human_name }}</text>
+        </view>
+        <view class="fs21 today-expend">{{ header.position_1_amount }}</view>
+        <view class="overflow-hide">
+          <view class="pull-left fs14">{{ header.position_2_human_name }} {{ header.position_2_amount }}</view>
+          <view
+            class="pull-right fs14"
+          >{{ header.position_3_human_name }} {{ header.position_3_amount }}</view>
+        </view>
+      </view>
+    </view>
+    
+    <view class="bill-btn">
+      <view class="mine-bill-btn btn-shadow"  v-on:click="handleAddBookkeeping" >
+          <i class="iconfont icon-write writeicon"></i>
+      </view>
+    </view>
+
+    <view class="bill-container">
+      <view class="bill-title">今日消费</view>
+      <view class="bill-list" wx-if="{{ list.length > 0 }}">
+        <div v-for="item,index in list">
+          <bill :bill.sync="item"></bill>
+        </div>
+      </view>
+    </view>
+
+<empty :title.sync="emptyTitle"/>
+    <!-- <view wx:if="{{ list.length == 0 }}">
+        <empty :title.sync="emptyTitle"/>
+    </view> -->
+  </view>
+</template>
+
+<config>
+{
+  "usingComponents": {
+    "bill": "~@/components/bill/bill_item",
+    "empty": "~@/components/core/empty"
+  },
+  "navigationBarTitleText": "记账"
+}
+</config>
+
+<script>
+import wepy from '@wepy/core'
+wepy.page ({
+  data: {
+    emptyTitle: '今天没有账目噢！',
+    list: [
+      // {
+      //   id: 1,
+      //   icon_path: '',
+      //   category: '数码',
+      //   description: '买电脑',
+      //   timeStr: '11-01 01:26',
+      //   asset: '微信',
+      //   type: 1,
+      //   money: 300
+      // },
+      // {
+      //   id: 2,
+      //   icon_path: '',
+      //   category: '出行',
+      //   description: '买电脑',
+      //   timeStr: '11-01 01:26',
+      //   asset: '微信',
+      //   type: 1,
+      //   money: 300.89
+      // }
+    ],
+    header: {
+      bg_avatar:
+        'http://localhost:5000/core/images/other/index_bg3_533x300.png',
+      position_1_human_name: '今日支出',
+      position_1_amount: '40.00',
+      position_2_human_name: '本月支出',
+      position_2_amount: '200.45',
+      position_3_human_name: '剩余预算',
+      position_3_amount: '200.00'
+    },
+    budgetHeader: {
+      budget: '0.00',
+      month_expend: '0.00',
+      percentage: '0',
+      color: '#FF2929'
+    }
+  },
+  methods: {
+    handleAddBookkeeping () {
+      wx.navigateTo({
+        url: `/pages/bill/create`
+      })
+    }
+  }
+});
+</script>

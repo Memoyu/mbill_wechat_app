@@ -1,0 +1,114 @@
+<style lang='scss'>
+@import '~@/assets/styles/pages/bill/create.scss';
+</style>
+
+<template lang='wxml'>
+  <view class="container">
+      <van-tabs active="{{ current }}" bindchange="handleChange($wx)">
+        <van-tab name="expend" title="支出"></van-tab>
+        <van-tab name="income" title="收入"></van-tab>
+        <van-tab name="transfer" title="转账"></van-tab>
+        <van-tab name="repayment" title="还款"></van-tab>
+      </van-tabs>
+
+      <view class="comonent-list">
+        <expend
+          ref="expend"
+          :type="expend"
+          @submit.user="submit"
+          v-if="current === 'expend'"
+        />
+
+        <income
+          ref="income"
+          :type="income"
+          @submit.user="submit"
+          v-if="current === 'income'"
+        />
+
+        <transfer
+          ref="transfer"
+          :statement.sync="transferData"
+          @submit.user="submit"
+          v-if="current === 'transfer'"
+        />
+
+        <repayment
+          ref="repayment"
+          :statement.sync="repayData"
+          @submit.user="submit"
+          v-if="current === 'repayment'"
+        />
+    </view>
+    
+  </view>
+</template>
+
+<config>
+{
+  "usingComponents": {
+    "van-tab": "module:@vant/weapp/lib/tab/index",
+    "van-tabs": "module:@vant/weapp/lib/tabs/index",
+    "expend": "~@/components/bill/statement",
+    "income": "~@/components/bill/statement",
+    "transfer": "~@/components/bill/transfer",
+    "repayment": "~@/components/bill/repayment"
+  },
+  "navigationBarTitleText": "账单详情"
+}
+</config>
+
+<script>
+import wepy from '@wepy/core'
+import Tip from '@/utils/tip'
+import wxRequest from '@/utils/wxRequest'
+import { mapState , mapActions } from '@wepy/redux';
+import { SUBMITING } from '@/store/types';
+import store from '@/store';
+  import { changeSubmitStatus } from '@/store/actions';
+
+wepy.page ({
+  store,
+  data: {
+    current: 'expend',
+    expend: 'expend',
+    income: 'income'
+  },
+  computed: {
+    ...mapState({
+      submiting: state => state.bill.statementSubmiting
+    })
+  },
+  onLoad() {
+  },
+
+  methods: {
+    ...mapActions({
+      changeSubmitStatus
+    }),
+    handleChange ({detail}) {
+      const pages = getCurrentPages()
+      const page = pages[pages.length - 1]
+      page.$wepy.$children = []//清除当前的子组件
+      page.$wepy.$refs = {}
+      this.current = detail.name
+    },
+    async submit (statement) {
+      console.log("OK")
+      this.changeSubmitStatus(true)
+      
+      console.log(statement)
+      await wxRequest.Post(`statement/create`, statement).then(res=>{
+        Tip.toast("添加账单成功！")
+        wx.navigateBack({
+          delta: 1
+        })
+      }).catch(err=>{
+        Tip.confirm('由于网络原因，无法同步账单到服务器', {}, '保存失败')
+      })
+    
+      this.changeSubmitStatus(false)
+    }
+  }
+})
+</script>
