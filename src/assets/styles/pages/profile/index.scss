@@ -77,6 +77,12 @@ page {
     padding: 0 10px;
     margin: 10px 10px; 
     border-radius:10px;
+    .van-cell {
+      height: 60px;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px !important;
+    }
   }
   .bottom-des{
     margin-top: 100rpx;

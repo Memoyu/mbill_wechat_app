@@ -1,28 +1,125 @@
-<template lang="wxml">
-  <view>
-    <view style="margin-top: 50px;">
-        周趋势图
+<style lang="scss">
+.container{
+  margin-top: 30px;
+  min-height: 100%;
+  .main{
+    width: 750rpx;
+    .week-trend{
+      display: block;
+      width: 750rpx;
+      height: 500rpx;
+    }
+  }
+}
+</style>
+
+<template>
+  <view class="container">
+    <view class="main">
+      <ec-canvas 
+        id="week-trend-bar-dom"  
+        class="week-trend" 
+        canvas-id="week-trend-bar"
+        bind:init="echartBarInit($wx)"
+        :ec=" ec ">
+      </ec-canvas> 
     </view>
   </view>
 </template>
 
-<script>
-import wepy from '@wepy/core'
-
-wepy.component ({
-  data: {
-    categories: [],
-    info: {}
-  },
-  async ready() {
-    this.info = await wx.getSystemInfo()
-    this.initChart()
-  },
-  methods: {
-    async initChart() {
-      // const data = await wxRequest.Get('chart/week_trend')
-      const data = {title: ['2012', '2013', '2014', '2015', '2016', '2017'], data: [70, 40, 65, 100, 34, 18]}
-    }
+<config>
+{
+  usingComponents: {
+      "ec-canvas": "~@/utils/echart/ec-canvas"
   }
-});
+}
+</config>
+
+<script>
+  import wepy from '@wepy/core';
+  import WxCanvas from '@/utils/echart/wx-canvas'
+  import * as echarts from '@/utils/echart/echarts';
+
+  wepy.component({
+    data: {
+      ec: {
+      },
+      info: null
+    },
+    attached() {
+      // this.startInit()
+    },
+    methods: {
+      async echartBarInit({detail}){
+        // console.log(detail)
+        this.info = await wx.getSystemInfo()
+        this.initChart(detail.canvas, detail.width, detail.height , this)
+      },
+      initChart(canvas, width, height,self) {
+        // console.log(canvas)
+        // console.log(self)
+        const chart = echarts.init(canvas, null, {
+          width: width,
+          height: height,
+          devicePixelRatio: self.info.pixelRatio
+        });
+        canvas.setChart(chart);
+        var option = {
+          backgroundColor: "#ffffff",
+          color: ["#37A2DA", "#32C5E9", "#67E0E3", "#91F2DE", "#FFDB5C", "#FF9F7F"],
+          legend: {
+            data: ['直接访问', '邮件营销', '联盟广告']
+          },
+          xAxis : [
+            {
+              type : 'category',
+              data : ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+              axisTick: {
+                  alignWithLabel: true
+              }
+            }
+          ],
+          yAxis : [
+            {
+              type : 'value'
+            }
+          ],
+          series: [
+            {
+                name:'直接访问',
+                type:'bar',
+                barWidth: '60%',
+                data:[10, 52, 200, 334, 390, 330, 220]
+            },
+            {
+              name: '邮件营销',
+              type: 'bar',
+              stack: '总量',
+              label: {
+                normal: {
+                  show: true,
+                  position: 'insideRight'
+                }
+              },
+              data: [120, 132, 101, 134, 90, 230, 210]
+            },
+            {
+              name: '联盟广告',
+              type: 'bar',
+              stack: '总量',
+              label: {
+                normal: {
+                  show: true,
+                  position: 'insideRight'
+                }
+              },
+              data: [220, 182, 191, 234, 290, 330, 310]
+            }
+          ]
+        };
+        chart.setOption(option);
+        return chart;
+      }
+    }
+  });
 </script>

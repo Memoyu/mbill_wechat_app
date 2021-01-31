@@ -63,7 +63,7 @@ wepy.page ({
   data: {
     current: 'overview',
     date: nowDate,
-    isLogin: false,
+    isLogin: true,
     chartData: [],
     header: {},
     year: new Date().getFullYear(),
@@ -73,19 +73,18 @@ wepy.page ({
     emptyTitle: '没有数据噢！'
   },
   computed: {
-    isLogin() {
-      const token = Session.getByCache(tokenKey)
-      if (token) {
-        return true
-      } else {
-        return false
-      }
-    }
+    // isLogin() {
+    //   const token = Session.getByCache(tokenKey)
+    //   if (token) {
+    //     return true
+    //   } else {
+    //     return false
+    //   }
+    // }
   },
   methods: {
      handleChange ({ detail }) {
-        const pages = getCurrentPages()
-        const page = pages[pages.length - 1]
+        const page = this.$wx
         page.$wepy.$children = []//清除当前的子组件
         page.$wepy.$refs = {}
         this.current = detail.name

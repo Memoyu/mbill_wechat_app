@@ -5,7 +5,7 @@ import Session from '@/utils/session'
 const tokenKey = Session.key.token
 const userInfoKey = Session.key.userInfo
 const httpHandlerError = (info, errTip = null) => {
-  console.log(info)
+  // console.log(info)
   var data = info.data
   /** 请求成功，退出该函数 可以根据项目需求来判断是否请求成功。这里判断的是status为200的时候是成功 */
   if (info.statusCode === 200) {
@@ -66,7 +66,7 @@ const sendRequest = async (url, method, data, isShowLoading = true) => {
         resolve(res.data)
       },
       fail: res => {
-        console.log(res)
+        // console.log(res)
         Session.pushError({url: url, method: method, params: data, err: res.message, time: new Date().toLocaleString()})
         reject(res)
       },

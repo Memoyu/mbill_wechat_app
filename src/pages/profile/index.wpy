@@ -36,11 +36,10 @@
     </view>
 
     <view class="bottom-container">
-            <!-- 功能列表 -->
+        <!-- 功能列表 -->
         <view class="setting">
           <van-cell-group>
             <van-cell
-              title-style="font-size: 16px;"
               title="预算管理"
               link-type="navigateTo"
               is-link 
@@ -48,7 +47,6 @@
             </van-cell>
 
             <van-cell
-              title-style="font-size: 16px;"
               title="资产分类管理"
               link-type="navigateTo"
               is-link 
@@ -56,7 +54,6 @@
             </van-cell>
 
             <van-cell
-              title-style="font-size: 16px;"
               title="支出分类管理"
               link-type="navigateTo"
               is-link 
@@ -64,7 +61,6 @@
             </van-cell>
 
             <van-cell
-              title-style="font-size: 16px;"
               title="收入分类管理"
               link-type="navigateTo"
               is-link 
@@ -72,7 +68,6 @@
             </van-cell>
 
             <van-cell
-              title-style="font-size: 16px;"
               title="关于mBill"
               is-link 
               link-type="navigateTo"
@@ -117,10 +112,12 @@
       already_login: false,
       version: 'v1.0'
     },
+    options: {
+      addGlobalClass: true,
+    },
     onShow() {
       this.getUser()
     },
-    
     methods: {
       async getUser() {
         const token = Session.getByCache(tokenKey)

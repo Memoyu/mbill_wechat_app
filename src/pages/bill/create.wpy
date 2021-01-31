@@ -87,8 +87,7 @@ wepy.page ({
       changeSubmitStatus
     }),
     handleChange ({detail}) {
-      const pages = getCurrentPages()
-      const page = pages[pages.length - 1]
+      const page = this.$wx
       page.$wepy.$children = []//清除当前的子组件
       page.$wepy.$refs = {}
       this.current = detail.name

@@ -1,13 +1,18 @@
-<style lang="less">
-.list-container{
-  background-color: #f6f6f6;
+<style lang="scss">
+.container{
+  margin-top: 30px;
   min-height: 100%;
   .main{
     width: 750rpx;
-    .canvas1{
+    .category-pie{
       display: block;
       width: 750rpx;
       height: 500rpx;
+    }
+    .category-bar{
+      display: block;
+      width: 750rpx;
+      height: 900rpx;
     }
   }
 }
@@ -15,10 +20,25 @@
 </style>
 
 <template>
-  <view class="list-container">
-    <view
-      class="main">
-      <ec-canvas id="mychart-dom-pie" class="canvas1" canvas-id="mychart-pie"></ec-canvas> 
+  <view class="container">
+    <view class="main">
+      <ec-canvas 
+        id="category-pie-dom"  
+        class="category-pie" 
+        canvas-id="category-pie"
+        bind:init="echartPieInit($wx)"
+        :ec=" ec ">
+      </ec-canvas> 
+
+      <ec-canvas
+        id="category-bar-dom"  
+        class="category-bar" 
+        canvas-id="category-bar" 
+        bind:init="echartBarInit($wx)"
+        :ec=" ec ">
+        <tooltip :tooltip.sync="tooltip" :lx.sync="lx" :ly.sync="ly"/>
+      </ec-canvas>
+
     </view>
   </view>
 </template>
@@ -26,7 +46,8 @@
 <config>
 {
   usingComponents: {
-    'ec-canvas': '~@/utils/echart/ec-canvas'
+    "tooltip":"~@/components/chart/tooltip",
+    "ec-canvas": "~@/utils/echart/ec-canvas"
   }
 }
 </config>
@@ -37,53 +58,162 @@
 
   wepy.component({
     data: {
-      chart: null,
+      ec: {
+        // disableTouch: false
+      },
+      info: null,
+      tooltip: [],
+      lx: 0,
+      ly: 0,
+      data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
     },
     attached() {
-      this.startInit()
     },
     methods: {
-      startInit() {
-        if (!this.chart) {
-          this.chart = this.$wx.selectComponent('#mychart-dom-pie');
-        }
-        this.chart.init(this.initChart);
+      async echartPieInit({detail}){
+        this.info = await wx.getSystemInfo()
+        // console.log(this.info)
+        this.initChartPie(detail.canvas, detail.width, detail.height , this)
       },
-      initChart(canvas, width, height) {
+      echartBarInit({detail}){
+        this.initChartBar(detail.canvas, detail.width, detail.height , this)
+      },
+      initChartPie(canvas, width, height, self) {
         const chart = echarts.init(canvas, null, {
           width: width,
-          height: height
+          height: height,
+          devicePixelRatio: self.info.pixelRatio
         });
         canvas.setChart(chart);
         var option = {
-          backgroundColor: "#ffffff",
-          color: ["#37A2DA", "#32C5E9", "#67E0E3", "#91F2DE", "#FFDB5C", "#FF9F7F"],
-          legend: {
-            data:['直接访问']
+          title: {
+            text: '用户访问来源',
+            x:'center'
           },
-          xAxis : [{
-              type : 'category',
-              data : ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-              axisTick: {
-                  alignWithLabel: true
-              }
-          }],
-          yAxis : [
-              {
-                type : 'value'
-              }
-          ],
+          color: ["#37A2DA", "#32C5E9", "#67E0E3", "#91F2DE", "#FFDB5C", "#FF9F7F"],
+          tooltip: {
+            show: true,
+            trigger: 'item',
+          },
+          legend: {
+            orient: 'vertical',
+            left: 'left',
+            data: ['直接访问', '邮件营销', '联盟广告', '视频广告', '搜索引擎']
+          },
           series: [
-              {
-                  name:'直接访问',
-                  type:'bar',
-                  barWidth: '60%',
-                  data:[10, 52, 200, 334, 390, 330, 220]
+            {
+              name: '访问来源',
+              type: 'pie',
+              radius: '55%',
+              center: ['50%', '60%'],
+              data: [
+                { value: 335, name: '直接访问' },
+                { value: 310, name: '邮件营销' },
+                { value: 234, name: '联盟广告' },
+                { value: 135, name: '视频广告' },
+                { value: 1548, name: '搜索引擎' }
+              ],
+              label: {
+                formatter(d) {
+                  return `${d.data.name}\n${d.data.value}`
+                }
+              },
+              itemStyle: {
+                emphasis: {
+                  shadowBlur: 10,
+                  shadowOffsetX: 0,
+                  shadowColor: 'rgba(0, 0, 0, 0.5)'
+                }
               }
+            }
           ]
-        };
+        }
         chart.setOption(option);
         return chart;
+      },
+      initChartBar(canvas, width, height, self) {
+       
+        const chart = echarts.init(canvas, null, {
+          width: width,
+          height: height,
+          devicePixelRatio: self.info.pixelRatio
+        });
+        // console.log(self)
+        canvas.setChart(chart);
+        var option = {
+          title: {
+            text: '堆叠图'
+          },
+          color: ["#37A2DA", "#32C5E9", "#67E0E3", "#91F2DE", "#FFDB5C", "#FF9F7F"],
+          tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+              type: 'shadow'
+            }
+          },
+          legend: {
+            data: ['直接访问', '邮件营销', '联盟广告']
+          },
+          grid: {
+            containLabel: true
+          },
+          xAxis: {
+            type: 'value'
+          },
+          yAxis: {
+            type: 'category',
+            data: self.data,
+            axisPointer:{
+              label:{
+                formatter: (d) => {
+                  console.log(d)
+                  console.log(self)
+                  self.tooltip = d.seriesData
+                }
+              }
+            }
+          },
+          series: [
+            {
+              name: '直接访问',
+              type: 'bar',
+              stack: '总量',
+              label: {
+                normal: {
+                  show: true,
+                  position: 'insideRight'
+                }
+              },
+              data: [320, 302, 301, 334, 390, 330, 320]
+            },
+            {
+              name: '邮件营销',
+              type: 'bar',
+              stack: '总量',
+              label: {
+                normal: {
+                  show: true,
+                  position: 'insideRight'
+                }
+              },
+              data: [120, 132, 101, 134, 90, 230, 210]
+            },
+            {
+              name: '联盟广告',
+              type: 'bar',
+              stack: '总量',
+              label: {
+                normal: {
+                  show: true,
+                  position: 'insideRight'
+                }
+              },
+              data: [220, 182, 191, 234, 290, 330, 310]
+            }
+          ]
+        }
+        chart.setOption(option)
+        return chart
       }
     },
   });
