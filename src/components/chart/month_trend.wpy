@@ -37,7 +37,6 @@
 
 <script>
   import wepy from '@wepy/core';
-  import WxCanvas from '@/utils/echart/wx-canvas'
   import * as echarts from '@/utils/echart/echarts';
 
   wepy.component({
@@ -51,17 +50,16 @@
     },
     methods: {
       async echartBarInit({detail}){
-        // console.log(detail)
-        this.info = await wx.getSystemInfo()
-        this.initChart(detail.canvas, detail.width, detail.height , this)
+        console.log(detail)
+        this.initChart(detail.canvas, detail.width, detail.height, detail.dpr, detail.wxNode)
       },
-      initChart(canvas, width, height,self) {
-        // console.log(canvas)
+      initChart(canvas, width, height, dpr, wxNode) {
+        console.log(canvas)
         // console.log(self)
         const chart = echarts.init(canvas, null, {
           width: width,
           height: height,
-          devicePixelRatio: self.info.pixelRatio
+          devicePixelRatio: dpr
         });
         canvas.setChart(chart);
         var option = {
@@ -117,7 +115,7 @@
           ]
         };
         chart.setOption(option);
-        return chart;
+        wxNode.chart = chart;
       }
     }
   });

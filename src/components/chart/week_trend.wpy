@@ -51,17 +51,15 @@
     },
     methods: {
       async echartBarInit({detail}){
-        // console.log(detail)
-        this.info = await wx.getSystemInfo()
-        this.initChart(detail.canvas, detail.width, detail.height , this)
+        this.initChart(detail.canvas, detail.width, detail.height, detail.dpr, detail.wxNode)
       },
-      initChart(canvas, width, height,self) {
+      initChart(canvas, width, height, dpr, wxNode) {
         // console.log(canvas)
         // console.log(self)
         const chart = echarts.init(canvas, null, {
           width: width,
           height: height,
-          devicePixelRatio: self.info.pixelRatio
+          devicePixelRatio: dpr
         });
         canvas.setChart(chart);
         var option = {
@@ -118,7 +116,7 @@
           ]
         };
         chart.setOption(option);
-        return chart;
+        wxNode.chart = chart;
       }
     }
   });

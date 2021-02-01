@@ -36,7 +36,6 @@
         canvas-id="category-bar" 
         bind:init="echartBarInit($wx)"
         :ec=" ec ">
-        <tooltip :tooltip.sync="tooltip" :lx.sync="lx" :ly.sync="ly"/>
       </ec-canvas>
 
     </view>
@@ -61,28 +60,23 @@
       ec: {
         // disableTouch: false
       },
-      info: null,
-      tooltip: [],
-      lx: 0,
-      ly: 0,
       data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
     },
     attached() {
     },
     methods: {
-      async echartPieInit({detail}){
-        this.info = await wx.getSystemInfo()
-        // console.log(this.info)
-        this.initChartPie(detail.canvas, detail.width, detail.height , this)
+      echartPieInit({detail}){
+        console.log(detail)
+        this.initChartPie(detail.canvas, detail.width, detail.height ,detail.dpr, detail.wxNode)
       },
       echartBarInit({detail}){
-        this.initChartBar(detail.canvas, detail.width, detail.height , this)
+        this.initChartBar(detail.canvas, detail.width, detail.height, detail.dpr, detail.wxNode)
       },
-      initChartPie(canvas, width, height, self) {
+      initChartPie(canvas, width, height, dpr, wxNode) {
         const chart = echarts.init(canvas, null, {
           width: width,
           height: height,
-          devicePixelRatio: self.info.pixelRatio
+          devicePixelRatio: dpr
         });
         canvas.setChart(chart);
         var option = {
@@ -129,16 +123,16 @@
           ]
         }
         chart.setOption(option);
-        return chart;
+        wxNode.chart = chart;
       },
-      initChartBar(canvas, width, height, self) {
-       
+      initChartBar(canvas, width, height, dpr, wxNode) {
+        
         const chart = echarts.init(canvas, null, {
           width: width,
           height: height,
-          devicePixelRatio: self.info.pixelRatio
+          devicePixelRatio: dpr
         });
-        // console.log(self)
+        console.log(wxNode)
         canvas.setChart(chart);
         var option = {
           title: {
@@ -162,13 +156,13 @@
           },
           yAxis: {
             type: 'category',
-            data: self.data,
+            data: this.data,
             axisPointer:{
               label:{
                 formatter: (d) => {
-                  console.log(d)
-                  console.log(self)
-                  self.tooltip = d.seriesData
+                  // console.log(d)
+                  // console.log(self)
+                  // self.tooltip = d.seriesData
                 }
               }
             }
@@ -213,7 +207,7 @@
           ]
         }
         chart.setOption(option)
-        return chart
+        wxNode.chart = chart;
       }
     },
   });
