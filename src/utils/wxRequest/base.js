@@ -65,10 +65,11 @@ const sendRequest = async (url, method, data, isShowLoading = true) => {
         if (error) return
         resolve(res.data)
       },
-      fail: res => {
+      fail: err => {
         // console.log(res)
-        Session.pushError({url: url, method: method, params: data, err: res.message, time: new Date().toLocaleString()})
-        reject(res)
+        Session.pushError({url: url, method: method, params: data, err: err.errMsg, time: new Date().toLocaleString()})
+        Tip.error(err.errMsg)
+        reject(err)
       },
       complete(res) {
         wx.hideToast()

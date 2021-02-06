@@ -92,26 +92,28 @@ wepy.page ({
     id: 0,
     statement:
     {
-      id: 1,
-      category: '生活-数码',
-      categoryIcon: '',
-      categoryTitle: '数码',
-      description: '买电脑',
-      time: '2020-11-01 01:26:30',
-      asset: '虚拟账户-微信',
-      residue: -400,
-      type: 'expend',
-      location: '广东广州白云区',
-      amount: 300
+      // id: 1,
+      // category: '生活-数码',
+      // categoryIcon: '',
+      // categoryTitle: '数码',
+      // description: '买电脑',
+      // time: '2020-11-01 01:26:30',
+      // asset: '虚拟账户-微信',
+      // residue: -400,
+      // type: 'expend',
+      // location: '广东广州白云区',
+      // amount: 300
     }
   },
   onLoad (options) {
-    this.id = options.id
     if (this.id === undefined) {
-      wepy.navigateBack({
+      wx.navigateBack({
         delta: 1
       })
     }
+  },
+  onShow() {
+    this.getStatement()
   },
   methods: {
     async handlerDel() {
@@ -119,8 +121,13 @@ wepy.page ({
       console.log('删除')
     },
     handlerEdit() {
-      wepy.navigateTo({
+      wx.navigateTo({
         url: `/pages/bookkeeping/edit?id=${this.id}`
+      })
+    },
+    async getStatement () {
+      await wxRequest.Get('statements/detail', { id: this.id }).then(res=>{
+        this.statement = data
       })
     }
   }

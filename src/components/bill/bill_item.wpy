@@ -6,16 +6,20 @@
   <view class="bill" @tap="editStatement('id','{{ bill.id }}')">
     <view class="information">
       <view class="icon">
-        <image src="{{ bill.icon_path }}"></image>
+        <image src="{{ bill.categoryIconPath }}"></image>
       </view>
       <view class="st-title">
-        <view class="title">{{ bill.category }}</view>
-        <view class="description" wx:if="{{bill.description}}">{{ bill.description }}</view>
-        <view class="time">{{ bill.timeStr }} · {{ bill.asset }}</view>
+        <view v-if="bill.type === 'expend' || bill.type === 'income' " class="title">{{ bill.categoryName }}</view>
+        <view 
+          v-if="bill.type === 'transfer' || bill.type === 'repayment' " 
+          class="title">{{bill.type === 'transfer' ? '[转账]' : '[还款]'}}{{ bill.assetName }}->{{ bill.targetAssetName }}
+        </view>
+        <view class="description" v-if="bill.description">{{ bill.description }}</view>
+        <view class="time">{{bill.year}}-{{ bill.month }}-{{bill.day}} {{bill.time}} · {{ bill.assetName }}</view>
       </view>
     </view>
     <view class="amount {{ bill.type }}">
-      {{ bill.money }}
+      {{ bill.amount }}
     </view>
   </view>
 </template>
@@ -30,7 +34,7 @@ wepy.component ({
   },
   methods: {
     editStatement (key, id) {
-      wepy.navigateTo({
+      wx.navigateTo({
         url: `/pages/bill/detail?${key}=${id}`
       })
     }

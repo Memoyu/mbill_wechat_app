@@ -50,11 +50,11 @@
     },
     methods: {
       async echartBarInit({detail}){
-        console.log(detail)
+        // console.log(detail)
         this.initChart(detail.canvas, detail.width, detail.height, detail.dpr, detail.wxNode)
       },
       initChart(canvas, width, height, dpr, wxNode) {
-        console.log(canvas)
+        // console.log(canvas)
         // console.log(self)
         const chart = echarts.init(canvas, null, {
           width: width,

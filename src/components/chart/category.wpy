@@ -66,7 +66,7 @@
     },
     methods: {
       echartPieInit({detail}){
-        console.log(detail)
+        // console.log(detail)
         this.initChartPie(detail.canvas, detail.width, detail.height ,detail.dpr, detail.wxNode)
       },
       echartBarInit({detail}){
@@ -132,7 +132,7 @@
           height: height,
           devicePixelRatio: dpr
         });
-        console.log(wxNode)
+        // console.log(wxNode)
         canvas.setChart(chart);
         var option = {
           title: {

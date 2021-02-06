@@ -162,7 +162,7 @@ Component({
           } else if (this.data.ec && typeof this.data.ec.onInit === 'function') {
             this.chart = this.data.ec.onInit(canvas, canvasWidth, canvasHeight, canvasDpr)
           } else {
-            console.log(this)
+            // console.log(this)
             this.triggerEvent('init', {
               canvas: canvas,
               width: canvasWidth,
