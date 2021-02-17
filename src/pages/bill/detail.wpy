@@ -8,8 +8,9 @@
       <view class="container">
       <view class="title">
         <view>
-          <image class="icon" src="{{ statement.categoryIcon }}"></image>
-          <text>{{ statement.categoryTitle }}</text>
+          <image class="icon" src="{{ statement.categoryIconPath }}"></image>
+          <text v-if="statement.type === 'expend' || statement.type === 'income' ">{{ statement.categoryName }}</text>
+           <text v-else>{{statement.typeName}}</text>
         </view>
         <text class="{{statement.type}}">{{ statement.type == 'expend' ? '-' : '+' }} {{ statement.amount }}</text>
       </view>
@@ -19,7 +20,8 @@
           <view class="iconfont jz-icon-fenlei"></view>
           <text>分类</text>
         </view>
-        <text>{{ statement.category }}</text>
+        <text v-if="statement.type === 'expend' || statement.type === 'income' ">{{ statement.categoryParentName }}/{{ statement.categoryName }}</text>
+        <text v-else>[{{statement.typeName}}]{{ statement.assetName }}/{{ statement.targetAssetName }}</text>
       </view>
 
       <view class="column">
@@ -27,7 +29,7 @@
           <view class="iconfont jz-icon-qianbao"></view>
           <text>账户</text>
         </view>
-        <text>{{ statement.asset }}</text>
+        <text>{{ statement.assetParentName }}/{{ statement.assetName }}</text>
       </view>
 
       <view class="column">
@@ -35,7 +37,7 @@
           <view class="iconfont jz-icon-50"></view>
           <text>使用后账户余额</text>
         </view>
-        <text>{{ statement.residue }}</text>
+        <text>{{ statement.assetResidue }}</text>
       </view>
 
       <view class="column">
@@ -43,15 +45,15 @@
           <view class="iconfont jz-icon-shijian"></view>
           <text>时间</text>
         </view>
-        <text>{{ statement.time }}</text>
+        <text>{{statement.year}}-{{statement.month}}-{{statement.day}} {{ statement.time }}</text>
       </view>
 
-      <view class="column" wx:if="{{ statement.location != null && statement.location != '' }}">
+      <view class="column" wx:if="{{ statement.address != null && statement.address != '' }}">
         <view>
           <view class="iconfont jz-icon-address"></view>
           <text>坐标</text>
         </view>
-        <text>{{ statement.location }}</text>
+        <text>{{ statement.address }}</text>
       </view>
 
       <view class="column" wx:if="{{ statement.description != null && statement.description != '' }}">
@@ -87,29 +89,56 @@
 <script>
 import wepy from '@wepy/core'
 import tip from '@/utils/tip'
+import wxRequest from "@/utils/wxRequest"
+  
 wepy.page ({
   data: {
     id: 0,
     statement:
     {
       // id: 1,
-      // category: '生活-数码',
-      // categoryIcon: '',
-      // categoryTitle: '数码',
+      // categoryIconPath: 'http://localhost:5000/core/images/category/icon_mushroom_64.png',
+      // categoryName: '数码',
+      // categoryParentName: "休闲娱乐",
+      // assetName: '微信',
+      // assetParentName: '虚拟账户',
+      // targetAssetName: '信用卡',
       // description: '买电脑',
-      // time: '2020-11-01 01:26:30',
-      // asset: '虚拟账户-微信',
+      // year: '2020',
+      // month: '11',
+      // day: '01',
+      // time: '01:26:30',
       // residue: -400,
       // type: 'expend',
-      // location: '广东广州白云区',
+      // address: '广东广州白云区',
+      // amount: 300
+
+      // id: 1,
+      // categoryIconPath: 'http://localhost:5000/core/images/category/icon_mushroom_64.png',
+      // categoryName: '还款',
+      // categoryParentName: "",
+      // assetName: '微信',
+      // assetParentName: '虚拟账户',
+      // targetAssetName: '信用卡',
+      // description: '还款信用卡',
+      // year: '2020',
+      // month: '11',
+      // day: '01',
+      // time: '01:26:30',
+      // assetResidue: -400,
+      // typeName: '还款',
+      // type: 'repayment',
+      // address: '',
       // amount: 300
     }
   },
   onLoad (options) {
-    if (this.id === undefined) {
+    if (options.id === undefined) {
       wx.navigateBack({
         delta: 1
       })
+    }else{
+      this.id = options.id
     }
   },
   onShow() {
@@ -126,8 +155,8 @@ wepy.page ({
       })
     },
     async getStatement () {
-      await wxRequest.Get('statements/detail', { id: this.id }).then(res=>{
-        this.statement = data
+      await wxRequest.Get('statement/detail', { id: this.id }).then(res=>{
+        this.statement = res.result
       })
     }
   }

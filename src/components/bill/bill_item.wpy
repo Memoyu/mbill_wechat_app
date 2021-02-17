@@ -3,7 +3,7 @@
 </style>
 
 <template>
-  <view class="bill" @tap="editStatement('id','{{ bill.id }}')">
+  <view class="bill" @tap="editStatement('id', bill.id )">
     <view class="information">
       <view class="icon">
         <image src="{{ bill.categoryIconPath }}"></image>
@@ -34,6 +34,7 @@ wepy.component ({
   },
   methods: {
     editStatement (key, id) {
+      console.log(key,id)
       wx.navigateTo({
         url: `/pages/bill/detail?${key}=${id}`
       })
