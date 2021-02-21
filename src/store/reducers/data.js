@@ -1,3 +1,4 @@
 export const billData = {
-  statementSubmiting: false
+  statementSubmiting: false,
+  statements: []
 }

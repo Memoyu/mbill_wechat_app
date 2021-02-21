@@ -10,7 +10,7 @@
         <view>
           <image class="icon" src="{{ statement.categoryIconPath }}"></image>
           <text v-if="statement.type === 'expend' || statement.type === 'income' ">{{ statement.categoryName }}</text>
-           <text v-else>{{statement.typeName}}</text>
+          <text v-else>{{statement.typeName}}</text>
         </view>
         <text class="{{statement.type}}">{{ statement.type == 'expend' ? '-' : '+' }} {{ statement.amount }}</text>
       </view>
@@ -146,16 +146,21 @@ wepy.page ({
   },
   methods: {
     async handlerDel() {
-      await tip.confirm('是否删除该条账单？', {}, '提示')
-      console.log('删除')
+      await tip.choose('是否删除该条账单？', {}, '提示').then(async ()=>{
+        await wxRequest.Delete(`statement/delete/${this.id}`).then(res=>{
+          wx.navigateBack({
+            delta: 1
+          })
+        })
+      })
     },
     handlerEdit() {
       wx.navigateTo({
-        url: `/pages/bookkeeping/edit?id=${this.id}`
+        url: `/pages/bill/edit?id=${this.id}`
       })
     },
     async getStatement () {
-      await wxRequest.Get('statement/detail', { id: this.id }).then(res=>{
+      await wxRequest.Get(`statement/detail/${this.id}`).then(res=>{
         this.statement = res.result
       })
     }

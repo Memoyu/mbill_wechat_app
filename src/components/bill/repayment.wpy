@@ -15,9 +15,9 @@
       >
     </view>
     <view class="column transfer-type">
-      <view class="assetSource" @tap="assetSource">{{ assetSourceName }}</view>
+      <view class="assetSource" @tap="assetSource">{{ repayment.assetName }}</view>
       <view class="iconfont icon-to transfer-icon"></view>
-      <view class="assetTarget" @tap="assetTarget">{{ assetTargetName }}</view>
+      <view class="assetTarget" @tap="assetTarget">{{ repayment.targetAssetName }}</view>
     </view>
     <view class="column">
       <text>日期</text>
@@ -26,8 +26,8 @@
         <text class="label" @tap="quickSetDate('-1')">昨天</text>
         <text class="label" @tap="quickSetDate('0')">今天</text>
       </view>
-      <picker mode="date" start="2017-01-01" bindchange="dateChange">
-        <text>{{ repayment.date }}</text>
+      <picker mode="date" start="2017-01-01" @change="dateChange($wx)">
+        <text>{{ repayment.year }}-{{ repayment.month }}-{{ repayment.day }}</text>
       </picker>
     </view>
     <view class="column">
@@ -67,7 +67,11 @@ wepy.component({
           description: '',
           assetId: 0,
           targetAssetId: 0,
-          date: Util.getCurrentDate(),
+          assetName: '选择还款账户',
+          targetAssetName: '选择负债账户',
+          year: Util.getCurrentYear(),
+          month: Util.getCurrentMonth(),
+          day: Util.getCurrentDay(),
           time: Util.getCurrentTime()
         };
       }
@@ -77,8 +81,7 @@ wepy.component({
     addGlobalClass: true
   },
   data: {
-    assetSourceName: '选择还款账户',
-    assetTargetName: '选择负债账户',
+    
     repaymentType: 0
   },
   computed: {
@@ -90,10 +93,10 @@ wepy.component({
     // 选择账户后回调
     setAsset(asset) {
       if (this.repaymentType === 1) {
-        this.assetSourceName = asset.name;
+        this.assetName = asset.name;
         this.repayment.assetId = asset.id;
       } else {
-        this.assetTargetName = asset.name;
+        this.targetAssetName = asset.name;
         this.repayment.targetAssetId = asset.id;
       }
     },
@@ -115,7 +118,10 @@ wepy.component({
     },
     // 时间改变
     dateChange({ detail }) {
-      this.repayment.date = detail.value;
+      var date = new Date(detail.value)
+      this.repayment.year = Util.getCurrentYear(date);
+      this.repayment.month = Util.getCurrentMonth(date);
+      this.repayment.day = Util.getCurrentDay(date);
     },
     // 快速选取时间
     quickSetDate(between) {
@@ -126,12 +132,9 @@ wepy.component({
       } else if (between === '-2') {
         date = new Date(today.getTime() - 2 * 24 * 60 * 60 * 1000);
       }
-      const year = date.getFullYear();
-      let month = date.getMonth() + 1;
-      let day = date.getDate();
-      if (month < 10) month = '0' + month;
-      if (day < 10) day = '0' + day;
-      this.repayment.date = [year, month, day].join('-');
+      this.repayment.year = Util.getCurrentYear(date);
+      this.repayment.month = Util.getCurrentMonth(date);
+      this.repayment.day = Util.getCurrentDay(date);
     },
     async reportStatement() {
       const repayment = this.repayment;

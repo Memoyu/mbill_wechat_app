@@ -14,9 +14,9 @@
       </view>
 
       <view class="column transfer-type">
-        <view class="assetSource" @tap="assetSource">{{ assetSourceName }}</view>
+        <view class="assetSource" @tap="assetSource">{{ transfer.assetName }}</view>
         <view @tap="exchangeAsset" class="iconfont icon-xingzhuang_1 transfer-icon"></view>
-        <view class="assetTarget" @tap="assetTarget">{{ assetTargetName }}</view>
+        <view class="assetTarget" @tap="assetTarget">{{ transfer.targetAssetName }}</view>
       </view>
 
       <view class="column">
@@ -26,8 +26,8 @@
           <text class="label" @tap="quickSetDate('-1')">昨天</text>
           <text class="label" @tap="quickSetDate('0')">今天</text>
         </view>
-        <picker mode="date" start="2017-01-01" bindchange="dateChange">
-          <text>{{ transfer.date }}</text>
+        <picker mode="date" start="2017-01-01" @change="dateChange($wx)">
+          <text>{{ transfer.year }}-{{ transfer.month }}-{{ transfer.day }}</text>
         </picker>
       </view>
 
@@ -68,18 +68,23 @@ wepy.component({
           description: '',
           assetId: 0,
           targetAssetId: 0,
-          date: Util.getCurrentDate(),
+          assetName: '选择账户',
+          targetAssetName: '选择账户',
+          year: Util.getCurrentYear(),
+          month: Util.getCurrentMonth(),
+          day: Util.getCurrentDay(),
           time: Util.getCurrentTime()
         };
       }
     }
   },
+  created () {
+    console.log(this.transfer)
+  },
   options: {
     addGlobalClass: true
   },
   data: {
-    assetSourceName: '选择账户',
-    assetTargetName: '选择账户',
     transferType: 0
   },
   computed: {
@@ -91,10 +96,10 @@ wepy.component({
     // 选择账户后回调
     setAsset(asset) {
       if (this.transferType === 1) {
-        this.assetSourceName = asset.name;
+        this.assetName = asset.name;
         this.transfer.assetId = asset.id;
       } else {
-        this.assetTargetName = asset.name;
+        this.targetAssetName = asset.name;
         this.transfer.targetAssetId = asset.id;
       }
     },
@@ -110,9 +115,9 @@ wepy.component({
     },
     // 对调账户
     exchangeAsset() {
-      const tmp1 = this.assetSourceName;
-      this.assetSourceName = this.assetTargetName;
-      this.assetTargetName = tmp1;
+      const tmp1 = this.assetName;
+      this.assetName = this.targetAssetName;
+      this.targetAssetName = tmp1;
 
       const tmp2 = this.transfer.assetId;
       this.transfer.assetId = this.transfer.targetAssetId;
@@ -120,7 +125,10 @@ wepy.component({
     },
     // 时间改变
     dateChange({ detail }) {
-      this.transfer.date = detail.value;
+      var date = new Date(detail.value)
+      this.transfer.year = Util.getCurrentYear(date);
+      this.transfer.month = Util.getCurrentMonth(date);
+      this.transfer.day = Util.getCurrentDay(date);
     },
     // 快速选取时间
     quickSetDate(between) {
@@ -131,12 +139,9 @@ wepy.component({
       } else if (between === '-2') {
         date = new Date(today.getTime() - 2 * 24 * 60 * 60 * 1000);
       }
-      const year = date.getFullYear();
-      let month = date.getMonth() + 1;
-      let day = date.getDate();
-      if (month < 10) month = '0' + month;
-      if (day < 10) day = '0' + day;
-      this.transfer.date = [year, month, day].join('-');
+      this.transfer.year = Util.getCurrentYear(date);
+      this.transfer.month = Util.getCurrentMonth(date);
+      this.transfer.day = Util.getCurrentDay(date);
     },
      async reportStatement() {
       const transfer = this.transfer;

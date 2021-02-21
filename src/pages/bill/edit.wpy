@@ -5,30 +5,30 @@
 <template lang="wxml">
   <view class="container">
      <view class="comonent-list">
-        <statement
-          :statement.sync="statement"
+       <expend
           :type="expend"
+          :statement="statement"
           @submit.user="submit"
-          wx:if="{{ current == 'expend' }}"
+          v-if="current === 'expend'"
         />
 
-        <statement
-          :statement.sync="statement"
+        <income
           :type="income"
+          :statement="statement"
           @submit.user="submit"
-          wx:if="{{ current == 'income' }}"
+          v-if="current === 'income'"
         />
 
         <transfer
-          :statement.sync="statement"
+          :transfer="statement"
           @submit.user="submit"
-          wx:if="{{ current == 'transfer' }}"
+          v-if="current === 'transfer'"
         />
 
         <repayment
-          :statement.sync="statement"
+          :repayment="statement"
           @submit.user="submit"
-          wx:if="{{ current == 'repayment' }}"
+          v-if="current === 'repayment'"
         />
     </view>
   </view>
@@ -37,7 +37,8 @@
 <config>
 {
   "usingComponents": {
-    "statement": "~@/components/bill/statement",
+    "expend": "~@/components/bill/statement",
+    "income": "~@/components/bill/statement",
     "transfer": "~@/components/bill/transfer",
     "repayment": "~@/components/bill/repayment"
   },
@@ -46,18 +47,31 @@
 </config>
 
 <script>
-  import wepy from '@wepy/core'
+import wepy from '@wepy/core'
+import wxRequest from '@/utils/wxRequest'
 
-  wepy.page ({
-    data: {
-      current: 'expend',
-      statement: {},
-      expend: 'expend',
-      income: 'income'
+wepy.page ({
+  data: {
+    current: 'expend',
+    statement: {},
+    expend: 'expend',
+    income: 'income'
+  },
+  onLoad (options) {
+      this.getStatement(options.id)
+  },
+  methods: {
+    async submit (statement) {
     },
-    methods: {
-      async submit (statement) {
-      }
+    async getStatement (id) {
+      await wxRequest.Get('statement/detail', { id: id }).then(res=>{
+        console.log(res.result)
+        this.statement = res.result
+        this.current = res.result.type
+        
+      })
     }
-  });
+
+  }
+});
 </script>

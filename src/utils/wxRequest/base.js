@@ -60,19 +60,21 @@ const sendRequest = async (url, method, data, isShowLoading = true) => {
       method: method,
 
       success: res => {
+        wx.hideToast()
         // console.log(data)
         const error = httpHandlerError(res)
-        if (error) return
+        if (error) reject(res.Message)
         resolve(res.data)
       },
       fail: err => {
+        wx.hideToast()
         // console.log(res)
-        Session.pushError({url: url, method: method, params: data, err: err.errMsg, time: new Date().toLocaleString()})
         Tip.error(err.errMsg)
+        Session.pushError({url: url, method: method, params: data, err: err.errMsg, time: new Date().toLocaleString()})
         reject(err)
       },
       complete(res) {
-        wx.hideToast()
+        // wx.hideToast()
         wx.stopPullDownRefresh()
       }
     })

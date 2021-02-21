@@ -65,7 +65,7 @@ import wxRequest from '@/utils/wxRequest'
 import { mapState , mapActions } from '@wepy/redux';
 import { SUBMITING } from '@/store/types';
 import store from '@/store';
-  import { changeSubmitStatus } from '@/store/actions';
+import { changeSubmitStatus } from '@/store/actions';
 
 wepy.page ({
   store,

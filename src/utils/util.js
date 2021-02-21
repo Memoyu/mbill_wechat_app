@@ -8,6 +8,33 @@ function getCurrentDate() {
   return [year, month, day].join('-')
 }
 
+function getCurrentYear(date) {
+  var myDate = new Date()
+  if (date !== null && date !== undefined) {
+    myDate = date
+  }
+  let year = myDate.getFullYear()
+  return year
+}
+
+function getCurrentMonth(date) {
+  var myDate = new Date()
+  if (date !== null && date !== undefined) {
+    myDate = date
+  }
+  let month = myDate.getMonth() + 1
+  return month
+}
+
+function getCurrentDay(date) {
+  var myDate = new Date()
+  if (date !== null && date !== undefined) {
+    myDate = date
+  }
+  let day = myDate.getDate()
+  return day
+}
+
 function getCurrentTime() {
   const myDate = new Date()
   let min = myDate.getMinutes()
@@ -29,5 +56,8 @@ function getCurrentTime() {
 
 module.exports = {
   getCurrentDate,
+  getCurrentYear,
+  getCurrentMonth,
+  getCurrentDay,
   getCurrentTime
 }

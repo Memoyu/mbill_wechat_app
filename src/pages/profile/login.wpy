@@ -61,7 +61,8 @@
 
       },
       async goLogin() {
-        await wxRequest.Post('account/login', {username: this.username, password: this.password}).then(res=>{
+        await wxRequest.Post('account/login', {username: this.username, password: this.password})
+        .then(res=>{
           // console.log(res)
           Session.setByCache(tokenKey, res.result)
           wx.navigateBack()

@@ -17,7 +17,7 @@
     </view>
     <view class="column" @tap="redirectChoseCategory">
       <text>分类</text>
-      <view class="align-right">{{ categoryName }}</view>
+      <view class="align-right">{{ statement.categoryName }}</view>
     </view>
     <view class="frequent-use" v-if="categories_labels.length > 0">
       <text>猜你想用：</text>
@@ -29,7 +29,7 @@
     </view>
     <view class="column" @tap="redirectChoseAsset">
       <text>账户</text>
-      <view class="align-right">{{ assetName }}</view>
+      <view class="align-right">{{ statement.assetName }}</view>
     </view>
     <view class="frequent-use" v-if="assets_labels.length > 0">
       <text>猜你想用：</text>
@@ -42,8 +42,8 @@
         <text class="label" @tap="quickSetDate('-1')">昨天</text>
         <text class="label" @tap="quickSetDate('0')">今天</text>
       </view>
-      <picker mode="date" start="2017-01-01" bindchange="dateChange">
-        <text>{{ statement.date }}</text>
+      <picker mode="date" start="2017-01-01" @change="dateChange($wx)">
+        <text>{{ statement.year }}-{{ statement.month }}-{{ statement.day }}</text>
       </picker>
     </view>
     <view class="column location-column">
@@ -92,6 +92,8 @@ wepy.component({
           type: 'expend',
           categoryId: 0,
           assetId: 0,
+          categoryName: '请选择分类',
+          assetName: '请选择账户',
           amount: '',
           description: '',
           address: '',
@@ -100,7 +102,9 @@ wepy.component({
           city: '',
           district: '',
           street: '',
-          date: Util.getCurrentDate(),
+          year: Util.getCurrentYear(),
+          month: Util.getCurrentMonth(),
+          day: Util.getCurrentDay(),
           time: Util.getCurrentTime()
         };
       }
@@ -111,9 +115,6 @@ wepy.component({
     addGlobalClass: true
   },
   data: {
-    submiting: false,
-    categoryName: '请选择分类',
-    assetName: '请选择账户',
     assets_labels: [{ id: 1, name: '支付宝' }, { id: 2, name: '微信' }],
     categories_labels: [{ id: 1, name: '地铁' }, { id: 2, name: '一日三餐' }],
     switchCheck: Session.get('getLocationSwitch') || false
@@ -161,7 +162,10 @@ wepy.component({
     },
     // 时间改变
     dateChange({ detail }) {
-      this.statement.date = detail.value;
+      var date = new Date(detail.value)
+      this.statement.year = Util.getCurrentYear(date);
+      this.statement.month = Util.getCurrentMonth(date);
+      this.statement.day = Util.getCurrentDay(date);
     },
     // 快速选取时间
     quickSetDate(between) {
@@ -172,12 +176,9 @@ wepy.component({
       } else if (between === '-2') {
         date = new Date(today.getTime() - 2 * 24 * 60 * 60 * 1000);
       }
-      const year = date.getFullYear();
-      let month = date.getMonth() + 1;
-      let day = date.getDate();
-      if (month < 10) month = '0' + month;
-      if (day < 10) day = '0' + day;
-      this.statement.date = [year, month, day].join('-');
+      this.statement.year = Util.getCurrentYear(date);
+      this.statement.month = Util.getCurrentMonth(date);
+      this.statement.day = Util.getCurrentDay(date);
     },
     getLocation(e) {
       // console.log(e)
