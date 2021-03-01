@@ -1,0 +1,2 @@
+"use strict";Object.defineProperty(exports,"__esModule",{value:!0}),exports.compressTemplateAttr=compressTemplateAttr;const templateAttrMap={type:"t",attr:"a",classList:"cL",style:"s",events:"e",children:"c"};function compressTemplateAttr(t){if(t){if(t.children)for(let e=0,r=t.children.length;e<r;e++){compressTemplateAttr(t.children[e])}for(const e in t)if(templateAttrMap[e]){t[templateAttrMap[e]]=t[e],delete t[e]}}}
+//# sourceMappingURL=compress.js.map

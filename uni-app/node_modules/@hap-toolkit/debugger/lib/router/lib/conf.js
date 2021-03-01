@@ -1,0 +1,2 @@
+"use strict";Object.defineProperty(exports,"__esModule",{value:!0}),exports.init=init;var _path=_interopRequireDefault(require("path"));function _interopRequireDefault(t){return t&&t.__esModule?t:{default:t}}function init(t){const e=_path.default.join(t,".."),i=_path.default.join(e,"client"),r=_path.default.join(i,"html");return{moduleDir:e,staticDir:i,htmlPageDir:r,inspectorHtmlDir:_path.default.join(r,"inspector"),inspectorTarFile:_path.default.join(r,"inspector.tar.gz")}}
+//# sourceMappingURL=conf.js.map

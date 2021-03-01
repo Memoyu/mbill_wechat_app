@@ -1,0 +1,2 @@
+"use strict";var _shared=require("../common/shared"),_utils=require("../common/utils"),_script=_interopRequireDefault(require("@hap-toolkit/compiler/lib/script"));function _interopRequireDefault(e){return e&&e.__esModule?e:{default:e}}module.exports=function(e,r){const t=(0,_shared.searchModuleImport)(e);e=t.fileCont,(0,_utils.logWarn)(this,t.logFeatureList),e=_script.default.replaceModuleImport(e),this.callback(null,e,r)};
+//# sourceMappingURL=module-loader.js.map
