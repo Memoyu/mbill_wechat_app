@@ -142,7 +142,7 @@ exports.default = void 0;
 //
 var _default = {
   name: "statementItem",
-  prop: {
+  props: {
     bill: {
       type: Object,
       default: {}

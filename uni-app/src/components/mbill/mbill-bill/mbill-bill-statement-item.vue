@@ -21,7 +21,7 @@
 <script>
 	export default {
 		name: "statementItem",
-		prop: {
+		props: {
 			bill: {
 				type: Object,
 				default: {}
