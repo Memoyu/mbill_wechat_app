@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "账单",
+  "usingComponents": {
+    "mbill-bill-statement-item": "/components/mbill/mbill-bill/mbill-bill-statement-item",
+    "uni-load-more": "/node-modules/@dcloudio/uni-ui/lib/uni-load-more/uni-load-more"
+  }
+}

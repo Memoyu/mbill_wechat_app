@@ -2,7 +2,7 @@
 	<view class="bill" @tap="editStatement('id', bill.id )">
 		<view class="information">
 			<view class="icon">
-				<image src="{{ bill.categoryIconPath }}"></image>
+				<image :src="bill.categoryIconPath"></image>
 			</view>
 			<view class="st-title">
 				<view v-if="bill.type === 'expend' || bill.type === 'income' " class="title">{{ bill.categoryName }}</view>
@@ -12,7 +12,7 @@
 				<view class="time">{{bill.year}}-{{ bill.month }}-{{bill.day}} {{bill.time}} · {{ bill.assetName }}</view>
 			</view>
 		</view>
-		<view class="amount {{ bill.type }}">
+		<view :class="['amount',bill.type ]">
 			{{ bill.amount }}
 		</view>
 	</view>

@@ -25,6 +25,10 @@
 		</view>
 		<view class="bill-container">
 			<view class="bill-title">今日消费</view>
+			<view v-for="(item,index) in list" :key="index">
+				<mbill-bill-statement-item :bill="item"></mbill-bill-statement-item>
+			</view>
+			<uni-load-more :status="more"></uni-load-more>
 		</view>
 	</view>
 </template>

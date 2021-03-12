@@ -1,0 +1,317 @@
+.theme-color-red {
+  color: #be6868;
+}
+.zan-btn {
+  line-height: 40px;
+  height: 40px;
+}
+.zan-loadmore--nodata {
+  margin: auto !important;
+}
+.ljt-btn {
+  line-height: 40px;
+  height: 40px;
+  color: white;
+  position: relative;
+  background-color: #be6868;
+  padding-left: 15px;
+  padding-right: 15px;
+  border-radius: 2px;
+  font-size: 16px;
+  line-height: 40px;
+  height: 40px;
+  box-sizing: border-box;
+  text-decoration: none;
+  text-align: center;
+  vertical-align: middle;
+}
+.ljt-btn:after, button::after {
+  border: 0;
+}
+.btn-shadow {
+  box-shadow: 4rpx 8rpx 12rpx #ccc;
+}
+.pull-right {
+  float: right;
+}
+.pull-left {
+  float: left;
+}
+.overflow-hide {
+  overflow: hidden;
+}
+.income {
+  color: green;
+}
+.expend, .repayment {
+  color: red;
+}
+.transfer {
+  color: orange;
+}
+.income-border {
+  border-bottom: 1px solid green;
+}
+.expend-border {
+  border-bottom: 1px solid red;
+}
+.surplus {
+  color: black;
+}
+.surplus-border {
+  border-bottom: 1px solid black;
+}
+.orange {
+  color: orange;
+}
+.blue {
+  color: blue;
+}
+.col999 {
+  color: #999;
+}
+.text-grey {
+  color: #757575;
+}
+.fs12 {
+  font-size: 24rpx;
+}
+.fs14 {
+  font-size: 28rpx;
+}
+.fs16 {
+  font-size: 32rpx;
+}
+.fs18 {
+  font-size: 36rpx;
+}
+.fs20 {
+  font-size: 40rpx;
+}
+.fs21 {
+  font-size: 42rpx;
+}
+.fs24 {
+  font-size: 48rpx;
+}
+.fs32 {
+  font-size: 64rpx;
+}
+.ljt-icon {
+  width: 50rpx;
+  height: 50rpx;
+}
+.container {
+  height: 100vh;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+          flex-direction: column;
+  overflow: hidden;
+}
+.container > view {
+    display: block;
+}
+.header {
+  position: relative;
+  color: white;
+  height: 340rpx;
+}
+.header .bg {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    z-index: -1;
+    border-radius: 15rpx;
+}
+.header .level-2 {
+    position: absolute;
+    bottom: 50rpx;
+    width: 100%;
+}
+.header .level-2 .today-weather {
+      display: -webkit-box;
+      display: -webkit-flex;
+      display: flex;
+      margin-bottom: 15px;
+}
+.header .level-2 .today-weather .weather-icon {
+        font-size: 20px;
+        margin: 0 5px 0 5px;
+}
+.header .level-2 .today-expend {
+      font-size: 64rpx;
+      margin-bottom: 24rpx;
+}
+.header .level-2 > view {
+      padding: 0 24rpx;
+}
+.header .no-read-msg:after {
+    content: '';
+    position: absolute;
+    width: 16rpx;
+    height: 16rpx;
+    top: 0;
+    right: 0;
+    border-radius: 50%;
+    background: #FF0000;
+}
+.header .pay-num {
+    background: #2056ae;
+    margin: 0 4rpx;
+}
+.header .notification {
+    position: absolute;
+    top: 42rpx;
+    right: 42rpx;
+    width: 60rpx;
+    height: 60rpx;
+    background: black;
+    border-radius: 50%;
+    padding: 8rpx;
+}
+.header .notification image {
+      width: 100%;
+      height: 100%;
+}
+.header .jz-icon-xiaoxi {
+    font-size: 54rpx;
+    position: absolute;
+    top: 32rpx;
+    right: 48rpx;
+}
+.bill-btn {
+  padding-top: 150px;
+  width: 100%;
+  text-align: -webkit-center;
+}
+.bill-btn .mine-bill-btn {
+    background: #be6868;
+    color: white;
+    width: 140rpx;
+    height: 140rpx;
+    border-radius: 50%;
+    -webkit-flex-shrink: 0;
+            flex-shrink: 0;
+    text-align: center;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+            align-items: center;
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+            justify-content: center;
+}
+.bill-btn .mine-bill-btn .writeicon {
+      font-size: 80rpx;
+      color: white;
+}
+.bill-btn .mine-bill-btn::after {
+    border: none;
+}
+.zan-btns.new-record .jz-btn {
+  background: #be6868;
+  color: white;
+  margin: 15px;
+}
+.bill-container {
+  margin-top: 30rpx;
+}
+.bill-container .bill-title {
+    position: relative;
+    display: inline-block;
+    padding-bottom: 4px;
+    margin-bottom: 12px;
+    font-size: 18px;
+    color: #40485B;
+    font-weight: bolder;
+    margin-left: 14px;
+}
+.bill-container .bill-title:before {
+      content: '';
+      position: absolute;
+      background: #be6868;
+      width: calc(100% + 16px);
+      height: 12px;
+      bottom: 0;
+      left: 0;
+      border-radius: 12px;
+      z-index: -1;
+}
+.bill-list {
+  margin-bottom: 40rpx;
+}
+.bill-list > .surplus {
+    text-align: center;
+}
+.bill-list > .surplus > text {
+      font-size: 24rpx;
+      padding: 0 12rpx;
+}
+.bill-list > .total {
+    text-align: right;
+    margin: 0 32rpx;
+}
+.bill-list > .total > text {
+      font-size: 24rpx;
+}
+.bill-list > .total > text:first-child {
+        padding-right: 16rpx;
+}
+.budget-setting {
+  width: 100%;
+  font-size: 24rpx;
+  box-sizing: border-box;
+  padding: 24rpx;
+  margin-top: -12rpx;
+  background: white;
+  border-radius: 10rpx;
+  border-bottom: 1px dashed #f3f3f3;
+}
+.budget-setting .budget__cur-month {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-box-pack: justify;
+    -webkit-justify-content: space-between;
+            justify-content: space-between;
+}
+.budget-setting .budget__cur-amount {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-box-pack: justify;
+    -webkit-justify-content: space-between;
+            justify-content: space-between;
+    color: #757575;
+    font-size: 24rpx;
+}
+.budget-setting .budget-progress {
+    height: 6px;
+    width: 100%;
+    margin: 6px 0;
+    position: relative;
+}
+.budget-setting .budget-progress .budget-progress__bg {
+      width: 100%;
+      height: 100%;
+      border-radius: 10px;
+      background: #F0EAD7;
+      position: absolute;
+      top: 0;
+      left: 0;
+}
+.budget-setting .budget-progress .budget-progress__item {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      border-radius: 10px;
+}
+
