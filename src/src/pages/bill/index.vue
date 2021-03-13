@@ -25,10 +25,10 @@
 		</view>
 		<view class="bill-container">
 			<view class="bill-title">今日消费</view>
-			<view v-for="(item,index) in list" :key="index">
+			<block v-for="(item,index) in list" :key="index">
 				<mbill-bill-statement-item :bill="item"></mbill-bill-statement-item>
-			</view>
-			<uni-load-more :status="more"></uni-load-more>
+			</block>
+			<uni-load-more :status="more" :content-text="contentText" ></uni-load-more>
 		</view>
 	</view>
 </template>
@@ -71,7 +71,7 @@
 					}
 				],
 				header: {
-					backgroundUrl: 'https://gimg2.baidu.com/image_search/src=http%3A%2F%2Finews.gtimg.com%2Fnewsapp_match%2F0%2F11260081412%2F0.jpg&refer=http%3A%2F%2Finews.gtimg.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1617871514&t=c3c556302a48220806fe6e6145130c4b',
+					backgroundUrl: 'http://localhost:5000/core/images/other/index_bg1_533x300.png',
 					positionName1: '今日支出',
 					positionAmount1: '40.00',
 					positionName2: '本月支出',
@@ -88,6 +88,11 @@
 					percentage: '0',
 					color: '#FF2929'
 				},
+				contentText: {
+					contentdown: '上拉加载更多',
+					contentrefresh: '加载中',
+					contentnomore: '没有更多'
+				},
 				total: 0,
 				page: {
 					// Date: Util.getCurrentDate(),
@@ -97,7 +102,14 @@
 			}
 		},
 		onLoad() {
+			
+		},
+		onPullDownRefresh() {
 
+		},
+		onReachBottom() {
+			this.status = 'more';
+			this.getList();
 		},
 		methods: {
 
