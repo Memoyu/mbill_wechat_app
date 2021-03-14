@@ -25,10 +25,14 @@
 		</view>
 		<view class="bill-container">
 			<view class="bill-title">今日消费</view>
-			<block v-for="(item,index) in list" :key="index">
-				<mbill-bill-statement-item :bill="item"></mbill-bill-statement-item>
-			</block>
-			<uni-load-more :status="more" :content-text="contentText" ></uni-load-more>
+			<scroll-view scroll-y="true">
+				<view>
+					<block v-for="(item,index) in statementList" :key="index">
+						<mbill-bill-statement-item :bill="item"></mbill-bill-statement-item>
+					</block>
+				</view>
+				<uni-load-more :status="more" :content-text="contentText" ></uni-load-more>
+			</scroll-view>
 		</view>
 	</view>
 </template>
@@ -41,34 +45,35 @@
 				triggered: false,
 				refreshing: false,
 				emptyTitle: "今天没有账目噢！",
-				list: [{
-						id: 1,
-						categoryIconPath: "http://localhost:5000/core/images/category/icon_mushroom_64.png",
-						categoryName: "数码",
-						assetName: "微信",
-						targetAssetName: "",
-						description: "买电脑",
-						year: 2021,
-						month: 2,
-						day: 6,
-						time: "16:13:11",
-						type: "expend",
-						amount: 300
-					},
-					{
-						id: 2,
-						categoryIconPath: "http://localhost:5000/core/images/category/icon_mushroom_64.png",
-						categoryName: "",
-						assetName: "微信",
-						targetAssetName: "信用卡",
-						description: "买电脑",
-						year: 2021,
-						month: 2,
-						day: 6,
-						time: "16:13:11",
-						type: "transfer",
-						amount: 300.89
-					}
+				statementList: [
+					// {
+					// 	id: 1,
+					// 	categoryIconPath: "http://localhost:5000/core/images/category/icon_mushroom_64.png",
+					// 	categoryName: "数码",
+					// 	assetName: "微信",
+					// 	targetAssetName: "",
+					// 	description: "买电脑",
+					// 	year: 2021,
+					// 	month: 2,
+					// 	day: 6,
+					// 	time: "16:13:11",
+					// 	type: "expend",
+					// 	amount: 300
+					// },
+					// {
+					// 	id: 2,
+					// 	categoryIconPath: "http://localhost:5000/core/images/category/icon_mushroom_64.png",
+					// 	categoryName: "",
+					// 	assetName: "微信",
+					// 	targetAssetName: "信用卡",
+					// 	description: "买电脑",
+					// 	year: 2021,
+					// 	month: 2,
+					// 	day: 6,
+					// 	time: "16:13:11",
+					// 	type: "transfer",
+					// 	amount: 300.89
+					// }
 				],
 				header: {
 					backgroundUrl: 'http://localhost:5000/core/images/other/index_bg1_533x300.png',
@@ -102,7 +107,7 @@
 			}
 		},
 		onLoad() {
-			
+			this.getStatementList();
 		},
 		onPullDownRefresh() {
 
@@ -112,7 +117,18 @@
 			this.getList();
 		},
 		methods: {
-
+			getStatementList() {
+				let that = this;
+				that.$api('statement.list', {
+					Date: '2021-03-14',
+					Size: 10,
+					Page: 0
+				}).then(res => {
+					if (res.code === 0) {
+						that.statementList = [...that.statementList, ...res.result.items];
+					}
+				});
+			},
 		}
 	}
 </script>
