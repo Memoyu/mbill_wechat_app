@@ -4,6 +4,7 @@
 		"custom": {
 			"mbill-bill(.*)": "@/components/mbill/mbill-bill/mbill-bill$1.vue",
 			"mbill-core(.*)": "@/components/mbill/mbill-core/mbill-core$1.vue",
+			"mbill-chart(.*)": "@/components/mbill/mbill-chart/mbill-chart$1.vue",
 			"core-(.*)": "@/components/core/core-$1.vue",
 			"^uni-(.*)": "@dcloudio/uni-ui/lib/uni-$1/uni-$1.vue"
 		}
@@ -33,8 +34,28 @@
 				"navigationBarTitleText": "我的"
 			}
 		}
+		,
+		{
+			"path": "pages/profile/user-info",
+			"style": {
+				"navigationBarTitleText": "用户信息"
+			}
+		}
+		,
+		{
+			"path": "pages/profile/login",
+			"style": {
+				"navigationBarTitleText": "登陆"
+			}
+		}
 
-
+		,
+		{
+			"path": "pages/bill/create",
+			"style": {
+				"navigationBarTitleText": "创建账单"
+			}
+		}
 		,
 		{
 			"path": "pages/bill/detail",
@@ -46,8 +67,8 @@
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "mbill",
-		"navigationBarBackgroundColor": "#F8F8F8",
-		"backgroundColor": "#F8F8F8"
+		"navigationBarBackgroundColor": "#FFF",
+		"backgroundColor": "#FFF"
 	},
 	"tabBar" : {
 	  "backgroundColor": "#fff",

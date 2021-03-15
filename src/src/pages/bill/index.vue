@@ -26,7 +26,7 @@
       <view class="bill-btn">
         <view
           class="mine-bill-btn btn-shadow"
-          :click="handleAddBookkeeping"
+          @click="handleAddStatement"
         >
           <i class="iconfont icon-write writeicon"></i>
         </view>
@@ -139,6 +139,12 @@ export default {
           }
         });
     },
+    handleAddStatement() {
+      console.log("11111");
+      wx.navigateTo({
+        url: '/pages/bill/create'
+      })
+    }
   },
 };
 </script>

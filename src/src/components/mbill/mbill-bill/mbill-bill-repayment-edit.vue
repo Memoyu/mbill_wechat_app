@@ -5,19 +5,19 @@
       <input
         :class="['money-input', repayment.type]"
         placeholder="0.00"
-        placeholder-class="{{ repayment.type }}"
+        :placeholder-class="repayment.type"
         type="digit"
         v-model="repayment.amount"
       />
     </view>
     <view class="column transfer-type">
-      <view class="assetSource" @tap="assetSource">{{
-        repayment.assetName
-      }}</view>
+      <view class="assetSource" @tap="assetSource">
+        {{ repayment.assetName }}
+      </view>
       <view class="iconfont icon-to transfer-icon"></view>
-      <view class="assetTarget" @tap="assetTarget">{{
-        repayment.targetAssetName
-      }}</view>
+      <view class="assetTarget" @tap="assetTarget">
+        {{ repayment.targetAssetName }}
+      </view>
     </view>
     <view class="column">
       <text>日期</text>
@@ -26,7 +26,7 @@
         <text class="label" @tap="quickSetDate('-1')">昨天</text>
         <text class="label" @tap="quickSetDate('0')">今天</text>
       </view>
-      <picker mode="date" start="2017-01-01" @change="dateChange($wx)">
+      <picker mode="date" start="2017-01-01" @change="dateChange">
         <text
           >{{ repayment.year }}-{{ repayment.month }}-{{ repayment.day }}</text
         >
@@ -49,9 +49,30 @@
 </template>
 
 <script>
+import Util from '@/common/utils/util.js';
 export default {
   name: "repaymentEdit",
-  props: {},
+  props: {
+    repayment: {
+      type: Object,
+      default() {
+        return {
+          id: 0,
+          type: "repayment",
+          amount: "",
+          description: "",
+          assetId: 0,
+          targetAssetId: 0,
+          assetName: "选择还款账户",
+          targetAssetName: "选择负债账户",
+          year: Util.getCurrentYear(),
+          month: Util.getCurrentMonth(),
+          day: Util.getCurrentDay(),
+          time: Util.getCurrentTime(),
+        };
+      },
+    },
+  },
   methods: {},
 };
 </script>

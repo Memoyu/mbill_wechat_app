@@ -1,48 +1,102 @@
 <template>
-	<view class="content">
-		<view>
-			<text class="title">{{title}}</text>
-		</view>
-	</view>
+  <view class="container">
+    <view
+      class="controller"
+      :class="{ 'no-login': !isLogin }"
+      :hidden="!isLogin"
+    >
+      <view class="time-filter">
+        <view class="month-filter">
+          <!-- <view>2019 年 01 月</view> -->
+          <view class="iconfont icon-arrow-left" @tap="prevMonth"></view>
+          <picker
+            class="time-picker"
+            mode="date"
+            @change="bindPickerChange"
+            fields="month"
+            :value="date"
+          >
+            <view class="month">{{ year }} 年 {{ month }} 月</view>
+          </picker>
+          <view class="iconfont icon-arrow-right" @tap="nextMonth"></view>
+        </view>
+      </view>
+      <core-tabs :type="tabList" v-model="active"></core-tabs>
+
+      <mbill-chart-overview v-if="active === 0" :date.sync="date"></mbill-chart-overview>
+      <mbill-chart-category v-if="active === 1" :date.sync="date"></mbill-chart-category>
+      <mbill-chart-week-trend v-if="active === 2"></mbill-chart-week-trend>
+      <mbill-chart-month-trend v-if="active === 3"></mbill-chart-month-trend>
+      <mbill-chart-rate v-if="active === 4" :date.sync="date"></mbill-chart-rate>
+    </view>
+    <core-not-login v-if="!isLogin" />
+  </view>
 </template>
 
 <script>
-	export default {
-		data() {
-			return {
-				title: '统计页面'
-			}
-		},
-		onLoad() {
-
-		},
-		methods: {
-
-		}
-	}
+const nowDate = new Date();
+export default {
+  data() {
+    return {
+      active: 0,
+      tabList: [
+        {
+          title: "总览",
+        },
+        {
+          title: "分类",
+        },
+        {
+          title: "周趋势",
+        },
+        {
+          title: "月趋势",
+        },
+        {
+          title: "排行榜",
+        },
+      ],
+      date: nowDate,
+      isLogin: true,
+      chartData: [],
+      header: {},
+      year: new Date().getFullYear(),
+      month: new Date().getMonth() + 1,
+      categories: [],
+      showFilter: false,
+      emptyTitle: "没有数据噢！",
+    };
+  },
+  onLoad() {},
+  methods: {},
+};
 </script>
 
-<style>
-	.content {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		justify-content: center;
-	}
-
-	.logo {
-		height: 200rpx;
-		width: 200rpx;
-		margin: 200rpx auto 50rpx auto;
-	}
-
-	.text-area {
-		display: flex;
-		justify-content: center;
-	}
-
-	.title {
-		font-size: 36rpx;
-		color: #8f8f94;
-	}
+<style lang="scss">
+.container {
+  // background:#f2f2f2;
+  .controller {
+    &.no-login {
+      filter: blur(2px);
+    }
+    .time-filter {
+      display: flex;
+      justify-content: center;
+      padding: 8px 0;
+      font-size: 30rpx;
+      .month-filter {
+        display: flex;
+        align-items: center;
+        .iconfont {
+          color: black;
+          padding: 6px 10px;
+        }
+        .month {
+          color: $primaryColor;
+          padding: 0 12px;
+        }
+      }
+    }
+  }
+}
 </style>
