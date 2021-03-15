@@ -20,8 +20,6 @@
 
 ## 项目介绍
 
-**此分支为基于WePY 2.x 实现，已废弃**
-
 项目为个人记账小程序端实现。
 
 参考设计：[yigger/jiezhang: 基于 wepy 开发的一款纯记账的微信小程序 ](https://github.com/yigger/jiezhang)
