@@ -22,7 +22,7 @@
 
 **此分支为基于WePY 2.x 实现，已废弃**
 
-项目为个人记账小程序端实现。
+`项目为个人记账小程序端实现。`
 
 参考设计：[yigger/jiezhang: 基于 wepy 开发的一款纯记账的微信小程序 ](https://github.com/yigger/jiezhang)
 
@@ -51,7 +51,7 @@
 
 ## 效果演示
 
-![effect](https://github.com/Memoyu/mbill_app/blob/main/doc/images/effect.png)
+![effect](https://github.com/Memoyu/mbill_wechat_app/tree/WePY2.x/doc/images/effect.png)
 
 
 
