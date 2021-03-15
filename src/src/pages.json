@@ -68,7 +68,10 @@
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "mbill",
 		"navigationBarBackgroundColor": "#FFF",
-		"backgroundColor": "#FFF"
+		"backgroundColor": "#FFF",
+		"usingComponents": {
+			"ec-canvas": "/static/plugin/echart/ec-canvas"
+		}
 	},
 	"tabBar" : {
 	  "backgroundColor": "#fff",
