@@ -51,9 +51,7 @@
 
 ## 效果演示
 
-![effect](https://github.com/Memoyu/mbill_wechat_app/tree/WePY2.x/doc/images/effect.png)
-
-
+![effect](https://github.com/Memoyu/mbill_wechat_app/blob/WePY2.x/doc/images/effect.png)
 
 ## TimeLine
 
