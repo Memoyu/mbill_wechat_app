@@ -1,12 +1,4 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
 
-
-Vue.use(Vuex)
-
-const store = new Vuex.Store({
-	modules: {
-	}
-})
-
-export default store
+export const LOGIN_TIP = 'LOGIN_TIP' //登录提示
+export const USER_INFO = 'USER_INFO' //用户信息
+export const OUT_LOGIN = 'OUT_LOGIN' //退出登录

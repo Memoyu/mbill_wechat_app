@@ -14,24 +14,48 @@
 			"path": "pages/bill/index",
 			"style": {
 				"navigationBarTitleText": "账单"
+			},
+			"meta": {
+				"auth": true,
+				"async": true,
+				"title": "账单",
+				"group": ""
 			}
 		},
 		{
 			"path": "pages/detail/index",
 			"style": {
 				"navigationBarTitleText": "详情"
+			},
+			"meta": {
+				"auth": true,
+				"async": true,
+				"title": "详情",
+				"group": ""
 			}
 		},
 		{
 			"path": "pages/statistics/index",
 			"style": {
 				"navigationBarTitleText": "统计"
+			},
+			"meta": {
+				"auth": true,
+				"async": true,
+				"title": "统计",
+				"group": ""
 			}
 		},
 		{
 			"path": "pages/profile/index",
 			"style": {
 				"navigationBarTitleText": "我的"
+			},
+			"meta": {
+				"auth": false,
+				"async": true,
+				"title": "我的",
+				"group": ""
 			}
 		}
 		,
@@ -39,6 +63,12 @@
 			"path": "pages/profile/user-info",
 			"style": {
 				"navigationBarTitleText": "用户信息"
+			},
+			"meta": {
+				"auth": true,
+				"async": true,
+				"title": "用户信息",
+				"group": ""
 			}
 		}
 		,
@@ -46,6 +76,12 @@
 			"path": "pages/profile/login",
 			"style": {
 				"navigationBarTitleText": "登陆"
+			},
+			"meta": {
+				"auth": false,
+				"async": true,
+				"title": "登陆",
+				"group": ""
 			}
 		}
 
@@ -54,6 +90,12 @@
 			"path": "pages/bill/create",
 			"style": {
 				"navigationBarTitleText": "创建账单"
+			},
+			"meta": {
+				"auth": true,
+				"async": true,
+				"title": "创建账单",
+				"group": ""
 			}
 		}
 		,
@@ -61,6 +103,12 @@
 			"path": "pages/bill/detail",
 			"style": {
 				"navigationBarTitleText": "账单详情"
+			},
+			"meta": {
+				"auth": true,
+				"async": true,
+				"title": "账单详情",
+				"group": ""
 			}
 		}
 	],

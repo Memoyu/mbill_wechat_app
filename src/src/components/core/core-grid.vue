@@ -27,9 +27,9 @@ export default {
     },
   },
   methods: {
-    jump(data) {
-      wx.navigateTo({
-        url: data.path,
+    jump(path) {
+      this.$Router.push({
+        path: path,
       });
     },
   },

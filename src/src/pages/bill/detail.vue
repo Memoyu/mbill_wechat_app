@@ -81,11 +81,11 @@
       </view>
     </view>
     <view class="button-groups">
-      <view class="delete-button" :click="handlerDel">
+      <view class="delete-button" @click="handlerDel">
         <view class="iconfont icon-delete-note"></view>
         <text>删除</text>
       </view>
-      <view class="edit-button" :click="handlerEdit">
+      <view class="edit-button" @click="handlerEdit">
         <view class="iconfont icon-edit-note"></view>
         <text>编辑</text>
       </view>
