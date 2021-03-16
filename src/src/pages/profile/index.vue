@@ -53,45 +53,45 @@ export default {
           title: "预算管理",
           path: "",
 		  extraIcon: {
-            color: "#4cd964",
+            color: "#757575",
             size: "22",
-            type: "gear-filled",
+            type: "shop",
           },
         },
         {
           title: "资产管理",
           path: "",
           extraIcon: {
-            color: "#4cd964",
+            color: "#757575",
             size: "22",
-            type: "gear-filled",
+            type: "circle",
           },
         },
         {
           title: "分类管理",
           path: "",
           extraIcon: {
-            color: "#4cd964",
+            color: "#757575",
             size: "22",
-            type: "gear-filled",
+            type: "list",
           },
         },
         {
           title: "系统设置",
           path: "",
           extraIcon: {
-            color: "#4cd964",
+            color: "#757575",
             size: "22",
-            type: "gear-filled",
+            type: "gear",
           },
         },
         {
           title: "关于mbill",
           path: "",
           extraIcon: {
-            color: "#4cd964",
+            color: "#757575",
             size: "22",
-            type: "gear-filled",
+            type: "paperplane",
           },
 		  rightText: "v1.0"
         },

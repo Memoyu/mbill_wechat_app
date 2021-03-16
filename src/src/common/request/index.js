@@ -14,9 +14,9 @@ export default function api(url, data = {}, showToast = true) {
 				throw ('暂未登录,已阻止此次API请求~');
 			}
 		}
-		//if (uni.getStorageSync('token')) {
-			config.header.Authorization = tempToken; //uni.getStorageSync('token');
-		//}
+		if (uni.getStorageSync('token')) {
+			config.header.Authorization = "Bearer " + uni.getStorageSync('token');
+		}
 		return config
 	});
 
@@ -35,7 +35,7 @@ export default function api(url, data = {}, showToast = true) {
 
 		if (response.data.code === 401) { // 服务端返回的状态码不等于200，则reject()
 			uni.removeStorageSync('token');
-			//store.commit('LOGIN_TIP', true)
+			store.commit('LOGIN_TIP', true)
 		}
 		// if (response.config.custom.verification) { // 演示自定义参数的作用
 		//   return response.data

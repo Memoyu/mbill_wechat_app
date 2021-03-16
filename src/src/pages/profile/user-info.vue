@@ -53,17 +53,23 @@
 </template>
 
 <script>
+import { mapMutations, mapActions, mapState } from 'vuex';
 export default {
   data() {
     return {
-      userInfo: {
-        avatarUrl: "../../static/assets/icons/profile/default_avatar.png",
-        username: "蒙明宇",
-        nickname: "memoyu",
-        birthday: "1996-10-15",
-        phone: "18878613483",
-      },
+      // userInfo: {
+      //   avatarUrl: "../../static/assets/icons/profile/default_avatar.png",
+      //   username: "蒙明宇",
+      //   nickname: "memoyu",
+      //   birthday: "1996-10-15",
+      //   phone: "18878613483",
+      // },
     };
+  },
+  computed: {
+		...mapState({
+			userInfo: state => state.user.userInfo
+		}),
   },
   methods: {
     jump(page) {

@@ -12,7 +12,7 @@
           <text v-else>{{ statement.typeName }}</text>
         </view>
         <text :class="statement.type"
-          >{{ statement.type == "expend" ? "-" : "+" }} {{ statement.amount }}</text
+          >{{ statement.type == "expend" ? "-" : "+" }}  {{ statement.amount }}</text
         >
       </view>
 
@@ -53,14 +53,13 @@
           <text>时间</text>
         </view>
         <text
-          >{{ statement.year }}-{{ statement.month }}-{{ statement.day }}
-          {{ statement.time }}</text
+          >{{ statement.year }}-{{ statement.month }}-{{ statement.day }} {{ statement.time }}</text
         >
       </view>
 
       <view
         class="column"
-        v-if=" statement.address != null && statement.address != '' "
+        v-if="statement.address != null && statement.address != ''"
       >
         <view>
           <view class="iconfont jz-icon-address"></view>
@@ -94,6 +93,7 @@
 </template>
 
 <script>
+import Tip from '@/common/utils/tip'
 export default {
   data() {
     return {
@@ -115,26 +115,64 @@ export default {
         // address: '广东广州白云区',
         // amount: 300
 
-        id: 1,
-        categoryIconPath:
-          "http://localhost:5000/core/images/category/icon_mushroom_64.png",
-        categoryName: "还款",
-        categoryParentName: "",
-        assetName: "微信",
-        assetParentName: "虚拟账户",
-        targetAssetName: "信用卡",
-        description: "还款信用卡",
-        year: "2020",
-        month: "11",
-        day: "01",
-        time: "01:26:30",
-        assetResidue: -400,
-        typeName: "还款",
-        type: "repayment",
-        address: "",
-        amount: 300,
+        // id: 1,
+        // categoryIconPath:
+        //   "http://localhost:5000/core/images/category/icon_mushroom_64.png",
+        // categoryName: "还款",
+        // categoryParentName: "",
+        // assetName: "微信",
+        // assetParentName: "虚拟账户",
+        // targetAssetName: "信用卡",
+        // description: "还款信用卡",
+        // year: "2020",
+        // month: "11",
+        // day: "01",
+        // time: "01:26:30",
+        // assetResidue: -400,
+        // typeName: "还款",
+        // type: "repayment",
+        // address: "",
+        // amount: 300,
       },
     };
+  },
+  onLoad (options) {
+    if (options.id === undefined) {
+      uni.navigateBack({
+        delta: 1
+      })
+    }else{
+      this.id = options.id
+    }
+    this.getStatement(this.id)
+  },
+  methods: {
+    handlerDel() {
+      Tip.choose("是否删除该条账单？", {}, "提示").then(async () => {
+        await wxRequest.Delete(`statement/delete/${this.id}`).then((res) => {
+          wx.navigateBack({
+            delta: 1,
+          });
+        });
+      });
+    },
+    handlerEdit() {
+      this.$Router.push({
+        path: `/pages/bill/edit?id=${this.id}`,
+      });
+    },
+    getStatement (id) {
+      var that = this;
+      that
+        .$api("statement.detail",{
+          id: id
+        })
+        .then((res) => {
+          if (res.code === 0) {
+            that.statement = res.result
+          }
+        });
+    }
   },
 };
 </script>

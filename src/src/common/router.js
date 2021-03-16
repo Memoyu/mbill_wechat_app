@@ -22,11 +22,10 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
 	console.log("全局路由前置守卫")
 	// 有两个个判断条件,一个是token,还有一个路由元信息
-	let info = uni.getStorageSync('userInfo');
-	let userInfo = Boolean(info);
+	let token = uni.getStorageSync('token');
+	let existToken = Boolean(token);
 	// 权限控制登录
-	if (to.meta && to.meta.auth && !userInfo) {
-		debugger
+	if (to.meta && to.meta.auth && !existToken) {
 		store.commit('LOGIN_TIP', true)
 		uni.showToast({title: '请先登录', icon: 'none', duration: 1500 });
 		setTimeout(function(){ next('/pages/profile/login'); }, 1500);
