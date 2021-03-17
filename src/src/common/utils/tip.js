@@ -21,4 +21,13 @@ export default class Tips {
             })
         })
     }
+    /**轻提示 */
+    static toast(title, duration = 2000) {
+        uni.showToast({
+            title: title,
+            icon: 'none',
+            mask: false,
+            duration: duration
+        })
+      }
 }

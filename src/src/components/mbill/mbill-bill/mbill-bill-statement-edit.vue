@@ -70,7 +70,7 @@
       />
     </view>
     <view class="btn-save">
-      <button v-if="!submiting" @tap="reportStatement">保存</button>
+      <button v-if="!submiting" @tap="submitStatement">保存</button>
       <button v-else>保存中...</button>
     </view>
   </view>
@@ -78,6 +78,10 @@
 
 <script>
 import Util from '@/common/utils/util.js';
+import Tip from '@/common/utils/tip';
+import { mapMutations, mapActions, mapState } from 'vuex';
+import QQMapWX from '@/common/wechat/qqmap-wx-jssdk.js';
+import { MAP_KEY } from '@/env';
 export default {
   name: "statementEdit",
   props: {
@@ -108,7 +112,59 @@ export default {
     },
     type: String,
   },
-  methods: {},
+  computed: {
+		...mapState({
+      submiting: state => state.statement.submiting,
+    })
+  },
+  setLocation() {
+      // 获取地址
+      this.qqmapSDK = new QQMapWX({
+        key: MAP_KEY
+      });
+      wx.getLocation({
+        type: 'gcj02', // 返回可以用于wx.openLocation的经纬度
+        success: result => {
+          this.qqmapSDK.reverseGeocoder({
+            location: {
+              latitude: result.latitude,
+              longitude: result.longitude
+            }, // 坐标
+            success: res => {
+              const addressComponent = res.result.address_component;
+              this.statement.nation = addressComponent.nation;
+              this.statement.province = addressComponent.province;
+              this.statement.city = addressComponent.city;
+              this.statement.district = addressComponent.district;
+              this.statement.street = addressComponent.street;
+              this.statement.address = res.result.address;
+            }
+          });
+        }
+      });
+    },
+  methods: {
+     submitStatement() {
+      console.log("开始提交")
+      const statement = this.statement;
+      // if (statement.amount === 0 || statement.amount === '') {
+      //   Tip.toast('金额不能为零')
+      //   return false
+      // }
+
+      // if (statement.category_id === 0) {
+      //   Tip.toast('未选择分类')
+      //   return false
+      // }
+
+      // if (statement.asset_id === 0) {
+      //   Tip.toast('未选择账户')
+      //   return false
+      // }
+      // 触发submit
+      this.$emit('submitStatement', this.statement);
+    }
+  },
 };
 </script>
 

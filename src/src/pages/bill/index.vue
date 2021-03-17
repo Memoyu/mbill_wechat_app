@@ -24,10 +24,7 @@
         </view>
       </view>
       <view class="bill-btn">
-        <view
-          class="mine-bill-btn btn-shadow"
-          @click="handleAddStatement"
-        >
+        <view class="mine-bill-btn btn-shadow" @click="handleAddStatement">
           <i class="iconfont icon-write writeicon"></i>
         </view>
       </view>
@@ -37,13 +34,13 @@
     </view>
 
     <view class="bill-container">
-      <view v-for="(item, index) in statementList" :key="index">
+      <view v-for="(item, index) in statements" :key="index">
         <mbill-bill-statement-item :bill="item"></mbill-bill-statement-item>
       </view>
-      <core-empty v-if="statementList.length == 0" :title.sync="emptyTitle" />
+      <core-empty v-if="statements.length == 0" :title.sync="emptyTitle" />
       <uni-load-more
-        v-else
-        :status="more"
+        v-else-if="showLoadMore"
+        :status="status"
         :content-text="contentText"
       ></uni-load-more>
     </view>
@@ -51,6 +48,7 @@
 </template>
 
 <script>
+import { mapMutations, mapActions, mapState } from 'vuex';
 export default {
   data() {
     return {
@@ -104,6 +102,8 @@ export default {
         percentage: "0",
         color: "#FF2929",
       },
+      showLoadMore: false,
+      status: 'more',
       contentText: {
         contentdown: "上拉加载更多",
         contentrefresh: "加载中",
@@ -111,40 +111,58 @@ export default {
       },
       total: 0,
       page: {
-        // Date: Util.getCurrentDate(),
+        Date: "2021-03-14",// Date: Util.getCurrentDate(),
         Size: 10,
         Page: 0,
       },
     };
+  },
+  computed: {
+		...mapState({
+      statements: state => state.statement.statements,
+    })
+  },
+  onUnload() {
+    this.showLoadMore = false;
   },
   onLoad() {
     this.getStatementList();
   },
   onPullDownRefresh() {},
   onReachBottom() {
+
     this.status = "more";
+    this.showLoadMore = true;
+    var totalPage = this.total / this.page.Size;
+    var currentPage = this.page.Page + 1;
+    if (currentPage > totalPage) {
+				this.status = "moMore"
+				return;
+		}
+
+    this.page.Page += 1;
+    this.getStatementList();
   },
   methods: {
+    ...mapActions(['addStatements']),
     getStatementList() {
+      this.status = 'loading';
       let that = this;
       that
-        .$api("statement.list", {
-          Date: "2021-03-14",
-          Size: 10,
-          Page: 0,
-        })
+        .$api("statement.list", this.page)
         .then((res) => {
           if (res.code === 0) {
             that.statementList = [...that.statementList, ...res.result.items];
+            that.addStatements(res.result.items)
+            that.total = res.result.total;
           }
         });
     },
     handleAddStatement() {
-      console.log("11111");
       wx.navigateTo({
-        url: '/pages/bill/create'
-      })
-    }
+        url: "/pages/bill/create",
+      });
+    },
   },
 };
 </script>

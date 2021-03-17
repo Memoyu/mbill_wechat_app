@@ -42,14 +42,16 @@
       />
     </view>
     <view class="btn-save">
-      <button v-if="!submiting" @tap="reportStatement">保存</button>
+      <button v-if="!submiting" @tap="submitStatement">保存</button>
       <button v-else>保存中...</button>
     </view>
   </view>
 </template>
 
 <script>
-import Util from '@/common/utils/util.js';
+import Util from '@/common/utils/util';
+import Tip from '@/common/utils/tip';
+import { mapMutations, mapActions, mapState } from 'vuex';
 export default {
   name: "repaymentEdit",
   props: {
@@ -73,7 +75,28 @@ export default {
       },
     },
   },
-  methods: {},
+  computed: {
+		...mapState({
+      submiting: state => state.statement.submiting,
+    })
+  },
+  methods: {
+    submitStatement() {
+      const repayment = this.repayment;
+      if (repayment.amount === 0 || repayment.amount === '') {
+        Tip.error('金额不能为零');
+        return false;
+      }
+      if (repayment.assetId === 0 || repayment.targetAssetId === 0) {
+        Tip.error('未选择转账账户');
+        return false;
+      } else if (repayment.assetId === repayment.targetAssetId) {
+        Tip.error('不能转向同一账户');
+        return false;
+      }
+      this.$emit('submitStatement', repayment);
+    }
+  },
 };
 </script>
 

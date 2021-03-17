@@ -46,14 +46,16 @@
     </view>
 
     <view class="btn-save">
-      <button v-if="!submiting" @tap="reportStatement">保存</button>
+      <button v-if="!submiting" @tap="submitStatement">保存</button>
       <button v-else>保存中...</button>
     </view>
   </view>
 </template>
 
 <script>
-import Util from '@/common/utils/util.js';
+import Util from '@/common/utils/util';
+import Tip from '@/common/utils/tip';
+import { mapMutations, mapActions, mapState } from 'vuex';
 export default {
   name: "transferEdit",
   props: {
@@ -77,7 +79,32 @@ export default {
       },
     },
   },
-  methods: {},
+  computed: {
+		...mapState({
+      submiting: state => state.statement.submiting,
+    })
+  },
+  methods: {
+     submitStatement() {
+        const transfer = this.transfer;
+        console.log(transfer)
+        if (transfer.amount === 0 || transfer.amount === '') {
+          Tip.error('金额不能为零');
+          return false;
+        }
+        if (transfer.assetId === 0) {
+          Tip.error('未选择还款账户');
+          return false;
+        } else if (transfer.targetAssetId === 0) {
+          Tip.error('未选择负债账户');
+          return false;
+        } else if (transfer.assetId === transfer.targetAssetId) {
+          Tip.error('还款账户与负债账户不能相同');
+          return false;
+        }
+        this.$emit('submitStatement', transfer);
+    }
+  },
 };
 </script>
 

@@ -53,7 +53,7 @@ export default {
 	};
   },
   methods: {
-	...mapActions(['getUserInfo', 'setTokenAndBack']),
+	  ...mapActions(['getUserInfo', 'setTokenAndBack']),
     toLogin() {
       var that = this;
       that

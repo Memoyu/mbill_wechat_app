@@ -110,6 +110,18 @@
 				"title": "账单详情",
 				"group": ""
 			}
+		},
+		{
+			"path": "pages/bill/edit",
+			"style": {
+				"navigationBarTitleText": "账单编辑"
+			},
+			"meta": {
+				"auth": true,
+				"async": true,
+				"title": "账单编辑",
+				"group": ""
+			}
 		}
 	],
 	"globalStyle": {

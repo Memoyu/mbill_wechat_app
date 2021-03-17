@@ -6,20 +6,24 @@
       <mbill-bill-statement-edit
         ref="expend"
         :type="expend"
+         @submitStatement="submitStatement"
         v-if="active === 0"
       />
       <mbill-bill-statement-edit
         ref="income"
         :type="income"
+        @submitStatement="submitStatement"
         v-if="active === 1"
       />
       <mbill-bill-transfer-edit
         ref="transfer"
+        @submitStatement="submitStatement"
         v-if="active === 2"
       />
 
       <mbill-bill-repayment-edit
         ref="repayment"
+        @submitStatement="submitStatement"
         v-if="active === 3"
       /> 
     </view>
@@ -50,6 +54,13 @@ export default {
       
     };
   },
+  methods: {
+    submitStatement(statement) {
+      this.$store.commit('STATEMENT_SUBMIT', true)
+      console.log("提交账单信息")
+      this.$store.commit('STATEMENT_SUBMIT', false)
+    }
+  }
 };
 </script>
 

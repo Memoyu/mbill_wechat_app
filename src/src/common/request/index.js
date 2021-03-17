@@ -1,6 +1,6 @@
 import Request from './request'
 import apiList from './mbill'
-import store from '@/common/store/index.js'
+import store from '@/common/store/index'
 
 export default function api(url, data = {}, showToast = true) {
 	const request = new Request();
