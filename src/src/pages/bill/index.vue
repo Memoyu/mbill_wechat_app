@@ -37,7 +37,7 @@
       <view v-for="(item, index) in statements" :key="index">
         <mbill-bill-statement-item :bill="item"></mbill-bill-statement-item>
       </view>
-      <core-empty v-if="statements.length == 0" :title.sync="emptyTitle" />
+      <core-empty v-if="statements.length == 0" :title="emptyTitle" />
       <uni-load-more
         v-else-if="showLoadMore"
         :status="status"
@@ -48,6 +48,7 @@
 </template>
 
 <script>
+import Util from "@/common/utils/util";
 import { mapMutations, mapActions, mapState } from 'vuex';
 export default {
   data() {
@@ -111,7 +112,7 @@ export default {
       },
       total: 0,
       page: {
-        Date: "2021-03-14",// Date: Util.getCurrentDate(),
+        Date: Util.getCurrentDate(),
         Size: 10,
         Page: 0,
       },
@@ -159,7 +160,7 @@ export default {
         });
     },
     handleAddStatement() {
-      wx.navigateTo({
+      uni.navigateTo({
         url: "/pages/bill/create",
       });
     },

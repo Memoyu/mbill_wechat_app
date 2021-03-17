@@ -27,8 +27,7 @@ router.beforeEach((to, from, next) => {
 	// 权限控制登录
 	if (to.meta && to.meta.auth && !existToken) {
 		store.commit('LOGIN_TIP', true)
-		uni.showToast({title: '请先登录', icon: 'none', duration: 1500 });
-		setTimeout(function(){ next('/pages/profile/login'); }, 1500);
+		store.dispatch('goToLogin');
 	} else {	
 		next()
 	}

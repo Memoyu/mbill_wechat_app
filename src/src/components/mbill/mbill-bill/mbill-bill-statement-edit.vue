@@ -77,60 +77,140 @@
 </template>
 
 <script>
-import Util from '@/common/utils/util.js';
-import Tip from '@/common/utils/tip';
-import { mapMutations, mapActions, mapState } from 'vuex';
-import QQMapWX from '@/common/wechat/qqmap-wx-jssdk.js';
-import { MAP_KEY } from '@/env';
+import Util from "@/common/utils/util.js";
+import Tip from "@/common/utils/tip";
+import { mapMutations, mapActions, mapState } from "vuex";
+import QQMapWX from "@/common/wechat/qqmap-wx-jssdk.js";
+import { MAP_KEY } from "@/env";
 export default {
   name: "statementEdit",
   props: {
-    statement: {
+    detail: {
       type: Object,
-      default() {
-        return {
-          id: 0,
-          type: "expend",
-          categoryId: 0,
-          assetId: 0,
-          categoryName: "请选择分类",
-          assetName: "请选择账户",
-          amount: "",
-          description: "",
-          address: "",
-          nation: "",
-          province: "",
-          city: "",
-          district: "",
-          street: "",
-          year: Util.getCurrentYear(),
-          month: Util.getCurrentMonth(),
-          day: Util.getCurrentDay(),
-          time: Util.getCurrentTime(),
-        };
+      default: {
+        id: 0,
+        type: "expend",
+        categoryId: 0,
+        assetId: 0,
+        categoryName: "请选择分类",
+        assetName: "请选择账户",
+        amount: "",
+        description: "",
+        address: "",
+        nation: "",
+        province: "",
+        city: "",
+        district: "",
+        street: "",
+        year: Util.getCurrentYear(),
+        month: Util.getCurrentMonth(),
+        day: Util.getCurrentDay(),
+        time: Util.getCurrentTime(),
       },
     },
     type: String,
   },
-  computed: {
-		...mapState({
-      submiting: state => state.statement.submiting,
-    })
+  data() {
+    return {
+      statement: {},
+      assets_labels: [{ id: 1, name: '支付宝' }, { id: 2, name: '微信' }],
+      categories_labels: [{ id: 1, name: '地铁' }, { id: 2, name: '一日三餐' }],
+      switchCheck: uni.getStorageSync('getLocationSwitch') || false
+    };
   },
-  setLocation() {
+  computed: {
+    ...mapState({
+      submiting: (state) => state.statement.submiting,
+    }),
+  },
+  created() {
+    this.statement = this.detail;
+    this.statement.type = this.type;
+    // console.log(this.statement)
+    if (this.statement.id === 0) {
+      if (this.switchCheck) this.setLocation();
+    }
+    this.guessCategory();
+    this.guessAsset();
+  },
+  methods: {
+    guessCategory() {},
+    guessAsset() {},
+    // 分类选择
+    redirectChoseCategory() {
+      this.$Router.push({
+        path: "/pages/bill/chose-category",
+        query: {
+          type: this.statement.type,
+        },
+      });
+    },
+    // 账户选择
+    redirectChoseAsset() {
+      this.$Router.push({
+        path: "/pages/bill/chose-asset",
+        query: {
+          type: this.statement.type,
+        },
+      });
+    },
+    // 赋值分类
+    setCategory(category) {
+      // console.log(category);
+      this.statement.categoryId = category.id;
+      this.statement.categoryName = category.name;
+    },
+    // 赋值账户
+    setAsset(asset) {
+      // console.log(asset.name);
+      this.statement.assetId = asset.id;
+      this.statement.assetName = asset.name;
+    },
+    // 时间改变
+    dateChange({ detail }) {
+      var date = new Date(detail.value);
+      this.statement.year = Util.getCurrentYear(date);
+      this.statement.month = Util.getCurrentMonth(date);
+      this.statement.day = Util.getCurrentDay(date);
+    },
+    // 快速选取时间
+    quickSetDate(between) {
+      const today = new Date();
+      let date = today;
+      if (between === "-1") {
+        date = new Date(today.getTime() - 24 * 60 * 60 * 1000);
+      } else if (between === "-2") {
+        date = new Date(today.getTime() - 2 * 24 * 60 * 60 * 1000);
+      }
+      this.statement.year = Util.getCurrentYear(date);
+      this.statement.month = Util.getCurrentMonth(date);
+      this.statement.day = Util.getCurrentDay(date);
+    },
+    getLocation(e) {
+      // console.log(e)
+      const locationSwitch = e.target.value;
+      uni.setStorageSync("getLocationSwitch", locationSwitch);
+      if (locationSwitch) {
+        this.setLocation();
+      } else {
+        // 关闭获取地理位置
+        this.statement.address = "";
+      }
+    },
+    setLocation() {
       // 获取地址
       this.qqmapSDK = new QQMapWX({
-        key: MAP_KEY
+        key: MAP_KEY,
       });
-      wx.getLocation({
-        type: 'gcj02', // 返回可以用于wx.openLocation的经纬度
-        success: result => {
+      uni.getLocation({
+        type: "gcj02", // 返回可以用于wx.openLocation的经纬度
+        success: (result) => {
           this.qqmapSDK.reverseGeocoder({
             location: {
               latitude: result.latitude,
-              longitude: result.longitude
+              longitude: result.longitude,
             }, // 坐标
-            success: res => {
+            success: (res) => {
               const addressComponent = res.result.address_component;
               this.statement.nation = addressComponent.nation;
               this.statement.province = addressComponent.province;
@@ -138,32 +218,32 @@ export default {
               this.statement.district = addressComponent.district;
               this.statement.street = addressComponent.street;
               this.statement.address = res.result.address;
-            }
+            },
           });
-        }
+        },
       });
     },
-  methods: {
-     submitStatement() {
-      console.log("开始提交")
+    submitStatement() {
+      // console.log("开始提交");
       const statement = this.statement;
-      // if (statement.amount === 0 || statement.amount === '') {
-      //   Tip.toast('金额不能为零')
-      //   return false
-      // }
+      // console.log(statement)
+      if (statement.amount === 0 || statement.amount === '') {
+        Tip.toast('金额不能为零')
+        return false
+      }
 
-      // if (statement.category_id === 0) {
-      //   Tip.toast('未选择分类')
-      //   return false
-      // }
+      if (statement.category_id === 0) {
+        Tip.toast('未选择分类')
+        return false
+      }
 
-      // if (statement.asset_id === 0) {
-      //   Tip.toast('未选择账户')
-      //   return false
-      // }
-      // 触发submit
-      this.$emit('submitStatement', this.statement);
-    }
+      if (statement.asset_id === 0) {
+        Tip.toast('未选择账户')
+        return false
+      }
+      //触发submit
+      this.$emit("submitStatement", statement);
+    },
   },
 };
 </script>

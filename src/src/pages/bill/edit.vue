@@ -3,23 +3,23 @@
     <view class="comonent-list">
       <mbill-bill-statement-edit
         :type="expend"
-        :statement="statement"
+        :detail="statement"
         v-if="current === 'expend'"
       />
 
       <mbill-bill-statement-edit
         :type="income"
-        :statement="statement"
+        :detail="statement"
         v-if="current === 'income'"
       />
 
       <mbill-bill-transfer-edit
-        :transfer="statement"
+        :detail="statement"
         v-if="current === 'transfer'"
       />
 
       <mbill-bill-repayment-edit
-        :repayment="statement"
+        :detail="statement"
         v-if="current === 'repayment'"
       />
     </view>

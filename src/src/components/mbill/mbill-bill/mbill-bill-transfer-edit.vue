@@ -11,14 +11,14 @@
     </view>
 
     <view class="column transfer-type">
-      <view class="assetSource" @tap="assetSource">
+      <view class="assetSource" @tap="redirectChoseAssetSource">
         {{ transfer.assetName }}
       </view>
       <view
         @tap="exchangeAsset"
         class="iconfont icon-xingzhuang_1 transfer-icon"
       ></view>
-      <view class="assetTarget" @tap="assetTarget">
+      <view class="assetTarget" @tap="redirectChoseAssetTarget">
         {{ transfer.targetAssetName }}
       </view>
     </view>
@@ -53,13 +53,14 @@
 </template>
 
 <script>
-import Util from '@/common/utils/util';
-import Tip from '@/common/utils/tip';
-import { mapMutations, mapActions, mapState } from 'vuex';
+import { BASE_URL } from '@/env'
+import Util from "@/common/utils/util";
+import Tip from "@/common/utils/tip";
+import { mapMutations, mapActions, mapState } from "vuex";
 export default {
   name: "transferEdit",
   props: {
-    transfer: {
+    detail: {
       type: Object,
       default() {
         return {
@@ -79,31 +80,100 @@ export default {
       },
     },
   },
+  data() {
+    return {
+      AssignmentType: 1,
+      transfer: {},
+    };
+  },
+  created() {
+    this.transfer = this.detail;
+  },
   computed: {
-		...mapState({
-      submiting: state => state.statement.submiting,
-    })
+    ...mapState({
+      submiting: (state) => state.statement.submiting,
+    }),
   },
   methods: {
-     submitStatement() {
-        const transfer = this.transfer;
-        console.log(transfer)
-        if (transfer.amount === 0 || transfer.amount === '') {
-          Tip.error('金额不能为零');
-          return false;
-        }
-        if (transfer.assetId === 0) {
-          Tip.error('未选择还款账户');
-          return false;
-        } else if (transfer.targetAssetId === 0) {
-          Tip.error('未选择负债账户');
-          return false;
-        } else if (transfer.assetId === transfer.targetAssetId) {
-          Tip.error('还款账户与负债账户不能相同');
-          return false;
-        }
-        this.$emit('submitStatement', transfer);
-    }
+    // 赋值还款账户
+    redirectChoseAssetSource() {
+      this.AssignmentType = 1;
+      this.$Router.push({
+        path: "/pages/bill/chose-asset",
+        query: {
+          type: this.detail.type,
+        },
+      });
+    },
+    // 赋值负债账户
+    redirectChoseAssetTarget() {
+      this.AssignmentType = 2;
+      this.$Router.push({
+        path: "/pages/bill/chose-asset",
+        query: {
+          type: this.detail.type,
+        },
+      });
+    },
+    // 选择账户后回调
+    setAsset(asset) {
+      if (this.AssignmentType === 1) {
+        this.transfer.assetName = asset.name;
+        this.transfer.assetId = asset.id;
+      } else {
+        this.transfer.targetAssetName = asset.name;
+        this.transfer.targetAssetId = asset.id;
+      }
+    },
+    // 对调账户
+    exchangeAsset() {
+      const tmp1 = this.transfer.assetName;
+      this.transfer.assetName = this.transfer.targetAssetName;
+      this.transfer.targetAssetName = tmp1;
+
+      const tmp2 = this.transfer.assetId;
+      this.transfer.assetId = this.transfer.targetAssetId;
+      this.transfer.targetAssetId = tmp2;
+    },
+    // 时间改变
+    dateChange({ detail }) {
+      var date = new Date(detail.value);
+      this.transfer.year = Util.getCurrentYear(date);
+      this.transfer.month = Util.getCurrentMonth(date);
+      this.transfer.day = Util.getCurrentDay(date);
+    },
+    // 快速选取时间
+    quickSetDate(between) {
+      const today = new Date();
+      let date = today;
+      if (between === "-1") {
+        date = new Date(today.getTime() - 24 * 60 * 60 * 1000);
+      } else if (between === "-2") {
+        date = new Date(today.getTime() - 2 * 24 * 60 * 60 * 1000);
+      }
+      this.transfer.year = Util.getCurrentYear(date);
+      this.transfer.month = Util.getCurrentMonth(date);
+      this.transfer.day = Util.getCurrentDay(date);
+    },
+    submitStatement() {
+      const transfer = this.transfer;
+      console.log(transfer);
+      if (transfer.amount === 0 || transfer.amount === "") {
+        Tip.error("金额不能为零");
+        return false;
+      }
+      if (transfer.assetId === 0) {
+        Tip.error("未选择还款账户");
+        return false;
+      } else if (transfer.targetAssetId === 0) {
+        Tip.error("未选择负债账户");
+        return false;
+      } else if (transfer.assetId === transfer.targetAssetId) {
+        Tip.error("还款账户与负债账户不能相同");
+        return false;
+      }
+      this.$emit("submitStatement", transfer);
+    },
   },
 };
 </script>

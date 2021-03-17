@@ -2,7 +2,7 @@
  * 接口列表
  */
 export default {
-    /** 用户 */
+	/** 用户 */
 	user: {
 		login: {
 			url: 'account/login',
@@ -17,25 +17,45 @@ export default {
 			// desc: '获取账户信息',
 		},
 	},
-
-    /** 分类 */
+	/** 资产分类 */
+	asset: {
+		group: {
+			url: 'asset/groups',
+			auth: true,
+			method: 'GET',
+			// desc: '资产分类类别',
+		},
+		detail: {
+			url: 'asset/get',
+			auth: true,
+			method: 'GET',
+			// desc: '资产分类详情',
+		},
+	},
+	/** 账单分类 */
 	category: {
-		list: {
+		group: {
 			url: 'category/groups',
 			auth: true,
 			method: 'GET',
-			// desc: '分类类别',
+			// desc: '账单分类类别',
 		},
 		detail: {
 			url: 'category/get',
 			auth: true,
 			method: 'GET',
-			// desc: '分类详情',
+			// desc: '账单分类详情',
 		},
 	},
 
-    /** 账单 */
-    statement: {
+	/** 账单 */
+	statement: {
+		create: {
+			url: 'statement/create',
+			auth: true,
+			method: 'POST',
+			// desc: '创建账单',
+		},
 		list: {
 			url: 'statement/pages',
 			auth: true,

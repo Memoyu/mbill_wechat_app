@@ -97,6 +97,30 @@
 				"title": "创建账单",
 				"group": ""
 			}
+		},
+		{
+			"path": "pages/bill/chose-asset",
+			"style": {
+				"navigationBarTitleText": "选择资产类型"
+			},
+			"meta": {
+				"auth": true,
+				"async": true,
+				"title": "选择资产类型",
+				"group": ""
+			}
+		},
+		{
+			"path": "pages/bill/chose-category",
+			"style": {
+				"navigationBarTitleText": "选择账单类型"
+			},
+			"meta": {
+				"auth": true,
+				"async": true,
+				"title": "选择账单类型",
+				"group": ""
+			}
 		}
 		,
 		{

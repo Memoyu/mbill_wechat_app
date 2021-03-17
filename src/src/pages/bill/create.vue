@@ -6,7 +6,7 @@
       <mbill-bill-statement-edit
         ref="expend"
         :type="expend"
-         @submitStatement="submitStatement"
+        @submitStatement="submitStatement"
         v-if="active === 0"
       />
       <mbill-bill-statement-edit
@@ -25,12 +25,13 @@
         ref="repayment"
         @submitStatement="submitStatement"
         v-if="active === 3"
-      /> 
+      />
     </view>
   </view>
 </template>
 
 <script>
+import Tip from "@/common/utils/tip";
 export default {
   data() {
     return {
@@ -51,16 +52,30 @@ export default {
           title: "还款",
         },
       ],
-      
     };
   },
   methods: {
     submitStatement(statement) {
-      this.$store.commit('STATEMENT_SUBMIT', true)
-      console.log("提交账单信息")
-      this.$store.commit('STATEMENT_SUBMIT', false)
-    }
-  }
+      var that = this;
+      this.$store.commit("STATEMENT_SUBMIT", true);
+      // console.log("提交账单信息")
+      that
+        .$api("statement.create", statement)
+        .then((res) => {
+          if (res.code === 0) {
+            Tip.toast("添加账单成功！");
+            this.$store.dispatch("addStatement", res.result);
+            uni.navigateBack({
+              delta: 1,
+            });
+          }
+        })
+        .catch((err) => {
+          Tip.confirm("由于网络原因，无法同步账单到服务器", {}, "保存失败");
+        });
+      this.$store.commit("STATEMENT_SUBMIT", false);
+    },
+  },
 };
 </script>
 

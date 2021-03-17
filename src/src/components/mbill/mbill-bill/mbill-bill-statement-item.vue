@@ -1,5 +1,5 @@
 <template>
-	<view class="bill" @tap="editStatement('id', bill.id )">
+	<view class="bill" @tap="editStatement( bill.id )">
 		<view class="information">
 			<view class="icon">
 				<image :src="bill.categoryIconPath"></image>
@@ -28,11 +28,14 @@
 			}
 		},
 		methods: {
-			editStatement(key, id) {
-				console.log(key, id)
-				wx.navigateTo({
-					url: `/pages/bill/detail?${key}=${id}`
-				})
+			editStatement(id) {
+				// console.log(key, id)
+				this.$Router.push({
+					path: "/pages/bill/detail",
+					query: {
+					id: id,
+					},
+     			});
 			}
 		}
 	}

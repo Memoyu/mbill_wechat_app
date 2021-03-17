@@ -45,6 +45,17 @@ const actions = {
             })
         })
     },
+    // 去登陆
+    goToLogin({
+        commit
+    }) {
+        uni.showToast({title: '请先登录', icon: 'none', duration: 1500 });
+		setTimeout(function(){ 
+            uni.navigateTo({
+                url: "/pages/profile/login",
+            });
+        }, 1500);
+    },
 }
 
 const mutations = {

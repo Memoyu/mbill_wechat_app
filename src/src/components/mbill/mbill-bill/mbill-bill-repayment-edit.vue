@@ -11,11 +11,11 @@
       />
     </view>
     <view class="column transfer-type">
-      <view class="assetSource" @tap="assetSource">
+      <view class="assetSource" @tap="redirectChoseAssetSource">
         {{ repayment.assetName }}
       </view>
       <view class="iconfont icon-to transfer-icon"></view>
-      <view class="assetTarget" @tap="assetTarget">
+      <view class="assetTarget" @tap="redirectChoseAssetTarget">
         {{ repayment.targetAssetName }}
       </view>
     </view>
@@ -49,13 +49,14 @@
 </template>
 
 <script>
-import Util from '@/common/utils/util';
-import Tip from '@/common/utils/tip';
-import { mapMutations, mapActions, mapState } from 'vuex';
+import { BASE_URL } from '@/env'
+import Util from "@/common/utils/util";
+import Tip from "@/common/utils/tip";
+import { mapMutations, mapActions, mapState } from "vuex";
 export default {
   name: "repaymentEdit",
   props: {
-    repayment: {
+    detail: {
       type: Object,
       default() {
         return {
@@ -70,32 +71,95 @@ export default {
           year: Util.getCurrentYear(),
           month: Util.getCurrentMonth(),
           day: Util.getCurrentDay(),
-          time: Util.getCurrentTime(),
+          time: Util.getCurrentTime()
         };
       },
     },
   },
+  data() {
+    return {
+      AssignmentType: 1,
+      repayment: {},
+    };
+  },
+  created() {
+    this.repayment = this.detail;
+  },
   computed: {
-		...mapState({
-      submiting: state => state.statement.submiting,
-    })
+    ...mapState({
+      submiting: (state) => state.statement.submiting,
+    }),
   },
   methods: {
+     // 赋值源账户
+    redirectChoseAssetSource() {
+      this.AssignmentType = 1;
+      this.$Router.push({
+        path: "/pages/bill/chose-asset",
+        query: {
+          type: this.detail.type,
+          asset_type: "deposit",
+          hide_frequent: 1,
+        },
+      });
+    },
+    // 赋值目标账户
+    redirectChoseAssetTarget() {
+      this.AssignmentType = 2;
+      this.$Router.push({
+        path: "/pages/bill/chose-asset",
+        query: {
+          type: this.detail.type,
+          asset_type: "debt",
+          hide_frequent: 1,
+        },
+      });
+    },
+    // 选择账户后回调
+    setAsset(asset) {
+      if (this.AssignmentType === 1) {
+        this.repayment.assetName = asset.name;
+        this.repayment.assetId = asset.id;
+      } else {
+        this.repayment.targetAssetName = asset.name;
+        this.repayment.targetAssetId = asset.id;
+      }
+    },
+    // 时间改变
+    dateChange({ detail }) {
+      var date = new Date(detail.value);
+      this.repayment.year = Util.getCurrentYear(date);
+      this.repayment.month = Util.getCurrentMonth(date);
+      this.repayment.day = Util.getCurrentDay(date);
+    },
+    // 快速选取时间
+    quickSetDate(between) {
+      const today = new Date();
+      let date = today;
+      if (between === "-1") {
+        date = new Date(today.getTime() - 24 * 60 * 60 * 1000);
+      } else if (between === "-2") {
+        date = new Date(today.getTime() - 2 * 24 * 60 * 60 * 1000);
+      }
+      this.repayment.year = Util.getCurrentYear(date);
+      this.repayment.month = Util.getCurrentMonth(date);
+      this.repayment.day = Util.getCurrentDay(date);
+    },
     submitStatement() {
       const repayment = this.repayment;
-      if (repayment.amount === 0 || repayment.amount === '') {
-        Tip.error('金额不能为零');
+      if (repayment.amount === 0 || repayment.amount === "") {
+        Tip.error("金额不能为零");
         return false;
       }
       if (repayment.assetId === 0 || repayment.targetAssetId === 0) {
-        Tip.error('未选择转账账户');
+        Tip.error("未选择转账账户");
         return false;
       } else if (repayment.assetId === repayment.targetAssetId) {
-        Tip.error('不能转向同一账户');
+        Tip.error("不能转向同一账户");
         return false;
       }
-      this.$emit('submitStatement', repayment);
-    }
+      this.$emit("submitStatement", repayment);
+    },
   },
 };
 </script>

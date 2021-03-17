@@ -21,7 +21,9 @@ export default function api(url, data = {}, showToast = true) {
 	});
 
 	request.interceptor.response((response) => { /* 请求之后拦截器 */
-		if (response.data.code !== 0) { // 服务端返回的状态码不等于200，则reject()
+
+		var code = response.data.code;
+		if (code !== 0 ) { // 服务端返回的状态码不等于0，则reject()
 			if (showToast) {
 				uni.showToast({
 					title: response.data.message || '请求出错,稍后重试',
@@ -33,9 +35,11 @@ export default function api(url, data = {}, showToast = true) {
 
 		}
 
-		if (response.data.code === 401) { // 服务端返回的状态码不等于200，则reject()
+		if ( code===10000 || code===10040 || code===10050) { // 授权失败则登陆，则reject()
+			console.log(response.data)
 			uni.removeStorageSync('token');
 			store.commit('LOGIN_TIP', true)
+			store.dispatch('goToLogin');
 		}
 		// if (response.config.custom.verification) { // 演示自定义参数的作用
 		//   return response.data

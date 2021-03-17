@@ -1,20 +1,20 @@
 <template>
     <view class="category-component">
-    <view wx:if="{{ frequent.length > 0 }}">
+    <view v-if=" frequent.length > 0 ">
       <view class="header fs14">常用</view>
-      <repeat for="{{frequent}}" key="index" index="index" item="child">
-        <category :category="child" ></category>
+      <repeat v-for="(child , index) in frequent" :key="index" >
+        <mbill-core-category-item :asset="child" @choseItem="setCategory" ></mbill-core-category-item>
       </repeat>
     </view>
 
-    <view v-for="(item,index) in list" :key="index">
+    <view v-for="(item,id) in list" :key="id">
       <view class="header fs14">{{ item.name }}</view>
       <div v-for="(child,index) in item.childs" :key="index">
-        <category :category="child" ></category>
+        <mbill-core-category-item :category="child" @choseItem="setCategory" ></mbill-core-category-item>
       </div>
     </view>
 
-    <navigator url="/pages/categories/category_form?type={{ type }}">
+    <navigator url="/pages/categories/category_form">
       <view class="add-wallet">
         <text class="fs16">添加分类</text>
       </view>
@@ -26,9 +26,40 @@
 export default {
     data() {
         return {
-
+          frequent: [],
+          last: null,
+          list: [],
+          category_type: 'expend',
+          already_load: false
         }
     },
+    onLoad (options) {
+      this.category_type = options.type;
+      this.getCategory();
+    },
+    methods: {
+      getCategory() {
+        var that = this;
+        let parame = this.category_type !== null ? { type: this.category_type } : {};
+        that.$api("category.group", parame).then((res) => {
+          this.list = res.result;
+        });
+      },
+      setCategory (category) {
+        let pages = getCurrentPages();
+        let beforePage = pages[pages.length - 2];
+        // console.log(beforePage)
+        let refs = beforePage.$vm.$refs;
+        if (this.category_type === 'expend') {
+          refs.expend.setCategory(category)
+        } else {
+          refs.income.setCategory(category)
+        }
+        uni.navigateBack({
+          delta: 1
+        })
+      }
+    }
 }
 </script>
 

@@ -1,16 +1,16 @@
 <template>
- <view class="category-component">
-    <view wx:if="{{ !hide_frequent && frequent.length > 0 }}">
+  <view class="category-component">
+    <view v-if="!hide_frequent && frequent.length > 0">
       <view class="header fs14">常用</view>
-      <repeat for="{{frequent}}" key="index" index="index" item="child">
-        <asset :asset.sync="child" ></asset>
+      <repeat v-for="(child, index) in frequent" :key="index">
+        <mbill-core-asset-item :asset="child" @choseItem="setAsset"></mbill-core-asset-item>
       </repeat>
     </view>
 
-    <view v-for="(item,index) in list" :key="index">
+    <view v-for="(item, id) in list" :key="id">
       <view class="header fs14">{{ item.name }}</view>
-      <div v-for="(child,index) in item.childs" :key="index">
-        <asset :asset="child"></asset>
+      <div v-for="(child, index) in item.childs" :key="index">
+        <mbill-core-asset-item :asset="child" @choseItem="setAsset"></mbill-core-asset-item>
       </div>
     </view>
 
@@ -19,14 +19,62 @@
         <text class="fs16" bindtap="newAsset">添加资产类型</text>
       </view>
     </navigator>
-
   </view>
 </template>
 
 <script>
 export default {
   data() {
-    return {};
+    return {
+      frequent: [],
+      last: null,
+      list: [],
+      type: "expend",
+      asset_type: null,
+      hide_frequent: false,
+    };
+  },
+  onLoad(options) {
+    this.type = options.type;
+    if (typeof options.asset_type !== "undefined") {
+      this.asset_type = options.asset_type;
+    }
+    if (Number.parseInt(options.hide_frequent) === 1) {
+      this.hide_frequent = true;
+    }
+    this.getAsset();
+  },
+  methods: {
+    getAsset() {
+      var that = this;
+      let parame = this.asset_type !== null ? { type: this.asset_type } : {};
+      that.$api("asset.group", parame).then((res) => {
+        this.list = res.result;
+      });
+    },
+    setAsset(asset) {
+      let pages = getCurrentPages();
+      let beforePage = pages[pages.length - 2];
+      // console.log(beforePage)
+      let refs = beforePage.$vm.$refs;
+      switch (this.type) {
+        case "expend":
+          refs.expend.setAsset(asset);
+          break;
+        case "income":
+          refs.income.setAsset(asset);
+          break;
+        case "transfer":
+          refs.transfer.setAsset(asset);
+          break;
+        case "repayment":
+          refs.repayment.setAsset(asset);
+          break;
+      }
+      uni.navigateBack({
+        delta: 1,
+      });
+    },
   },
 };
 </script>
