@@ -22,6 +22,8 @@
 
 项目为个人记账微信小程序端实现。
 
+【基于WePY 2.x项目在分支中可见】
+
 界面参考设计：[yigger/jiezhang: 基于 wepy 开发的一款纯记账的微信小程序 ](https://github.com/yigger/jiezhang)
 
 &nbsp;
@@ -49,9 +51,9 @@
 
 ## 效果演示
 
+![mbill_wechat_app/doc at main · Memoyu/mbill_wechat_app (github.com)](https://github.com/Memoyu/mbill_wechat_app/blob/main/doc/效果图.png)
 
-
-
+&nbsp;
 
 ## TimeLine
 
