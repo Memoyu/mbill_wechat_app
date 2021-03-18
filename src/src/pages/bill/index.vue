@@ -86,7 +86,7 @@ export default {
       ],
       header: {
         backgroundUrl:
-          "http://localhost:5000/core/images/other/index_bg1_533x300.png",
+          "http://39.108.97.141:5901/core/images/other/index_bg1_533x300.png",
         positionName1: "今日支出",
         positionAmount1: "40.00",
         positionName2: "本月支出",

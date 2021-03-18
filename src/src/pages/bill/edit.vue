@@ -2,13 +2,13 @@
   <view class="container">
     <view class="comonent-list">
       <mbill-bill-statement-edit
-        :type="expend"
+        type="expend"
         :detail="statement"
         v-if="current === 'expend'"
       />
 
       <mbill-bill-statement-edit
-        :type="income"
+        type="income"
         :detail="statement"
         v-if="current === 'income'"
       />
@@ -30,7 +30,7 @@
 export default {
   data() {
     return {
-      current: "expend",
+      current: "",
       statement: {},
     };
   },

@@ -1,5 +1,5 @@
 const ENV_BASE_URL = {
-	development: 'http://localhost:5000', //开发环境
+	development: 'http://39.108.97.141:5901', //开发环境
 	production: 'http://', //生产环境
 }
 
