@@ -12,7 +12,7 @@
 
 > 知行合一
 
-[![小程序: wepy (shields.io)](https://img.shields.io/badge/小程序-wepy-blue)](https://github.com/Tencent/wepy)&ensp;[![](https://img.shields.io/badge/license-MIT-3963bc.svg)](LICENSE)
+[![小程序: uni-app](https://img.shields.io/badge/小程序-uni--app-blue)](https://github.com/dcloudio/uni-app)&ensp;[![](https://img.shields.io/badge/license-MIT-3963bc.svg)](LICENSE)
 </div>
 
 
@@ -20,9 +20,9 @@
 
 ## 项目介绍
 
-项目为个人记账小程序端实现。
+项目为个人记账微信小程序端实现。
 
-参考设计：[yigger/jiezhang: 基于 wepy 开发的一款纯记账的微信小程序 ](https://github.com/yigger/jiezhang)
+界面参考设计：[yigger/jiezhang: 基于 wepy 开发的一款纯记账的微信小程序 ](https://github.com/yigger/jiezhang)
 
 &nbsp;
 
@@ -39,9 +39,9 @@
 ## TODO
 
 - [x] 搭建基本界面
-- [ ] 实现接口调用
+- [x] 实现接口调用
 - [ ] 实现天气推送
-- [ ] 实现统计效果显示
+- [x] 实现统计效果显示
 - [ ] 优化界面设计
 - [ ] ......
 
@@ -49,7 +49,7 @@
 
 ## 效果演示
 
-![effect](https://github.com/Memoyu/mbill_app/blob/main/doc/images/effect.png)
+
 
 
 
@@ -64,6 +64,8 @@
 `2021-02-02：`莫名其妙破案，明天整理一下教程！[WePY 2.x 下使用ECharts - Memoyu - 博客园 (cnblogs.com)](https://www.cnblogs.com/memoyu/p/14360278.html)
 
 `2021-03-01：`打算转战uni-app了。wepy现在直接没人更新了，太难了，很多问题难以解决。
+
+`2021-03-18`：基本完成向uni-app迁移。接下来继续晚上功能，并且将大部分时间去完善一下blazor后台管理。
 
 &nbsp;
 
