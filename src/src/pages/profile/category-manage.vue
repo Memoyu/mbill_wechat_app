@@ -1,5 +1,5 @@
 <template>
-    
+    <text>分类管理</text>
 </template>
 
 <script>

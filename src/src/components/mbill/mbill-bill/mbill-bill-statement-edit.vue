@@ -22,8 +22,7 @@
         v-for="(item, index) in categories_labels"
         :key="index"
         @tap="setCategory(item)"
-        >{{ item.name }}</text
-      >
+      >{{ item.name }}</text>
     </view>
     <view class="column" @tap="redirectChoseAsset">
       <text>账户</text>
@@ -36,8 +35,7 @@
         v-for="(item, index) in assets_labels"
         :key="index"
         @tap="setAsset(item)"
-        >{{ item.name }}</text
-      >
+      >{{ item.name }}</text>
     </view>
     <view class="column">
       <text>日期</text>
@@ -47,9 +45,7 @@
         <text class="label" @tap="quickSetDate('0')">今天</text>
       </view>
       <picker mode="date" start="2017-01-01" @change="dateChange">
-        <text
-          >{{ statement.year }}-{{ statement.month }}-{{ statement.day }}</text
-        >
+        <text>{{ statement.year }}-{{ statement.month }}-{{ statement.day }}</text>
       </picker>
     </view>
     <view class="column location-column">
@@ -79,9 +75,8 @@
 <script>
 import Util from "@/common/utils/util.js";
 import Tip from "@/common/utils/tip";
+import Tools from "@/common/utils/tools";
 import { mapMutations, mapActions, mapState } from "vuex";
-import QQMapWX from "@/common/wechat/qqmap-wx-jssdk.js";
-import { MAP_KEY } from "@/env";
 export default {
   name: "statementEdit",
   props: {
@@ -113,9 +108,15 @@ export default {
   data() {
     return {
       statement: {},
-      assets_labels: [{ id: 1, name: '支付宝' }, { id: 2, name: '微信' }],
-      categories_labels: [{ id: 1, name: '地铁' }, { id: 2, name: '一日三餐' }],
-      switchCheck: uni.getStorageSync('getLocationSwitch') || false
+      assets_labels: [
+        { id: 1, name: "支付宝" },
+        { id: 2, name: "微信" },
+      ],
+      categories_labels: [
+        { id: 1, name: "地铁" },
+        { id: 2, name: "一日三餐" },
+      ],
+      switchCheck: uni.getStorageSync("getLocationSwitch") || false,
     };
   },
   computed: {
@@ -197,49 +198,34 @@ export default {
         this.statement.address = "";
       }
     },
-    setLocation() {
-      // 获取地址
-      this.qqmapSDK = new QQMapWX({
-        key: MAP_KEY,
-      });
-      uni.getLocation({
-        type: "gcj02", // 返回可以用于wx.openLocation的经纬度
-        success: (result) => {
-          this.qqmapSDK.reverseGeocoder({
-            location: {
-              latitude: result.latitude,
-              longitude: result.longitude,
-            }, // 坐标
-            success: (res) => {
-              const addressComponent = res.result.address_component;
-              this.statement.nation = addressComponent.nation;
-              this.statement.province = addressComponent.province;
-              this.statement.city = addressComponent.city;
-              this.statement.district = addressComponent.district;
-              this.statement.street = addressComponent.street;
-              this.statement.address = res.result.address;
-            },
-          });
-        },
+    async setLocation() {
+      await Tools.getLocation().then((res) => {
+        let addressComponent = res.regeocodeData.addressComponent;
+        this.statement.nation = addressComponent.country;
+        this.statement.province = addressComponent.province;
+        this.statement.city = addressComponent.city;
+        this.statement.district = addressComponent.district;
+        this.statement.street = addressComponent.township + addressComponent.streetNumber.street;
+        this.statement.address = res.name;
       });
     },
     submitStatement() {
       // console.log("开始提交");
       const statement = this.statement;
       // console.log(statement)
-      if (statement.amount === 0 || statement.amount === '') {
-        Tip.toast('金额不能为零')
-        return false
+      if (statement.amount === 0 || statement.amount === "") {
+        Tip.toast("金额不能为零");
+        return false;
       }
 
       if (statement.category_id === 0) {
-        Tip.toast('未选择分类')
-        return false
+        Tip.toast("未选择分类");
+        return false;
       }
 
       if (statement.asset_id === 0) {
-        Tip.toast('未选择账户')
-        return false
+        Tip.toast("未选择账户");
+        return false;
       }
       //触发submit
       this.$emit("submitStatement", statement);

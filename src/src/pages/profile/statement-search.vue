@@ -1,5 +1,5 @@
 <template>
-    
+    <text>账单检索</text>
 </template>
 
 <script>

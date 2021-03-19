@@ -47,8 +47,8 @@
     <view class="btn-box flex align-center justify-center"
       ><button class="cu-btn confirem-btn" @tap="editUserInfo">
         保存
-      </button></view
-    >
+      </button>
+    </view>
   </view>
 </template>
 

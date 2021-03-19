@@ -68,6 +68,12 @@ export default {
 			method: 'GET',
 			// desc: '账单详情',
 		},
+		total: {
+			url: 'statement/statistics/total',
+			auth: true,
+			method: 'GET',
+			// desc: '账单月各类型账单金额统计',
+		},
 	},
 
 };

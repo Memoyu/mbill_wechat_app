@@ -4,20 +4,15 @@
     <core-user-info :userInfo="userInfo"/>
     <!-- 主要功能 -->
     <view class="func-btn">
-      <view @tap="redirect('/pages/profile/asset_manage')">
-        <view>
-          <image src="~@/static/assets/icons/profile/asset_manage.png"></image>
-        </view>
-        <view>资产管理</view>
+      <view @tap="jump('/pages/profile/statement-search')">
+        <image src="~@/static/assets/icons/profile/icon_search_64.png">
+        <view>搜索</view>
       </view>
-      <view @tap="redirect('/pages/profile/advance_list')">
-        <view>
-          <image src="~@/static/assets/icons/profile/advance_list.png"></image>
-        </view>
+      <view @tap="jump('/pages/profile/advance-list')">
+        <image src="~@/static/assets/icons/profile/icon_list_64.png">
         <view>预购清单</view>
       </view>
     </view>
-
     <view class="bottom-container">
       <!-- 功能列表 -->
       <uni-list :border="false">
@@ -26,15 +21,14 @@
           :key="index"
           :show-extra-icon="true"
           showArrow
-		      :rightText="item.rightText"
+          :rightText="item.rightText"
           :extra-icon="item.extraIcon"
           :title="item.title"
-          link
+          link=""
           :to="item.path"
         />
       </uni-list>
     </view>
-
     <view class="foot_box">
       <view class="copyright y-f">
         <view class="author">Power By Memoyu</view>
@@ -44,80 +38,75 @@
 </template>
 
 <script>
-import { mapMutations, mapActions, mapState } from 'vuex';
+import { mapMutations, mapActions, mapState } from "vuex";
 export default {
   data() {
     return {
       funList: [
         {
           title: "预算管理",
-          path: "",
-		  extraIcon: {
+          path: "/pages/profile/budget-manage",
+          extraIcon: {
             color: "#757575",
             size: "22",
-            type: "shop",
-          },
+            type: "shop"
+          }
         },
         {
           title: "资产管理",
-          path: "",
+          path: "/pages/profile/asset-manage",
           extraIcon: {
             color: "#757575",
             size: "22",
-            type: "circle",
-          },
+            type: "circle"
+          }
         },
         {
           title: "分类管理",
-          path: "",
+          path: "/pages/profile/category-manage",
           extraIcon: {
             color: "#757575",
             size: "22",
-            type: "list",
-          },
+            type: "list"
+          }
         },
         {
           title: "系统设置",
-          path: "",
+          path: "/pages/profile/setting",
           extraIcon: {
             color: "#757575",
             size: "22",
-            type: "gear",
-          },
-        },
-        {
-          title: "关于mbill",
-          path: "",
-          extraIcon: {
-            color: "#757575",
-            size: "22",
-            type: "paperplane",
-          },
-		  rightText: "v1.0"
-        },
+            type: "gear"
+          }
+        }
       ],
-      already_login: true,
+      already_login: true
     };
   },
   onLoad() {},
   computed: {
-		...mapState({
-      userInfo: state => state.user.userInfo,
+    ...mapState({
+      userInfo: state => state.user.userInfo
     })
   },
   methods: {
-   
-  },
+    jump(path, parmas) {
+      this.$Router.push({
+				path: path,
+				query: parmas
+			});
+    }
+  }
 };
 </script>
 
 <style lang="scss">
 page {
   background: #f4f4f4;
-  overflow-y:hidden;
+  overflow-y: hidden;
 }
 .func-btn {
-  height: 70px;
+  height: 80px;
   border-radius: 10px;
   margin: 15px 10px 10px 10px;
   display: flex;
@@ -129,8 +118,8 @@ page {
     flex: 1;
     text-align: center;
     image {
-      width: 25px;
-      height: 25px;
+      width: 35px;
+      height: 35px;
     }
   }
 }

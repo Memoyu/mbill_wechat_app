@@ -84,28 +84,9 @@ export default {
     width: 100%;
     padding-top: 30rpx;
     .info-box {
-      padding-left: 30rpx;
+      padding-left: 50rpx;
       .head-img-wrap {
         position: relative;
-        .refresh-btn {
-          position: absolute;
-          padding: 0;
-          background: none;
-          width: 34rpx;
-          height: 34rpx;
-          border-radius: 50%;
-          background: #c9912c;
-          top: 0;
-          right: 20rpx;
-          .cuIcon-refresh {
-            color: #fff;
-            font-size: 24rpx;
-          }
-          .refresh-rotate {
-            transform: rotate(360deg);
-            transition: all 0.2s;
-          }
-        }
       }
       .head-img {
         width: 94rpx;
@@ -131,10 +112,6 @@ export default {
       line-height: 38rpx;
       padding-right: 10rpx;
       margin-left: 10rpx;
-      .cuIcon-refresh {
-        color: #fff;
-        margin: 0 10rpx;
-      }
       .tag-img {
         width: 40rpx;
         height: 40rpx;

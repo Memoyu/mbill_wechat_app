@@ -26,7 +26,7 @@ const actions = {
             uni.removeStorageSync('fromLogin')
         } else {
             //默认跳转首页S
-            router.replaceAll('/pages/bill/index')
+            router.replaceAll('/pages/index/bill')
         }
     },
     // 获取用户信息

@@ -1,42 +1,39 @@
 <template>
   <view class="container">
     <view class="wrapper">
+      <!-- logo -->
+      <core-magic-text text="mbill" class />
       <!-- 表单 -->
       <view class="login-box y-f">
-        <view class="input-item x-c"
-          ><input
+        <view class="input-item x-c">
+          <input
             class="inp"
             v-model="username"
-            type="number"
+            type="text"
             placeholder="请输入账号"
             placeholder-class="pl"
-        /></view>
-        <view class="input-item x-c"
-          ><input
+          />
+        </view>
+        <view class="input-item x-c">
+          <input
             class="inp"
-            password
+            :password="!isShowPassword"
             v-model="password"
             type="text"
             placeholder="请输入密码"
             placeholder-class="pl"
-        /></view>
+          />
+          <view @tap="togglePassword" :class="['iconfont', isShowPassword ? 'icon-eye-open':'icon-eye-close', 'eye-image']"></view>
+        </view>
       </view>
       <!-- 登录按钮 -->
       <view class="x-c y-f">
         <button class="cu-btn login-btn mb30" @tap="toLogin">登录</button>
         <view class="x-bc tip-box">
-          <button
-            class="cu-btn tip-btn"
-            hidden="true"
-            @tap="jump('/pages/public/register')"
-          >
-            立即注册
-          </button>
-          <view class="" v-show="loginWay === 1"
-            ><button class="cu-btn tip-btn" @tap="jump('/pages/public/forgot')">
-              忘记密码
-            </button></view
-          >
+          <button class="cu-btn tip-btn" hidden="true" @tap="jump('/pages/public/register')">立即注册</button>
+          <view class v-show="loginWay === 1">
+            <button class="cu-btn tip-btn" @tap="jump('/pages/public/forgot')">忘记密码</button>
+          </view>
         </view>
       </view>
     </view>
@@ -44,16 +41,24 @@
 </template>
 
 <script>
-import { mapMutations, mapActions, mapState } from 'vuex';
+import { mapMutations, mapActions, mapState } from "vuex";
+import coreMagicText from "../../components/core/core-magic-text.vue";
 export default {
+  components: { coreMagicText },
   data() {
     return {
-		username: 'administrator',
-		password: '123456',
-	};
+      isShowPassword: false,
+      username: "administrator",
+      password: "123456",
+    };
   },
   methods: {
-	  ...mapActions(['getUserInfo', 'setTokenAndBack']),
+    ...mapActions(["getUserInfo", "setTokenAndBack"]),
+    //显示密码
+    togglePassword() {
+      this.isShowPassword = !this.isShowPassword;
+    },
+    //登陆
     toLogin() {
       var that = this;
       that
@@ -77,12 +82,6 @@ export default {
   width: 100vw;
   height: 100vh;
   // overflow: hidden;
-  background: linear-gradient(
-    180deg,
-    $darkPrimaryColor 0%,
-    $primaryColor 25%,
-    rgba(255, 255, 255, 1) 98%
-  );
 
   // logo
   .logo {
@@ -99,14 +98,15 @@ export default {
 .wrapper {
   position: absolute;
   z-index: 90;
+  padding-top: 30px;
   padding-bottom: 40upx;
-  padding-top: 215px;
   width: 100vw;
   height: 100vh;
   top: 0;
 
   // 输入
   .login-box {
+    padding-top: 80px;
     .input-item {
       height: 108rpx;
       border-bottom: 1rpx solid rgba($darkPrimaryColor, 0.3);
@@ -119,13 +119,16 @@ export default {
       }
 
       .pl {
-        color: white;
+        color: $secondaryText;
       }
 
       .code-btn {
         background: none;
         font-size: 28rpx;
         color: #845708;
+      }
+      .eye-image {
+       font-size: 23px;
       }
     }
   }

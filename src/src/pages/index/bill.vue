@@ -13,10 +13,10 @@
           </view>
         </view>
         <view class="fs14"> {{ header.positionName1 }}</view>
-        <view class="fs21 today-expend">{{ header.positionAmount1 }}</view>
+        <view class="fs21 today-expend">{{ statementTotal.dayExpend }}</view>
         <view class="overflow-hide">
           <view class="pull-left fs14"
-            >{{ header.positionName2 }} {{ header.positionAmount2 }}</view
+            >{{ header.positionName2 }} {{ statementTotal.monthExpend }}</view
           >
           <view class="pull-right fs14"
             >{{ header.positionName3 }} {{ header.positionAmount3 }}</view
@@ -38,18 +38,18 @@
         <mbill-bill-statement-item :bill="item"></mbill-bill-statement-item>
       </view>
       <core-empty v-if="statements.length == 0" :title="emptyTitle" />
-      <uni-load-more
-        v-else-if="showLoadMore"
-        :status="status"
-        :content-text="contentText"
-      ></uni-load-more>
+      <uni-load-more v-else-if="showLoadMore" :status="status" :content-text="contentText"></uni-load-more>
     </view>
   </view>
 </template>
 
 <script>
+import { BASE_URL } from '@/env'
 import Util from "@/common/utils/util";
 import { mapMutations, mapActions, mapState } from 'vuex';
+import Tools from "@/common/utils/tools";
+import Session from "@/common/utils/session";
+
 export default {
   data() {
     return {
@@ -84,24 +84,20 @@ export default {
         // 	amount: 300.89
         // }
       ],
+      statementTotal: {
+        monthExpend: 0.00,
+        dayExpend: 0.00,
+      },    
       header: {
         backgroundUrl:
-          "http://39.108.97.141:5901/core/images/other/index_bg1_533x300.png",
+          BASE_URL + "/core/images/other/index_bg1_533x300.png",
         positionName1: "今日支出",
-        positionAmount1: "40.00",
         positionName2: "本月支出",
-        positionAmount2: "200.45",
         positionName3: "剩余预算",
-        positionAmount3: "200.00",
-        positionName4: "广州",
+        positionAmount3: "0.00",
+        positionName4: "未知",
         positionWeather: "icon-weather-sun",
-        positionCelsius: "27℃/16℃",
-      },
-      budgetHeader: {
-        budget: "0.00",
-        month_expend: "0.00",
-        percentage: "0",
-        color: "#FF2929",
+        positionCelsius: "27℃",
       },
       showLoadMore: false,
       status: 'more',
@@ -112,7 +108,9 @@ export default {
       },
       total: 0,
       page: {
-        Date: Util.getCurrentDate(),
+        Year: Util.getCurrentYear(),
+        Month: Util.getCurrentMonth(),
+        Day: Util.getCurrentDay(),
         Size: 10,
         Page: 0,
       },
@@ -120,18 +118,17 @@ export default {
   },
   computed: {
 		...mapState({
-      statements: state => state.statement.statements,
+      statements: state => state.statement.statements
     })
   },
-  onUnload() {
-    this.showLoadMore = false;
-  },
-  onLoad() {
-    this.getStatementList();
+  onLoad() {},
+  onShow() {
+    this.getStatementList(true);
+    this.getStatementTotal();
+    this.getWeatherInfo();
   },
   onPullDownRefresh() {},
   onReachBottom() {
-
     this.status = "more";
     this.showLoadMore = true;
     var totalPage = this.total / this.page.Size;
@@ -140,24 +137,55 @@ export default {
 				this.status = "moMore"
 				return;
 		}
-
     this.page.Page += 1;
+    this.status = 'loading';
     this.getStatementList();
   },
   methods: {
-    ...mapActions(['addStatements']),
-    getStatementList() {
-      this.status = 'loading';
+    ...mapActions(['addStatements','getPagesAsync', 'getTotalAsync']),
+    /**
+     * 获取分页账单数据
+     * isCover：是否清除账单数据（重新加载）
+     */
+   async getStatementList(isCover = false) {
       let that = this;
-      that
-        .$api("statement.list", this.page)
-        .then((res) => {
-          if (res.code === 0) {
-            that.statementList = [...that.statementList, ...res.result.items];
-            that.addStatements(res.result.items)
-            that.total = res.result.total;
-          }
+      await that.getPagesAsync(this.page).then(res=>{
+        if(isCover){
+          uni.pageScrollTo({scrollTop:0, duration: 0})
+          that.$store.commit('COVER_STATEMENTS', res.items);
+        }else{
+           that.$store.commit('ADD_STATEMENTS', res.items);
+        }
+        that.total = res.total;
+      });
+      
+    },
+    // 获取当各类账单总计
+    async getStatementTotal() {
+      let that = this;
+      let res = await that.getTotalAsync({Year: this.page.Year, Month: this.page.Month, Day: this.page.Day});
+      that.statementTotal = res;
+    },
+    async getWeatherInfo() {
+      let that = this;
+      let weatherCache = Session.cache("bill:index:weather");
+      if(weatherCache == null)
+      {
+        await Tools.getWeather().then((res) => {
+          console.log(res)
+          var data = res.liveData;
+          that.setWeather(data);
+          Session.cache("bill:index:weather", JSON.stringify(data) , 60 * 60)//一小时过期
         });
+      }else{
+        that.setWeather(JSON.parse(weatherCache));
+      }
+    },
+    setWeather(data) {
+      console.log(data)
+      this.header.positionName4 = data.province + '-' + data.city //"广州",
+      this.header.positionWeather =  Tools.getWeatherIcon(data.weather),//"多云"
+      this.header.positionCelsius = data.temperature + '℃'  //"27℃,
     },
     handleAddStatement() {
       uni.navigateTo({
@@ -179,7 +207,6 @@ export default {
 }
 
 .header {
-  position: -webkit-sticky;
   position: sticky;
   top: 0;
   z-index: 998;
@@ -272,6 +299,4 @@ export default {
   }
 }
 
-.bill-container {
-}
 </style>

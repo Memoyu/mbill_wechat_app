@@ -1,5 +1,5 @@
 <template>
-    
+    <text>资产管理</text>
 </template>
 
 <script>

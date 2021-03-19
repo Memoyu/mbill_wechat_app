@@ -11,7 +11,8 @@
 	},
 	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
 		{
-			"path": "pages/bill/index",
+			"path": "pages/index/bill",
+			"name": "bill",
 			"style": {
 				"navigationBarTitleText": "账单"
 			},
@@ -23,9 +24,11 @@
 			}
 		},
 		{
-			"path": "pages/detail/index",
+			"path": "pages/index/detail",
+			"name": "detail",
 			"style": {
-				"navigationBarTitleText": "详情"
+				"navigationBarTitleText": "明细",
+				"enablePullDownRefresh": true // 开启下拉刷新
 			},
 			"meta": {
 				"auth": true,
@@ -35,7 +38,8 @@
 			}
 		},
 		{
-			"path": "pages/statistics/index",
+			"path": "pages/index/statistics",
+			"name": "statistics",
 			"style": {
 				"navigationBarTitleText": "统计"
 			},
@@ -47,7 +51,8 @@
 			}
 		},
 		{
-			"path": "pages/profile/index",
+			"path": "pages/index/profile",
+			"name": "profile",
 			"style": {
 				"navigationBarTitleText": "我的"
 			},
@@ -57,95 +62,185 @@
 				"title": "我的",
 				"group": ""
 			}
-		}
-		,
-		{
-			"path": "pages/profile/user-info",
-			"style": {
-				"navigationBarTitleText": "用户信息"
-			},
-			"meta": {
-				"auth": true,
-				"async": true,
-				"title": "用户信息",
-				"group": ""
-			}
-		}
-		,
-		{
-			"path": "pages/profile/login",
-			"style": {
-				"navigationBarTitleText": "登陆"
-			},
-			"meta": {
-				"auth": false,
-				"async": true,
-				"title": "登陆",
-				"group": ""
-			}
-		}
-
-		,
-		{
-			"path": "pages/bill/create",
-			"style": {
-				"navigationBarTitleText": "创建账单"
-			},
-			"meta": {
-				"auth": true,
-				"async": true,
-				"title": "创建账单",
-				"group": ""
-			}
+		}	
+	],
+	"subPackages": [
+		{//bill分包
+			"root": "pages/bill",
+			"pages": [
+				{
+					"path": "chose-asset",
+					"style": {
+						"navigationBarTitleText": "选择资产类型"
+					},
+					"meta": {
+						"auth": true,
+						"async": true,
+						"title": "选择资产类型"
+					}
+				},
+				{
+					"path": "chose-category",
+					"style": {
+						"navigationBarTitleText": "选择账单类型"
+					},
+					"meta": {
+						"auth": true,
+						"async": true,
+						"title": "选择账单类型"
+					}
+				},
+				{
+					"path": "create",
+					"style": {
+						"navigationBarTitleText": "创建账单"
+					},
+					"meta": {
+						"auth": true,
+						"async": true,
+						"title": "创建账单",
+						"group": ""
+					}
+				},
+				{
+					"path": "detail",
+					"style": {
+						"navigationBarTitleText": "账单详情"
+					},
+					"meta": {
+						"auth": true,
+						"async": true,
+						"title": "账单详情"
+					}
+				},
+				{
+					"path": "edit",
+					"style": {
+						"navigationBarTitleText": "账单编辑"
+					},
+					"meta": {
+						"auth": true,
+						"async": true,
+						"title": "账单编辑"
+					}
+				}
+			]
 		},
-		{
-			"path": "pages/bill/chose-asset",
-			"style": {
-				"navigationBarTitleText": "选择资产类型"
-			},
-			"meta": {
-				"auth": true,
-				"async": true,
-				"title": "选择资产类型",
-				"group": ""
-			}
+		{//detail分包
+			"root": "pages/detail",
+			"pages": [
+				
+			]
 		},
-		{
-			"path": "pages/bill/chose-category",
-			"style": {
-				"navigationBarTitleText": "选择账单类型"
-			},
-			"meta": {
-				"auth": true,
-				"async": true,
-				"title": "选择账单类型",
-				"group": ""
-			}
-		}
-		,
-		{
-			"path": "pages/bill/detail",
-			"style": {
-				"navigationBarTitleText": "账单详情"
-			},
-			"meta": {
-				"auth": true,
-				"async": true,
-				"title": "账单详情",
-				"group": ""
-			}
+		{//statistics分包
+			"root": "pages/statistics",
+			"pages": [
+				
+			]
 		},
-		{
-			"path": "pages/bill/edit",
-			"style": {
-				"navigationBarTitleText": "账单编辑"
-			},
-			"meta": {
-				"auth": true,
-				"async": true,
-				"title": "账单编辑",
-				"group": ""
-			}
+		{//profile分包
+			"root": "pages/profile",
+			"pages": [
+				{
+					"path": "about",
+					"style": {
+						"navigationBarTitleText": "关于mbill"
+					},
+					"meta": {
+						"auth": false,
+						"async": true,
+						"title": "关于mbill"
+					}
+				},
+				{
+					"path": "advance-list",
+					"style": {
+						"navigationBarTitleText": "预购清单"
+					},
+					"meta": {
+						"auth": true,
+						"async": true,
+						"title": "预购清单"
+					}
+				},
+				{
+					"path": "asset-manage",
+					"style": {
+						"navigationBarTitleText": "资产管理"
+					},
+					"meta": {
+						"auth": true,
+						"async": true,
+						"title": "资产管理"
+					}
+				},
+				{
+					"path": "budget-manage",
+					"style": {
+						"navigationBarTitleText": "预算管理"
+					},
+					"meta": {
+						"auth": true,
+						"async": true,
+						"title": "预算管理"
+					}
+				},
+				{
+					"path": "category-manage",
+					"style": {
+						"navigationBarTitleText": "分类管理"
+					},
+					"meta": {
+						"auth": true,
+						"async": true,
+						"title": "分类管理"
+					}
+				},
+				{
+					"path": "login",
+					"style": {
+						"navigationBarTitleText": "登陆"
+					},
+					"meta": {
+						"auth": false,
+						"async": true,
+						"title": "登陆"
+					}
+				},
+				{
+					"path": "setting",
+					"style": {
+						"navigationBarTitleText": "系统设置"
+					},
+					"meta": {
+						"auth": false,
+						"async": true,
+						"title": "系统设置"
+					}
+				},
+				{
+					"path": "statement-search",
+					"style": {
+						"navigationBarTitleText": "账单检索"
+					},
+					"meta": {
+						"auth": false,
+						"async": true,
+						"title": "账单检索"
+					}
+				},
+				{
+					"path": "user-info",
+					"style": {
+						"navigationBarTitleText": "用户信息"
+					},
+					"meta": {
+						"auth": true,
+						"async": true,
+						"title": "用户信息"
+					}
+				}
+			]
 		}
 	],
 	"globalStyle": {
@@ -157,35 +252,35 @@
 			"ec-canvas": "/static/plugin/echart/ec-canvas"
 		}
 	},
-	"tabBar" : {
-	  "backgroundColor": "#fff",
-      "color": "#000000",
-      "selectedColor": "#be6868",
-      "list": [
-        {
-          "pagePath": "pages/bill/index",
-          "iconPath": "static/assets/icons/tabbar/bill.png",
-          "selectedIconPath": "static/assets/icons/tabbar/bill_select.png",
-          "text": "记账"
-        },
-        {
-          "pagePath": "pages/detail/index",
-          "iconPath": "static/assets/icons/tabbar/detail.png",
-          "selectedIconPath": "static/assets/icons/tabbar/detail_select.png",
-          "text": "明细"
-        },
-        {
-          "pagePath": "pages/statistics/index",
-          "iconPath": "static/assets/icons/tabbar/statistics.png",
-          "selectedIconPath": "static/assets/icons/tabbar/statistics_select.png",
-          "text": "统计"
-        },
-        {
-          "pagePath": "pages/profile/index",
-          "iconPath": "static/assets/icons/tabbar/profile.png",
-          "selectedIconPath": "static/assets/icons/tabbar/profile_select.png",
-          "text": "我的"
-        }
-      ]
+	"tabBar": {
+		"backgroundColor": "#fff",
+		"color": "#000000",
+		"selectedColor": "#be6868",
+		"list": [
+			{
+				"pagePath": "pages/index/bill",
+				"iconPath": "static/assets/icons/tabbar/bill.png",
+				"selectedIconPath": "static/assets/icons/tabbar/bill_select.png",
+				"text": "记账"
+			},
+			{
+				"pagePath": "pages/index/detail",
+				"iconPath": "static/assets/icons/tabbar/detail.png",
+				"selectedIconPath": "static/assets/icons/tabbar/detail_select.png",
+				"text": "明细"
+			},
+			{
+				"pagePath": "pages/index/statistics",
+				"iconPath": "static/assets/icons/tabbar/statistics.png",
+				"selectedIconPath": "static/assets/icons/tabbar/statistics_select.png",
+				"text": "统计"
+			},
+			{
+				"pagePath": "pages/index/profile",
+				"iconPath": "static/assets/icons/tabbar/profile.png",
+				"selectedIconPath": "static/assets/icons/tabbar/profile_select.png",
+				"text": "我的"
+			}
+		]
 	}
 }

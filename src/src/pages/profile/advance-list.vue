@@ -1,5 +1,5 @@
 <template>
-    
+    <text>预购清单</text>
 </template>
 
 <script>

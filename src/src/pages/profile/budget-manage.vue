@@ -1,5 +1,5 @@
 <template>
-    
+    <text>预算管理</text>
 </template>
 
 <script>
