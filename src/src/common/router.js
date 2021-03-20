@@ -20,7 +20,7 @@ const router = createRouter({
 
 //全局路由前置守卫
 router.beforeEach((to, from, next) => {
-	console.log("全局路由前置守卫")
+	// console.log("全局路由前置守卫")
 	// 有两个个判断条件,一个是token,还有一个路由元信息
 	let token = uni.getStorageSync('token');
 	let existToken = Boolean(token);

@@ -23,7 +23,7 @@ module.exports = {
 	 */
 	cache: function (key, value, seconds) {
 		var timestamp = Date.parse(new Date()) / 1000
-		console.log(timestamp + "===" + key)
+		//console.log(timestamp + "===" + key)
 		if (key && value === null || value === undefined) {
 			//删除缓存
 			//获取缓存

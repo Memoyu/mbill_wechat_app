@@ -172,7 +172,7 @@ export default {
       if(weatherCache == null)
       {
         await Tools.getWeather().then((res) => {
-          console.log(res)
+          // console.log(res)
           var data = res.liveData;
           that.setWeather(data);
           Session.cache("bill:index:weather", JSON.stringify(data) , 60 * 60)//一小时过期
@@ -182,7 +182,7 @@ export default {
       }
     },
     setWeather(data) {
-      console.log(data)
+      // console.log(data)
       this.header.positionName4 = data.province + '-' + data.city //"广州",
       this.header.positionWeather =  Tools.getWeatherIcon(data.weather),//"多云"
       this.header.positionCelsius = data.temperature + '℃'  //"27℃,

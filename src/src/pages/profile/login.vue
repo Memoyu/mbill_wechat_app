@@ -48,8 +48,8 @@ export default {
   data() {
     return {
       isShowPassword: false,
-      username: "administrator",
-      password: "123456",
+      username: "",
+      password: "",
     };
   },
   methods: {
