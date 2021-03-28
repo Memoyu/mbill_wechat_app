@@ -2,31 +2,30 @@
   <view class="container">
     <view class="wrapper">
       <!-- logo -->
-      <core-magic-text text="mbill" class=""/>
+      <core-magic-text text="mbill"/>
       <!-- 表单 -->
-      <view class="login-box y-f">
-        <view class="input-item x-c">
-          <input
-            class="inp"
-            v-model="username"
-            type="text"
-            placeholder="请输入用户名"
-            placeholder-class="pl"
-          >
+      <view class="input-content">
+        <view class="input-item">
+          <text class="tit">用户名</text>
+          <input type="text" name="username" v-model="username" placeholder="请输入用户名" maxlength="11">
         </view>
-        <view class="input-item x-c">
-          <input
-            class="inp"
-            :password="!isShowPassword"
-            v-model="password"
-            type="text"
-            placeholder="请输入密码"
-            placeholder-class="pl"
-          >
-          <view
-            @tap="togglePassword"
-            :class="['iconfont', isShowPassword ? 'icon-eye-open':'icon-eye-close', 'eye-image']"
-          ></view>
+        <view class="input-item">
+          <text class="tit">密码</text>
+          <view class="x-ac" style="width: 100%">
+            <input
+              name="password"
+              type="text"
+              :password="!isShowPassword"
+              v-model="password"
+              placeholder="请输入密码"
+              maxlength="20"
+            >
+            <view
+              @tap="togglePassword"
+              class="x-end"
+              :class="['iconfont', isShowPassword ? 'icon-eye-open':'icon-eye-close', 'eye-image']"
+            />
+          </view>
         </view>
       </view>
       <!-- 登录按钮 -->
@@ -93,59 +92,49 @@ export default {
 </script>
 
 <style lang="scss">
+page {
+  overflow-y: hidden;
+}
 .container {
   position: relative;
-  width: 100vw;
-  height: 100vh;
-  // overflow: hidden;
-
-  // logo
-  .logo {
-    width: 410rpx;
-    height: 120rpx;
-  }
-
-  .logo-bg {
-    width: 640rpx;
-    height: 300rpx;
-  }
 }
 
 .wrapper {
   position: absolute;
   z-index: 90;
-  padding-top: 30px;
-  padding-bottom: 40upx;
-  width: 100vw;
-  height: 100vh;
-  top: 0;
+  .input-content {
+    padding: 0 60upx;
+  }
+  .input-item {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 0 30upx;
+    background: $borderColor;
+    height: 120upx;
+    border-radius: 4px;
+    margin-bottom: 50upx;
 
-  // 输入
-  .login-box {
-    padding-top: 80px;
-    .input-item {
-      height: 108rpx;
-      border-bottom: 1rpx solid rgba($darkPrimaryColor, 0.3);
-      width: 608rpx;
+    &:last-child {
+      margin-bottom: 0;
+    }
 
-      .inp {
-        flex: 1;
-        height: 100%;
-        font-size: 28rpx;
-      }
+    .tit {
+      height: 50upx;
+      line-height: 56upx;
+      font-size: 28rpx;
+      color: $secondaryText;
+    }
 
-      .pl {
-        color: $secondaryText;
-      }
-
-      .code-btn {
-        background: none;
-        font-size: 28rpx;
-        color: #845708;
-      }
-      .eye-image {
-        font-size: 23px;
-      }
+    input {
+      height: 60upx;
+      font-size: 28rpx;
+      color: $secondaryText;
+      width: 100%;
+    }
+    .eye-image {
+      font-size: 23px;
     }
   }
 

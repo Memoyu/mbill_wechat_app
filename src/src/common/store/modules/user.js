@@ -15,11 +15,11 @@ const state = {
 
 const actions = {
     //设置token并返回上次页面
-    setTokenAndBack({
+    async setTokenAndBack({
         commit
     }, token) {
         uni.setStorageSync('token', token);
-        store.dispatch('getUserInfo');
+        await store.dispatch('getUserInfo');
         let fromLogin = uni.getStorageSync('fromLogin');//获取缓存的登录前的路由
         if (fromLogin) {
             tools.routerTo(fromLogin.path, fromLogin.query, true);

@@ -1,5 +1,12 @@
 <template>
-    <view class="magic">{{text}}</view>
+    <view class="container">
+        <text class="iconfont icon-left back-btn" @tap="jump"></text>
+        <view class="right-top-sign"></view>
+        <view class="wrapper">
+            <view class="left-top-sign">MBILL</view>
+            <view class="welcome">LOGIN</view>
+        </view>
+    </view>
 </template>
 
 <script>
@@ -8,50 +15,82 @@ export default {
   props: {
     text: {
       type: String,
-      default: "",
-    },
+      default: ""
+    }
   },
+  methods: {
+    jump() {
+        this.$Router.back();
+    }
+  }
 };
 </script>
 
 <style lang="scss">
-.magic {
+.container {
+  padding-top: 115px;
+  position: relative;
+  width: 100vw;
+  overflow: hidden;
+  background: #fff;
+  .wrapper {
     position: relative;
-    margin: auto;
-    width: 120px;
-    line-height: 100px;
-    text-align: center;
-    font-size: 24px;
-    font-weight: bold;
-    color: $primaryColor;
+    z-index: 90;
+    background: #fff;
+    padding-bottom: 40upx;
+  }
+  .back-btn {
+    position: absolute;
+    left: 40upx;
+    z-index: 9999;
+    padding-top: var(--status-bar-height);
+    top: 40upx;
+    font-size: 40upx;
+    color: black;
+  }
+  .right-top-sign {
+    position: absolute;
+    top: 80upx;
+    right: -30upx;
+    z-index: 95;
 
-    &::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        border: 2px solid $primaryColor;
-        transition: all .5s;
-        animation: clippath 3s infinite linear;
+    &:before,
+    &:after {
+      display: block;
+      content: "";
+      width: 400upx;
+      height: 80upx;
+      background: #cab1b1;
     }
-}
 
-@keyframes clippath {
-    0%,
-    100% {
-        clip-path: inset(0 0 95% 0);
+    &:before {
+      transform: rotate(50deg);
+      border-radius: 0 50px 0 0;
     }
-    
-    25% {
-        clip-path: inset(0 95% 0 0);
+
+    &:after {
+      position: absolute;
+      right: -198upx;
+      top: 0;
+      transform: rotate(-50deg);
+      border-radius: 50px 0 0 0;
+      /* background: pink; */
     }
-    50% {
-        clip-path: inset(95% 0 0 0);
-    }
-    75% {
-        clip-path: inset(0 0 0 95%);
-    }
+  }
+  .left-top-sign {
+    font-size: 120upx;
+    color: $divideText;
+    position: relative;
+    left: -16upx;
+  }
+
+  .welcome {
+    position: relative;
+    left: 50upx;
+    top: -55upx;
+    font-size: 46upx;
+    color: #555;
+    text-shadow: 1px 0px 1px rgba(0, 0, 0, 0.3);
+  }
 }
 </style>
