@@ -11,6 +11,7 @@ export default function api(url, data = {}, showToast = true) {
 			if (!token) {
 				store.commit('LOGIN_TIP', true)
 				store.commit('OUT_LOGIN');
+				
 				throw ('暂未登录,已阻止此次API请求~');
 			}
 		}
@@ -36,10 +37,10 @@ export default function api(url, data = {}, showToast = true) {
 		}
 
 		if ( code===10000 || code===10040 || code===10050) { // 授权失败则登陆，则reject()
-			console.log(response.data)
+			// console.log(response.data)
 			uni.removeStorageSync('token');
 			store.commit('LOGIN_TIP', true)
-			store.dispatch('goToLogin');
+			// store.dispatch('goToLogin');//******不应该跳转登陆界面，如果两个请求同时发起，这会跳转多次！！！*******
 		}
 		// if (response.config.custom.verification) { // 演示自定义参数的作用
 		//   return response.data

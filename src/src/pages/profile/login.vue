@@ -2,7 +2,7 @@
   <view class="container">
     <view class="wrapper">
       <!-- logo -->
-      <core-magic-text text="mbill" class />
+      <core-magic-text text="mbill" class=""/>
       <!-- 表单 -->
       <view class="login-box y-f">
         <view class="input-item x-c">
@@ -10,9 +10,9 @@
             class="inp"
             v-model="username"
             type="text"
-            placeholder="请输入账号"
+            placeholder="请输入用户名"
             placeholder-class="pl"
-          />
+          >
         </view>
         <view class="input-item x-c">
           <input
@@ -22,17 +22,20 @@
             type="text"
             placeholder="请输入密码"
             placeholder-class="pl"
-          />
-          <view @tap="togglePassword" :class="['iconfont', isShowPassword ? 'icon-eye-open':'icon-eye-close', 'eye-image']"></view>
+          >
+          <view
+            @tap="togglePassword"
+            :class="['iconfont', isShowPassword ? 'icon-eye-open':'icon-eye-close', 'eye-image']"
+          ></view>
         </view>
       </view>
       <!-- 登录按钮 -->
       <view class="x-c y-f">
         <button class="cu-btn login-btn mb30" @tap="toLogin">登录</button>
         <view class="x-bc tip-box">
-          <button class="cu-btn tip-btn" hidden="true" @tap="jump('/pages/public/register')">立即注册</button>
-          <view class v-show="loginWay === 1">
-            <button class="cu-btn tip-btn" @tap="jump('/pages/public/forgot')">忘记密码</button>
+          <button class="cu-btn tip-btn" @tap="jump('/pages/profile/register')">立即注册</button>
+          <view>
+            <button class="cu-btn tip-btn" @tap="jump('/pages/profile/forgot')">忘记密码</button>
           </view>
         </view>
       </view>
@@ -43,13 +46,15 @@
 <script>
 import { mapMutations, mapActions, mapState } from "vuex";
 import coreMagicText from "../../components/core/core-magic-text.vue";
+import Tip from "@/common/utils/tip";
+
 export default {
   components: { coreMagicText },
   data() {
     return {
       isShowPassword: false,
       username: "",
-      password: "",
+      password: ""
     };
   },
   methods: {
@@ -61,18 +66,29 @@ export default {
     //登陆
     toLogin() {
       var that = this;
+      if (that.username === "" || that.username === null) {
+        Tip.toast("用户名不能为空！");
+        return;
+      }
+      if (that.password === "" || that.password === null) {
+        Tip.toast("密码不能为空！");
+        return;
+      }
       that
         .$api("user.login", {
           username: that.username,
-          password: that.password,
+          password: that.password
         })
-        .then((res) => {
+        .then(res => {
           if (res.code === 0) {
             that.setTokenAndBack(res.result.accessToken);
           }
         });
     },
-  },
+    jump(path) {
+      this.$Router.push({ path: path });
+    }
+  }
 };
 </script>
 
@@ -128,7 +144,7 @@ export default {
         color: #845708;
       }
       .eye-image {
-       font-size: 23px;
+        font-size: 23px;
       }
     }
   }

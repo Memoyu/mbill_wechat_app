@@ -1,16 +1,16 @@
 import api from '@/common/request/index'
 import store from '@/common/store'
-import router from '@/common/router.js'
+import { router } from '@/common/router'
 import tools from '@/common/utils/tools'
 import {
-	USER_INFO,
-	LOGIN_TIP,
+    USER_INFO,
+    LOGIN_TIP,
     OUT_LOGIN
 } from '../types.js'
 
 const state = {
     userInfo: uni.getStorageSync('userInfo') ? uni.getStorageSync('userInfo') : {},
-    loginTip: false,
+    showLoginTip: false,
 }
 
 const actions = {
@@ -49,32 +49,34 @@ const actions = {
     goToLogin({
         commit
     }) {
-        uni.showToast({title: '请先登录', icon: 'none', duration: 1500 });
-		setTimeout(function(){ 
-            uni.navigateTo({
-                url: "/pages/profile/login",
-            });
-        }, 1500);
+        uni.showToast({ title: '请先登录', icon: 'none', duration: 1500 });
+        //setTimeout(function(){ 
+        console.log(router)
+        router.push({
+            path: "/pages/profile/login"
+        });
+        //}, 1500);
     },
 }
 
 const mutations = {
     [USER_INFO](state, data) {
-		state.userInfo = data
-	},
-	[LOGIN_TIP](state, data) {
-		state.showLoginTip = data
-	},
-	[OUT_LOGIN](state, data) {
-		uni.removeStorageSync('token');
-		uni.removeStorageSync('userInfo');
-		store.commit('USER_INFO', {});
-	},
+        state.userInfo = data
+    },
+    [LOGIN_TIP](state, data) {
+        state.showLoginTip = data
+    },
+    [OUT_LOGIN](state, data) {
+        uni.removeStorageSync('token');
+        uni.removeStorageSync('userInfo');
+        store.commit('USER_INFO', {});
+        store.commit('LOGIN_TIP', true);
+    },
 }
 
 
 export default {
-	state,
-	mutations,
-	actions
+    state,
+    mutations,
+    actions
 }

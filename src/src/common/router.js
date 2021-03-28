@@ -1,5 +1,5 @@
-import Vue from 'vue'
-import {createRouter} from 'uni-simple-router'
+
+import {RouterMount, createRouter} from 'uni-simple-router'
 import store from '@/common/store'
 
 //初始化
@@ -12,26 +12,36 @@ const router = createRouter({
 			animationDuration: 300
 		}
 	},
-	encodeURI: false,
+	//encodeURI: false,
 	platform: process.env.VUE_APP_PLATFORM,
 	detectBeforeLock: ()=>{ router.$lockStatus=false; },
-	routes: ROUTES //路由表
+	routes: [...ROUTES] //路由表
 });
 
 //全局路由前置守卫
 router.beforeEach((to, from, next) => {
-	// console.log("全局路由前置守卫")
+	console.log("全局路由前置守卫")
 	// 有两个个判断条件,一个是token,还有一个路由元信息
 	let token = uni.getStorageSync('token');
 	let existToken = Boolean(token);
 	// 权限控制登录
 	if (to.meta && to.meta.auth && !existToken) {
 		store.commit('LOGIN_TIP', true)
-		store.dispatch('goToLogin');
+		// store.dispatch('goToLogin');
+		next()
 	} else {	
 		next()
 	}
 
 })
 
-export default router;
+// 全局路由后置守卫
+router.afterEach((to, from) => {
+    console.log('跳转结束')
+})
+
+
+export {
+	router,
+	RouterMount
+}

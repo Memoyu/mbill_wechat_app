@@ -1,5 +1,5 @@
 
-import router from '@/common/router'
+import {router} from '@/common/router'
 import QQMapWX from "@/common/wechat/qqmap-wx-jssdk.js";
 import { MAP_KEY } from "@/env";
 import { AMAP_KEY } from "@/env";

@@ -1,36 +1,38 @@
 <template>
   <view class="container">
-    <view class="wallet-header">
-      <picker class="time-picker" mode="date" @change="pickerChange" fields="month" :value="date">
-        <view class="date-view">
-          <view class="toptitle-text">{{ page.Year }}</view>
+    <view v-if="!showLoginTip">
+      <view class="wallet-header">
+        <picker class="time-picker" mode="date" @change="pickerChange" fields="month" :value="date">
+          <view class="date-view">
+            <view class="toptitle-text">{{ page.Year }}</view>
+            <view>
+              <text class="bottom-text">{{ page.Month }}</text>
+              <text class="toptitle-text">月 ▼</text>
+            </view>
+          </view>
+        </picker>
+        <view>
+          <view class="toptitle-text">收入</view>
           <view>
-            <text class="bottom-text">{{ page.Month }}</text>
-            <text class="toptitle-text">月 ▼</text>
+            <text class="bottom-text">{{ statementTotal.monthIcome }}</text>
           </view>
         </view>
-      </picker>
-      <view>
-        <view class="toptitle-text">收入</view>
         <view>
-          <text class="bottom-text">{{ statementTotal.monthIcome }}</text>
+          <view class="toptitle-text">支出</view>
+          <view>
+            <text class="bottom-text">{{ statementTotal.monthExpend }}</text>
+          </view>
         </view>
       </view>
-      <view>
-        <view class="toptitle-text">支出</view>
-        <view>
-          <text class="bottom-text">{{ statementTotal.monthExpend }}</text>
+      <view class="bill-container">
+        <view v-for="(item, index) in statementList" :key="index">
+          <mbill-bill-statement-item :bill="item"></mbill-bill-statement-item>
         </view>
+        <core-empty v-if="statementList.length == 0" :title="emptyTitle"></core-empty>
+        <uni-load-more v-else-if="showLoadMore" :status="status" :content-text="contentText"></uni-load-more>
       </view>
     </view>
-
-    <view class="bill-container">
-      <view v-for="(item, index) in statementList" :key="index">
-        <mbill-bill-statement-item :bill="item"></mbill-bill-statement-item>
-      </view>
-      <core-empty v-if="statementList.length == 0" :title="emptyTitle"></core-empty>
-      <uni-load-more v-else-if="showLoadMore" :status="status" :content-text="contentText"></uni-load-more>
-    </view>
+    <core-login-modal/>
   </view>
 </template>
 
@@ -69,23 +71,30 @@ export default {
       ],
       statementTotal: {
         monthExpend: 0.0,
-        monthIcome: 0.0,
+        monthIcome: 0.0
       },
       showLoadMore: false,
       status: "more",
       contentText: {
         contentdown: "上拉加载更多",
         contentrefresh: "加载中",
-        contentnomore: "没有更多",
+        contentnomore: "没有更多"
       },
       total: 0,
       page: {
+        UserId: 0,
         Year: Util.getCurrentYear(),
         Month: Util.getCurrentMonth(),
         Size: 10,
-        Page: 0,
-      },
+        Page: 0
+      }
     };
+  },
+  computed: {
+    ...mapState({
+      showLoginTip: state => state.user.showLoginTip,
+      userInfo: state => state.user.userInfo
+    })
   },
   onLoad() {
     this.getStatementList();
@@ -124,11 +133,12 @@ export default {
      */
     async getStatementList(isCover = false) {
       let that = this;
-      let res = await that.getPagesAsync(this.page);
+      that.page.UserId = that.userInfo.id;
+      let res = await that.getPagesAsync(that.page);
       if (isCover) {
-        uni.pageScrollTo({scrollTop:0, duration: 0})
+        uni.pageScrollTo({ scrollTop: 0, duration: 0 });
         that.statementList = res.items;
-      }else{
+      } else {
         that.statementList = [...that.statementList, ...res.items];
       }
 
@@ -138,8 +148,9 @@ export default {
     async getStatementTotal() {
       let that = this;
       let res = await that.getTotalAsync({
-        Year: this.page.Year,
-        Month: this.page.Month,
+        UserId: that.userInfo.id,
+        Year: that.page.Year,
+        Month: that.page.Month
       });
       that.statementTotal = res;
     },
@@ -155,8 +166,8 @@ export default {
         this.page.Page = 0;
         this.getStatementList();
       }
-    },
-  },
+    }
+  }
 };
 </script>
 

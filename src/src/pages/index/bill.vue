@@ -1,26 +1,20 @@
 <template>
   <view class="container">
     <view class="header">
-      <image class="bg" :src="header.backgroundUrl"></image>
+      <image class="bg" :src="header.backgroundUrl" ></image>
       <view class="level-2">
         <view class="overflow-hide">
           <view class="pull-right fs14 today-weather">
             <text>{{ header.positionName4 }}</text>
-            <view
-              :class="['iconfont', header.positionWeather, 'weather-icon']"
-            ></view>
+            <view :class="['iconfont', header.positionWeather, 'weather-icon']"></view>
             <text>{{ header.positionCelsius }}</text>
           </view>
         </view>
-        <view class="fs14"> {{ header.positionName1 }}</view>
+        <view class="fs14">{{ header.positionName1 }}</view>
         <view class="fs21 today-expend">{{ statementTotal.dayExpend }}</view>
         <view class="overflow-hide">
-          <view class="pull-left fs14"
-            >{{ header.positionName2 }} {{ statementTotal.monthExpend }}</view
-          >
-          <view class="pull-right fs14"
-            >{{ header.positionName3 }} {{ header.positionAmount3 }}</view
-          >
+          <view class="pull-left fs14">{{ header.positionName2 }} {{ statementTotal.monthExpend }}</view>
+          <view class="pull-right fs14">{{ header.positionName3 }} {{ header.positionAmount3 }}</view>
         </view>
       </view>
       <view class="bill-btn">
@@ -32,21 +26,23 @@
         <view class="bill-title">今日消费</view>
       </view>
     </view>
-
     <view class="bill-container">
-      <view v-for="(item, index) in statements" :key="index">
-        <mbill-bill-statement-item :bill="item"></mbill-bill-statement-item>
+      <view v-if="!showLoginTip">
+        <view v-for="(item, index) in statements" :key="index">
+          <mbill-bill-statement-item :bill="item"></mbill-bill-statement-item>
+        </view>
+        <core-empty v-if="statements.length == 0" :title="emptyTitle"></core-empty>
+        <uni-load-more v-else-if="showLoadMore" :status="status" :content-text="contentText"></uni-load-more>
       </view>
-      <core-empty v-if="statements.length == 0" :title="emptyTitle" />
-      <uni-load-more v-else-if="showLoadMore" :status="status" :content-text="contentText"></uni-load-more>
+      <core-login-modal/>
     </view>
   </view>
 </template>
 
 <script>
-import { BASE_URL } from '@/env'
+import { BASE_URL } from "@/env";
 import Util from "@/common/utils/util";
-import { mapMutations, mapActions, mapState } from 'vuex';
+import { mapMutations, mapActions, mapState } from "vuex";
 import Tools from "@/common/utils/tools";
 import Session from "@/common/utils/session";
 
@@ -85,26 +81,25 @@ export default {
         // }
       ],
       statementTotal: {
-        monthExpend: 0.00,
-        dayExpend: 0.00,
-      },    
+        monthExpend: "0.00",
+        dayExpend: "0.00"
+      },
       header: {
-        backgroundUrl:
-          BASE_URL + "/core/images/other/index_bg1_533x300.png",
+        backgroundUrl: BASE_URL + "/core/images/other/index_bg1_533x300.png",
         positionName1: "今日支出",
         positionName2: "本月支出",
         positionName3: "剩余预算",
         positionAmount3: "0.00",
         positionName4: "未知",
         positionWeather: "icon-weather-sun",
-        positionCelsius: "27℃",
+        positionCelsius: "27℃"
       },
       showLoadMore: false,
-      status: 'more',
+      status: "more",
       contentText: {
         contentdown: "上拉加载更多",
         contentrefresh: "加载中",
-        contentnomore: "没有更多",
+        contentnomore: "没有更多"
       },
       total: 0,
       page: {
@@ -113,12 +108,15 @@ export default {
         Day: Util.getCurrentDay(),
         Size: 10,
         Page: 0,
-      },
+        UserId: 0
+      }
     };
   },
   computed: {
-		...mapState({
-      statements: state => state.statement.statements
+    ...mapState({
+      showLoginTip: state => state.user.showLoginTip,
+      statements: state => state.statement.statements,
+      userInfo: state => state.user.userInfo
     })
   },
   onLoad() {},
@@ -134,65 +132,74 @@ export default {
     var totalPage = this.total / this.page.Size;
     var currentPage = this.page.Page + 1;
     if (currentPage > totalPage) {
-				this.status = "moMore"
-				return;
-		}
+      this.status = "moMore";
+      return;
+    }
     this.page.Page += 1;
-    this.status = 'loading';
+    this.status = "loading";
     this.getStatementList();
   },
   methods: {
-    ...mapActions(['addStatements','getPagesAsync', 'getTotalAsync']),
+    ...mapActions(["addStatements", "getPagesAsync", "getTotalAsync"]),
     /**
      * 获取分页账单数据
      * isCover：是否清除账单数据（重新加载）
      */
-   async getStatementList(isCover = false) {
+    async getStatementList(isCover = false) {
       let that = this;
-      await that.getPagesAsync(this.page).then(res=>{
-        if(isCover){
-          uni.pageScrollTo({scrollTop:0, duration: 0})
-          that.$store.commit('COVER_STATEMENTS', res.items);
-        }else{
-           that.$store.commit('ADD_STATEMENTS', res.items);
+      that.page.UserId = that.userInfo.id;
+      await that.getPagesAsync(that.page).then(res => {
+        if (isCover) {
+          uni.pageScrollTo({ scrollTop: 0, duration: 0 });
+          that.$store.commit("COVER_STATEMENTS", res.items);
+        } else {
+          that.$store.commit("ADD_STATEMENTS", res.items);
         }
         that.total = res.total;
       });
-      
     },
     // 获取当各类账单总计
     async getStatementTotal() {
       let that = this;
-      let res = await that.getTotalAsync({Year: this.page.Year, Month: this.page.Month, Day: this.page.Day});
+      let res = await that.getTotalAsync({
+        UserId: that.userInfo.id,
+        Year: that.page.Year,
+        Month: that.page.Month,
+        Day: that.page.Day
+      });
       that.statementTotal = res;
     },
+    // 获取天气信息（校验缓存）
     async getWeatherInfo() {
       let that = this;
       let weatherCache = Session.cache("bill:index:weather");
-      if(weatherCache == null)
-      {
-        await Tools.getWeather().then((res) => {
-          // console.log(res)
+      // console.log(weatherCache);
+      if (weatherCache == null) {
+        await Tools.getWeather().then(res => {
+          //console.log(res)
           var data = res.liveData;
           that.setWeather(data);
-          Session.cache("bill:index:weather", JSON.stringify(data) , 60 * 60)//一小时过期
+          Session.cache("bill:index:weather", JSON.stringify(data), 60 * 60); //一小时过期
         });
-      }else{
+      } else {
         that.setWeather(JSON.parse(weatherCache));
       }
     },
+    // 赋值天气信息
     setWeather(data) {
       // console.log(data)
-      this.header.positionName4 = data.province + '-' + data.city //"广州",
-      this.header.positionWeather =  Tools.getWeatherIcon(data.weather),//"多云"
-      this.header.positionCelsius = data.temperature + '℃'  //"27℃,
+      this.header.positionName4 = data.province + "-" + data.city; //"广州",
+      (this.header.positionWeather = Tools.getWeatherIcon(data.weather)), //"多云"
+        (this.header.positionCelsius = data.temperature + "℃"); //"27℃,
     },
+    // 跳转创建账单
     handleAddStatement() {
-      uni.navigateTo({
-        url: "/pages/bill/create",
-      });
-    },
-  },
+      if (!this.showLoginTip)
+        this.$Router.push({
+          path: "/pages/bill/create"
+        });
+    }
+  }
 };
 </script>
 
@@ -298,5 +305,4 @@ export default {
     }
   }
 }
-
 </style>

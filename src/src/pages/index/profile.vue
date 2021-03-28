@@ -24,8 +24,8 @@
           :rightText="item.rightText"
           :extra-icon="item.extraIcon"
           :title="item.title"
-          link=""
-          :to="item.path"
+          clickable
+          @click="jump(item.path)"
         />
       </uni-list>
     </view>
@@ -38,7 +38,9 @@
 </template>
 
 <script>
-import { mapMutations, mapActions, mapState } from "vuex";
+import { mapState } from "vuex";
+import Tip from "@/common/utils/tip";
+
 export default {
   data() {
     return {
@@ -79,22 +81,33 @@ export default {
             type: "gear"
           }
         }
-      ],
-      already_login: true
+      ]
     };
   },
   onLoad() {},
   computed: {
     ...mapState({
+      showLoginTip: state => state.user.showLoginTip,
       userInfo: state => state.user.userInfo
     })
   },
   methods: {
-    jump(path, parmas) {
-      this.$Router.push({
-				path: path,
-				query: parmas
-			});
+    jump( path ) {
+      console.log(this.$Router)
+      let routes = this.$Router.options.routes
+      let isAuth = false
+      routes.map( r => {  
+        if(r.path === path && r.meta.auth !== undefined) {
+          isAuth = r.meta.auth;
+          return;
+        }
+      });
+      if(!isAuth || isAuth && !this.showLoginTip){
+        this.$Router.push({ path: path });
+      }else if(isAuth && this.showLoginTip) {
+        Tip.toast("登录后才能使用哦！");
+      }
+     
     }
   }
 };

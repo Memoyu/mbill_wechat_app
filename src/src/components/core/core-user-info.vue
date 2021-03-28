@@ -9,13 +9,13 @@
               <view class="head-img-wrap">
                 <image
                   class="head-img"
-                  @tap.stop="jump('/pages/profile/user-info')"
+                  @tap.stop="jump"
                   :src="userInfo.avatarUrl || '../../static/assets/icons/profile/default_avatar.png' "
                   mode="aspectFill"
                 ></image>
               </view>
               <text
-                @tap.stop="jump('/pages/profile/user-info')"
+                @tap.stop="jump"
                 class="user-name one-t"
                 >{{ userInfo.nickname || "未登录~" }}</text
               >
@@ -32,6 +32,8 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
+
 export default {
   data() {
     return {
@@ -46,8 +48,17 @@ export default {
       default: null,
     },
   },
+  computed: {
+    ...mapState({
+      showLoginTip: state => state.user.showLoginTip
+    })
+  },
   methods: {
-    jump(path) {
+    jump() {
+      var path = "/pages/profile/user-info";
+      if(this.showLoginTip) {
+        path = "/pages/profile/login"
+      }
       this.$Router.push({
         path: path,
       });

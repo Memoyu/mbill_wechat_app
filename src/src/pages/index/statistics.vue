@@ -1,10 +1,6 @@
 <template>
   <view class="container">
-    <view
-      class="controller"
-      :class="{ 'no-login': !isLogin }"
-      :hidden="!isLogin"
-    >
+    <view v-if="!showLoginTip" class="controller">
       <view class="time-filter">
         <view class="month-filter">
           <!-- <view>2019 年 01 月</view> -->
@@ -22,18 +18,19 @@
         </view>
       </view>
       <core-tabs :type="tabList" v-model="active"></core-tabs>
-
       <mbill-chart-overview v-if="active === 0" :date.sync="date"></mbill-chart-overview>
       <mbill-chart-category v-if="active === 1" :date.sync="date"></mbill-chart-category>
       <mbill-chart-week-trend v-if="active === 2"></mbill-chart-week-trend>
       <mbill-chart-month-trend v-if="active === 3"></mbill-chart-month-trend>
       <mbill-chart-rate v-if="active === 4" :date.sync="date"></mbill-chart-rate>
     </view>
-    <core-not-login v-if="!isLogin" />
+    <core-login-modal/>
   </view>
 </template>
 
 <script>
+import { mapMutations, mapActions, mapState } from "vuex";
+
 const nowDate = new Date();
 export default {
   data() {
@@ -41,20 +38,20 @@ export default {
       active: 0,
       tabList: [
         {
-          title: "总览",
+          title: "总览"
         },
         {
-          title: "分类",
+          title: "分类"
         },
         {
-          title: "周趋势",
+          title: "周趋势"
         },
         {
-          title: "月趋势",
+          title: "月趋势"
         },
         {
-          title: "排行榜",
-        },
+          title: "排行榜"
+        }
       ],
       date: nowDate,
       isLogin: true,
@@ -64,11 +61,16 @@ export default {
       month: new Date().getMonth() + 1,
       categories: [],
       showFilter: false,
-      emptyTitle: "没有数据噢！",
+      emptyTitle: "没有数据噢！"
     };
   },
+  computed: {
+    ...mapState({
+      showLoginTip: state => state.user.showLoginTip
+    })
+  },
   onLoad() {},
-  methods: {},
+  methods: {}
 };
 </script>
 
@@ -76,9 +78,6 @@ export default {
 .container {
   // background:#f2f2f2;
   .controller {
-    &.no-login {
-      filter: blur(2px);
-    }
     .time-filter {
       display: flex;
       justify-content: center;

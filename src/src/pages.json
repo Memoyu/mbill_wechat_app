@@ -197,6 +197,17 @@
 					}
 				},
 				{
+					"path": "forgot",
+					"style": {
+						"navigationBarTitleText": "忘记密码"
+					},
+					"meta": {
+						"auth": false,
+						"async": true,
+						"title": "忘记密码"
+					}
+				},
+				{
 					"path": "login",
 					"style": {
 						"navigationBarTitleText": "登陆"
@@ -205,6 +216,17 @@
 						"auth": false,
 						"async": true,
 						"title": "登陆"
+					}
+				},
+				{
+					"path": "register",
+					"style": {
+						"navigationBarTitleText": "注册"
+					},
+					"meta": {
+						"auth": false,
+						"async": true,
+						"title": "注册"
 					}
 				},
 				{
@@ -224,7 +246,7 @@
 						"navigationBarTitleText": "账单检索"
 					},
 					"meta": {
-						"auth": false,
+						"auth": true,
 						"async": true,
 						"title": "账单检索"
 					}
@@ -251,11 +273,13 @@
 		"usingComponents": {
 			"ec-canvas": "/static/plugin/echart/ec-canvas"
 		}
-	},
+	}
+	,
 	"tabBar": {
-		"backgroundColor": "#fff",
-		"color": "#000000",
 		"selectedColor": "#be6868",
+		"color": "#C0C4CC",
+		"borderStyle": "white",
+		"backgroundColor": "#ffffff",
 		"list": [
 			{
 				"pagePath": "pages/index/bill",
