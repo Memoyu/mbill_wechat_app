@@ -56,6 +56,12 @@ export default {
 			method: 'POST',
 			// desc: '创建账单',
 		},
+		delete: {
+			url: 'statement/delete',
+			auth: true,
+			method: 'DELETE',
+			// desc: '删除账单',
+		},
 		list: {
 			url: 'statement/pages',
 			auth: true,

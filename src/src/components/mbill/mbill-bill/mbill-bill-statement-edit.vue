@@ -9,7 +9,7 @@
         name="amount"
         type="digit"
         v-model="statement.amount"
-      />
+      >
     </view>
     <view class="column" @tap="redirectChoseCategory">
       <text>分类</text>
@@ -51,8 +51,8 @@
     <view class="column location-column">
       <text style="flex: 1">地点</text>
       <view>
-        <input name="address" type="text" :value="statement.address" />
-        <switch :checked="switchCheck" @change="getLocation" />
+        <input name="address" type="text" :value="statement.address">
+        <switch :checked="switchCheck" @change="getLocation"/>
       </view>
     </view>
     <view class="column">
@@ -63,7 +63,7 @@
         name="description"
         v-model="statement.description"
         placeholder="本笔账单的简单说明"
-      />
+      >
     </view>
     <view class="btn-save">
       <button v-if="!submiting" @tap="submitStatement">保存</button>
@@ -196,6 +196,11 @@ export default {
       } else {
         // 关闭获取地理位置
         this.statement.address = "";
+        this. nation= "";
+        this.province= "";
+        this. city= "";
+        this.district= "";
+        this.street= "";
       }
     },
     async setLocation() {

@@ -4,33 +4,30 @@
     <view class="container">
       <view class="title">
         <view>
-          <image class="icon" :src="statement.categoryIconPath"></image>
+          <image class="icon" :src="statement.categoryIconPath">
           <text
             v-if="statement.type === 'expend' || statement.type === 'income'"
-            >{{ statement.categoryName }}</text
-          >
+          >{{ statement.categoryName }}</text>
           <text v-else>{{ statement.typeName }}</text>
         </view>
-        <text :class="statement.type"
-          >{{ statement.type == "expend" ? "-" : "+" }}  {{ statement.amount }}</text
-        >
+        <text
+          :class="statement.type"
+        >{{ statement.type == "expend" ? "-" : "+" }} {{ statement.amount }}</text>
       </view>
-
       <view class="column">
         <view>
           <view class="iconfont jz-icon-fenlei"></view>
           <text>分类</text>
         </view>
-        <text v-if="statement.type === 'expend' || statement.type === 'income'"
-          >{{ statement.categoryParentName }}/{{ statement.categoryName }}</text
-        >
-        <text v-else
-          >[{{ statement.typeName }}]{{ statement.assetName }}/{{
-            statement.targetAssetName
-          }}</text
-        >
+        <text
+          v-if="statement.type === 'expend' || statement.type === 'income'"
+        >{{ statement.categoryParentName }}/{{ statement.categoryName }}</text>
+        <text v-else>
+          [{{ statement.typeName }}]{{ statement.assetName }}/{{
+          statement.targetAssetName
+          }}
+        </text>
       </view>
-
       <view class="column">
         <view>
           <view class="iconfont jz-icon-qianbao"></view>
@@ -38,7 +35,6 @@
         </view>
         <text>{{ statement.assetParentName }}/{{ statement.assetName }}</text>
       </view>
-
       <view class="column">
         <view>
           <view class="iconfont jz-icon-50"></view>
@@ -46,32 +42,21 @@
         </view>
         <text>{{ statement.assetResidue }}</text>
       </view>
-
       <view class="column">
         <view>
           <view class="iconfont jz-icon-shijian"></view>
           <text>时间</text>
         </view>
-        <text
-          >{{ statement.year }}-{{ statement.month }}-{{ statement.day }} {{ statement.time }}</text
-        >
+        <text>{{ statement.year }}-{{ statement.month }}-{{ statement.day }} {{ statement.time }}</text>
       </view>
-
-      <view
-        class="column"
-        v-if="statement.address != null && statement.address != ''"
-      >
+      <view class="column" v-if="statement.address != null && statement.address != ''">
         <view>
           <view class="iconfont jz-icon-address"></view>
           <text>坐标</text>
         </view>
         <text>{{ statement.address }}</text>
       </view>
-
-      <view
-        class="column"
-        v-if="statement.description != null && statement.description != ''"
-      >
+      <view class="column" v-if="statement.description != null && statement.description != ''">
         <view>
           <view class="iconfont jz-icon-remark"></view>
           <text>描述</text>
@@ -93,7 +78,7 @@
 </template>
 
 <script>
-import Tip from '@/common/utils/tip'
+import Tip from "@/common/utils/tip";
 export default {
   data() {
     return {
@@ -114,7 +99,6 @@ export default {
         // type: 'expend',
         // address: '广东广州白云区',
         // amount: 300
-
         // id: 1,
         // categoryIconPath:
         //   "http://localhost:5000/core/images/category/icon_mushroom_64.png",
@@ -133,47 +117,52 @@ export default {
         // type: "repayment",
         // address: "",
         // amount: 300,
-      },
+      }
     };
   },
-  onLoad (options) {
+  onLoad(options) {
     if (options.id === undefined) {
       uni.navigateBack({
         delta: 1
-      })
-    }else{
-      this.id = options.id
+      });
+    } else {
+      this.id = options.id;
     }
-    this.getStatement(this.id)
+    this.getStatement(this.id);
   },
   methods: {
     handlerDel() {
+      var that = this;
       Tip.choose("是否删除该条账单？", {}, "提示").then(async () => {
-        await wxRequest.Delete(`statement/delete/${this.id}`).then((res) => {
-          wx.navigateBack({
-            delta: 1,
+        that
+          .$api("statement.delete", {}, {
+            id: that.id
+          })
+          .then(res => {
+            if (res.code === 0) {
+              this.$Router.back();
+            }
           });
-        });
       });
     },
     handlerEdit() {
       this.$Router.push({
-        path: `/pages/bill/edit?id=${this.id}`,
+        path: `/pages/bill/edit?id=${this.id}`
       });
     },
-    getStatement (id) {
+    getStatement(id) {
       var that = this;
       that
-        .$api("statement.detail",{
+        .$api("statement.detail", {
           id: id
         })
-        .then((res) => {
+        .then(res => {
           if (res.code === 0) {
-            that.statement = res.result
+            that.statement = res.result;
           }
         });
     }
-  },
+  }
 };
 </script>
 
