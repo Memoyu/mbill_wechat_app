@@ -44,7 +44,7 @@ const actions = {
             }
         }
     },
-    //移除账单信息
+    //修改账单信息
     modifyStatement({
         commit
     }, statement) {

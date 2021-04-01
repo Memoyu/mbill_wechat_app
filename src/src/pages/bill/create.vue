@@ -55,6 +55,7 @@ export default {
     };
   },
   methods: {
+    //新增账单
     submitStatement(statement) {
       var that = this;
       this.$store.commit("STATEMENT_SUBMIT", true);
@@ -63,17 +64,17 @@ export default {
         .$api("statement.create", statement)
         .then((res) => {
           if (res.code === 0) {
-            Tip.toast("添加账单成功！");
-            this.$store.dispatch("addStatement", res.result);
+            that.$tip.toast("添加账单成功！");
+            that.$store.dispatch("addStatement", res.result);
             uni.navigateBack({
               delta: 1,
             });
           }
         })
         .catch((err) => {
-          Tip.confirm("由于网络原因，无法同步账单到服务器", {}, "保存失败");
+          that.$tip.confirm("由于网络原因，无法同步账单到服务器", {}, "保存失败");
         });
-      this.$store.commit("STATEMENT_SUBMIT", false);
+      that.$store.commit("STATEMENT_SUBMIT", false);
     },
   },
 };

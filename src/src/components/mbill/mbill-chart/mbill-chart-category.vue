@@ -23,10 +23,13 @@
 </template>
 
 <script>
-//import * as echarts from "@/static/plugin/echart/echarts";
 export default {
   name: "categoryChart",
-  props: {},
+  props: {
+    date: {
+      type: Object
+    },
+  },
   data() {
     return {
       ec: {},

@@ -154,17 +154,17 @@ export default {
       });
       that.statementTotal = res;
     },
+    //时间改变触发
     pickerChange({ detail }) {
+      let that = this;
       var date = new Date(detail.value);
-      console.log(detail);
+      // console.log(detail);
       var year = date.getFullYear();
       var month = date.getMonth() + 1;
-      if (year != this.page.Year || month != this.page.Month) {
-        this.page.Year = year;
-        this.page.Month = month;
-        this.statementList = [];
-        this.page.Page = 0;
-        this.getStatementList();
+      if (year != that.page.Year || month != that.page.Month) {
+        that.page.Year = year;
+        that.page.Month = month;
+        that. onPullDownRefresh();
       }
     }
   }

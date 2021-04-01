@@ -45,6 +45,7 @@ export default {
     this.getAsset();
   },
   methods: {
+    //获取分组后的资产数据
     getAsset() {
       var that = this;
       let parame = this.asset_type !== null ? { type: this.asset_type } : {};
@@ -52,6 +53,7 @@ export default {
         this.list = res.result;
       });
     },
+    //触发选中资产后赋值
     setAsset(asset) {
       let pages = getCurrentPages();
       let beforePage = pages[pages.length - 2];

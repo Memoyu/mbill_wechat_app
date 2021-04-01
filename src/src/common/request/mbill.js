@@ -56,6 +56,12 @@ export default {
 			method: 'POST',
 			// desc: '创建账单',
 		},
+		update: {
+			url: 'statement/update',
+			auth: true,
+			method: 'POST',
+			// desc: '更新账单',
+		},
 		delete: {
 			url: 'statement/delete',
 			auth: true,

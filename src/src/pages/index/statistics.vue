@@ -8,21 +8,22 @@
           <picker
             class="time-picker"
             mode="date"
-            @change="bindPickerChange"
+            @change="pickerChange"
             fields="month"
             :value="date"
           >
-            <view class="month">{{ year }} 年 {{ month }} 月</view>
+      date: {
+            <view class="month">{{ date.year }} 年 {{ date.month }} 月</view>
           </picker>
           <view class="iconfont icon-arrow-right" @tap="nextMonth"></view>
         </view>
       </view>
       <core-tabs :type="tabList" v-model="active"></core-tabs>
-      <mbill-chart-overview v-if="active === 0" :date.sync="date"></mbill-chart-overview>
-      <mbill-chart-category v-if="active === 1" :date.sync="date"></mbill-chart-category>
+      <mbill-chart-overview v-if="active === 0" :date="date"></mbill-chart-overview>
+      <mbill-chart-category v-if="active === 1" :date="date"></mbill-chart-category>
       <mbill-chart-week-trend v-if="active === 2"></mbill-chart-week-trend>
       <mbill-chart-month-trend v-if="active === 3"></mbill-chart-month-trend>
-      <mbill-chart-rate v-if="active === 4" :date.sync="date"></mbill-chart-rate>
+      <mbill-chart-rate v-if="active === 4" :date="date"></mbill-chart-rate>
     </view>
     <core-login-modal/>
   </view>
@@ -53,12 +54,13 @@ export default {
           title: "排行榜"
         }
       ],
-      date: nowDate,
+      date: {
+        year: nowDate.getFullYear(),
+        month: nowDate.getMonth() + 1,
+      },
       isLogin: true,
       chartData: [],
       header: {},
-      year: new Date().getFullYear(),
-      month: new Date().getMonth() + 1,
       categories: [],
       showFilter: false,
       emptyTitle: "没有数据噢！"
@@ -70,7 +72,20 @@ export default {
     })
   },
   onLoad() {},
-  methods: {}
+  methods: {
+    //时间改变触发
+    pickerChange() {
+
+    },
+    //上一月
+    prevMonth() {
+
+    },
+    //下一月
+    nextMonth() {
+
+    }
+  }
 };
 </script>
 

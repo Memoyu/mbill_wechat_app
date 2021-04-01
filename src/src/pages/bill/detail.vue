@@ -128,9 +128,13 @@ export default {
     } else {
       this.id = options.id;
     }
+    
+  },
+  onShow() {
     this.getStatement(this.id);
   },
   methods: {
+    //触发删除
     handlerDel() {
       var that = this;
       Tip.choose("是否删除该条账单？", {}, "提示").then(async () => {
@@ -145,11 +149,13 @@ export default {
           });
       });
     },
+    //触发编辑
     handlerEdit() {
       this.$Router.push({
         path: `/pages/bill/edit?id=${this.id}`
       });
     },
+    //获取账单详情
     getStatement(id) {
       var that = this;
       that

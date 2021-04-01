@@ -2,25 +2,25 @@
   <view class="overview">
     <view class="overview-header">
       <view class="overview-header__card">
-        <view class="expend amount">{{ header.expend }}</view>
+        <view class="expend amount">{{ header.monthExpend }}</view>
         <view class="text-small">总支出</view>
       </view>
       <view class="overview-header__card">
-        <view class="income amount">{{ header.income }}</view>
+        <view class="income amount">{{ header.monthIcome }}</view>
         <view class="text-small">总收入</view>
       </view>
       <view class="overview-header__card">
-        <view class="transfer amount">{{ header.transfer }}</view>
+        <view class="transfer amount">{{ header.monthTransfer }}</view>
         <view class="text-small">转账</view>
       </view>
       <view class="overview-header__card">
-        <view class="expend amount">{{ header.repay }}</view>
+        <view class="expend amount">{{ header.monthRepayment }}</view>
         <view class="text-small">还款</view>
       </view>
     </view>
 
     <view class="overview__count-result">
-      总计（收入-支出-还款）：<text class="expend">{{ header.total }}</text>
+      <text class="fs18">总计</text>（= 收入 - 支出 - 还款）：<text class="expend">{{ header.total }}</text>
     </view>
 
     <view class="overview__statements">
@@ -33,74 +33,74 @@
 </template>
 
 <script>
+import { mapActions, mapState } from "vuex";
+
 export default {
   name: "overviewChart",
   props: {
-    date: String,
+    date: {
+      type: Object
+    }
   },
   data() {
     return {
       header: {},
       statements: [],
       categories: [],
+      total: 0,
+      page: {
+        UserId: 0,
+        Year: 0,
+        Month: 0,
+        Size: 10,
+        Page: 0
+      }
     };
   },
+  computed: {
+    ...mapState({
+      userInfo: state => state.user.userInfo
+    })
+  },
   created() {
-    this.getHeader();
-    this.getStatementList();
+    this.getStatementTotal();
+    this.getStatementList(true);
     // this.categoryChart()
   },
   watch: {
     date() {
-      this.getHeader();
-      this.getStatementList();
+      this.getStatementTotal();
+      this.getStatementList(true);
       // this.categoryChart()
     },
   },
   methods: {
-    async getHeader() {
-      // const res = await wxRequest.Get('chart/overview_header', { date: this.date })
-      const res = {
-        expend: "20",
-        income: "20",
-        transfer: "20",
-        repay: "20",
-        total: "200",
-      };
-      this.header = res;
+    ...mapActions(["getPagesAsync", "getTotalAsync"]),
+
+     // 获取当各类账单总计
+    async getStatementTotal() {
+      let that = this;
+      let res = await that.getTotalAsync({
+        UserId: that.userInfo.id,
+        Year: that.date.year,
+        Month: that.date.month
+      });
+      that.header = res;
     },
-    async getStatementList() {
-      //console.log("加载")
-      // const res = await wxRequest.Get('chart/overview_statements', { date: this.date })
-      const res = [
-        {
-          id: 1,
-          categoryIconPath: "",
-          categoryName: "数码",
-          description: "买电脑",
-          year: "2021",
-          month: "11",
-          day: "01",
-          time: "01:26",
-          assetName: "微信",
-          type: "expend",
-          amount: 300,
-        },
-        {
-          id: 2,
-          categoryIconPath: "",
-          categoryName: "出行",
-          description: "买电脑",
-          year: "2021",
-          month: "11",
-          day: "01",
-          time: "01:26",
-          assetName: "微信",
-          type: "expend",
-          amount: 300.89,
-        },
-      ];
-      this.statements = res;
+    // 获取账单列表
+    async getStatementList(isCover = false) {
+      let that = this;
+      that.page.UserId = that.userInfo.id;
+      that.page.Year = that.date.year;
+      that.page.Month = that.date.month;
+      let res = await that.getPagesAsync(that.page);
+       if (isCover) {
+        uni.pageScrollTo({ scrollTop: 0, duration: 0 });
+        that.statementList = res.items;
+      } else {
+        that.statementList = [...that.statementList, ...res.items];
+      }
+      that.total = res.total;
     },
     async categoryChart() {
       // const res = await wxRequest.Get('chart/overview_budgets', { date: this.date })
@@ -153,7 +153,8 @@ export default {
     box-shadow: 0 0 4px #eee;
   }
   .ovweview-title {
-    font-size: 28rpx;
+    font-weight: bold;
+    font-size: 48rpx;
   }
 }
 </style>

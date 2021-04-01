@@ -92,6 +92,7 @@ export default {
     })
   },
   methods: {
+    //跳转页面
     jump( path ) {
       console.log(this.$Router)
       let routes = this.$Router.options.routes

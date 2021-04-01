@@ -38,6 +38,7 @@ export default {
       this.getCategory();
     },
     methods: {
+      //获取账单分类分组数据
       getCategory() {
         var that = this;
         let parame = this.category_type !== null ? { type: this.category_type } : {};
@@ -45,6 +46,7 @@ export default {
           this.list = res.result;
         });
       },
+      //触发选中分类后赋值
       setCategory (category) {
         let pages = getCurrentPages();
         let beforePage = pages[pages.length - 2];

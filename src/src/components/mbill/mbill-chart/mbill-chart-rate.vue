@@ -10,10 +10,15 @@
 
 <script>
 import mbillBillStatementItem from "../mbill-bill/mbill-bill-statement-item.vue";
+
 export default {
   components: { mbillBillStatementItem },
   name: "rateChart",
-  props: {},
+  props: {
+    date: {
+      type: Object
+    }
+  },
   data() {
     return {
       active: 0,
