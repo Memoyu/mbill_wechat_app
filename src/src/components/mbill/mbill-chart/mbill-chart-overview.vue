@@ -20,7 +20,7 @@
     </view>
 
     <view class="overview__count-result">
-      <text class="fs18">总计</text>（= 收入 - 支出 - 还款）：<text class="expend">{{ header.total }}</text>
+      <text class="fs12">总计</text>（收入 - 支出 - 还款）：<text class="expend">{{ header.total }}</text>
     </view>
 
     <view class="overview__statements">
@@ -44,7 +44,13 @@ export default {
   },
   data() {
     return {
-      header: {},
+      header: {
+        monthExpend: 0.00,
+        monthIcome: 0.00,
+        monthTransfer: 0.00,
+        monthRepayment: 0.00,
+        total: 0.00
+      },
       statements: [],
       categories: [],
       total: 0,
@@ -86,6 +92,7 @@ export default {
         Month: that.date.month
       });
       that.header = res;
+      that.header.total = that.header.monthIcome - that.header.monthExpend - that.header.monthRepayment
     },
     // 获取账单列表
     async getStatementList(isCover = false) {
@@ -96,9 +103,9 @@ export default {
       let res = await that.getPagesAsync(that.page);
        if (isCover) {
         uni.pageScrollTo({ scrollTop: 0, duration: 0 });
-        that.statementList = res.items;
+        that.statements = res.items;
       } else {
-        that.statementList = [...that.statementList, ...res.items];
+        that.statements = [...that.statementList, ...res.items];
       }
       that.total = res.total;
     },
@@ -126,6 +133,7 @@ export default {
       width: 25%;
       text-align: center;
       .text-small {
+        font-weight: bold;
         font-size: 24rpx;
       }
       .amount {
@@ -135,6 +143,7 @@ export default {
   }
   .overview__count-result {
     padding: 16rpx 24rpx;
+    font-weight: bold;
     font-size: 24rpx;
   }
   .overview__category-chart {
@@ -154,7 +163,7 @@ export default {
   }
   .ovweview-title {
     font-weight: bold;
-    font-size: 48rpx;
+    font-size: 32rpx;
   }
 }
 </style>

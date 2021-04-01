@@ -57,10 +57,10 @@ export default function api(url, data = {}, params = {},loading = true , showToa
 	}, (response) => { // 预留可以日志上报
 		return response
 	})
-	uni.showToast({
+	uni.showLoading({
 		title: "加载中...",
-		icon: "loading",
 		duration: 30000,
+		mask: true
 	});
 	return request.request({
 		url: api.url,
@@ -68,10 +68,10 @@ export default function api(url, data = {}, params = {},loading = true , showToa
 		params,
 		method: api.method
 	}).then(res=>{
-		uni.hideToast()
+		uni.hideLoading()
 		return res
 	}).catch(err=>{
-		uni.hideToast()
+		uni.hideLoading()
 	})
 
 }

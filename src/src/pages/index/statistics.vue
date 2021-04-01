@@ -12,7 +12,6 @@
             fields="month"
             :value="date"
           >
-      date: {
             <view class="month">{{ date.year }} 年 {{ date.month }} 月</view>
           </picker>
           <view class="iconfont icon-arrow-right" @tap="nextMonth"></view>

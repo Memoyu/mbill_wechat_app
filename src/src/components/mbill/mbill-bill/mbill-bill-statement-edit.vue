@@ -109,12 +109,12 @@ export default {
     return {
       statement: {},
       assets_labels: [
-        { id: 1, name: "支付宝" },
-        { id: 2, name: "微信" },
+        // { id: 1, name: "支付宝" },
+        // { id: 2, name: "微信" },
       ],
       categories_labels: [
-        { id: 1, name: "地铁" },
-        { id: 2, name: "一日三餐" },
+        // { id: 1, name: "地铁" },
+        // { id: 2, name: "一日三餐" },
       ],
       switchCheck: uni.getStorageSync("getLocationSwitch") || false,
     };

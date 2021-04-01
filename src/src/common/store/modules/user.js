@@ -70,7 +70,8 @@ const mutations = {
         uni.removeStorageSync('token');
         uni.removeStorageSync('userInfo');
         store.commit('USER_INFO', {});
-        store.commit('LOGIN_TIP', true);
+        store.commit('LOGIN_TIP', true); 
+        store.commit('COVER_STATEMENTS', []);
     },
 }
 

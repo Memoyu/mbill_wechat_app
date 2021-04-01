@@ -5,6 +5,7 @@
         ref="expend"
         :type="expend"
         :detail="statement"
+        @submitStatement="submitStatement"
         v-if="current === 'expend'"
       />
 
@@ -12,18 +13,21 @@
         ref="income"
         :type="income"
         :detail="statement"
+        @submitStatement="submitStatement"
         v-if="current === 'income'"
       />
 
       <mbill-bill-transfer-edit
         ref="transfer"
         :detail="statement"
+        @submitStatement="submitStatement"
         v-if="current === 'transfer'"
       />
 
       <mbill-bill-repayment-edit
         ref="repayment"
         :detail="statement"
+        @submitStatement="submitStatement"
         v-if="current === 'repayment'"
       />
     </view>
@@ -62,16 +66,14 @@ export default {
     submitStatement(statement) {
       var that = this;
       that.$store.commit("STATEMENT_SUBMIT", true);
-      // console.log("提交账单信息")
+      console.log(statement)
       that
         .$api("statement.update", statement)
         .then((res) => {
           if (res.code === 0) {
             that.$tip.toast("更新账单成功！");
-            that.$store.dispatch("modifyStatement", res.result);
-            uni.navigateBack({
-              delta: 1,
-            });
+            that.$store.dispatch("modifyStatement", statement);
+            that.$Router.back();
           }
         })
         .catch((err) => {

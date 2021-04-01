@@ -164,8 +164,7 @@ export default {
       let res = await that.getTotalAsync({
         UserId: that.userInfo.id,
         Year: that.page.Year,
-        Month: that.page.Month,
-        Day: that.page.Day
+        Month: that.page.Month
       });
       that.statementTotal = res;
     },

@@ -59,7 +59,7 @@ export default {
 		update: {
 			url: 'statement/update',
 			auth: true,
-			method: 'POST',
+			method: 'PUT',
 			// desc: '更新账单',
 		},
 		delete: {

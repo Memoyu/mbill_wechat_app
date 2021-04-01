@@ -164,7 +164,7 @@ export default {
       if (year != that.page.Year || month != that.page.Month) {
         that.page.Year = year;
         that.page.Month = month;
-        that. onPullDownRefresh();
+        uni.startPullDownRefresh();
       }
     }
   }
