@@ -92,6 +92,18 @@ export default {
 			method: 'GET',
 			// desc: '支出分类统计',
 		},
+		expendTrendWeek: {
+			url: 'statement/statistics/expend/trend/week',
+			auth: true,
+			method: 'GET',
+			// desc: '前月份所有周的支出趋势统计',
+		},
+		expendTrend5Month: {
+			url: 'statement/statistics/expend/trend/5month',
+			auth: true,
+			method: 'GET',
+			// desc: '5个月的支出趋势统计',
+		},
 	},
 
 };

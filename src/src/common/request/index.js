@@ -21,7 +21,7 @@ export default function api(url, data = {}, params = {}, loading = true, showToa
 				store.commit('LOGIN_TIP', true)
 				store.commit('OUT_LOGIN');
 
-				throw ('暂未登录,已阻止此次API请求~');
+				throw ({errMsg: '暂未登录，请先登陆后再操作~'});
 			}
 		}
 		if (uni.getStorageSync('token')) {
@@ -31,22 +31,8 @@ export default function api(url, data = {}, params = {}, loading = true, showToa
 	});
 
 	request.interceptor.response((response) => { /* 请求之后拦截器 */
-		debugger
 		var code = response.data.code;
-		if (code !== 0) { // 服务端返回的状态码不等于0，则reject()
-			if (showToast) {
-				uni.showToast({
-					title: response.data.message || '请求出错,稍后重试',
-					icon: 'none',
-					duration: 3000,
-					mask: true
-				});
-			}
-
-		}
-
 		if (code === 10000 || code === 10040 || code === 10050) { // 授权失败则登陆，则reject()
-			// console.log(response.data)
 			uni.removeStorageSync('token');
 			store.commit('LOGIN_TIP', true)
 			// store.dispatch('goToLogin');//******不应该跳转登陆界面，如果两个请求同时发起，这会跳转多次！！！*******
@@ -70,13 +56,23 @@ export default function api(url, data = {}, params = {}, loading = true, showToa
 			data,
 			params,
 			method: api.method
-		}).then(res=>{
+		}).then(res => {
 			uni.hideLoading();
+			if (res.code !== 0) { // 服务端返回的状态码不等于0，则reject()
+				if (showToast) {
+					Tip.toast(res.message || '请求出错,稍后重试', 3000);
+				}
+			}
 			resolve(res);
-		}).catch(err=>{
+		}).catch(err => {
 			uni.hideLoading();
 			if (showToast) {
-				Tip.toast("请求异常，请查看网络状态！", 3000)
+				if(err.errMsg === undefined) {
+					err.errMsg = "请求异常，请联系管理员！"
+				} else if(err.errMsg !== undefined && err.errMsg == "request:fail "){
+					err.errMsg = "请求异常，请检查您的网络情况！"
+				}
+				Tip.toast(err.errMsg, 3000)
 			}
 			reject(err);
 		});

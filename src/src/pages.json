@@ -24,20 +24,6 @@
 			}
 		},
 		{
-			"path": "pages/index/detail",
-			"name": "detail",
-			"style": {
-				"navigationBarTitleText": "明细",
-				"enablePullDownRefresh": true // 开启下拉刷新
-			},
-			"meta": {
-				"auth": true,
-				"async": true,
-				"title": "详情",
-				"group": ""
-			}
-		},
-		{
 			"path": "pages/index/statistics",
 			"name": "statistics",
 			"style": {
@@ -135,12 +121,6 @@
 						"title": "账单编辑"
 					}
 				}
-			]
-		},
-		{//detail分包
-			"root": "pages/detail",
-			"pages": [
-				
 			]
 		},
 		{//statistics分包
@@ -311,9 +291,3 @@
 		]
 	}
 }
-			// {
-			// 	"pagePath": "pages/index/detail",
-			// 	"iconPath": "static/assets/icons/tabbar/detail.png",
-			// 	"selectedIconPath": "static/assets/icons/tabbar/detail_select.png",
-			// 	"text": "明细"
-			// },

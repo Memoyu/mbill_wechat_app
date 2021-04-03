@@ -11,7 +11,7 @@
               mode="date"
               @change="pickerChange"
               fields="month"
-              :value="date"
+              :value="dateModel"
             >
               <view class="month">{{ date.year }} 年 {{ date.month }} 月</view>
             </picker>
@@ -53,6 +53,7 @@ export default {
           title: "排行榜"
         }
       ],
+      dateModel: nowDate,
       date: {
         year: nowDate.getFullYear(),
         month: nowDate.getMonth() + 1
@@ -71,19 +72,44 @@ export default {
   },
   onLoad() {},
   onReachBottom() {
-    // if(this.active === 0){
-		// 	this.$refs.overview.onLoadMore();
-    // } else if(this.active === 3){
-			this.$refs.overview.onLoadMore();
-   // }
+    if (this.$refs.overview !== undefined) {
+      this.$refs.overview.onLoadMore();
+    }
   },
   methods: {
     //时间改变触发
-    pickerChange() {},
+    pickerChange({ detail }) {
+      let that = this;
+      var date = new Date(detail.value);
+      // console.log(detail);
+      var year = date.getFullYear();
+      var month = date.getMonth() + 1;
+      if (year !== that.date.year || month !== that.date.month) {
+        that.date.year = year;
+        that.date.month = month;
+        that.dateModel = new Date(year, month);
+      }
+    },
     //上一月
-    prevMonth() {},
+    prevMonth() {
+      if (this.date.month === 1) {
+        this.date.year -= 1;
+        this.date.month = 12;
+      } else {
+        this.date.month -= 1;
+      }
+      this.dateModel = new Date(this.date.year, this.date.month);
+    },
     //下一月
-    nextMonth() {}
+    nextMonth() {
+      if (this.month === 12) {
+        this.date.year += 1;
+        this.date.month = 1;
+      } else {
+        this.date.month += 1;
+      }
+      this.dateModel = new Date(this.date.year, this.date.month);
+    }
   }
 };
 </script>
@@ -100,7 +126,7 @@ export default {
       // color: white;
     }
     .chart {
-       z-index: -1;
+      z-index: -1;
     }
     .time-filter {
       display: flex;

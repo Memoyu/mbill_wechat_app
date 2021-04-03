@@ -1,7 +1,8 @@
 <template>
   <view class="comp-container">
     <view class="category-pie-con">
-      <canvas
+      <core-empty v-if="chartData.length <= 0" :title="emptyTitle"></core-empty>
+      <canvas v-else
         id="canvasPie"
         type="2d"
         class="category-pie"
@@ -18,7 +19,7 @@
             :key="id"
             @tap="jump( item )"
           >
-            <image class="category-icon" :src="item.categoryIconPath"></image>
+            <image class="category-icon" :src="item.categoryIconPath">
             <view class="item" :style="'background-size:' + item.percent + '% 100%;'">
               <view class="title">
                 {{ item.name }}
@@ -49,11 +50,19 @@ export default {
   },
   data() {
     return {
+      emptyTitle: "空空如也！",
       groups: [],
       cWidth: "",
       cHeight: "",
-      pixelRatio: 1
+      pixelRatio: 1,
+      chartData:[]
     };
+  },
+  watch: {
+    async date() {
+      await this.getData();
+      this.showChart();
+    }
   },
   computed: {
     ...mapState({
@@ -61,17 +70,18 @@ export default {
     })
   },
   components: {},
-  created() {
+  async created() {
     _self = this;
     _self.pixelRatio = uni.getSystemInfoSync().pixelRatio;
     this.cWidth = uni.upx2px(750);
     this.cHeight = uni.upx2px(500);
-    this.getExpendCategory();
+    await this.getData();
+    this.showChart();
   },
   methods: {
     // 跳转分类详情
     jump(category) {
-      console.log(category)
+      console.log(category);
       let that = this;
       this.$Router.push({
         path: "/pages/bill/category-statements",
@@ -83,10 +93,18 @@ export default {
         }
       });
     },
+
+    async getData(){
+      await this.getExpendCategory();
+    },
+    showChart(){
+      if(this.chartData.length > 0)
+        this.showPie("canvasPie", this.chartData);
+    },
     // 获取支出分类统计
-    getExpendCategory() {
+    async getExpendCategory() {
       let that = this;
-      that
+      await that
         .$api("statement.expendCategory", {
           Year: that.date.year,
           Month: that.date.month,
@@ -95,7 +113,7 @@ export default {
         .then(res => {
           if (res.code === 0) {
             that.groups = res.result.childCategoryStas;
-            that.showPie("canvasPie", res.result.parentCategoryStas);
+            that.chartData = res.result.parentCategoryStas;
           }
         });
     },
@@ -152,11 +170,9 @@ export default {
 
 <style lang="scss">
 .comp-container {
-  min-height: 100%;
   .category-pie-con {
     margin-bottom: 30px;
     .category-pie {
-      display: block;
       width: 750rpx;
       height: 500rpx;
     }

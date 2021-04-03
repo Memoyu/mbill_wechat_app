@@ -26,7 +26,7 @@
       <view v-for="(item, index) in statements" :key="index">
         <mbill-bill-statement-item :bill="item"></mbill-bill-statement-item>
       </view>
-      <core-empty v-if="statements.length == 0" :title="emptyTitle"></core-empty>
+      <core-empty v-if="statements.length <= 0" :title="emptyTitle"></core-empty>
       <uni-load-more v-else-if="showLoadMore" :status="status" :content-text="contentText"></uni-load-more>
     </view>
   </view>
@@ -79,13 +79,11 @@ export default {
   created() {
     this.getStatementTotal();
     this.getStatementList(true);
-    // this.categoryChart()
   },
   watch: {
     date() {
       this.getStatementTotal();
       this.getStatementList(true);
-      // this.categoryChart()
     }
   },
   methods: {
@@ -133,16 +131,6 @@ export default {
       }
       that.total = res.total;
     },
-    async categoryChart() {
-      // const res = await wxRequest.Get('chart/overview_budgets', { date: this.date })
-      const res = [
-        { category_id: 1, percent: 30, name: "伙食", format_amount: 40 },
-        { category_id: 2, percent: 40, name: "游戏", format_amount: 40 }
-      ];
-      this.categories = res;
-      for (let item of res) {
-      }
-    }
   }
 };
 </script>

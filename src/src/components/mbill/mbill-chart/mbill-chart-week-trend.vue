@@ -2,11 +2,21 @@
   <view class="comp-container">
     <view class="week-trend-con">
       <view class="trend-title">周支出趋势</view>
-      <canvas id="canvaWeekColumn" type="2d" class="canva-week-column"></canvas>
+      <canvas
+        id="canvaWeekColumn"
+        type="2d"
+        class="canvas-week-column"
+        @touchstart="touchWeekColumn($event,'canvaWeekColumn')"
+      ></canvas>
     </view>
     <view class="month-trend-con">
       <view class="trend-title">月支出趋势</view>
-      <canvas id="canvaMonthColumn" type="2d" class="canva-month-column"></canvas>
+      <canvas
+        id="canvaMonthColumn"
+        type="2d"
+        class="canvas-month-column"
+        @touchstart="touchMonthColumn($event,'canvaMonthColumn')"
+      ></canvas>
     </view>
   </view>
 </template>
@@ -25,12 +35,20 @@ export default {
       type: Object
     }
   },
+  watch: {
+    async date() {
+      await this.getTrendData();
+      canvaWeekColumn.updateData(this.weekChartData);
+      canvaMonthColumn.updateData(this.monthChartData);
+    }
+  },
   data() {
     return {
-      groups: [],
       cWidth: "",
       cHeight: "",
-      pixelRatio: 1
+      pixelRatio: 1,
+      weekChartData: {},
+      monthChartData: {}
     };
   },
   computed: {
@@ -38,49 +56,71 @@ export default {
       userInfo: state => state.user.userInfo
     })
   },
-  created() {
+  async created() {
     _self = this;
     _self.pixelRatio = uni.getSystemInfoSync().pixelRatio;
     this.cWidth = uni.upx2px(750);
     this.cHeight = uni.upx2px(500);
-    this.getWeekTrend();
+    await this.getTrendData();
+    this.showTrendChart();
   },
   methods: {
+
+    async getTrendData() {
+      await this.getWeekTrend();
+      await this.getMonthTrend();
+    },
+    showTrendChart() {
+      this.showWeekColumn("canvaWeekColumn", this.weekChartData);
+      this.showMonthColumn("canvaMonthColumn", this.monthChartData);
+    },
     // 获取周趋势统计
-    getWeekTrend() {
+   async getWeekTrend() {
       let that = this;
-      that
-        .$api("statement.expendCategory", {
+    await that
+        .$api("statement.expendTrendWeek", {
           Year: that.date.year,
           Month: that.date.month,
+          Type: "expend",
           UserId: that.userInfo.id
         })
         .then(res => {
           if (res.code === 0) {
-            that.groups = res.result.childCategoryStas;
-            that.showWeekColumn(
-              "canvaWeekColumn",
-              res.result.parentCategoryStas
-            );
+            let categories = [];
+            let data = [];
+            res.result.map(r => {
+              categories.push(r.name);
+              data.push(r.data);
+            });
+            that.weekChartData = {
+              categories: categories,
+              series: [{ name: "周支出趋势", data: data }]
+            };
           }
         });
     },
     // 获取周趋势统计
-    getMonthTrend() {
+   async getMonthTrend() {
       let that = this;
-      that
-        .$api("statement.expendCategory", {
+      await that
+        .$api("statement.expendTrend5Month", {
           Year: that.date.year,
           Month: that.date.month,
+          Type: "expend",
           UserId: that.userInfo.id
         })
         .then(res => {
           if (res.code === 0) {
-            that.groups = res.result.childCategoryStas;
-            that.showMonthColumn(
-              "canvaMonthColumn",
-              res.result.parentCategoryStas
-            );
+            let categories = [];
+            let data = [];
+            res.result.reverse().map(r => {
+              categories.push(r.name);
+              data.push(r.data);
+            });
+             that.monthChartData = {
+              categories: categories,
+              series: [{ name: "月支出趋势", data: data }]
+            };
           }
         });
     },
@@ -96,7 +136,7 @@ export default {
           canvas.height = res[0].height * _self.pixelRatio;
           //此步不需要缩放画布，ucharts会自动缩放
           //ctx.scale(_self.pixelRatio, _self.pixelRatio)
-          canvaColumn = new uCharts({
+          canvaWeekColumn = new uCharts({
             $this: _self,
             //这俩参数是新增加的，开启2d并传入ctx
             canvas2d: true,
@@ -104,9 +144,10 @@ export default {
             //这俩参数是新增加的，开启2d并传入ctx
             canvasId: canvasId,
             type: "column",
-            padding: [15, 5, 0, 15],
+            fontSize: 13,
+            padding: [15, 15, 0, 15],
             legend: {
-              show: true,
+              show: false,
               padding: 5,
               lineHeight: 11,
               margin: 0
@@ -118,12 +159,14 @@ export default {
             categories: chartData.categories,
             series: chartData.series,
             xAxis: {
-              disableGrid: true
+              disableGrid: true,
+              calibration: true,
+              axisLine: true,
             },
             yAxis: {
               data: [
                 {
-                  position: "right",
+                  position: "left",
                   axisLine: false,
                   format: val => {
                     return val.toFixed(0) + "元";
@@ -157,7 +200,7 @@ export default {
           canvas.height = res[0].height * _self.pixelRatio;
           //此步不需要缩放画布，ucharts会自动缩放
           //ctx.scale(_self.pixelRatio, _self.pixelRatio)
-          canvaColumn = new uCharts({
+          canvaMonthColumn = new uCharts({
             $this: _self,
             //这俩参数是新增加的，开启2d并传入ctx
             canvas2d: true,
@@ -165,9 +208,10 @@ export default {
             //这俩参数是新增加的，开启2d并传入ctx
             canvasId: canvasId,
             type: "column",
-            padding: [15, 5, 0, 15],
+            fontSize: 13,
+            padding: [15, 15, 0, 15],
             legend: {
-              show: true,
+              show: false,
               padding: 5,
               lineHeight: 11,
               margin: 0
@@ -179,12 +223,14 @@ export default {
             categories: chartData.categories,
             series: chartData.series,
             xAxis: {
-              disableGrid: true
+              disableGrid: true,
+              calibration: true,
+              axisLine: true,
             },
             yAxis: {
               data: [
                 {
-                  position: "right",
+                  position: "left",
                   axisLine: false,
                   format: val => {
                     return val.toFixed(0) + "元";
@@ -205,6 +251,34 @@ export default {
             }
           });
         });
+    },
+    touchWeekColumn(e, id) {
+      canvaWeekColumn.touchLegend(e, {
+        animation: false
+      });
+      canvaWeekColumn.showToolTip(e, {
+        format: function(item, category) {
+          if (typeof item.data === "object") {
+            return category + " " + item.name + ":" + item.data.value;
+          } else {
+            return category + " " + item.name + ":" + item.data;
+          }
+        }
+      });
+    },
+    touchMonthColumn(e, id) {
+      canvaMonthColumn.touchLegend(e, {
+        animation: false
+      });
+      canvaMonthColumn.showToolTip(e, {
+        format: function(item, category) {
+          if (typeof item.data === "object") {
+            return category + " " + item.name + ":" + item.data.value;
+          } else {
+            return category + " " + item.name + ":" + item.data;
+          }
+        }
+      });
     }
   }
 };
@@ -212,8 +286,6 @@ export default {
 
 <style lang="scss">
 .comp-container {
-  margin-top: 30px;
-  min-height: 100%;
   .trend-title {
     position: relative;
     display: inline-block;
@@ -236,17 +308,17 @@ export default {
       z-index: -1;
     }
   }
-  .month-trend-con {
-    .week-trend {
-      display: block;
-      width: 750rpx;
+  .week-trend-con {
+    padding: 30rpx 2%;
+    .canvas-week-column {
+      width: 100%;
       height: 500rpx;
     }
   }
   .month-trend-con {
-    .month-trend {
-      display: block;
-      width: 750rpx;
+    padding: 30rpx 2%;
+    .canvas-month-column {
+      width: 100%;
       height: 500rpx;
     }
   }
