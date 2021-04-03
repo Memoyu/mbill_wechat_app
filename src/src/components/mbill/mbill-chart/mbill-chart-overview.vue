@@ -18,16 +18,17 @@
         <view class="text-small">还款</view>
       </view>
     </view>
-
     <view class="overview__count-result">
-      <text class="fs12">总计</text>（收入 - 支出 - 还款）：<text class="expend">{{ header.total }}</text>
+      <text class="fs12">总计</text>（收入 - 支出 - 还款）：
+      <text class="expend">{{ header.total }}</text>
     </view>
-
     <view class="overview__statements">
       <view class="ovweview-title">账单列表</view>
-      <div v-for="(item, index) in statements" :key="index">
+      <view v-for="(item, index) in statements" :key="index">
         <mbill-bill-statement-item :bill="item"></mbill-bill-statement-item>
-      </div>
+      </view>
+      <core-empty v-if="statements.length == 0" :title="emptyTitle"></core-empty>
+      <uni-load-more v-else-if="showLoadMore" :status="status" :content-text="contentText"></uni-load-more>
     </view>
   </view>
 </template>
@@ -45,11 +46,11 @@ export default {
   data() {
     return {
       header: {
-        monthExpend: 0.00,
-        monthIcome: 0.00,
-        monthTransfer: 0.00,
-        monthRepayment: 0.00,
-        total: 0.00
+        monthExpend: 0.0,
+        monthIcome: 0.0,
+        monthTransfer: 0.0,
+        monthRepayment: 0.0,
+        total: 0.0
       },
       statements: [],
       categories: [],
@@ -60,6 +61,13 @@ export default {
         Month: 0,
         Size: 10,
         Page: 0
+      },
+      showLoadMore: false,
+      status: "more",
+      contentText: {
+        contentdown: "上拉加载更多",
+        contentrefresh: "加载中",
+        contentnomore: "没有更多"
       }
     };
   },
@@ -78,12 +86,25 @@ export default {
       this.getStatementTotal();
       this.getStatementList(true);
       // this.categoryChart()
-    },
+    }
   },
   methods: {
     ...mapActions(["getPagesAsync", "getTotalAsync"]),
+    onLoadMore() {
+      this.status = "more";
+      this.showLoadMore = true;
+      var totalPage = this.total / this.page.Size;
+      var currentPage = this.page.Page + 1;
+      if (currentPage > totalPage) {
+        this.status = "moMore";
+        return;
+      }
 
-     // 获取当各类账单总计
+      this.page.Page += 1;
+      this.status = "loading";
+      this.getStatementList();
+    },
+    // 获取当各类账单总计
     async getStatementTotal() {
       let that = this;
       let res = await that.getTotalAsync({
@@ -92,7 +113,10 @@ export default {
         Month: that.date.month
       });
       that.header = res;
-      that.header.total = that.header.monthIcome - that.header.monthExpend - that.header.monthRepayment
+      that.header.total =
+        that.header.monthIcome -
+        that.header.monthExpend -
+        that.header.monthRepayment;
     },
     // 获取账单列表
     async getStatementList(isCover = false) {
@@ -101,11 +125,11 @@ export default {
       that.page.Year = that.date.year;
       that.page.Month = that.date.month;
       let res = await that.getPagesAsync(that.page);
-       if (isCover) {
+      if (isCover) {
         uni.pageScrollTo({ scrollTop: 0, duration: 0 });
         that.statements = res.items;
       } else {
-        that.statements = [...that.statementList, ...res.items];
+        that.statements = [...that.statements, ...res.items];
       }
       that.total = res.total;
     },
@@ -113,13 +137,13 @@ export default {
       // const res = await wxRequest.Get('chart/overview_budgets', { date: this.date })
       const res = [
         { category_id: 1, percent: 30, name: "伙食", format_amount: 40 },
-        { category_id: 2, percent: 40, name: "游戏", format_amount: 40 },
+        { category_id: 2, percent: 40, name: "游戏", format_amount: 40 }
       ];
       this.categories = res;
       for (let item of res) {
       }
-    },
-  },
+    }
+  }
 };
 </script>
 

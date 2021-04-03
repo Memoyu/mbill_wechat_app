@@ -10,7 +10,7 @@ import store from '@/common/store/index'
  * @param {Boolean} showToast 显示清求错误提示
  * @returns 
  */
-export default function api(url, data = {}, params = {},loading = true , showToast = true) {
+export default function api(url, data = {}, params = {}, loading = true, showToast = true) {
 	const request = new Request();
 	let api = getApiObj(url);
 	request.interceptor.request((config, cancel) => { /* 请求之前拦截器 */
@@ -30,7 +30,6 @@ export default function api(url, data = {}, params = {},loading = true , showToa
 	});
 
 	request.interceptor.response((response) => { /* 请求之后拦截器 */
-
 		var code = response.data.code;
 		if (code !== 0) { // 服务端返回的状态码不等于0，则reject()
 			if (showToast) {
@@ -57,23 +56,26 @@ export default function api(url, data = {}, params = {},loading = true , showToa
 	}, (response) => { // 预留可以日志上报
 		return response
 	})
-	uni.showLoading({
-		title: "加载中...",
-		duration: 30000,
-		mask: true
-	});
-	return request.request({
-		url: api.url,
-		data,
-		params,
-		method: api.method
-	}).then(res=>{
-		uni.hideLoading()
-		return res
-	}).catch(err=>{
-		uni.hideLoading()
-	})
 
+	return new Promise((resolve, reject) => {
+		uni.showLoading({
+			title: "加载中...",
+			duration: 30000,
+			mask: true
+		});
+		request.request({
+			url: api.url,
+			data,
+			params,
+			method: api.method
+		}).then(res=>{
+			uni.hideLoading();
+			resolve(res);
+		}).catch(err=>{
+			uni.hideLoading();
+			reject(err);
+		});
+	});
 }
 
 function getApiObj(url) {

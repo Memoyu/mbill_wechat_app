@@ -1,28 +1,32 @@
 <template>
   <view class="container">
     <view v-if="!showLoginTip" class="controller">
-      <view class="time-filter">
-        <view class="month-filter">
-          <!-- <view>2019 年 01 月</view> -->
-          <view class="iconfont icon-arrow-left" @tap="prevMonth"></view>
-          <picker
-            class="time-picker"
-            mode="date"
-            @change="pickerChange"
-            fields="month"
-            :value="date"
-          >
-            <view class="month">{{ date.year }} 年 {{ date.month }} 月</view>
-          </picker>
-          <view class="iconfont icon-arrow-right" @tap="nextMonth"></view>
+      <view class="header">
+        <view class="time-filter">
+          <view class="month-filter">
+            <!-- <view>2019 年 01 月</view> -->
+            <view class="iconfont icon-arrow-left" @tap="prevMonth"></view>
+            <picker
+              class="time-picker"
+              mode="date"
+              @change="pickerChange"
+              fields="month"
+              :value="date"
+            >
+              <view class="month">{{ date.year }} 年 {{ date.month }} 月</view>
+            </picker>
+            <view class="iconfont icon-arrow-right" @tap="nextMonth"></view>
+          </view>
         </view>
+        <core-tabs :type="tabList" v-model="active"></core-tabs>
       </view>
-      <core-tabs :type="tabList" v-model="active"></core-tabs>
-      <mbill-chart-overview v-if="active === 0" :date="date"></mbill-chart-overview>
-      <mbill-chart-category v-if="active === 1" :date="date"></mbill-chart-category>
-      <mbill-chart-week-trend v-if="active === 2"></mbill-chart-week-trend>
-      <mbill-chart-month-trend v-if="active === 3"></mbill-chart-month-trend>
-      <mbill-chart-rate v-if="active === 4" :date="date"></mbill-chart-rate>
+      <view class="chart">
+        <mbill-chart-overview ref="overview" v-if="active === 0" :date="date"></mbill-chart-overview>
+        <mbill-chart-category v-if="active === 1" :date="date"></mbill-chart-category>
+        <mbill-chart-week-trend v-if="active === 2"></mbill-chart-week-trend>
+        <mbill-chart-month-trend v-if="active === 3"></mbill-chart-month-trend>
+        <mbill-chart-rate v-if="active === 4" :date="date"></mbill-chart-rate>
+      </view>
     </view>
     <core-login-modal/>
   </view>
@@ -55,9 +59,8 @@ export default {
       ],
       date: {
         year: nowDate.getFullYear(),
-        month: nowDate.getMonth() + 1,
+        month: nowDate.getMonth() + 1
       },
-      isLogin: true,
       chartData: [],
       header: {},
       categories: [],
@@ -71,19 +74,18 @@ export default {
     })
   },
   onLoad() {},
+  onReachBottom() {
+    if(this.active === 0){
+			this.$refs.overview.onLoadMore();
+    }
+  },
   methods: {
     //时间改变触发
-    pickerChange() {
-
-    },
+    pickerChange() {},
     //上一月
-    prevMonth() {
-
-    },
+    prevMonth() {},
     //下一月
-    nextMonth() {
-
-    }
+    nextMonth() {}
   }
 };
 </script>
@@ -92,11 +94,20 @@ export default {
 .container {
   // background:#f2f2f2;
   .controller {
+    .header {
+      position: sticky;
+      top: 0;
+      z-index: 998;
+      background: white;
+      // color: white;
+    }
+    .chart {
+    }
     .time-filter {
       display: flex;
       justify-content: center;
       padding: 8px 0;
-      font-size: 30rpx;
+      font-size: 33rpx;
       .month-filter {
         display: flex;
         align-items: center;

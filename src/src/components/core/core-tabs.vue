@@ -151,7 +151,7 @@ export default {
   .tab {
     position: relative;
     display: flex;
-    font-size: 28rpx;
+    font-size: 30rpx;
     // padding-bottom: 15rpx;
     white-space: nowrap;
     &__item {
@@ -161,6 +161,7 @@ export default {
       line-height: 90rpx;
       color: $uni-text-color;
       &--active {
+        font-weight: bold;
         color: $primaryColor;
       }
       &-title {
