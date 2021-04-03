@@ -51,7 +51,6 @@
 <script>
 import { BASE_URL } from '@/env'
 import Util from "@/common/utils/util";
-import Tip from "@/common/utils/tip";
 import { mapMutations, mapActions, mapState } from "vuex";
 export default {
   name: "repaymentEdit",
@@ -71,7 +70,7 @@ export default {
           year: Util.getCurrentYear(),
           month: Util.getCurrentMonth(),
           day: Util.getCurrentDay(),
-          time: Util.getCurrentTime()
+          time: ""
         };
       },
     },
@@ -148,16 +147,17 @@ export default {
     submitStatement() {
       const repayment = this.repayment;
       if (repayment.amount === 0 || repayment.amount === "") {
-        Tip.error("金额不能为零");
+        this.$tip.error("金额不能为零");
         return false;
       }
       if (repayment.assetId === 0 || repayment.targetAssetId === 0) {
-        Tip.error("未选择转账账户");
+        this.$tip.error("未选择转账账户");
         return false;
       } else if (repayment.assetId === repayment.targetAssetId) {
-        Tip.error("不能转向同一账户");
+        this.$tip.error("不能转向同一账户");
         return false;
       }
+      repayment.time = Util.getCurrentTime();
       this.$emit("submitStatement", repayment);
     },
   },

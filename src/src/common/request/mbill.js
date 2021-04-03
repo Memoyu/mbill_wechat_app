@@ -86,6 +86,12 @@ export default {
 			method: 'GET',
 			// desc: '账单月各类型账单金额统计',
 		},
+		expendCategory: {
+			url: 'statement/statistics/expend/category',
+			auth: true,
+			method: 'GET',
+			// desc: '支出分类统计',
+		},
 	},
 
 };

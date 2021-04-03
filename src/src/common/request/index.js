@@ -1,6 +1,7 @@
 import Request from './request'
 import apiList from './mbill'
 import store from '@/common/store/index'
+import Tip from '@/common/utils/tip'
 
 /**
  * 
@@ -30,13 +31,14 @@ export default function api(url, data = {}, params = {}, loading = true, showToa
 	});
 
 	request.interceptor.response((response) => { /* 请求之后拦截器 */
+		debugger
 		var code = response.data.code;
 		if (code !== 0) { // 服务端返回的状态码不等于0，则reject()
 			if (showToast) {
 				uni.showToast({
 					title: response.data.message || '请求出错,稍后重试',
 					icon: 'none',
-					duration: 1000,
+					duration: 3000,
 					mask: true
 				});
 			}
@@ -73,6 +75,9 @@ export default function api(url, data = {}, params = {}, loading = true, showToa
 			resolve(res);
 		}).catch(err=>{
 			uni.hideLoading();
+			if (showToast) {
+				Tip.toast("请求异常，请查看网络状态！", 3000)
+			}
 			reject(err);
 		});
 	});

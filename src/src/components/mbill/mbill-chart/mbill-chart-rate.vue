@@ -1,18 +1,18 @@
 <template>
   <view class="category">
     <core-tabs :type="tabList" v-model="active"></core-tabs>
-
-    <div v-for="(item, index) in statements" :key="index">
+    <view v-for="(item, index) in statements" :key="index">
       <mbill-bill-statement-item :bill="item"></mbill-bill-statement-item>
-    </div>
+    </view>
+    <core-empty v-if="statements.length == 0" :title="emptyTitle"></core-empty>
+    <uni-load-more v-else-if="showLoadMore" :status="status" :content-text="contentText"></uni-load-more>
   </view>
 </template>
 
 <script>
-import mbillBillStatementItem from "../mbill-bill/mbill-bill-statement-item.vue";
+import { mapActions, mapState } from "vuex";
 
 export default {
-  components: { mbillBillStatementItem },
   name: "rateChart",
   props: {
     date: {
@@ -22,62 +22,93 @@ export default {
   data() {
     return {
       active: 0,
+      statements: [],
       tabList: [
         {
-          title: "支出",
+          title: "支出"
         },
         {
-          title: "收入",
-        },
+          title: "收入"
+        }
       ],
-	  statements: [],
+      emptyTitle: "空空如也！",
+      showLoadMore: false,
+      status: "more",
+      contentText: {
+        contentdown: "上拉加载更多",
+        contentrefresh: "加载中",
+        contentnomore: "没有更多"
+      },
+      total: 0,
+      page: {
+        UserId: 0,
+        Year: 0,
+        Month: 0,
+        Type: "expend",
+        Sort: "Amount-DESC,Time-DESC",
+        Size: 10,
+        Page: 0
+      }
     };
   },
+  computed: {
+    ...mapState({
+      userInfo: state => state.user.userInfo
+    })
+  },
   watch: {
-    date() {
-      this.getStatements();
+    active() {
+      this.handleChange()
     },
+    date() {
+      this.getStatements(true);
+    }
   },
   created() {
-    this.getStatements();
+    this.getStatements(true);
   },
   methods: {
-    handleChange({ detail }) {
-      this.current = detail.key;
+    ...mapActions(["getPagesAsync"]),
+    onLoadMore() {
+      this.status = "more";
+      this.showLoadMore = true;
+      var totalPage = this.total / this.page.Size;
+      var currentPage = this.page.Page + 1;
+      if (currentPage > totalPage) {
+        this.status = "noMore";
+        return;
+      }
+
+      this.page.Page += 1;
+      this.status = "loading";
       this.getStatements();
     },
-    getStatements() {
-      // const res = await wxRequest.Get('chart/rate', { date: this.date, type: this.current })
-      this.statements = [
-         {
-          id: 1,
-          categoryIconPath: "",
-          categoryName: "数码",
-          description: "买电脑",
-          year: "2021",
-          month: "11",
-          day: "01",
-          time: "01:26",
-          assetName: "微信",
-          type: "expend",
-          amount: 300,
-        },
-        {
-          id: 2,
-          categoryIconPath: "",
-          categoryName: "出行",
-          description: "买电脑",
-          year: "2021",
-          month: "11",
-          day: "01",
-          time: "01:26",
-          assetName: "微信",
-          type: "expend",
-          amount: 300.89,
-        },
-      ];
+    // 切换Tab
+    handleChange() {
+      let type = "expend";
+      if (this.active === 1) {
+        type = "income";
+      }
+      this.page.Type = type;
+      this.page.Page = 0;
+      this.getStatements(true);
     },
-  },
+    // 获取账单列表
+    async getStatements(isCover = false) {
+      let that = this;
+      that.page.UserId = that.userInfo.id;
+      that.page.Year = that.date.year;
+      that.page.Month = that.date.month;
+      let res = await that.getPagesAsync(that.page);
+      if (isCover) {
+        uni.pageScrollTo({ scrollTop: 0, duration: 0 });
+        that.statements = res.items;
+      } else {
+        that.statements = [...that.statements, ...res.items];
+      }
+      that.total = res.total;
+    }
+  }
 };
 </script>
 

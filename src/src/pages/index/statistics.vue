@@ -23,9 +23,8 @@
       <view class="chart">
         <mbill-chart-overview ref="overview" v-if="active === 0" :date="date"></mbill-chart-overview>
         <mbill-chart-category v-if="active === 1" :date="date"></mbill-chart-category>
-        <mbill-chart-week-trend v-if="active === 2"></mbill-chart-week-trend>
-        <mbill-chart-month-trend v-if="active === 3"></mbill-chart-month-trend>
-        <mbill-chart-rate v-if="active === 4" :date="date"></mbill-chart-rate>
+        <mbill-chart-week-trend v-if="active === 2" :date="date"></mbill-chart-week-trend>
+        <mbill-chart-rate ref="overview" v-if="active === 3" :date="date"></mbill-chart-rate>
       </view>
     </view>
     <core-login-modal/>
@@ -48,10 +47,7 @@ export default {
           title: "分类"
         },
         {
-          title: "周趋势"
-        },
-        {
-          title: "月趋势"
+          title: "趋势"
         },
         {
           title: "排行榜"
@@ -75,9 +71,11 @@ export default {
   },
   onLoad() {},
   onReachBottom() {
-    if(this.active === 0){
+    // if(this.active === 0){
+		// 	this.$refs.overview.onLoadMore();
+    // } else if(this.active === 3){
 			this.$refs.overview.onLoadMore();
-    }
+   // }
   },
   methods: {
     //时间改变触发
@@ -102,6 +100,7 @@ export default {
       // color: white;
     }
     .chart {
+       z-index: -1;
     }
     .time-filter {
       display: flex;

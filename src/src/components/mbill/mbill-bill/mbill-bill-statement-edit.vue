@@ -74,7 +74,6 @@
 
 <script>
 import Util from "@/common/utils/util.js";
-import Tip from "@/common/utils/tip";
 import Tools from "@/common/utils/tools";
 import { mapMutations, mapActions, mapState } from "vuex";
 export default {
@@ -100,7 +99,7 @@ export default {
         year: Util.getCurrentYear(),
         month: Util.getCurrentMonth(),
         day: Util.getCurrentDay(),
-        time: Util.getCurrentTime(),
+        time: ""
       },
     },
     type: String,
@@ -219,19 +218,20 @@ export default {
       const statement = this.statement;
       // console.log(statement)
       if (statement.amount === 0 || statement.amount === "") {
-        Tip.toast("金额不能为零");
+        this.$tip.toast("金额不能为零");
         return false;
       }
 
       if (statement.category_id === 0) {
-        Tip.toast("未选择分类");
+        this.$tip.toast("未选择分类");
         return false;
       }
 
       if (statement.asset_id === 0) {
-        Tip.toast("未选择账户");
+        this.$tip.toast("未选择账户");
         return false;
       }
+      statement.time = Util.getCurrentTime();
       //触发submit
       this.$emit("submitStatement", statement);
     },

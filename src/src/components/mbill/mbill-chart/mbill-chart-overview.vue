@@ -61,6 +61,7 @@ export default {
         Size: 10,
         Page: 0
       },
+      emptyTitle: "空空如也！",
       showLoadMore: false,
       status: "more",
       contentText: {
@@ -95,7 +96,7 @@ export default {
       var totalPage = this.total / this.page.Size;
       var currentPage = this.page.Page + 1;
       if (currentPage > totalPage) {
-        this.status = "moMore";
+        this.status = "noMore";
         return;
       }
 

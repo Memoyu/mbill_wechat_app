@@ -1,7 +1,7 @@
 <template>
 	<view class="column" @tap="choseCategory(category)">
 		<view class="category">
-			<image class="ljt-icon" :src="category.iconUrl"></image>
+			<image class="category-icon" :src="category.iconUrl"></image>
 			<text class="category-name fs16">{{ category.name }}</text>
 		</view>
 	</view>
@@ -49,7 +49,7 @@
 			color: $secondaryText;
 		}
 
-		.ljt-icon {
+		.category-icon {
 			width: 60rpx;
 			height: 60rpx;
 			margin-right: 12rpx;

@@ -1,7 +1,7 @@
 import { API_URL } from '@/env'
 
 export default class Request {
-    config = {
+	config = {
 		baseUrl: API_URL,
 		header: {
 			'content-type': 'application/json',
@@ -20,24 +20,24 @@ export default class Request {
 		// #endif
 	}
 
-    static posUrl(url) { /* 判断url是否为绝对路径 */
+	static posUrl(url) { /* 判断url是否为绝对路径 */
 		return /(http|https):\/\/([\w.]+\/?)\S*/.test(url)
 	}
 
-    /**
-     * 拼接请求参数
-     * @param {Array} params - 请求参数
-     * @returns 
-     */
-    static addQueryString(params) {
+	/**
+	 * 拼接请求参数
+	 * @param {Array} params - 请求参数
+	 * @returns 
+	 */
+	static addQueryString(params) {
 		let paramsData = ''
-		Object.keys(params).forEach(function(key) {
+		Object.keys(params).forEach(function (key) {
 			paramsData += key + '=' + encodeURIComponent(params[key]) + '&'
 		})
 		return paramsData.substring(0, paramsData.length - 1)
 	}
 
-    /**
+	/**
 	 * @property {Function} request 请求拦截器
 	 * @property {Function} response 响应拦截器
 	 * @type {{request: Request.interceptor.request, response: Request.interceptor.response}}
@@ -63,7 +63,7 @@ export default class Request {
 		}
 	}
 
-    requestBeforeFun(config) {
+	requestBeforeFun(config) {
 		return config
 	}
 
@@ -75,7 +75,7 @@ export default class Request {
 		return response
 	}
 
-    /**
+	/**
 	 * 自定义验证器，如果返回true 则进入响应拦截器的响应成功函数(resolve)，否则进入响应拦截器的响应错误函数(reject)
 	 * @param { Number } statusCode - 请求响应体statusCode（只读）
 	 * @return { Boolean } 如果为true,则 resolve, 否则 reject
@@ -84,8 +84,8 @@ export default class Request {
 		return statusCode === 200
 	}
 
-    async request(options = {}) {
-        options.baseUrl = this.config.baseUrl
+	async request(options = {}) {
+		options.baseUrl = this.config.baseUrl
 		options.dataType = options.dataType || this.config.dataType
 		// #ifndef MP-ALIPAY || APP-PLUS
 		options.responseType = options.responseType || this.config.responseType
@@ -98,14 +98,15 @@ export default class Request {
 		options.params = options.params || {}
 		options.header = options.header || this.config.header
 		options.method = options.method || this.config.method
-		options.custom = { ...this.config.custom,
+		options.custom = {
+			...this.config.custom,
 			...(options.custom || {})
 		}
-        // #ifdef APP-PLUS
-        options.sslVerify = options.sslVerify === undefined ? this.config.sslVerify : options.sslVerify
-        // #endif
-        return new Promise((resolve, reject) => {
-            let next = true
+		// #ifdef APP-PLUS
+		options.sslVerify = options.sslVerify === undefined ? this.config.sslVerify : options.sslVerify
+		// #endif
+		return new Promise((resolve, reject) => {
+			let next = true
 			let handleRe = {}
 
 			options.complete = (response) => {
@@ -114,6 +115,9 @@ export default class Request {
 					response = this.requestComFun(response)
 					resolve(response.data)
 				} else if (401 === response.statusCode) {
+					response = this.requestComFun(response)
+					resolve(response.data)
+				} else if (undefined !== response.data && undefined !== response.data.code) {
 					response = this.requestComFun(response)
 					resolve(response.data)
 				} else if (500 === response.statusCode) {
@@ -132,9 +136,11 @@ export default class Request {
 				next = false
 			}
 
-			handleRe = { ...this.requestBeforeFun(options, cancel)
+			handleRe = {
+				...this.requestBeforeFun(options, cancel)
 			}
-			const _config = { ...handleRe
+			const _config = {
+				...handleRe
 			}
 			if (!next) return
 			delete _config.custom
@@ -144,11 +150,11 @@ export default class Request {
 				mergeUrl += mergeUrl.indexOf('?') === -1 ? `?${paramsH}` : `&${paramsH}`
 			}
 			_config.url = mergeUrl
-			uni.request(_config) 
-        })
-    }
+			uni.request(_config)
+		})
+	}
 
-    get(url, options = {}) {
+	get(url, options = {}) {
 		return this.request({
 			url,
 			method: 'GET',

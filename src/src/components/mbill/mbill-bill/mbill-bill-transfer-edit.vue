@@ -55,7 +55,6 @@
 <script>
 import { BASE_URL } from '@/env'
 import Util from "@/common/utils/util";
-import Tip from "@/common/utils/tip";
 import { mapMutations, mapActions, mapState } from "vuex";
 export default {
   name: "transferEdit",
@@ -75,7 +74,7 @@ export default {
           year: Util.getCurrentYear(),
           month: Util.getCurrentMonth(),
           day: Util.getCurrentDay(),
-          time: Util.getCurrentTime(),
+          time: "",
         };
       },
     },
@@ -159,19 +158,20 @@ export default {
       const transfer = this.transfer;
       console.log(transfer);
       if (transfer.amount === 0 || transfer.amount === "") {
-        Tip.error("金额不能为零");
+        this.$tip.error("金额不能为零");
         return false;
       }
       if (transfer.assetId === 0) {
-        Tip.error("未选择还款账户");
+        this.$tip.error("未选择还款账户");
         return false;
       } else if (transfer.targetAssetId === 0) {
-        Tip.error("未选择负债账户");
+        this.$tip.error("未选择负债账户");
         return false;
       } else if (transfer.assetId === transfer.targetAssetId) {
-        Tip.error("还款账户与负债账户不能相同");
+        this.$tip.error("还款账户与负债账户不能相同");
         return false;
       }
+      transfer.time = Util.getCurrentTime();
       this.$emit("submitStatement", transfer);
     },
   },

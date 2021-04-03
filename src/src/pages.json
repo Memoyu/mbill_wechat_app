@@ -69,6 +69,17 @@
 			"root": "pages/bill",
 			"pages": [
 				{
+					"path": "category-statements",
+					"style": {
+						"navigationBarTitleText": "账单列表"
+					},
+					"meta": {
+						"auth": true,
+						"async": true,
+						"title": "账单列表"
+					}
+				},
+				{
 					"path": "chose-asset",
 					"style": {
 						"navigationBarTitleText": "选择资产类型"

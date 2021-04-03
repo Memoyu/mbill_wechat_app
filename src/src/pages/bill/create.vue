@@ -31,7 +31,6 @@
 </template>
 
 <script>
-import Tip from "@/common/utils/tip";
 export default {
   data() {
     return {

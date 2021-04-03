@@ -54,7 +54,12 @@ function getCurrentTime() {
   return [hour, min, second].join(':')
 }
 
+function getCurrentDateTime() {
+  return getCurrentDate() + ' ' + getCurrentTime()
+}
+
 module.exports = {
+  getCurrentDateTime,
   getCurrentDate,
   getCurrentYear,
   getCurrentMonth,
