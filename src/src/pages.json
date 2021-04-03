@@ -270,10 +270,7 @@
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "mbill",
 		"navigationBarBackgroundColor": "#FFF",
-		"backgroundColor": "#FFF",
-		"usingComponents": {
-			"ec-canvas": "/static/plugin/echart/ec-canvas"
-		}
+		"backgroundColor": "#FFF"
 	}
 	,
 	"tabBar": {
@@ -287,12 +284,6 @@
 				"iconPath": "static/assets/icons/tabbar/bill.png",
 				"selectedIconPath": "static/assets/icons/tabbar/bill_select.png",
 				"text": "记账"
-			},
-			{
-				"pagePath": "pages/index/detail",
-				"iconPath": "static/assets/icons/tabbar/detail.png",
-				"selectedIconPath": "static/assets/icons/tabbar/detail_select.png",
-				"text": "明细"
 			},
 			{
 				"pagePath": "pages/index/statistics",
@@ -309,3 +300,9 @@
 		]
 	}
 }
+			// {
+			// 	"pagePath": "pages/index/detail",
+			// 	"iconPath": "static/assets/icons/tabbar/detail.png",
+			// 	"selectedIconPath": "static/assets/icons/tabbar/detail_select.png",
+			// 	"text": "明细"
+			// },

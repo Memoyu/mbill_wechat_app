@@ -18,7 +18,7 @@
             <view class="iconfont icon-arrow-right" @tap="nextMonth"></view>
           </view>
         </view>
-        <core-tabs :type="tabList" v-model="active"></core-tabs>
+        <core-tabs :type="tabList" v-model="active" fontsize="medium"></core-tabs>
       </view>
       <view class="chart">
         <mbill-chart-overview ref="overview" v-if="active === 0" :date="date"></mbill-chart-overview>

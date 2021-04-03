@@ -23,7 +23,6 @@
       <text class="expend">{{ header.total }}</text>
     </view>
     <view class="overview__statements">
-      <view class="ovweview-title">账单列表</view>
       <view v-for="(item, index) in statements" :key="index">
         <mbill-bill-statement-item :bill="item"></mbill-bill-statement-item>
       </view>
@@ -184,10 +183,6 @@ export default {
     margin: 12px;
     padding: 12px;
     box-shadow: 0 0 4px #eee;
-  }
-  .ovweview-title {
-    font-weight: bold;
-    font-size: 32rpx;
   }
 }
 </style>

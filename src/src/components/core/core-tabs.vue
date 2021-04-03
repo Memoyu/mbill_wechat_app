@@ -6,7 +6,7 @@
       :scroll-left="tabsScrollLeft"
       @scroll="scroll"
     >
-      <view class="tab" id="tab_list">
+      <view :class="['tab', fontsize]" id="tab_list">
         <view
           v-for="(item, index) in type"
           :key="index"
@@ -56,6 +56,7 @@ export default {
       type: Boolean,
       default: true,
     },
+    fontsize: String
   },
   data() {
     return {
@@ -151,7 +152,7 @@ export default {
   .tab {
     position: relative;
     display: flex;
-    font-size: 30rpx;
+    font-size: 28rpx;
     // padding-bottom: 15rpx;
     white-space: nowrap;
     &__item {
@@ -168,6 +169,12 @@ export default {
         margin: 0 40rpx;
       }
     }
+  }
+  .small{
+    font-size: 28rpx;
+  }
+  .medium{
+    font-size: 30rpx;
   }
   .tab__line {
     display: block;
