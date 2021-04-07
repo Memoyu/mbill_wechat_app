@@ -60,8 +60,7 @@ export default {
   },
   watch: {
     async date() {
-      await this.getData();
-      this.showChart();
+      await this.initData()
     }
   },
   computed: {
@@ -75,10 +74,13 @@ export default {
     _self.pixelRatio = uni.getSystemInfoSync().pixelRatio;
     this.cWidth = uni.upx2px(750);
     this.cHeight = uni.upx2px(500);
-    await this.getData();
-    this.showChart();
+    await this.initData();
   },
   methods: {
+    async initData() {
+      await this.getData();
+      this.showChart();
+    },
     // 跳转分类详情
     jump(category) {
       console.log(category);

@@ -6,7 +6,7 @@
         id="canvaWeekColumn"
         type="2d"
         class="canvas-week-column"
-        @touchstart="touchWeekColumn($event,'canvaWeekColumn')"
+        @touchstart="touchWeekColumn($event, 'canvaWeekColumn')"
       ></canvas>
     </view>
     <view class="month-trend-con">
@@ -15,7 +15,7 @@
         id="canvaMonthColumn"
         type="2d"
         class="canvas-month-column"
-        @touchstart="touchMonthColumn($event,'canvaMonthColumn')"
+        @touchstart="touchMonthColumn($event, 'canvaMonthColumn')"
       ></canvas>
     </view>
   </view>
@@ -32,15 +32,13 @@ export default {
   name: "trendChart",
   props: {
     date: {
-      type: Object
-    }
+      type: Object,
+    },
   },
   watch: {
     async date() {
-      await this.getTrendData();
-      canvaWeekColumn.updateData(this.weekChartData);
-      canvaMonthColumn.updateData(this.monthChartData);
-    }
+      await this.initData();
+    },
   },
   data() {
     return {
@@ -48,13 +46,13 @@ export default {
       cHeight: "",
       pixelRatio: 1,
       weekChartData: {},
-      monthChartData: {}
+      monthChartData: {},
     };
   },
   computed: {
     ...mapState({
-      userInfo: state => state.user.userInfo
-    })
+      userInfo: (state) => state.user.userInfo,
+    }),
   },
   async created() {
     _self = this;
@@ -65,7 +63,11 @@ export default {
     this.showTrendChart();
   },
   methods: {
-
+    async initData() {
+      await this.getTrendData();
+      canvaWeekColumn.updateData(this.weekChartData);
+      canvaMonthColumn.updateData(this.monthChartData);
+    },
     async getTrendData() {
       await this.getWeekTrend();
       await this.getMonthTrend();
@@ -75,51 +77,51 @@ export default {
       this.showMonthColumn("canvaMonthColumn", this.monthChartData);
     },
     // 获取周趋势统计
-   async getWeekTrend() {
+    async getWeekTrend() {
       let that = this;
-    await that
+      await that
         .$api("statement.expendTrendWeek", {
           Year: that.date.year,
           Month: that.date.month,
           Type: "expend",
-          UserId: that.userInfo.id
+          UserId: that.userInfo.id,
         })
-        .then(res => {
+        .then((res) => {
           if (res.code === 0) {
             let categories = [];
             let data = [];
-            res.result.map(r => {
+            res.result.map((r) => {
               categories.push(r.name);
               data.push(r.data);
             });
             that.weekChartData = {
               categories: categories,
-              series: [{ name: "周支出趋势", data: data }]
+              series: [{ name: "周支出趋势", data: data }],
             };
           }
         });
     },
     // 获取周趋势统计
-   async getMonthTrend() {
+    async getMonthTrend() {
       let that = this;
       await that
         .$api("statement.expendTrend5Month", {
           Year: that.date.year,
           Month: that.date.month,
           Type: "expend",
-          UserId: that.userInfo.id
+          UserId: that.userInfo.id,
         })
-        .then(res => {
+        .then((res) => {
           if (res.code === 0) {
             let categories = [];
             let data = [];
-            res.result.reverse().map(r => {
+            res.result.reverse().map((r) => {
               categories.push(r.name);
               data.push(r.data);
             });
-             that.monthChartData = {
+            that.monthChartData = {
               categories: categories,
-              series: [{ name: "月支出趋势", data: data }]
+              series: [{ name: "月支出趋势", data: data }],
             };
           }
         });
@@ -129,7 +131,7 @@ export default {
       query
         .select("#" + canvasId)
         .fields({ node: true, size: true })
-        .exec(res => {
+        .exec((res) => {
           const canvas = res[0].node;
           const ctx = canvas.getContext("2d");
           canvas.width = res[0].width * _self.pixelRatio;
@@ -150,7 +152,7 @@ export default {
               show: false,
               padding: 5,
               lineHeight: 11,
-              margin: 0
+              margin: 0,
             },
             fontSize: 11,
             background: "#FFFFFF",
@@ -168,11 +170,11 @@ export default {
                 {
                   position: "left",
                   axisLine: false,
-                  format: val => {
+                  format: (val) => {
                     return val.toFixed(0) + "元";
-                  }
-                }
-              ]
+                  },
+                },
+              ],
             },
             dataLabel: true,
             width: _self.cWidth * _self.pixelRatio,
@@ -182,9 +184,9 @@ export default {
                 type: "group",
                 width:
                   (_self.cWidth * _self.pixelRatio * 0.45) /
-                  chartData.categories.length
-              }
-            }
+                  chartData.categories.length,
+              },
+            },
           });
         });
     },
@@ -193,7 +195,7 @@ export default {
       query
         .select("#" + canvasId)
         .fields({ node: true, size: true })
-        .exec(res => {
+        .exec((res) => {
           const canvas = res[0].node;
           const ctx = canvas.getContext("2d");
           canvas.width = res[0].width * _self.pixelRatio;
@@ -214,7 +216,7 @@ export default {
               show: false,
               padding: 5,
               lineHeight: 11,
-              margin: 0
+              margin: 0,
             },
             fontSize: 11,
             background: "#FFFFFF",
@@ -232,11 +234,11 @@ export default {
                 {
                   position: "left",
                   axisLine: false,
-                  format: val => {
+                  format: (val) => {
                     return val.toFixed(0) + "元";
-                  }
-                }
-              ]
+                  },
+                },
+              ],
             },
             dataLabel: true,
             width: _self.cWidth * _self.pixelRatio,
@@ -246,41 +248,41 @@ export default {
                 type: "group",
                 width:
                   (_self.cWidth * _self.pixelRatio * 0.45) /
-                  chartData.categories.length
-              }
-            }
+                  chartData.categories.length,
+              },
+            },
           });
         });
     },
     touchWeekColumn(e, id) {
       canvaWeekColumn.touchLegend(e, {
-        animation: false
+        animation: false,
       });
       canvaWeekColumn.showToolTip(e, {
-        format: function(item, category) {
+        format: function (item, category) {
           if (typeof item.data === "object") {
             return category + " " + item.name + ":" + item.data.value;
           } else {
             return category + " " + item.name + ":" + item.data;
           }
-        }
+        },
       });
     },
     touchMonthColumn(e, id) {
       canvaMonthColumn.touchLegend(e, {
-        animation: false
+        animation: false,
       });
       canvaMonthColumn.showToolTip(e, {
-        format: function(item, category) {
+        format: function (item, category) {
           if (typeof item.data === "object") {
             return category + " " + item.name + ":" + item.data.value;
           } else {
             return category + " " + item.name + ":" + item.data;
           }
-        }
+        },
       });
-    }
-  }
+    },
+  },
 };
 </script>
 

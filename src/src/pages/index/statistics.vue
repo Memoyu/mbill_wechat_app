@@ -22,8 +22,8 @@
       </view>
       <view class="chart">
         <mbill-chart-overview ref="overview" v-if="active === 0" :date="date"></mbill-chart-overview>
-        <mbill-chart-category v-if="active === 1" :date="date"></mbill-chart-category>
-        <mbill-chart-week-trend v-if="active === 2" :date="date"></mbill-chart-week-trend>
+        <mbill-chart-category ref="overview" v-if="active === 1" :date="date"></mbill-chart-category>
+        <mbill-chart-week-trend ref="overview" v-if="active === 2" :date="date"></mbill-chart-week-trend>
         <mbill-chart-rate ref="overview" v-if="active === 3" :date="date"></mbill-chart-rate>
       </view>
     </view>
@@ -71,8 +71,13 @@ export default {
     })
   },
   onLoad() {},
+  onShow() {
+     if (this.$refs.overview !== undefined) {
+      this.$refs.overview.initData();
+    }
+  },
   onReachBottom() {
-    if (this.$refs.overview !== undefined) {
+    if (this.active === 0 || this.active === 3) {
       this.$refs.overview.onLoadMore();
     }
   },

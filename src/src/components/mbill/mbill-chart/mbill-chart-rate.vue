@@ -61,14 +61,17 @@ export default {
       this.handleChange()
     },
     date() {
-      this.getStatements(true);
+      this.initData();
     }
   },
   created() {
-    this.getStatements(true);
+    this.initData();
   },
   methods: {
     ...mapActions(["getPagesAsync"]),
+    initData() {
+      this.getStatements(true);
+    },
     onLoadMore() {
       this.status = "more";
       this.showLoadMore = true;

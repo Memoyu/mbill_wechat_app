@@ -77,17 +77,19 @@ export default {
     })
   },
   created() {
-    this.getStatementTotal();
-    this.getStatementList(true);
+    this.initData();
   },
   watch: {
     date() {
-      this.getStatementTotal();
-      this.getStatementList(true);
+      this.initData();
     }
   },
   methods: {
     ...mapActions(["getPagesAsync", "getTotalAsync"]),
+    initData() {
+      this.getStatementTotal();
+      this.getStatementList(true);
+    },
     onLoadMore() {
       this.status = "more";
       this.showLoadMore = true;
