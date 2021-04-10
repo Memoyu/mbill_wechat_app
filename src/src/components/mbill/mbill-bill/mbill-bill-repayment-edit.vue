@@ -133,7 +133,7 @@ export default {
     },
     // 快速选取时间
     quickSetDate(between) {
-      const today = new Date();
+      let today = new Date();
       let date = today;
       if (between === "-1") {
         date = new Date(today.getTime() - 24 * 60 * 60 * 1000);
@@ -145,19 +145,21 @@ export default {
       this.repayment.day = Util.getCurrentDay(date);
     },
     submitStatement() {
-      const repayment = this.repayment;
-      if (repayment.amount === 0 || repayment.amount === "") {
-        this.$tip.error("金额不能为零");
+      let repayment = this.repayment;
+      if (repayment.amount === 0 || repayment.amount === "" || isNaN(repayment.amount)) {
+        this.$tip.toast("金额不能为零");
         return false;
       }
       if (repayment.assetId === 0 || repayment.targetAssetId === 0) {
-        this.$tip.error("未选择转账账户");
+        this.$tip.toast("未选择转账账户");
         return false;
       } else if (repayment.assetId === repayment.targetAssetId) {
-        this.$tip.error("不能转向同一账户");
+        this.$tip.toast("不能转向同一账户");
         return false;
       }
-      repayment.time = Util.getCurrentTime();
+      if(this.repayment.id === 0){
+        repayment.time = Util.getCurrentTime();
+      }
       this.$emit("submitStatement", repayment);
     },
   },

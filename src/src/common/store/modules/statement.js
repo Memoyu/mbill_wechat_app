@@ -49,7 +49,6 @@ const actions = {
         commit
     }, statement) {
         for (let index = 0, length = state.statements.length; index < length; ++index) {
-            debugger
             if (state.statements[index]['id'] === statement.id) {
                 commit('MODIFY_STATEMENT', { index, statement });
                 break;

@@ -188,7 +188,7 @@ export default {
     },
     getLocation(e) {
       // console.log(e)
-      const locationSwitch = e.target.value;
+      let locationSwitch = e.target.value;
       uni.setStorageSync("getLocationSwitch", locationSwitch);
       if (locationSwitch) {
         this.setLocation();
@@ -215,23 +215,26 @@ export default {
     },
     submitStatement() {
       // console.log("开始提交");
-      const statement = this.statement;
+      let statement = this.statement;
       // console.log(statement)
-      if (statement.amount === 0 || statement.amount === "") {
+      if (statement.amount === 0 || statement.amount === "" ||  isNaN(statement.amount)) {
         this.$tip.toast("金额不能为零");
         return false;
       }
 
-      if (statement.category_id === 0) {
+      if (statement.categoryId === 0) {
         this.$tip.toast("未选择分类");
         return false;
       }
 
-      if (statement.asset_id === 0) {
+      if (statement.assetId === 0) {
         this.$tip.toast("未选择账户");
         return false;
       }
-      statement.time = Util.getCurrentTime();
+      if(this.statement.id === 0){
+        statement.time = Util.getCurrentTime();
+      }
+      debugger
       //触发submit
       this.$emit("submitStatement", statement);
     },

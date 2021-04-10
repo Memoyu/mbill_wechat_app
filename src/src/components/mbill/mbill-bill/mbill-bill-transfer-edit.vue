@@ -136,14 +136,14 @@ export default {
     },
     // 时间改变
     dateChange({ detail }) {
-      var date = new Date(detail.value);
+      let date = new Date(detail.value);
       this.transfer.year = Util.getCurrentYear(date);
       this.transfer.month = Util.getCurrentMonth(date);
       this.transfer.day = Util.getCurrentDay(date);
     },
     // 快速选取时间
     quickSetDate(between) {
-      const today = new Date();
+      let today = new Date();
       let date = today;
       if (between === "-1") {
         date = new Date(today.getTime() - 24 * 60 * 60 * 1000);
@@ -155,23 +155,25 @@ export default {
       this.transfer.day = Util.getCurrentDay(date);
     },
     submitStatement() {
-      const transfer = this.transfer;
-      console.log(transfer);
-      if (transfer.amount === 0 || transfer.amount === "") {
-        this.$tip.error("金额不能为零");
+      let transfer = this.transfer;
+      // console.log(transfer);
+      if (transfer.amount === 0 || transfer.amount === "" || isNaN(transfer.amount)) {
+        this.$tip.toast("金额不能为零");
         return false;
       }
       if (transfer.assetId === 0) {
-        this.$tip.error("未选择还款账户");
+        this.$tip.toast("未选择还款账户");
         return false;
       } else if (transfer.targetAssetId === 0) {
-        this.$tip.error("未选择负债账户");
+        this.$tip.toast("未选择负债账户");
         return false;
       } else if (transfer.assetId === transfer.targetAssetId) {
-        this.$tip.error("还款账户与负债账户不能相同");
+        this.$tip.toast("还款账户与负债账户不能相同");
         return false;
       }
-      transfer.time = Util.getCurrentTime();
+      if(this.transfer.id === 0){
+        transfer.time = Util.getCurrentTime();
+      }
       this.$emit("submitStatement", transfer);
     },
   },
