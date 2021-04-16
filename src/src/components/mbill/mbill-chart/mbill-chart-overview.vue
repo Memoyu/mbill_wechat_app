@@ -20,7 +20,7 @@
     </view>
     <view class="overview__count-result">
       <text class="fs12">总计</text>（收入 - 支出 - 还款）：
-      <text class="expend">{{ header.total }}</text>
+      <text :class="[header.total < 0 ? 'expend' : 'income']">{{ header.total }}</text>
     </view>
     <view class="overview__statements">
       <view v-for="(item, index) in statements" :key="index">
@@ -34,6 +34,7 @@
 
 <script>
 import { mapActions, mapState } from "vuex";
+import Value from "@/common/utils/value";
 
 export default {
   name: "overviewChart",
@@ -114,9 +115,9 @@ export default {
       });
       that.header = res;
       that.header.total =
-        that.header.monthIcome -
+        Value.returnFloat(that.header.monthIcome -
         that.header.monthExpend -
-        that.header.monthRepayment;
+        that.header.monthRepayment);
     },
     // 获取账单列表
     async getStatementList(isCover = false) {

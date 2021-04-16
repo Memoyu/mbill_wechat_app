@@ -234,7 +234,6 @@ export default {
       if(this.statement.id === 0){
         statement.time = Util.getCurrentTime();
       }
-      debugger
       //触发submit
       this.$emit("submitStatement", statement);
     },

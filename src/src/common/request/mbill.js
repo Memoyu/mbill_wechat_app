@@ -51,19 +51,19 @@ export default {
 	/** 账单 */
 	statement: {
 		create: {
-			url: 'statement/create',
+			url: 'statement',
 			auth: true,
 			method: 'POST',
 			// desc: '创建账单',
 		},
 		update: {
-			url: 'statement/update',
+			url: 'statement',
 			auth: true,
 			method: 'PUT',
 			// desc: '更新账单',
 		},
 		delete: {
-			url: 'statement/delete',
+			url: 'statement',
 			auth: true,
 			method: 'DELETE',
 			// desc: '删除账单',
