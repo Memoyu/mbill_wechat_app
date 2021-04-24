@@ -11,7 +11,7 @@ export default {
 			// desc: '账户登录',
 		},
 		info: {
-			url: 'user/get',
+			url: 'account/user',
 			auth: true,
 			method: 'GET',
 			// desc: '获取账户信息',
