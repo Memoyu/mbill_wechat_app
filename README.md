@@ -69,6 +69,10 @@
 
 `2021-03-18`：基本完成向uni-app迁移。接下来继续晚上功能，并且将大部分时间去完善一下blazor后台管理。
 
+`2021-03-29`：完成对uni-app下ECharts的配置与使用，与WePY配置类似[uni-app 下使用ECharts - Memoyu - 博客园 (cnblogs.com)](https://www.cnblogs.com/memoyu/p/14555331.html)
+
+`2021-04-17`：完成小程序发版与迭代到1.0.3版本，基本可日常使用，暂时停止更新，完成Blog或Blazor 后端管理
+
 &nbsp;
 
 ## 开源协议
