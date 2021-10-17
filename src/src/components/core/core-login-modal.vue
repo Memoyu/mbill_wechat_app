@@ -4,7 +4,7 @@
       <view class="iconfont icon-prohibit icon"></view>
       <view class="title">
         {{title}}
-        <view class="navigator" @tap="jump('/pages/profile/login')">登录/注册 ></view>
+        <view class="navigator" @tap="jump('/pages/profile/login')">登录 ></view>
       </view>
     </view>
   </view>

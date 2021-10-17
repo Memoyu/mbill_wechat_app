@@ -10,6 +10,12 @@ export default {
 			method: 'POST',
 			// desc: '账户登录',
 		},
+		wxlogin: {
+			url: 'account/wxlogin',
+			auth: false,
+			method: 'POST',
+			// desc: '微信登录',
+		},
 		info: {
 			url: 'account/user',
 			auth: true,
@@ -17,6 +23,21 @@ export default {
 			// desc: '获取账户信息',
 		},
 	},
+	wx: {
+		code2session: {
+			url: 'wx/getcode2session',
+			auth: false,
+			method: 'GET',
+			// desc: 'code2session',
+		},
+		wxlogin: {
+			url: 'wx/wxlogin',
+			auth: false,
+			method: 'GET',
+			// desc: '微信登录',
+		},
+	},
+
 	/** 资产分类 */
 	asset: {
 		group: {
