@@ -1,21 +1,21 @@
 <template>
   <view class="container">
     <!--用户信息-->
-    <core-user-info :userInfo="userInfo"/>
+    <core-user-info :userInfo="userInfo" />
     <!-- 主要功能 -->
     <view class="func-btn">
       <view @tap="jump('/pages/profile/statement-search')">
-        <image src="~@/static/assets/icons/profile/icon_search_64.png">
+        <i class="iconfont icon-bill-search icon-style"></i>
         <view>搜索</view>
       </view>
       <view @tap="jump('/pages/profile/advance-list')">
-        <image src="~@/static/assets/icons/profile/icon_list_64.png">
+        <i class="iconfont icon-tolist icon-style"></i>
         <view>预购清单</view>
       </view>
     </view>
     <view class="bottom-container">
       <!-- 功能列表 -->
-      <uni-list :border="false">
+      <uni-list :border="false" >
         <uni-list-item
           v-for="(item, index) in funList"
           :key="index"
@@ -51,8 +51,8 @@ export default {
           extraIcon: {
             color: "#757575",
             size: "22",
-            type: "shop"
-          }
+            type: "shop",
+          },
         },
         {
           title: "资产管理",
@@ -60,8 +60,8 @@ export default {
           extraIcon: {
             color: "#757575",
             size: "22",
-            type: "circle"
-          }
+            type: "circle",
+          },
         },
         {
           title: "分类管理",
@@ -69,8 +69,8 @@ export default {
           extraIcon: {
             color: "#757575",
             size: "22",
-            type: "list"
-          }
+            type: "list",
+          },
         },
         {
           title: "系统设置",
@@ -78,39 +78,38 @@ export default {
           extraIcon: {
             color: "#757575",
             size: "22",
-            type: "gear"
-          }
-        }
-      ]
+            type: "gear",
+          },
+        },
+      ],
     };
   },
   onLoad() {},
   computed: {
     ...mapState({
-      showLoginTip: state => state.user.showLoginTip,
-      userInfo: state => state.user.userInfo
-    })
+      showLoginTip: (state) => state.user.showLoginTip,
+      userInfo: (state) => state.user.userInfo,
+    }),
   },
   methods: {
     //跳转页面
-    jump( path ) {
-      console.log(this.$Router)
-      let routes = this.$Router.options.routes
-      let isAuth = false
-      routes.map( r => {  
-        if(r.path === path && r.meta.auth !== undefined) {
+    jump(path) {
+      console.log(this.$Router);
+      let routes = this.$Router.options.routes;
+      let isAuth = false;
+      routes.map((r) => {
+        if (r.path === path && r.meta.auth !== undefined) {
           isAuth = r.meta.auth;
           return;
         }
       });
-      if(!isAuth || isAuth && !this.showLoginTip){
+      if (!isAuth || (isAuth && !this.showLoginTip)) {
         this.$Router.push({ path: path });
-      }else if(isAuth && this.showLoginTip) {
+      } else if (isAuth && this.showLoginTip) {
         Tip.toast("登录后才能使用哦！");
       }
-     
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -120,14 +119,16 @@ page {
   overflow-y: hidden;
 }
 .func-btn {
+  margin-top: -100rpx;
+  margin-left: 10rpx;
+  margin-right: 10rpx;
   height: 80px;
   border-radius: 10px;
-  margin: 15px 10px 10px 10px;
   display: flex;
-  z-index: -1;
   align-items: center;
   justify-items: center;
   background: white;
+  position: relative;
   > view {
     flex: 1;
     text-align: center;
@@ -136,13 +137,17 @@ page {
       height: 35px;
     }
   }
+  .icon-style{
+    font-size: 60rpx;
+    color: $primaryColor;
+  }
 }
 
 .bottom-container {
-  background: white;
+  // background: white;
   padding: 0 10px;
-  margin: 10px 10px;
-  border-radius: 10px;
+  margin: 10px 0px;
+ // border-radius: 10px;
 }
 
 .foot_box {

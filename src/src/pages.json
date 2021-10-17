@@ -41,7 +41,8 @@
 			"path": "pages/index/profile",
 			"name": "profile",
 			"style": {
-				"navigationBarTitleText": "我的"
+				"navigationBarTitleText": "我的",
+				"navigationBarBackgroundColor": "#8DAFB1"
 			},
 			"meta": {
 				"auth": false,
@@ -49,10 +50,10 @@
 				"title": "我的",
 				"group": ""
 			}
-		}	
+		}
 	],
 	"subPackages": [
-		{//bill分包
+		{ //bill分包
 			"root": "pages/bill",
 			"pages": [
 				{
@@ -124,13 +125,11 @@
 				}
 			]
 		},
-		{//statistics分包
+		{ //statistics分包
 			"root": "pages/statistics",
-			"pages": [
-				
-			]
+			"pages": []
 		},
-		{//profile分包
+		{ //profile分包
 			"root": "pages/profile",
 			"pages": [
 				{
@@ -263,8 +262,7 @@
 		"navigationBarTitleText": "mbill",
 		"navigationBarBackgroundColor": "#FFF",
 		"backgroundColor": "#FFF"
-	}
-	,
+	},
 	"tabBar": {
 		"selectedColor": "#be6868",
 		"color": "#C0C4CC",
@@ -272,16 +270,16 @@
 		"backgroundColor": "#ffffff",
 		"list": [
 			{
-				"pagePath": "pages/index/bill",
-				"iconPath": "static/assets/icons/tabbar/bill.png",
-				"selectedIconPath": "static/assets/icons/tabbar/bill_select.png",
-				"text": "记账"
-			},
-			{
 				"pagePath": "pages/index/statistics",
 				"iconPath": "static/assets/icons/tabbar/statistics.png",
 				"selectedIconPath": "static/assets/icons/tabbar/statistics_select.png",
 				"text": "统计"
+			},
+			{
+				"pagePath": "pages/index/bill",
+				"iconPath": "static/assets/icons/tabbar/bill.png",
+				"selectedIconPath": "static/assets/icons/tabbar/bill_select.png",
+				"text": "记账"
 			},
 			{
 				"pagePath": "pages/index/profile",

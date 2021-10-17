@@ -4,6 +4,7 @@ export default {
     console.log("App Launch");
   },
   onShow: function () {
+    // wx.hideTabBar();
     console.log("App Show");
   },
   onHide: function () {

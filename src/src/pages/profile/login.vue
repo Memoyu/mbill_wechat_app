@@ -59,7 +59,6 @@
 import { mapMutations, mapActions, mapState } from "vuex";
 import coreMagicText from "../../components/core/core-magic-text.vue";
 import Tip from "@/common/utils/tip";
-import WXBizDataCrypt from "@/static/plugin/WXBizDataCrypt.js";
 
 export default {
   components: { coreMagicText },
