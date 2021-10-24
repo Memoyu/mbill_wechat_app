@@ -18,16 +18,36 @@
             <view class="iconfont icon-arrow-right" @tap="nextMonth"></view>
           </view>
         </view>
-        <core-tabs :type="tabList" v-model="active" fontsize="medium"></core-tabs>
+        <core-tabs
+          :type="tabList"
+          v-model="active"
+          fontsize="medium"
+        ></core-tabs>
       </view>
       <view class="chart">
-        <mbill-chart-overview ref="overview" v-if="active === 0" :date="date"></mbill-chart-overview>
-        <mbill-chart-category ref="overview" v-if="active === 1" :date="date"></mbill-chart-category>
-        <mbill-chart-week-trend ref="overview" v-if="active === 2" :date="date"></mbill-chart-week-trend>
-        <mbill-chart-rate ref="overview" v-if="active === 3" :date="date"></mbill-chart-rate>
+        <mbill-chart-overview
+          ref="overview"
+          v-if="active === 0"
+          :date="date"
+        ></mbill-chart-overview>
+        <mbill-chart-category
+          ref="overview"
+          v-if="active === 1"
+          :date="date"
+        ></mbill-chart-category>
+        <mbill-chart-week-trend
+          ref="overview"
+          v-if="active === 2"
+          :date="date"
+        ></mbill-chart-week-trend>
+        <mbill-chart-rate
+          ref="overview"
+          v-if="active === 3"
+          :date="date"
+        ></mbill-chart-rate>
       </view>
     </view>
-    <core-login-modal/>
+    <core-login-modal />
   </view>
 </template>
 
@@ -41,38 +61,38 @@ export default {
       active: 0,
       tabList: [
         {
-          title: "总览"
+          title: "总览",
         },
         {
-          title: "分类"
+          title: "分类",
         },
         {
-          title: "趋势"
+          title: "趋势",
         },
         {
-          title: "排行榜"
-        }
+          title: "排行榜",
+        },
       ],
       dateModel: nowDate,
       date: {
         year: nowDate.getFullYear(),
-        month: nowDate.getMonth() + 1
+        month: nowDate.getMonth() + 1,
       },
       chartData: [],
       header: {},
       categories: [],
       showFilter: false,
-      emptyTitle: "没有数据噢！"
+      emptyTitle: "没有数据噢！",
     };
   },
   computed: {
     ...mapState({
-      showLoginTip: state => state.user.showLoginTip
-    })
+      showLoginTip: (state) => state.user.showLoginTip,
+    }),
   },
   onLoad() {},
   onShow() {
-     if (this.$refs.overview !== undefined) {
+    if (this.$refs.overview !== undefined) {
       this.$refs.overview.initData();
     }
   },
@@ -97,25 +117,21 @@ export default {
     },
     //上一月
     prevMonth() {
-      if (this.date.month === 1) {
-        this.date.year -= 1;
-        this.date.month = 12;
-      } else {
-        this.date.month -= 1;
-      }
-      this.dateModel = new Date(this.date.year, this.date.month);
+      var now = this.dateModel;
+      now.setMonth(now.getMonth() - 1);
+      this.dateModel = now;
+      this.date.year = now.getFullYear();
+      this.date.month = now.getMonth() + 1;
     },
     //下一月
     nextMonth() {
-      if (this.month === 12) {
-        this.date.year += 1;
-        this.date.month = 1;
-      } else {
-        this.date.month += 1;
-      }
-      this.dateModel = new Date(this.date.year, this.date.month);
-    }
-  }
+      var now = this.dateModel;
+      now.setMonth(now.getMonth() + 1);
+      this.dateModel = now;
+      this.date.year = now.getFullYear();
+      this.date.month = now.getMonth() + 1;
+    },
+  },
 };
 </script>
 

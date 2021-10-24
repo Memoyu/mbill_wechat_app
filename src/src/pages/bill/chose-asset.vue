@@ -50,6 +50,7 @@ export default {
       var that = this;
       let parame = this.asset_type !== null ? { type: this.asset_type } : {};
       that.$api("asset.group", parame).then((res) => {
+        debugger
         this.list = res.result;
       });
     },

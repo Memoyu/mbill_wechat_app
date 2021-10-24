@@ -144,7 +144,7 @@
 					}
 				},
 				{
-					"path": "advance-list",
+					"path": "pre-order-list",
 					"style": {
 						"navigationBarTitleText": "预购清单"
 					},

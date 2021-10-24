@@ -18,7 +18,7 @@ export default {
 @import "static/font/iconfont.css";
 page {
   height: 100%;
-  overflow-y: hidden;
+  // overflow-y: hidden;
   background-color: #ffffff;
 }
 </style>

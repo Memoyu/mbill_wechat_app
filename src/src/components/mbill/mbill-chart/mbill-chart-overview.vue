@@ -172,9 +172,9 @@ export default {
     }
   }
   .overview__statements {
-    margin: 12px;
-    padding: 12px;
-    box-shadow: 0 0 4px #eee;
+    margin: 8px;
+    // padding: 8px;
+    // box-shadow: 0 0 4px #eee;
   }
 }
 </style>

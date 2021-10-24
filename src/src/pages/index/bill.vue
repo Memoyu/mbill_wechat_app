@@ -14,7 +14,7 @@
         <view class="fs21 today-expend">{{ statementTotal.dayExpend }}</view>
         <view class="overflow-hide">
           <view class="pull-left fs14">{{ header.positionName2 }} {{ statementTotal.monthExpend }}</view>
-          <view class="pull-right fs14">{{ header.positionName3 }} {{ header.positionAmount3 }}</view>
+          <!-- <view class="pull-right fs14">{{ header.positionName3 }} {{ header.positionAmount3 }}</view> -->
         </view>
       </view>
       <view class="bill-btn">

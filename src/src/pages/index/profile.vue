@@ -8,7 +8,7 @@
         <i class="iconfont icon-bill-search icon-style"></i>
         <view>搜索</view>
       </view>
-      <view @tap="jump('/pages/profile/advance-list')">
+      <view @tap="jump('/pages/profile/pre-order-list')">
         <i class="iconfont icon-tolist icon-style"></i>
         <view>预购清单</view>
       </view>
