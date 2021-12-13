@@ -29,7 +29,7 @@ import { mapState } from "vuex";
 export default {
   data() {
     return {
-      bgImage: BASE_URL + "/core/images/other/index_bg4_533x300.png",
+      bgImage: BASE_URL + "/images/other/index_bg4_533x300.png",
     };
   },
   computed: {},

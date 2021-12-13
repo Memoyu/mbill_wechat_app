@@ -85,7 +85,7 @@ export default {
         dayExpend: "0.00"
       },
       header: {
-        backgroundUrl: BASE_URL + "/core/images/other/index_bg1_533x300.png",
+        backgroundUrl: BASE_URL + "/images/other/index_bg3_533x300.png",
         positionName1: "今日支出",
         positionName2: "本月支出",
         positionName3: "剩余预算",
