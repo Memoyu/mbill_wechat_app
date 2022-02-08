@@ -5,7 +5,7 @@
     </br>
     </br>
      <span  align="center">
- 	 	个人记账小程序
+          个人记账小程序
      </span>
 </h1>
 <div align="center">
@@ -13,8 +13,8 @@
 > 知行合一
 
 [![小程序: uni-app](https://img.shields.io/badge/小程序-uni--app-blue)](https://github.com/dcloudio/uni-app)&ensp;[![](https://img.shields.io/badge/license-MIT-3963bc.svg)](LICENSE)
-</div>
 
+</div>
 
 &nbsp;
 
@@ -51,7 +51,13 @@
 
 ## 效果演示
 
+**小程序效果：**
+
 ![mbill_wechat_app/doc at main · Memoyu/mbill_wechat_app (github.com)](https://github.com/Memoyu/mbill_wechat_app/blob/main/doc/效果图.png)
+
+**小程序二维码：**
+
+![mbill_wechat_app/效果图.png at main · Memoyu/mbill_wechat_app · GitHub](https://github.com/Memoyu/mbill_wechat_app/blob/main/doc/效果图.png)
 
 &nbsp;
 
