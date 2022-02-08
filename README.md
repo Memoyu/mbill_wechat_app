@@ -51,7 +51,7 @@
 
 ## 效果演示
 
-**小程序效果：**
+**小程序效果：（界面在迭代中，部分与展示有所不同）**
 
 ![小程序效果图](https://github.com/Memoyu/mbill_wechat_app/blob/main/doc/效果图.png)
 
