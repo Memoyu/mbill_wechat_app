@@ -53,11 +53,11 @@
 
 **小程序效果：**
 
-![mbill_wechat_app/doc at main · Memoyu/mbill_wechat_app (github.com)](https://github.com/Memoyu/mbill_wechat_app/blob/main/doc/效果图.png)
+![小程序效果图](https://github.com/Memoyu/mbill_wechat_app/blob/main/doc/效果图.png)
 
 **小程序二维码：**
 
-![mbill_wechat_app/效果图.png at main · Memoyu/mbill_wechat_app · GitHub](https://github.com/Memoyu/mbill_wechat_app/blob/main/doc/效果图.png)
+![小程序二维码](https://github.com/Memoyu/mbill_wechat_app/blob/main/doc/qrcode.jpg)
 
 &nbsp;
 
