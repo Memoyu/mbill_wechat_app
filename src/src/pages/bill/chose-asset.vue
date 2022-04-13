@@ -3,14 +3,20 @@
     <view v-if="!hide_frequent && frequent.length > 0">
       <view class="header fs14">常用</view>
       <repeat v-for="(child, index) in frequent" :key="index">
-        <mbill-core-asset-item :asset="child" @choseItem="setAsset"></mbill-core-asset-item>
+        <mbill-core-asset-item
+          :asset="child"
+          @choseItem="setAsset"
+        ></mbill-core-asset-item>
       </repeat>
     </view>
 
     <view v-for="(item, id) in list" :key="id">
       <view class="header fs14">{{ item.name }}</view>
       <div v-for="(child, index) in item.childs" :key="index">
-        <mbill-core-asset-item :asset="child" @choseItem="setAsset"></mbill-core-asset-item>
+        <mbill-core-asset-item
+          :asset="child"
+          @choseItem="setAsset"
+        ></mbill-core-asset-item>
       </div>
     </view>
 
@@ -50,7 +56,6 @@ export default {
       var that = this;
       let parame = this.asset_type !== null ? { type: this.asset_type } : {};
       that.$api("asset.group", parame).then((res) => {
-        debugger
         this.list = res.result;
       });
     },

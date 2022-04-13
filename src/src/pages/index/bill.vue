@@ -1,19 +1,23 @@
 <template>
   <view class="container">
     <view class="header">
-      <image class="bg" :src="header.backgroundUrl" ></image>
+      <image class="bg" :src="header.backgroundUrl"></image>
       <view class="level-2">
         <view class="overflow-hide">
           <view class="pull-right fs14 today-weather">
             <text>{{ header.positionName4 }}</text>
-            <view :class="['iconfont', header.positionWeather, 'weather-icon']"></view>
+            <view
+              :class="['iconfont', header.positionWeather, 'weather-icon']"
+            ></view>
             <text>{{ header.positionCelsius }}</text>
           </view>
         </view>
         <view class="fs14">{{ header.positionName1 }}</view>
         <view class="fs21 today-expend">{{ statementTotal.dayExpend }}</view>
         <view class="overflow-hide">
-          <view class="pull-left fs14">{{ header.positionName2 }} {{ statementTotal.monthExpend }}</view>
+          <view class="pull-left fs14"
+            >{{ header.positionName2 }} {{ statementTotal.monthExpend }}</view
+          >
           <!-- <view class="pull-right fs14">{{ header.positionName3 }} {{ header.positionAmount3 }}</view> -->
         </view>
       </view>
@@ -31,10 +35,17 @@
         <view v-for="(item, index) in statements" :key="index">
           <mbill-bill-statement-item :bill="item"></mbill-bill-statement-item>
         </view>
-        <core-empty v-if="statements.length == 0" :title="emptyTitle"></core-empty>
-        <uni-load-more v-else-if="showLoadMore" :status="status" :content-text="contentText"></uni-load-more>
+        <core-empty
+          v-if="statements.length == 0"
+          :title="emptyTitle"
+        ></core-empty>
+        <uni-load-more
+          v-else-if="showLoadMore"
+          :status="status"
+          :content-text="contentText"
+        ></uni-load-more>
       </view>
-      <core-login-modal/>
+      <core-login-modal />
     </view>
   </view>
 </template>
@@ -82,7 +93,7 @@ export default {
       ],
       statementTotal: {
         monthExpend: "0.00",
-        dayExpend: "0.00"
+        dayExpend: "0.00",
       },
       header: {
         backgroundUrl: BASE_URL + "/images/other/index_bg3_533x300.png",
@@ -92,14 +103,14 @@ export default {
         positionAmount3: "0.00",
         positionName4: "未知",
         positionWeather: "icon-weather-sun",
-        positionCelsius: "27℃"
+        positionCelsius: "27℃",
       },
       showLoadMore: false,
       status: "more",
       contentText: {
         contentdown: "上拉加载更多",
         contentrefresh: "加载中",
-        contentnomore: "没有更多"
+        contentnomore: "没有更多",
       },
       total: 0,
       page: {
@@ -108,16 +119,16 @@ export default {
         Day: Util.getCurrentDay(),
         Size: 10,
         Page: 0,
-        UserId: 0
-      }
+        UserId: 0,
+      },
     };
   },
   computed: {
     ...mapState({
-      showLoginTip: state => state.user.showLoginTip,
-      statements: state => state.statement.statements,
-      userInfo: state => state.user.userInfo
-    })
+      showLoginTip: (state) => state.user.showLoginTip,
+      statements: (state) => state.statement.statements,
+      userInfo: (state) => state.user.userInfo,
+    }),
   },
   onLoad() {},
   onShow() {
@@ -148,7 +159,7 @@ export default {
     async getStatementList(isCover = false) {
       let that = this;
       that.page.UserId = that.userInfo.id;
-      await that.getPagesAsync(that.page).then(res => {
+      await that.getPagesAsync(that.page).then((res) => {
         if (isCover) {
           uni.pageScrollTo({ scrollTop: 0, duration: 0 });
           that.$store.commit("COVER_STATEMENTS", res.items);
@@ -165,7 +176,7 @@ export default {
         UserId: that.userInfo.id,
         Year: that.page.Year,
         Month: that.page.Month,
-        Day: that.page.Day
+        Day: that.page.Day,
       });
       that.statementTotal = res;
     },
@@ -175,7 +186,7 @@ export default {
       let weatherCache = Session.cache("bill:index:weather");
       // console.log(weatherCache);
       if (weatherCache == null) {
-        await Tools.getWeather().then(res => {
+        await Tools.getWeather().then((res) => {
           //console.log(res)
           var data = res.liveData;
           that.setWeather(data);
@@ -196,26 +207,25 @@ export default {
     handleAddStatement() {
       if (!this.showLoginTip)
         this.$Router.push({
-          path: "/pages/bill/create"
+          path: "/pages/bill/create",
         });
-    }
-  }
+    },
+  },
 };
 </script>
 
 <style lang="scss">
 .container {
-  &:-webkit-scrollbar {
-    width: 0;
-    height: 0;
-    color: transparent;
-    display: none;
-  }
+  // &:-webkit-scrollbar {
+  //   width: 0;
+  //   height: 0;
+  //   color: transparent;
+  //   display: none;
+  // }
+  height: 100%;
 }
 
 .header {
-  position: sticky;
-  top: 0;
   z-index: 998;
   background: white;
   color: white;
@@ -283,7 +293,7 @@ export default {
     }
   }
   .bill-title {
-    position: relative;
+    position: sticky;
     display: inline-block;
     padding-bottom: 4px;
     margin-bottom: 12px;

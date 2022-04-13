@@ -17,7 +17,7 @@ export default {
 /*每个页面公共css */
 @import "static/font/iconfont.css";
 page {
-  height: 100%;
+  height: 100vh;
   // overflow-y: hidden;
   background-color: #ffffff;
 }

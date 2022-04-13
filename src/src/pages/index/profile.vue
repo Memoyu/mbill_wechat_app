@@ -8,14 +8,14 @@
         <i class="iconfont icon-bill-search icon-style"></i>
         <view>搜索</view>
       </view>
-      <view @tap="jump('/pages/profile/pre-order-list')">
+      <view @tap="jump('/pages/profile/pre_order/pre-order-list')">
         <i class="iconfont icon-tolist icon-style"></i>
         <view>预购清单</view>
       </view>
     </view>
     <view class="bottom-container">
       <!-- 功能列表 -->
-      <uni-list :border="false" >
+      <uni-list :border="false">
         <uni-list-item
           v-for="(item, index) in funList"
           :key="index"
@@ -137,7 +137,7 @@ page {
       height: 35px;
     }
   }
-  .icon-style{
+  .icon-style {
     font-size: 60rpx;
     color: $primaryColor;
   }
@@ -147,7 +147,7 @@ page {
   // background: white;
   padding: 0 10px;
   margin: 10px 0px;
- // border-radius: 10px;
+  // border-radius: 10px;
 }
 
 .foot_box {

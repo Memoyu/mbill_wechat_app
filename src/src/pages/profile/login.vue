@@ -100,6 +100,11 @@ export default {
     },
     //登陆
     toWxLogin() {
+      uni.showLoading({
+        title: "登录中...",
+        duration: 10000,
+        mask: true,
+      });
       let code = "";
       uni.login({
         success: (res) => {
@@ -118,6 +123,7 @@ export default {
           }
         },
       });
+      uni.hideLoading();
     },
     toGetToken(user, code) {
       this.$api("user.wxlogin", {

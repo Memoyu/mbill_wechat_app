@@ -22,7 +22,7 @@
     </view>
     <view class="pre-order-list">
       <view v-for="(item, index) in preOrders" :key="index">
-        <mbill-bill-statement-item :bill="item"></mbill-bill-statement-item>
+        <mbill-bill-pre-order-item :order="item"></mbill-bill-pre-order-item>
       </view>
       <core-empty
         class=""
@@ -52,7 +52,38 @@ export default {
         month: nowDate.getMonth() + 1,
         day: nowDate.getDate(),
       },
-      preOrders: [],
+      preOrders: [
+        {
+          id: 1,
+          categoryIconPath:
+            "http://localhost:5000/core/images/category/icon_mushroom_64.png",
+          categoryName: "数码",
+          assetName: "微信",
+          targetAssetName: "",
+          description: "买电脑",
+          year: 2021,
+          month: 2,
+          day: 6,
+          time: "16:13:11",
+          type: "expend",
+          amount: 300,
+        },
+        {
+          id: 2,
+          categoryIconPath:
+            "http://localhost:5000/core/images/category/icon_mushroom_64.png",
+          categoryName: "",
+          assetName: "微信",
+          targetAssetName: "信用卡",
+          description: "买电脑",
+          year: 2021,
+          month: 2,
+          day: 6,
+          time: "16:13:11",
+          type: "transfer",
+          amount: 300.89,
+        },
+      ],
       emptyTitle: "空空如也！",
       showLoadMore: false,
       status: "more",
@@ -107,8 +138,6 @@ export default {
 
 <style lang="scss">
 .container {
-  height: 100%;
-
   .header {
     position: sticky;
     top: 0;
