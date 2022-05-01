@@ -1,9 +1,8 @@
 <template>
   <view>
     <view class="content">
-      <view>
-        <text class="title">统计</text>
-      </view>
+      <text class="title">记账</text>
+      <mbill-keyboard ref="keyboard" :pnum="pnum" @getnum_="getnum" />
     </view>
   </view>
 </template>

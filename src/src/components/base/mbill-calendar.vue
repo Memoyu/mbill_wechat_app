@@ -203,7 +203,6 @@ export default {
 
     //获取某月日期
     getCalendar(Year, Month) {
-      console.log(Year, Month);
       //每个月的天数
       var days_per_month = new Array(
         31,
@@ -311,8 +310,6 @@ export default {
 
     //点击某一天
     dayClick(index) {
-      console.log(this.monthList);
-
       // 如果 点击本月的日期
       let targetIndex = index;
       if (this.monthList[1][index].fromMonth != "nowMonth") {
@@ -423,9 +420,10 @@ export default {
       align-items: center;
 
       .text {
-        font-size: 12px;
+        font-size: 11px;
       }
       .total {
+        font-size: 13px;
         font-weight: bold;
       }
     }
