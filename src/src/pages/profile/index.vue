@@ -14,12 +14,10 @@ import { mixin } from "@/mixins/tabbar.js";
 export default {
   mixins: [mixin], //混入文件
   data() {
-    return {
-      title: "Hello",
-    };
+    return {};
   },
   onShow() {
-    this.setTabBarIndex(2);
+    this.setTabBarIndex(1);
   },
   onLoad() {},
   methods: {},

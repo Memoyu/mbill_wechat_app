@@ -3,32 +3,32 @@
     <view class="board f-sb-c">
       <view class="key-num">
         <view
+          v-for="(num, index) in numList"
+          :key="index"
           class="key"
           hover-class="key-click"
-          hover-stay-time="100"
-          @click="setnum('1')"
-          >1</view
+          hover-stay-time="50"
+          @click="handlerClickNum(num.value)"
         >
-        <view class="key" hover-class="key-click" @click="setnum('2')">2</view>
-        <view class="key" hover-class="key-click" @click="setnum('3')">3</view>
-        <view class="key" hover-class="key-click" @click="setnum('4')">4</view>
-        <view class="key" hover-class="key-click" @click="setnum('5')">5</view>
-        <view class="key" hover-class="key-click" @click="setnum('6')">6</view>
-        <view class="key" hover-class="key-click" @click="setnum('7')">7</view>
-        <view class="key" hover-class="key-click" @click="setnum('8')">8</view>
-        <view class="key" hover-class="key-click" @click="setnum('9')">9</view>
-        <view class="key" hover-class="key-click" @click="setnum('.')"></view>
-        <view class="key key-num0" hover-class="key-click" @click="setnum('0')"
-          >0</view
-        >
-        <view class="key" hover-class="key-click" @click="setnum('.')">.</view>
+          <text v-if="!num.isIcon">{{ num.value }}</text>
+          <i
+            v-else
+            style="font-size: 25px"
+            :class="['iconfont', 'icon-' + num.value]"
+          />
+        </view>
       </view>
       <view class="btn">
-        <view class="delete" hover-class="key-click" @click="del">+</view>
-        <view class="delete" hover-class="key-click" @click="del">-</view>
-        <view class="confirm" hover-class="key-click" @click="confirm"
-          >确认</view
+        <view
+          v-for="(op, index) in operatorList"
+          :key="index"
+          :class="op.className"
+          hover-class="key-click"
+          hover-stay-time="50"
+          @click="handlerOperator(op.value)"
         >
+          <i style="font-size: 20px" :class="['iconfont', 'icon-' + op.icon]" />
+        </view>
       </view>
     </view>
   </view>
@@ -36,8 +36,8 @@
 
 <script>
 /**
- * ongetnum_ -> 绑定方法 数字变化
- * getnum_   -> 绑定方法 点击确认
+ * ongetnum -> 绑定方法 数字变化
+ * getnum   -> 绑定方法 点击确认
  * */
 
 export default {
@@ -46,7 +46,7 @@ export default {
     leng: {
       //输入长度
       type: [String, Number],
-      default: "6",
+      default: 8,
     },
     pass: {
       // 是否开启密码模式
@@ -56,18 +56,37 @@ export default {
     pnum: {
       //初始化数量
       type: [String, Number],
-      default: "0",
+      default: 0,
     },
 
     decimal: {
       // 保存几位小数
       type: [String, Number],
-      default: 0,
+      default: 2,
     },
   },
   data() {
     return {
       num: "0", //初始化输入数字
+      numList: [
+        { value: "1", isIcon: false },
+        { value: "2", isIcon: false },
+        { value: "3", isIcon: false },
+        { value: "4", isIcon: false },
+        { value: "5", isIcon: false },
+        { value: "6", isIcon: false },
+        { value: "7", isIcon: false },
+        { value: "8", isIcon: false },
+        { value: "9", isIcon: false },
+        { value: "delete", isIcon: true },
+        { value: "0", isIcon: false },
+        { value: ".", isIcon: false },
+      ],
+      operatorList: [
+        { value: "+", icon: "plus", className: "operator" },
+        { value: "-", icon: "subtract", className: "operator" },
+        { value: "confirm", icon: "confirm", className: "confirm" },
+      ],
     };
   },
   created() {
@@ -91,7 +110,12 @@ export default {
     },
 
     // 输入
-    setnum(e) {
+    handlerClickNum(e) {
+      if (e == "delete") {
+        this.handlerDel();
+        return;
+      }
+
       let num = String(this.num);
 
       //输入长度小于设置
@@ -122,12 +146,24 @@ export default {
         }
 
         this.num = num;
-        this.$emit("ongetnum_", num); //数字变化调用
+        this.$emit("ongetnum", num); //数字变化调用
+      }
+    },
+    // 操作符
+    handlerOperator(val) {
+      switch (val) {
+        case "+":
+          break;
+        case "-":
+          break;
+        case "confirm":
+          this.handlerConfirm();
+          break;
       }
     },
 
     // 删除
-    del() {
+    handlerDel() {
       let num = String(this.num);
       num = num.substr(0, num.length - 1);
       if (num.length == 0) {
@@ -140,10 +176,10 @@ export default {
         this.num = num;
       }
 
-      this.$emit("ongetnum_", num); //数字变化调用
+      this.$emit("ongetnum", num); //数字变化调用
     },
     // 确定
-    confirm() {
+    handlerConfirm() {
       let num = String(this.num);
 
       if (num.charAt(num.length - 1) == ".") {
@@ -151,8 +187,7 @@ export default {
         num = num.substr(0, num.length - 1);
         this.num = num;
       }
-
-      this.$emit("getnum_", num);
+      this.$emit("getnum", num);
     },
   },
 };
@@ -184,24 +219,20 @@ export default {
         line-height: 100rpx;
         width: 172rpx;
         height: 100rpx;
-        border: 1rpx solid #6699ff;
-      }
-      .key-click {
-        background: #8552a1;
-        transform: scale(1.1);
+        //border: 1rpx solid #6699ff;
       }
     }
 
     .btn {
       width: 190rpx;
 
-      .delete {
+      .operator {
         font-size: 19px;
         font-weight: bolder;
         text-align: center;
         line-height: 100rpx;
         height: 100rpx;
-        border: 1rpx solid #6699ff;
+        //border: 1rpx solid #6699ff;
       }
 
       .confirm {
@@ -211,8 +242,13 @@ export default {
         line-height: 200rpx;
         height: 200rpx;
         background: #8552a1;
-        border: 1rpx solid #6699ff;
+        //border: 1rpx solid #6699ff;
       }
+    }
+
+    .key-click {
+      background: #8552a1;
+      transform: scale(1.1);
     }
   }
 }

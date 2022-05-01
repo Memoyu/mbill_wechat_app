@@ -7,6 +7,7 @@
   display: flex;
   line-height: 1.2;
   padding-bottom: env(safe-area-inset-bottom);
+  background: white;
  
 }
 
@@ -23,20 +24,20 @@
   height: 27px;
 }
 
-.bulge .tab-bar-bulge {
+.bulge {
   position: absolute;
-  z-index: -1;
-  top: -10px;
-  width: 80px;
+  left: 50%;
+  right: 50%;
+  transform: translate(-50%);
+  top: -12px;
   height: 80px;
-
+  width: 60px;
+  text-align: center;
 }
+
 .bulge .image{
-  position: absolute;
   width: 45px;
   height: 45px;
-  top: -12px;
-  padding-top: 10px;
 }
 
 .tab-bar-item .tab-bar-view {

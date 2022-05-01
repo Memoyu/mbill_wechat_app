@@ -5,4 +5,7 @@
     <image style="display: {{item.bulge? 'block' : 'none'}};" class="image" src="{{selected === index ? item.selectedIconPath : item.iconPath}}"></image>
     <view  wx:if="{{item.text}}" style="color: {{selected === index ? selectedColor : color}}" class="tab-bar-view">{{item.text}}</view>
   </view>
+   <view class="bulge"  bindtap="toadd">
+   <image class="image" src="/static/assets/tabbar/plus.png"></image>
+   </view>
 </view>

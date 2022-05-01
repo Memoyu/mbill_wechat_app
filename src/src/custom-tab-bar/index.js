@@ -1,17 +1,12 @@
 Component({
   data: {
     selected: 0,
+    lastUrl: '/pages/index/index',
     color: "#7A7E83",
-    selectedColor: "#3cc51f",
+    selectedColor: "#8552a1",
     list: [{
       "pagePath": "/pages/index/index",
       "text": "账目"
-    },
-    {
-      "bulge": true,
-      "pagePath": "/pages/bill/index",
-      "iconPath": "/static/assets/tabbar/plus.png",
-      "selectedIconPath": "/static/assets/tabbar/plus.png"
     },
     {
       "pagePath": "/pages/profile/index",
@@ -25,10 +20,12 @@ Component({
       const data = e.currentTarget.dataset
       const url = data.path
       wx.switchTab({ url })
-      console.log(data.index)
       this.setData({
-        selected: data.index
+        selected: data.index,
       })
+    },
+    toadd() {
+      wx.navigateTo({ url: '/pages/bill/index' })
     }
   }
 })

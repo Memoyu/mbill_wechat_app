@@ -44,11 +44,6 @@
 				"text": "账目"
 			},
 			{
-				"pagePath": "pages/bill/index",
-				"iconPath": "static/assets/tabbar/plus.png",
-				"selectedIconPath": "static/assets/tabbar/plus.png"
-			},
-			{
 				"pagePath": "pages/profile/index",
 				"text": "我的"
 			}

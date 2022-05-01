@@ -16,7 +16,10 @@
           class="scroll-view-expand"
           @tap="handlerExpandView"
         >
-          <text>^</text>
+          <i
+            style="font-size: 20px"
+            :class="['iconfont', 'icon-' + (expand ? 'top' : 'bottom')]"
+          />
         </view>
         <scroll-view
           class="items"
@@ -73,7 +76,7 @@
           <p>123132123132123</p>
           <p>123132123132123</p>
           <p>123132123132123</p>
-          <p>123132123132123</p>
+          <p>123132123132123Bottom</p>
         </scroll-view>
       </view>
     </view>
@@ -144,8 +147,7 @@ export default {
       tH: 0,
       expandHeight: 25,
       scrollHeight: 0,
-      calendarMaxHeight: 0,
-      title: "Hello",
+      scrollMaxHeight: 0,
       state: 1,
     };
   },
@@ -161,7 +163,9 @@ export default {
       uni.getSystemInfo({
         //调用uni-app接口获取屏幕高度
         success(res) {
-          that._data.tH = res.screenHeight - res.windowHeight;
+          console.log(res);
+          that._data.tH = res.screenHeight - res.windowHeight - 12;
+          console.log(that._data.tH);
           //成功回调函数
           that._data.pH = res.windowHeight; //windoHeight为窗口高度，主要使用的是这个
           let titleH = uni.createSelectorQuery().select("#calendar_cls"); //想要获取高度的元素名（class/id）
@@ -172,7 +176,7 @@ export default {
                 data.height -
                 that._data.tH -
                 that._data.expandHeight;
-              that._data.calendarMaxHeight = that._data.scrollHeight;
+              that._data.scrollMaxHeight = that._data.scrollHeight;
             })
             .exec();
         },
@@ -183,11 +187,21 @@ export default {
     },
     handlerExpandView() {
       let minHeight = this.$refs.calendar.minHeight;
+      console.log(minHeight);
       if (this.expand) {
         this.scrollHeight = this.pH - minHeight - this.tH - this.expandHeight;
         this.expand = false;
+        // console.log(
+        //   this.pH +
+        //     " - " +
+        //     minHeight +
+        //     " - " +
+        //     this.tH +
+        //     " - " +
+        //     this.expandHeight
+        // );
       } else {
-        this.scrollHeight = this.calendarMaxHeight - this.expandHeight;
+        this.scrollHeight = this.scrollMaxHeight;
         this.expand = true;
       }
     },
@@ -204,7 +218,7 @@ export default {
 }
 
 .scroll-view-expand {
-  background: linear-gradient(rgba(247, 235, 252, 1), rgba(255, 0, 0, 0));
+  // background: linear-gradient(rgba(247, 235, 252, 1), rgba(255, 0, 0, 0));
   text-align: center;
 }
 

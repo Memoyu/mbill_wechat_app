@@ -3,7 +3,6 @@
     class="calendar"
     :style="{
       height: expand ? 'auto' : minHeight + 'px',
-      margin: expand ? '0 auto 10px auto' : '0 auto',
     }"
   >
     <view class="calendar-title">
@@ -391,8 +390,8 @@ export default {
 
 <style lang="scss" scope>
 .calendar {
+  margin: 0 auto;
   width: 92%;
-  margin: 0 auto 10px auto;
   background-color: #fff;
   border-radius: 16px;
   overflow: hidden;
@@ -401,7 +400,7 @@ export default {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    margin: 15px 15px 10px 15px;
+    margin: 15px;
     align-items: center;
 
     .now-date {
