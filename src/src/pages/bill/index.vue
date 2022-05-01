@@ -1,7 +1,6 @@
 <template>
   <view>
     <view class="content">
-      <view @tap="goBack">返回</view>
       <view class="key-board">
         <view></view>
         <mbill-keyboard
@@ -29,12 +28,6 @@ export default {
     },
     handlerConfirmNum(e) {
       console.log("cof" + e);
-    },
-    goBack() {
-      console.log("打印");
-      uni.switchTab({
-        url: "/pages/index/index",
-      });
     },
   },
 };
