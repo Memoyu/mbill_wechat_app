@@ -1,0 +1,45 @@
+.tab-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 48px;
+  display: flex;
+  line-height: 1.2;
+  padding-bottom: env(safe-area-inset-bottom);
+ 
+}
+
+.tab-bar-item {
+  flex: 1;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+.tab-bar-item .image {
+  width: 27px;
+  height: 27px;
+}
+
+.bulge .tab-bar-bulge {
+  position: absolute;
+  z-index: -1;
+  top: -10px;
+  width: 80px;
+  height: 80px;
+
+}
+.bulge .image{
+  position: absolute;
+  width: 45px;
+  height: 45px;
+  top: -12px;
+  padding-top: 10px;
+}
+
+.tab-bar-item .tab-bar-view {
+  font-size: 13px;
+  font-weight: bold;
+}

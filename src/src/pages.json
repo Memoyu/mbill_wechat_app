@@ -1,292 +1,58 @@
 {
-	"easycom": { //easycom,按需自动注册组件。原则上可以把所有页面引入组件方法删掉，会自动引入。
+	"easycom": {
 		"autoscan": true,
 		"custom": {
-			"mbill-bill(.*)": "@/components/mbill/mbill-bill/mbill-bill$1.vue",
-			"mbill-core(.*)": "@/components/mbill/mbill-core/mbill-core$1.vue",
-			"mbill-chart(.*)": "@/components/mbill/mbill-chart/mbill-chart$1.vue",
-			"core-(.*)": "@/components/core/core-$1.vue",
-			"^uni-(.*)": "@dcloudio/uni-ui/lib/uni-$1/uni-$1.vue",
-			"tui-(.*)": "thorui-uni/lib/thorui/tui-$1/tui-$1.vue"
+			"mbill-(.*)": "@/components/base/mbill-$1.vue",
+			// uni-ui 规则如下配置
+			"^uni-(.*)": "@dcloudio/uni-ui/lib/uni-$1/uni-$1.vue"
 		}
 	},
 	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
 		{
-			"path": "pages/index/bill",
-			"name": "bill",
+			"path": "pages/index/index",
 			"style": {
-				"navigationBarTitleText": "账单"
-			},
-			"meta": {
-				"auth": true,
-				"async": true,
-				"title": "账单",
-				"group": ""
+				"navigationBarTitleText": "首页"
 			}
 		},
 		{
-			"path": "pages/index/statistics",
-			"name": "statistics",
+			"path": "pages/bill/index",
 			"style": {
-				"navigationBarTitleText": "统计"
-			},
-			"meta": {
-				"auth": true,
-				"async": true,
-				"title": "统计",
-				"group": ""
+				"navigationBarTitleText": "记账"
 			}
 		},
 		{
-			"path": "pages/index/profile",
-			"name": "profile",
+			"path": "pages/profile/index",
 			"style": {
-				"navigationBarTitleText": "我的",
-				"navigationBarBackgroundColor": "#8DAFB1"
-			},
-			"meta": {
-				"auth": false,
-				"async": true,
-				"title": "我的",
-				"group": ""
+				"navigationBarTitleText": "个人"
 			}
-		}
-	],
-	"subPackages": [
-		{ //bill分包
-			"root": "pages/bill",
-			"pages": [
-				{
-					"path": "category-statements",
-					"style": {
-						"navigationBarTitleText": "账单列表"
-					},
-					"meta": {
-						"auth": true,
-						"async": true,
-						"title": "账单列表"
-					}
-				},
-				{
-					"path": "chose-asset",
-					"style": {
-						"navigationBarTitleText": "选择资产类型"
-					},
-					"meta": {
-						"auth": true,
-						"async": true,
-						"title": "选择资产类型"
-					}
-				},
-				{
-					"path": "chose-category",
-					"style": {
-						"navigationBarTitleText": "选择账单类型"
-					},
-					"meta": {
-						"auth": true,
-						"async": true,
-						"title": "选择账单类型"
-					}
-				},
-				{
-					"path": "create",
-					"style": {
-						"navigationBarTitleText": "创建账单"
-					},
-					"meta": {
-						"auth": true,
-						"async": true,
-						"title": "创建账单",
-						"group": ""
-					}
-				},
-				{
-					"path": "detail",
-					"style": {
-						"navigationBarTitleText": "账单详情"
-					},
-					"meta": {
-						"auth": true,
-						"async": true,
-						"title": "账单详情"
-					}
-				},
-				{
-					"path": "edit",
-					"style": {
-						"navigationBarTitleText": "账单编辑"
-					},
-					"meta": {
-						"auth": true,
-						"async": true,
-						"title": "账单编辑"
-					}
-				}
-			]
-		},
-		{ //statistics分包
-			"root": "pages/statistics",
-			"pages": []
-		},
-		{ //profile分包
-			"root": "pages/profile",
-			"pages": [
-				{
-					"path": "about",
-					"style": {
-						"navigationBarTitleText": "关于mbill"
-					},
-					"meta": {
-						"auth": false,
-						"async": true,
-						"title": "关于mbill"
-					}
-				},
-				{
-					"path": "pre_order/pre-order-list",
-					"style": {
-						"navigationBarTitleText": "预购清单"
-					},
-					"meta": {
-						"auth": true,
-						"async": true,
-						"title": "预购清单"
-					}
-				},
-				{
-					"path": "asset-manage",
-					"style": {
-						"navigationBarTitleText": "资产管理"
-					},
-					"meta": {
-						"auth": true,
-						"async": true,
-						"title": "资产管理"
-					}
-				},
-				{
-					"path": "budget-manage",
-					"style": {
-						"navigationBarTitleText": "预算管理"
-					},
-					"meta": {
-						"auth": true,
-						"async": true,
-						"title": "预算管理"
-					}
-				},
-				{
-					"path": "category-manage",
-					"style": {
-						"navigationBarTitleText": "分类管理"
-					},
-					"meta": {
-						"auth": true,
-						"async": true,
-						"title": "分类管理"
-					}
-				},
-				{
-					"path": "forgot",
-					"style": {
-						"navigationBarTitleText": "忘记密码"
-					},
-					"meta": {
-						"auth": false,
-						"async": true,
-						"title": "忘记密码"
-					}
-				},
-				{
-					"path": "login",
-					"style": {
-						"navigationStyle": "custom",
-						"navigationBarTitleText": "登陆"
-					},
-					"meta": {
-						"auth": false,
-						"async": true,
-						"title": "登陆"
-					}
-				},
-				{
-					"path": "register",
-					"style": {
-						"navigationBarTitleText": "注册"
-					},
-					"meta": {
-						"auth": false,
-						"async": true,
-						"title": "注册"
-					}
-				},
-				{
-					"path": "setting",
-					"style": {
-						"navigationBarTitleText": "系统设置"
-					},
-					"meta": {
-						"auth": false,
-						"async": true,
-						"title": "系统设置"
-					}
-				},
-				{
-					"path": "statement-search",
-					"style": {
-						"navigationBarTitleText": "账单检索"
-					},
-					"meta": {
-						"auth": true,
-						"async": true,
-						"title": "账单检索"
-					}
-				},
-				{
-					"path": "user-info",
-					"style": {
-						"navigationBarTitleText": "用户信息"
-					},
-					"meta": {
-						"auth": true,
-						"async": true,
-						"title": "用户信息"
-					}
-				}
-			]
 		}
 	],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
-		"navigationBarTitleText": "mbill",
-		"navigationBarBackgroundColor": "#FFF",
-		"backgroundColor": "#FFF"
+		"navigationBarTitleText": "uni-app",
+		"navigationBarBackgroundColor": "#F8F8F8",
+		"backgroundColor": "#F8F8F8"
 	},
 	"tabBar": {
+		"custom": true,
 		"selectedColor": "#be6868",
 		"color": "#C0C4CC",
 		"borderStyle": "white",
-		"backgroundColor": "#ffffff",
 		"list": [
 			{
-				"pagePath": "pages/index/statistics",
-				"iconPath": "static/assets/icons/tabbar/statistics.png",
-				"selectedIconPath": "static/assets/icons/tabbar/statistics_select.png",
-				"text": "统计"
+				"pagePath": "pages/index/index",
+				"text": "账目"
 			},
 			{
-				"pagePath": "pages/index/bill",
-				"iconPath": "static/assets/icons/tabbar/bill.png",
-				"selectedIconPath": "static/assets/icons/tabbar/bill_select.png",
-				"text": "记账"
+				"pagePath": "pages/bill/index",
+				"iconPath": "static/assets/tabbar/plus.png",
+				"selectedIconPath": "static/assets/tabbar/plus.png"
 			},
 			{
-				"pagePath": "pages/index/profile",
-				"iconPath": "static/assets/icons/tabbar/profile.png",
-				"selectedIconPath": "static/assets/icons/tabbar/profile_select.png",
+				"pagePath": "pages/profile/index",
 				"text": "我的"
 			}
 		]
-	}
+	},
+	"usingComponents": {}
 }
