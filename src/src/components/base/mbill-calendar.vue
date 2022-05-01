@@ -55,12 +55,12 @@
           @tap="dayClick(index2)"
         >
           <!-- 不是本月的天数颜色为灰色 -->
-          <text
-            :class="['item-text', item2.activeName, item2.tagName]"
+          <view
+            :class="['item-text', item2.className]"
             :style="item2.fromMonth == 'nowMonth' ? '' : 'color:#c8c9cc;'"
-            >{{ item2.day }}
-            <view class="status-point" />
-          </text>
+            ><text>{{ item2.day }}</text>
+            <view v-if="item2.isTag" class="status-point" />
+          </view>
         </view>
       </view>
     </view>
@@ -235,8 +235,8 @@ export default {
           month: lastMonth,
           day,
           fromMonth: "lastMonth",
-          activeName: this.isActive(lastYear, lastMonth, day),
-          tagName: this.isTag(lastYear, lastMonth, day),
+          className: this.isActive(lastYear, lastMonth, day),
+          isTag: this.isTag(lastYear, lastMonth, day),
         }); //获取上月末尾天数  补齐本月日历显示
       }
 
@@ -249,8 +249,8 @@ export default {
           month: Month,
           day: d + 1,
           fromMonth: "nowMonth",
-          activeName: this.isActive(Year, Month, d + 1),
-          tagName: this.isTag(Year, Month, d + 1),
+          className: this.isActive(Year, Month, d + 1),
+          isTag: this.isTag(Year, Month, d + 1),
         });
       }
 
@@ -267,8 +267,8 @@ export default {
             month: nextMonth,
             day: d,
             fromMonth: "nextMonth",
-            activeName: this.isActive(nextYear, nextMonth, d),
-            tagName: this.isTag(nextYear, nextMonth, d),
+            className: this.isActive(nextYear, nextMonth, d),
+            isTag: this.isTag(nextYear, nextMonth, d),
           });
         }
       }
@@ -299,10 +299,10 @@ export default {
     },
 
     isTag(y, m, d) {
-      let tag = "";
+      let tag = false;
       this.tags.map((t) => {
         if (y == t.year && m == t.month && d == t.day) {
-          tag = "tag";
+          tag = true;
         }
       });
       return tag;
@@ -330,7 +330,7 @@ export default {
       // if (this.monthList[1][index].fromMonth == "nowMonth") {
       //   this.monthList[1].map((item, inx) => {
       //     if (index == inx) {
-      //       item.activeName = "active";
+      //       item.className = "active";
       //       this.selectedDate = {
       //         year: this.nowYear,
       //         month: this.nowMonth,
@@ -338,7 +338,7 @@ export default {
       //       };
       //       this.$emit("change", this.selectedDate);
       //     } else {
-      //       item.activeName = "";
+      //       item.className = "";
       //     }
       //   });
       //   return;
@@ -349,7 +349,7 @@ export default {
       this.monthList.map((m, i) => {
         m.map((item, inx) => {
           if (targetIndex == inx && i == 1) {
-            item.activeName = "active";
+            item.className = "active";
             this.selectedDate = {
               year: this.nowYear,
               month: this.nowMonth,
@@ -357,7 +357,7 @@ export default {
             };
             this.$emit("change", this.selectedDate);
           } else {
-            item.activeName = "";
+            item.className = "";
           }
         });
       });
@@ -366,7 +366,7 @@ export default {
       // let nowIndex = this.monthList[1].findIndex(
       //   (e) => e.fromMonth == "nowMonth" && e.day == day
       // );
-      // this.monthList[1][nowIndex].activeName = "active";
+      // this.monthList[1][nowIndex].className = "active";
       // this.selectedDate = {
       //   year: this.nowYear,
       //   month: this.nowMonth,
@@ -459,23 +459,43 @@ export default {
 
   .day-item {
     width: 14%;
-    text {
-      display: block;
+    .item-text {
+      display: flex;
+      flex-direction: column;
+      // justify-content: center;
+      align-items: center;
+      // display: block;
       border-radius: 50%;
       width: 100%;
       padding-top: calc(50% - 0.8em);
       padding-bottom: calc(50% + 0.8em);
       height: 0;
     }
-    .tag {
+    .status-point {
+      // display: inline-block;
+      // width: 5px;
+      // height: 5px;
+      // line-height: 5px;
+      // border-radius: 50%;
+      // background-color: #8552a1;
       &::after {
-        display: inline-block;
+        display: block;
         content: "";
         width: 5px;
         height: 5px;
         border-radius: 50%;
         background: #8552a1;
       }
+    }
+    .tag {
+      // &::after {
+      //   display: inline-block;
+      //   content: "";
+      //   width: 5px;
+      //   height: 5px;
+      //   border-radius: 50%;
+      //   background: #8552a1;
+      // }
     }
   }
 }

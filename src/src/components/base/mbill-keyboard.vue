@@ -1,30 +1,34 @@
 <template>
   <view class="mode">
-    <view class="inp f-c-c">
-      <text v-if="pass">
-        <text v-for="(item, index) in num" :key="index">*</text>
-      </text>
-      <text class="text f-c-c" v-else>{{ num }}</text>
-    </view>
-    <view class="key f-sb-c">
+    <view class="board f-sb-c">
       <view class="key-num">
-        <view class="keynum" @click="setnum('1')">1</view>
-        <view class="keynum" @click="setnum('2')">2</view>
-        <view class="keynum" @click="setnum('3')">3</view>
-        <view class="keynum" @click="setnum('4')">4</view>
-        <view class="keynum" @click="setnum('5')">5</view>
-        <view class="keynum" @click="setnum('6')">6</view>
-        <view class="keynum" @click="setnum('7')">7</view>
-        <view class="keynum" @click="setnum('8')">8</view>
-        <view class="keynum" @click="setnum('9')">9</view>
-        <view class="keynum" @click="setnum('.')">删除</view>
-        <view class="keynum keynum0" @click="setnum('0')">0</view>
-        <view class="keynum" @click="setnum('.')">.</view>
+        <view
+          class="key"
+          hover-class="key-click"
+          hover-stay-time="100"
+          @click="setnum('1')"
+          >1</view
+        >
+        <view class="key" hover-class="key-click" @click="setnum('2')">2</view>
+        <view class="key" hover-class="key-click" @click="setnum('3')">3</view>
+        <view class="key" hover-class="key-click" @click="setnum('4')">4</view>
+        <view class="key" hover-class="key-click" @click="setnum('5')">5</view>
+        <view class="key" hover-class="key-click" @click="setnum('6')">6</view>
+        <view class="key" hover-class="key-click" @click="setnum('7')">7</view>
+        <view class="key" hover-class="key-click" @click="setnum('8')">8</view>
+        <view class="key" hover-class="key-click" @click="setnum('9')">9</view>
+        <view class="key" hover-class="key-click" @click="setnum('.')"></view>
+        <view class="key key-num0" hover-class="key-click" @click="setnum('0')"
+          >0</view
+        >
+        <view class="key" hover-class="key-click" @click="setnum('.')">.</view>
       </view>
       <view class="btn">
-        <view class="delete" @click="del">+</view>
-        <view class="delete" @click="del">-</view>
-        <view class="confirm" @click="confirm">确认</view>
+        <view class="delete" hover-class="key-click" @click="del">+</view>
+        <view class="delete" hover-class="key-click" @click="del">-</view>
+        <view class="confirm" hover-class="key-click" @click="confirm"
+          >确认</view
+        >
       </view>
     </view>
   </view>
@@ -157,28 +161,15 @@ export default {
 <style lang="scss">
 .mode {
   background-color: #fff;
-  padding-bottom: 40rpx;
-  .inp {
-    height: 90rpx;
-    padding: 20rpx;
-    background-color: #f1f1f1;
-
-    .text {
-      width: 100%;
-      display: flex;
-      height: 62rpx;
-      background-color: #fff;
-      border-radius: 8rpx;
-    }
-  }
+  padding-bottom: 20rpx;
   .f-sb-c {
     /*两端对齐 上下居中*/
     display: flex;
     justify-content: space-between;
     align-items: center;
   }
-  .key {
-    padding: 20rpx;
+  .board {
+    // padding: 20rpx;
 
     .key-num {
       width: 534rpx;
@@ -186,19 +177,23 @@ export default {
       flex-wrap: wrap;
       align-items: center;
 
-      .keynum {
+      .key {
         font-size: 19px;
         font-weight: bolder;
         text-align: center;
         line-height: 100rpx;
         width: 172rpx;
         height: 100rpx;
-        // border: 1rpx solid #6699ff;
+        border: 1rpx solid #6699ff;
+      }
+      .key-click {
+        background: #8552a1;
+        transform: scale(1.1);
       }
     }
 
     .btn {
-      width: 160rpx;
+      width: 190rpx;
 
       .delete {
         font-size: 19px;
@@ -206,7 +201,7 @@ export default {
         text-align: center;
         line-height: 100rpx;
         height: 100rpx;
-        // border: 1rpx solid #6699ff;
+        border: 1rpx solid #6699ff;
       }
 
       .confirm {
@@ -216,7 +211,7 @@ export default {
         line-height: 200rpx;
         height: 200rpx;
         background: #8552a1;
-        // border: 1rpx solid #6699ff;
+        border: 1rpx solid #6699ff;
       }
     }
   }

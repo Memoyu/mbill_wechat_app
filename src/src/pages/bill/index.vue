@@ -1,7 +1,6 @@
 <template>
   <view>
     <view class="content">
-      <text class="title">记账</text>
       <mbill-keyboard ref="keyboard" :pnum="pnum" @getnum_="getnum" />
     </view>
   </view>
@@ -13,9 +12,7 @@ import { mixin } from "@/mixins/tabbar.js";
 export default {
   mixins: [mixin], //混入文件
   data() {
-    return {
-      title: "Hello",
-    };
+    return {};
   },
   onShow() {
     this.setTabBarIndex(1);
