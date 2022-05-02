@@ -32,8 +32,8 @@
         <view class="x-start">
           <text class="total">￥</text>
           <view class="y-start">
-            <view class="total">10000</view>
-            <view class="input">10000</view>
+            <view class="total">{{ inputResult }}</view>
+            <view class="input">{{ input }}</view>
           </view>
         </view>
         <mbill-end-split-line count="50" />
@@ -52,8 +52,8 @@
         <mbill-keyboard
           ref="keyboard"
           :pnum="pnum"
-          @getnum="handlerConfirmNum"
-          @ongetnum="handlerInputNum"
+          @confirm="handlerConfirmNum"
+          @input="handlerInputNum"
         />
       </view>
       <view>
@@ -102,8 +102,10 @@ export default {
         month: now.getMonth() + 1,
         day: now.getDate(),
       },
-      scrollHeight: 0,
       pnum: 0,
+      input: 0,
+      inputResult: 0,
+      scrollHeight: 0,
       assetList: [],
     };
   },
@@ -128,7 +130,7 @@ export default {
               that.scrollHeight += i.height;
             });
             that.scrollHeight = pH - that.scrollHeight;
-            console.log(that.scrollHeight);
+            // console.log(that.scrollHeight);
           });
         },
       });
@@ -158,16 +160,18 @@ export default {
       this.$refs.popupHi.open();
     },
     handlerInputNum(e) {
-      console.log("in" + e);
+      console.log(e);
+      this.input = e.input;
+      this.inputResult = e.result;
     },
     handlerConfirmNum(e) {
-      console.log("cof" + e);
+      console.log("cof " + e);
     },
   },
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scope>
 .header {
   padding: 10px 10px;
   background: $bright-color;

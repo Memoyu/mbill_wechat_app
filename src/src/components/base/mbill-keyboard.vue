@@ -1,34 +1,32 @@
 <template>
-  <view class="mode">
-    <view class="board f-sb-c">
-      <view class="key-num">
-        <view
-          v-for="(num, index) in numList"
-          :key="index"
-          class="key"
-          hover-class="key-click"
-          hover-stay-time="50"
-          @click="handlerClickNum(num.value)"
-        >
-          <text v-if="!num.isIcon">{{ num.value }}</text>
-          <i
-            v-else
-            style="font-size: 25px"
-            :class="['iconfont', 'icon-' + num.value]"
-          />
-        </view>
+  <view class="board x-bc">
+    <view class="key-num">
+      <view
+        v-for="(numKey, index) in numKeyList"
+        :key="index"
+        class="key"
+        hover-class="key-click"
+        hover-stay-time="50"
+        @click="handlerClickNum(numKey.value)"
+      >
+        <text v-if="!numKey.isIcon">{{ numKey.value }}</text>
+        <i
+          v-else
+          style="font-size: 25px"
+          :class="['iconfont', 'icon-' + numKey.value]"
+        />
       </view>
-      <view class="btn">
-        <view
-          v-for="(op, index) in operatorList"
-          :key="index"
-          :class="op.className"
-          hover-class="key-click"
-          hover-stay-time="50"
-          @click="handlerOperator(op.value)"
-        >
-          <i style="font-size: 20px" :class="['iconfont', 'icon-' + op.icon]" />
-        </view>
+    </view>
+    <view class="btn">
+      <view
+        v-for="(op, index) in operatorList"
+        :key="index"
+        :class="op.className"
+        hover-class="key-click"
+        hover-stay-time="50"
+        @click="handlerClickOperator(op.value)"
+      >
+        <i style="font-size: 20px" :class="['iconfont', 'icon-' + op.icon]" />
       </view>
     </view>
   </view>
@@ -36,8 +34,8 @@
 
 <script>
 /**
- * ongetnum -> 绑定方法 数字变化
- * getnum   -> 绑定方法 点击确认
+ * input -> 绑定方法 数字变化
+ * confirm   -> 绑定方法 点击确认
  * */
 
 export default {
@@ -47,11 +45,6 @@ export default {
       //输入长度
       type: [String, Number],
       default: 8,
-    },
-    pass: {
-      // 是否开启密码模式
-      type: Boolean,
-      default: false,
     },
     pnum: {
       //初始化数量
@@ -67,8 +60,9 @@ export default {
   },
   data() {
     return {
-      num: "0", //初始化输入数字
-      numList: [
+      input: "0",
+      result: 0,
+      numKeyList: [
         { value: "1", isIcon: false },
         { value: "2", isIcon: false },
         { value: "3", isIcon: false },
@@ -92,23 +86,9 @@ export default {
   created() {
     //自定义初始化值
     let pnum = this.pnum;
-    this.num = pnum;
+    this.input = pnum;
   },
   methods: {
-    // 模态状态改变
-    popcha(e) {
-      this.num = this.pnum;
-    },
-
-    // 显示弹窗
-    openfun() {
-      this.$refs.popup.open();
-    },
-    // 关闭弹窗
-    closefun() {
-      this.$refs.popup.close();
-    },
-
     // 输入
     handlerClickNum(e) {
       if (e == "delete") {
@@ -116,45 +96,45 @@ export default {
         return;
       }
 
-      let num = String(this.num);
-
+      let input = String(this.input);
       //输入长度小于设置
-      if (num.length < this.leng) {
+      if (input.length < this.leng) {
         // 判断小数点
-        let numof = num.indexOf(".");
+        let numof = input.indexOf(".");
         if (numof > -1) {
           //小数点处理
           if (e != ".") {
-            if (num == 0) {
-              num = e;
+            if (input == 0) {
+              input = e;
             } else {
-              num = String(num) + e;
+              input = String(input) + e;
             }
 
             // 设置保留几位
             let decimal = this.decimal; //小数点
-            if (num.length > numof + 1 + decimal) {
-              num = num.substr(0, numof + 1 + decimal);
+            if (input.length > numof + 1 + decimal) {
+              input = input.substr(0, numof + 1 + decimal);
             }
           }
         } else {
-          if (num == 0) {
-            num = e;
+          if (input == 0) {
+            input = e;
           } else {
-            num = String(num) + e;
+            input = String(input) + e;
           }
         }
 
-        this.num = num;
-        this.$emit("ongetnum", num); //数字变化调用
+        this.input = input;
+        let result = this.calculate(input);
+        this.$emit("input", { input, result }); //数字变化调用
       }
     },
     // 操作符
-    handlerOperator(val) {
+    handlerClickOperator(val) {
       switch (val) {
         case "+":
-          break;
         case "-":
+          this.handlerOperator(val);
           break;
         case "confirm":
           this.handlerConfirm();
@@ -164,95 +144,111 @@ export default {
 
     // 删除
     handlerDel() {
-      let num = String(this.num);
-      num = num.substr(0, num.length - 1);
-      if (num.length == 0) {
-        if (this.pass) {
-          this.num = "";
-        } else {
-          this.num = 0;
-        }
+      let input = String(this.input);
+      input = input.substr(0, input.length - 1);
+      console.log(input);
+      if (input.length == 0) {
+        this.input = 0;
       } else {
-        this.num = num;
+        this.input = input;
       }
-
-      this.$emit("ongetnum", num); //数字变化调用
+      let result = this.calculate(input);
+      this.$emit("input", { input, result }); //数字变化调用
     },
+
+    // 计算操作
+    calculate(input) {
+      // if (input.includes("+")) {
+      //   let nums = input.split("+");
+      //   this.result = eval(string);
+      // } else if (input.includes("-")) {
+      //   let nums = input.split("-");
+      //   this.result = Number(nums[0]) - Number(nums[1]);
+      // } else {
+      //   this.result = Number(input);
+      // }
+      this.result = eval(this.input);
+      return this.result;
+    },
+
+    // 按下加减符号
+    handlerOperator(op) {
+      console.log(this.input);
+      if (this.input.includes("+") || this.input.includes("-")) {
+        this.input = this.result + op;
+        this.$emit("input", { input: this.input, result: this.result });
+        return;
+      }
+      let endChar = this.input.charAt(this.input.length - 1);
+      if (endChar == "+" || endChar == "-") return;
+      this.handlerClickNum(op);
+    },
+
     // 确定
     handlerConfirm() {
-      let num = String(this.num);
+      let input = String(this.input);
 
-      if (num.charAt(num.length - 1) == ".") {
+      if (input.charAt(input.length - 1) == ".") {
         // 最后一位是小数点就去掉
-        num = num.substr(0, num.length - 1);
-        this.num = num;
+        input = input.substr(0, input.length - 1);
+        this.input = input;
       }
-      this.$emit("getnum", num);
+      this.$emit("confirm", input);
     },
   },
 };
 </script>
 
-<style lang="scss">
-.mode {
+<style lang="scss" scope>
+.board {
   background-color: #ffffff;
   padding-bottom: 20rpx;
-  .f-sb-c {
-    /*两端对齐 上下居中*/
+  .key-num {
+    width: 534rpx;
     display: flex;
-    justify-content: space-between;
+    flex-wrap: wrap;
     align-items: center;
+
+    .key {
+      color: $primary-text-color;
+      font-size: 19px;
+      font-weight: bold;
+      text-align: center;
+      line-height: 110rpx;
+      width: 172rpx;
+      height: 110rpx;
+      //border: 1rpx solid #6699ff;
+    }
   }
-  .board {
-    // padding: 20rpx;
 
-    .key-num {
-      width: 534rpx;
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
+  .btn {
+    width: 190rpx;
 
-      .key {
-        color: $primary-text-color;
-        font-size: 19px;
-        font-weight: bold;
-        text-align: center;
-        line-height: 110rpx;
-        width: 172rpx;
-        height: 110rpx;
-        //border: 1rpx solid #6699ff;
-      }
+    .operator {
+      font-size: 19px;
+      font-weight: bolder;
+      text-align: center;
+      line-height: 110rpx;
+      height: 110rpx;
+      //border: 1rpx solid #6699ff;
     }
 
-    .btn {
-      width: 190rpx;
-
-      .operator {
-        font-size: 19px;
-        font-weight: bolder;
-        text-align: center;
-        line-height: 110rpx;
-        height: 110rpx;
-        //border: 1rpx solid #6699ff;
-      }
-
-      .confirm {
-        font-size: 19px;
-        font-weight: bolder;
-        text-align: center;
-        line-height: 220rpx;
-        height: 220rpx;
-        background: $light-color;
-        border-radius: 16px;
-        //border: 1rpx solid #6699ff;
-      }
-    }
-
-    .key-click {
+    .confirm {
+      font-size: 19px;
+      font-weight: bolder;
+      text-align: center;
+      line-height: 220rpx;
+      height: 220rpx;
+      background: $light-color;
       border-radius: 16px;
-      background: $primary-color !important;
-      // transform: scale(1.1);
+      //border: 1rpx solid #6699ff;
     }
+  }
+
+  .key-click {
+    border-radius: 16px;
+    background: $primary-color !important;
+    // transform: scale(1.1);
   }
 }
 </style>
