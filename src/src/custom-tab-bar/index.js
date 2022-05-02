@@ -24,7 +24,7 @@ Component({
       })
     },
     toadd() {
-      wx.navigateTo({ url: '/pages/bill/index' })
+      wx.navigateTo({ url: '/pages/bill/edit' })
     }
   }
 })

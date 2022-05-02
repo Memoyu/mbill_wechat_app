@@ -32,7 +32,8 @@
   top: -12px;
   height: 80px;
   width: 60px;
-  text-align: center;
+  display: flex;
+  justify-content: center;
 }
 
 .bulge .background{

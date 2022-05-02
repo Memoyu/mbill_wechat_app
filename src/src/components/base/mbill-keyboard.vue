@@ -217,9 +217,9 @@ export default {
         font-size: 19px;
         font-weight: bold;
         text-align: center;
-        line-height: 100rpx;
+        line-height: 110rpx;
         width: 172rpx;
-        height: 100rpx;
+        height: 110rpx;
         //border: 1rpx solid #6699ff;
       }
     }
@@ -231,8 +231,8 @@ export default {
         font-size: 19px;
         font-weight: bolder;
         text-align: center;
-        line-height: 100rpx;
-        height: 100rpx;
+        line-height: 110rpx;
+        height: 110rpx;
         //border: 1rpx solid #6699ff;
       }
 
@@ -240,8 +240,8 @@ export default {
         font-size: 19px;
         font-weight: bolder;
         text-align: center;
-        line-height: 200rpx;
-        height: 200rpx;
+        line-height: 220rpx;
+        height: 220rpx;
         background: $light-color;
         border-radius: 16px;
         //border: 1rpx solid #6699ff;

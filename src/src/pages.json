@@ -15,7 +15,7 @@
 			}
 		},
 		{
-			"path": "pages/bill/index",
+			"path": "pages/bill/edit",
 			"style": {
 				"navigationBarTitleText": "记账"
 			}
@@ -29,8 +29,8 @@
 	],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
-		"navigationBarTitleText": "uni-app",
-		"navigationBarBackgroundColor": "#F8F8F8",
+		"navigationBarTitleText": "mbill",
+		"navigationBarBackgroundColor": "#F4EEFF",
 		"backgroundColor": "#F8F8F8"
 	},
 	"tabBar": {

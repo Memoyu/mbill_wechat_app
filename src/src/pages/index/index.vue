@@ -1,84 +1,36 @@
 <template>
   <view>
     <view class="content">
-      <view>
-        <view id="calendar_cls">
-          <mbill-calendar
-            ref="calendar"
-            class="calendar"
-            :expand="expand"
-            :tags="tags"
-            @change="handlerDateChange"
-          />
-        </view>
-        <view
-          :style="{ height: expandHeight + 'px' }"
-          class="scroll-view-expand"
-          @tap="handlerExpandView"
-        >
-          <i
-            style="font-size: 20px"
-            :class="['iconfont', 'icon-' + (expand ? 'top' : 'bottom')]"
-          />
-        </view>
-        <scroll-view
-          class="items"
-          :style="{
-            height: scrollHeight + 'px',
-          }"
-          scroll-y="true"
-        >
-          <p>123132123132123</p>
-          <p>123132123132123</p>
-          <p>12313212313 2123</p>
-          <p>123132123132123</p>
-          <p>123132123dddd132123</p>
-          <p>123132123132123</p>
-          <p>123132123132123</p>
-          <p>123132123132123</p>
-          <p>123132123132123</p>
-          <p>123132123132123</p>
-          <p>123132123132123</p>
-          <p>123132123132123</p>
-          <p>123132123132123</p>
-          <p>123132123132123</p>
-          <p>123132123132123</p>
-          <p>123132123ddd132123</p>
-          <p>123132123132123</p>
-          <p>123132123132123</p>
-          <p>123132123132123</p>
-          <p>123132123132123</p>
-          <p>123132123132123</p>
-          <p>123132123132123</p>
-          <p>123132123132123</p>
-          <p>123132123132123</p>
-          <p>123132123132123</p>
-          <p>123132123132123</p>
-          <p>123132123132123</p>
-          <p>123132123132123</p>
-          <p>123132123132123</p>
-          <p>123132123132123</p>
-          <p>123132123132123</p>
-          <p>123132123132123</p>
-          <p>123132123132123</p>
-          <p>123132123132123</p>
-          <p>123132123132123</p>
-          <p>123132123132123</p>
-          <p>123132123132123</p>
-          <p>123132123132123</p>
-          <p>123132123132123</p>
-          <p>123132123132123</p>
-          <p>123132123132123</p>
-          <p>123132123132123</p>
-          <p>123132123132123</p>
-          <p>123132123132123</p>
-          <p>123132123132123</p>
-          <p>123132123132123</p>
-          <p>123132123132123</p>
-          <p>123132123132123</p>
-          <p>123132123132123Bottom</p>
-        </scroll-view>
+      <view class="calendar">
+        <mbill-calendar
+          ref="calendar"
+          class="calendar"
+          :expand="expand"
+          :tags="tags"
+          @change="handlerDateChange"
+        />
       </view>
+      <view
+        :style="{ height: expandHeight + 'px' }"
+        class="calendar-expand"
+        @tap="handlerExpandView"
+      >
+        <i
+          style="font-size: 20px"
+          :class="['iconfont', 'icon-' + (expand ? 'top' : 'bottom')]"
+        />
+      </view>
+      <scroll-view
+        class="items"
+        :style="{
+          height: scrollHeight + 'px',
+        }"
+        scroll-y="true"
+      >
+        <p v-for="(item, index) in Array(100).fill(1)" :key="index">
+          123132123132123 {{ index }}
+        </p>
+      </scroll-view>
     </view>
   </view>
 </template>
@@ -161,24 +113,21 @@ export default {
     dynamicHeight() {
       let that = this;
       uni.getSystemInfo({
-        //调用uni-app接口获取屏幕高度
         success(res) {
           console.log(res);
-          that._data.tH = res.screenHeight - res.windowHeight - 12;
-          console.log(that._data.tH);
-          //成功回调函数
-          that._data.pH = res.windowHeight; //windoHeight为窗口高度，主要使用的是这个
-          let titleH = uni.createSelectorQuery().select("#calendar_cls"); //想要获取高度的元素名（class/id）
-          titleH
-            .boundingClientRect((data) => {
-              that._data.scrollHeight =
-                that._data.pH -
-                data.height -
-                that._data.tH -
-                that._data.expandHeight;
-              that._data.scrollMaxHeight = that._data.scrollHeight;
-            })
-            .exec();
+          that.tH = res.screenHeight - res.windowHeight - 12;
+          that.pH = res.windowHeight; //windoHeight为窗口高度，主要使用的是这个
+          let query = uni.createSelectorQuery();
+          query.select(".calendar").fields({ size: true });
+          query.select(".calendar-expand").fields({ size: true });
+          query.exec((data) => {
+            console.log(data);
+            data.map((i) => {
+              that.scrollHeight += i.height;
+            });
+            that.scrollHeight = that.pH - that.scrollHeight;
+            that.scrollMaxHeight = that.scrollHeight;
+          });
         },
       });
     },
@@ -217,7 +166,7 @@ export default {
   justify-content: center;
 }
 
-.scroll-view-expand {
+.calendar-expand {
   // background: linear-gradient(rgba(247, 235, 252, 1), rgba(255, 0, 0, 0));
   text-align: center;
 }
