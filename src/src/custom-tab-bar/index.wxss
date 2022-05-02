@@ -35,9 +35,19 @@
   text-align: center;
 }
 
-.bulge .image{
+.bulge .background{
+  background: #A6B1E1;
   width: 45px;
   height: 45px;
+  border-radius: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.bulge .background .image{
+  width: 20px;
+  height: 20px;
 }
 
 .tab-bar-item .tab-bar-view {

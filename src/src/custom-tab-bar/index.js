@@ -1,9 +1,8 @@
 Component({
   data: {
     selected: 0,
-    lastUrl: '/pages/index/index',
-    color: "#7A7E83",
-    selectedColor: "#8552a1",
+    color: "#D1D1D1",
+    selectedColor: "#A6B1E1",
     list: [{
       "pagePath": "/pages/index/index",
       "text": "账目"

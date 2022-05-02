@@ -55,8 +55,13 @@
         >
           <!-- 不是本月的天数颜色为灰色 -->
           <view
-            :class="['item-text', item2.className]"
-            :style="item2.fromMonth == 'nowMonth' ? '' : 'color:#c8c9cc;'"
+            :class="[
+              'item-text',
+              item2.className,
+              item2.fromMonth == 'nowMonth'
+                ? 'item-text-dark'
+                : 'item-text-grey',
+            ]"
             ><text>{{ item2.day }}</text>
             <view v-if="item2.isTag" class="status-point" />
           </view>
@@ -69,6 +74,7 @@
 <script>
 const currentDate = new Date();
 export default {
+  name: "mbill-calendar",
   props: {
     expand: {
       type: Boolean,
@@ -391,9 +397,9 @@ export default {
 <style lang="scss" scope>
 .calendar {
   margin: 0 auto;
-  width: 92%;
-  background-color: #fff;
-  border-radius: 16px;
+  padding: 5px 5px;
+  width: auto;
+  background-color: $bright-color;
   overflow: hidden;
 
   .calendar-title {
@@ -449,52 +455,39 @@ export default {
     flex-wrap: wrap;
     text-align: center;
     align-content: flex-start;
-
-    .active {
-      background-color: #1972f0;
-      color: #fff;
-    }
-  }
-
-  .day-item {
-    width: 14%;
-    .item-text {
-      display: flex;
-      flex-direction: column;
-      // justify-content: center;
-      align-items: center;
-      // display: block;
-      border-radius: 50%;
-      width: 100%;
-      padding-top: calc(50% - 0.8em);
-      padding-bottom: calc(50% + 0.8em);
-      height: 0;
-    }
-    .status-point {
-      // display: inline-block;
-      // width: 5px;
-      // height: 5px;
-      // line-height: 5px;
-      // border-radius: 50%;
-      // background-color: #8552a1;
-      &::after {
-        display: block;
-        content: "";
-        width: 5px;
-        height: 5px;
+    .day-item {
+      width: 14%;
+      .item-text {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
         border-radius: 50%;
-        background: #8552a1;
+        width: 100%;
+        padding-top: calc(50% - 0.8em);
+        padding-bottom: calc(50% + 0.8em);
+        height: 0;
+        &-dark {
+          color: $primary-text-color;
+        }
+        &-grey {
+          color: $grey-text-color;
+        }
       }
-    }
-    .tag {
-      // &::after {
-      //   display: inline-block;
-      //   content: "";
-      //   width: 5px;
-      //   height: 5px;
-      //   border-radius: 50%;
-      //   background: #8552a1;
-      // }
+      .status-point {
+        &::after {
+          display: block;
+          content: "";
+          width: 5px;
+          height: 5px;
+          border-radius: 50%;
+          background: $dark-color;
+        }
+      }
+
+      .active {
+        background-color: $primary-color;
+        color: $light-text-color;
+      }
     }
   }
 }

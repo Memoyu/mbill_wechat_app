@@ -2,7 +2,18 @@
   <view>
     <view class="content">
       <view class="key-board">
-        <view></view>
+        <view class="text">
+          <view class="x-start">
+            <i class="iconfont icon-assets" />
+            <text>选择资产</text>
+            <i class="iconfont icon-to" />
+          </view>
+          <view class="x-start">
+            <i class="iconfont icon-assets" />
+            <text>选择资产</text>
+            <i class="iconfont icon-to" />
+          </view>
+        </view>
         <mbill-keyboard
           ref="keyboard"
           :pnum="pnum"
@@ -33,7 +44,15 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss">
+.text {
+  background: $primary-color;
+}
+
+.choose-asset {
+  display: flex;
+  flex-direction: row;
+}
 .key-board {
   position: absolute;
   bottom: 0;

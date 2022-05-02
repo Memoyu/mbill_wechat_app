@@ -41,7 +41,7 @@
  * */
 
 export default {
-  name: "wly-keyboard",
+  name: "mbill-keyboard",
   props: {
     leng: {
       //输入长度
@@ -195,7 +195,7 @@ export default {
 
 <style lang="scss">
 .mode {
-  background-color: #fff;
+  background-color: #ffffff;
   padding-bottom: 20rpx;
   .f-sb-c {
     /*两端对齐 上下居中*/
@@ -213,8 +213,9 @@ export default {
       align-items: center;
 
       .key {
+        color: $primary-text-color;
         font-size: 19px;
-        font-weight: bolder;
+        font-weight: bold;
         text-align: center;
         line-height: 100rpx;
         width: 172rpx;
@@ -241,14 +242,16 @@ export default {
         text-align: center;
         line-height: 200rpx;
         height: 200rpx;
-        background: #8552a1;
+        background: $light-color;
+        border-radius: 16px;
         //border: 1rpx solid #6699ff;
       }
     }
 
     .key-click {
-      background: #8552a1;
-      transform: scale(1.1);
+      border-radius: 16px;
+      background: $primary-color !important;
+      // transform: scale(1.1);
     }
   }
 }
