@@ -140,15 +140,6 @@ export default {
       if (this.expand) {
         this.scrollHeight = this.pH - minHeight - this.tH - this.expandHeight;
         this.expand = false;
-        // console.log(
-        //   this.pH +
-        //     " - " +
-        //     minHeight +
-        //     " - " +
-        //     this.tH +
-        //     " - " +
-        //     this.expandHeight
-        // );
       } else {
         this.scrollHeight = this.scrollMaxHeight;
         this.expand = true;
