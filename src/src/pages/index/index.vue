@@ -121,7 +121,7 @@ export default {
           query.select(".calendar").fields({ size: true });
           query.select(".calendar-expand").fields({ size: true });
           query.exec((data) => {
-            console.log(data);
+            // console.log(data);
             data.map((i) => {
               that.scrollHeight += i.height;
             });

@@ -9,22 +9,22 @@
         hover-stay-time="50"
         @click="handlerClickNum(numKey.value)"
       >
-        <text v-if="!numKey.isIcon">{{ numKey.value }}</text>
+        <text v-if="!numKey.icon">{{ numKey.value }}</text>
         <i
           v-else
           style="font-size: 25px"
-          :class="['iconfont', 'icon-' + numKey.value]"
+          :class="['iconfont', 'icon-' + numKey.icon]"
         />
       </view>
     </view>
     <view class="btn">
       <view
-        v-for="(op, index) in operatorList"
+        v-for="(op, index) in operateList"
         :key="index"
         :class="op.className"
         hover-class="key-click"
         hover-stay-time="50"
-        @click="handlerClickOperator(op.value)"
+        @click="handlerClickNum(op.value)"
       >
         <i style="font-size: 20px" :class="['iconfont', 'icon-' + op.icon]" />
       </view>
@@ -33,11 +33,6 @@
 </template>
 
 <script>
-/**
- * input -> 绑定方法 数字变化
- * confirm   -> 绑定方法 点击确认
- * */
-
 export default {
   name: "mbill-keyboard",
   props: {
@@ -49,7 +44,7 @@ export default {
     pnum: {
       //初始化数量
       type: [String, Number],
-      default: 0,
+      default: "",
     },
 
     decimal: {
@@ -60,140 +55,226 @@ export default {
   },
   data() {
     return {
-      input: "0",
-      result: 0,
       numKeyList: [
-        { value: "1", isIcon: false },
-        { value: "2", isIcon: false },
-        { value: "3", isIcon: false },
-        { value: "4", isIcon: false },
-        { value: "5", isIcon: false },
-        { value: "6", isIcon: false },
-        { value: "7", isIcon: false },
-        { value: "8", isIcon: false },
-        { value: "9", isIcon: false },
-        { value: "delete", isIcon: true },
-        { value: "0", isIcon: false },
-        { value: ".", isIcon: false },
+        { value: "1" },
+        { value: "2" },
+        { value: "3" },
+        { value: "4" },
+        { value: "5" },
+        { value: "6" },
+        { value: "7" },
+        { value: "8" },
+        { value: "9" },
+        { value: "del", icon: "delete" },
+        { value: "0" },
+        { value: "." },
       ],
-      operatorList: [
-        { value: "+", icon: "plus", className: "operator" },
-        { value: "-", icon: "subtract", className: "operator" },
+      operateList: [
+        { value: "plus", icon: "plus", className: "operator" },
+        { value: "minus", icon: "subtract", className: "operator" },
         { value: "confirm", icon: "confirm", className: "confirm" },
       ],
+      infix: [],
+      suffix: [],
+      result: [],
+      opList: ["+", "-"],
+      nameToOp: {
+        plus: "+",
+        minus: "-",
+      },
     };
   },
   created() {
     //自定义初始化值
     let pnum = this.pnum;
-    this.input = pnum;
+    this.infix.push(pnum);
   },
   methods: {
     // 输入
     handlerClickNum(e) {
-      if (e == "delete") {
-        this.handlerDel();
+      // 数字：0-9
+      if (!isNaN(parseInt(e, 10))) {
+        // 构建中缀表达式并显示
+        let infixRe = this.buildInfix(e, "add");
+        console.log(infixRe);
+        this.calculate();
         return;
       }
 
-      let input = String(this.input);
-      //输入长度小于设置
-      if (input.length < this.leng) {
-        // 判断小数点
-        let numof = input.indexOf(".");
-        if (numof > -1) {
-          //小数点处理
-          if (e != ".") {
-            if (input == 0) {
-              input = e;
-            } else {
-              input = String(input) + e;
-            }
-
-            // 设置保留几位
-            let decimal = this.decimal; //小数点
-            if (input.length > numof + 1 + decimal) {
-              input = input.substr(0, numof + 1 + decimal);
-            }
-          }
-        } else {
-          if (input == 0) {
-            input = e;
-          } else {
-            input = String(input) + e;
-          }
+      // 操作：清除、删除、计算等于
+      if ("del" == e) {
+        // 重新构建中缀表达式
+        let infixRe = this.buildInfix(this.nameToOp[e], "del");
+        this.calculate();
+      }
+      // 预运算：小数点
+      else if ("." == e) {
+        if (!this.infix.length || this.isOp(this.peekInfix())) {
+          return;
         }
 
-        this.input = input;
-        let result = this.calculate(input);
-        this.$emit("input", { input, result }); //数字变化调用
+        // 重新构建中缀表达式
+        let infixRe = this.buildInfix(this.peekInfix(), "dot");
+        this.calculate();
       }
-    },
-    // 操作符
-    handlerClickOperator(val) {
-      switch (val) {
-        case "+":
-        case "-":
-          this.handlerOperator(val);
-          break;
-        case "confirm":
-          this.handlerConfirm();
-          break;
+      // 运算符：+ -
+      else if (this.isOp(this.nameToOp[e])) {
+        let infixRe = this.buildInfix(this.nameToOp[e], "add");
+        this.calculate();
       }
-    },
-
-    // 删除
-    handlerDel() {
-      let input = String(this.input);
-      input = input.substr(0, input.length - 1);
-      console.log(input);
-      if (input.length == 0) {
-        this.input = 0;
-      } else {
-        this.input = input;
-      }
-      let result = this.calculate(input);
-      this.$emit("input", { input, result }); //数字变化调用
-    },
-
-    // 计算操作
-    calculate(input) {
-      // if (input.includes("+")) {
-      //   let nums = input.split("+");
-      //   this.result = eval(string);
-      // } else if (input.includes("-")) {
-      //   let nums = input.split("-");
-      //   this.result = Number(nums[0]) - Number(nums[1]);
-      // } else {
-      //   this.result = Number(input);
-      // }
-      this.result = eval(this.input);
-      return this.result;
-    },
-
-    // 按下加减符号
-    handlerOperator(op) {
-      console.log(this.input);
-      if (this.input.includes("+") || this.input.includes("-")) {
-        this.input = this.result + op;
-        this.$emit("input", { input: this.input, result: this.result });
-        return;
-      }
-      let endChar = this.input.charAt(this.input.length - 1);
-      if (endChar == "+" || endChar == "-") return;
-      this.handlerClickNum(op);
     },
 
     // 确定
     handlerConfirm() {
-      let input = String(this.input);
-
-      if (input.charAt(input.length - 1) == ".") {
-        // 最后一位是小数点就去掉
-        input = input.substr(0, input.length - 1);
-        this.input = input;
-      }
       this.$emit("confirm", input);
+    },
+
+    // 计算输入
+    calculate() {
+      console.log(this.infix);
+      this.infixToSuffix();
+      var suffixRe = this.calcSuffix();
+      this.$emit("input", {
+        input: this.infix.join(""),
+        result: suffixRe == undefined ? "" : suffixRe,
+      });
+      return suffixRe;
+    },
+
+    // 构建中缀表达式
+    buildInfix(val, type) {
+      let tempVal;
+
+      // 删除操作
+      if (type === "del") {
+        if (this.infix.length > 0) {
+          tempVal = this.infix.pop();
+          console.log(tempVal);
+          tempVal = tempVal.substr(0, tempVal.length - 1);
+          // 删除末尾一位数
+          if (tempVal.length > 0) {
+            this.infix.push(tempVal);
+          }
+        }
+
+        // this.lastVal = this.infix[this.infix.length - 1];
+        return this.infix;
+      }
+      // 添加操作，首先得判断运算符是否重复
+      else if (type === "add") {
+        let last = this.peekInfix();
+        // 两个连续的运算符
+        if (this.isOp(val) && this.isOp(last)) {
+          return this.infix;
+        }
+        // 两个连续的数字
+        else if (!this.isOp(val) && !this.isOp(last)) {
+          tempVal = last + val;
+          this.infix.pop();
+          this.infix.push(tempVal);
+
+          return this.infix;
+        }
+        // 首个数字正负数
+        if (
+          !this.isOp(val) &&
+          this.infix.length === 1 &&
+          (last === "+" || last === "-")
+        ) {
+          tempVal = last === "+" ? val : "-" + val;
+          this.infix.pop();
+          this.infix.push(tempVal);
+
+          return this.infix;
+        }
+
+        this.infix.push(val);
+        return this.infix;
+      }
+      // 更改操作，比如%的预运算
+      else if (type === "dot") {
+        tempVal = this.infix.pop();
+        if (tempVal.indexOf(".") < 0) {
+          this.infix.push(tempVal + ".");
+        } else {
+          this.infix.push(tempVal);
+        }
+
+        return this.infix;
+      }
+    },
+
+    // 中缀表达式转后缀表达式
+    infixToSuffix() {
+      // 主要用于临时存放操作符
+      var temp = [];
+      this.suffix = [];
+
+      for (var i = 0; i < this.infix.length; i++) {
+        // 数值，直接压入
+        if (!this.isOp(this.infix[i])) {
+          this.suffix.push(this.infix[i]);
+        } else {
+          if (!temp.length) {
+            temp.push(this.infix[i]);
+          } else {
+            // 调整操作符位置，准确的构建后缀表达式
+            while (temp.length) {
+              this.suffix.push(temp.pop());
+            }
+            // 将当前运算符也压入后缀表达式
+            temp.push(this.infix[i]);
+          }
+        }
+      }
+      // 将剩余运算符号压入
+      while (temp.length) {
+        this.suffix.push(temp.pop());
+      }
+    },
+
+    // 后缀表达式计算
+    calcSuffix() {
+      this.result = [];
+      let last = this.peekInfix();
+      let len = this.isOp(last) ? this.suffix.length - 1 : this.suffix.length;
+      console.log(this.infix);
+      console.log(this.suffix);
+      for (var i = 0; i < len; i++) {
+        // 数值，直接压入结果集
+        if (!this.isOp(this.suffix[i])) {
+          this.result.push(this.suffix[i]);
+        }
+        // 运算符，从结果集中取出两项进行运算，并将运算结果置入结果集合
+        else {
+          this.result.push(
+            this.opCalc(this.result.pop(), this.suffix[i], this.result.pop())
+          );
+        }
+      }
+      // 此时结果集中只有一个值，即为结果
+
+      return this.result[0];
+    },
+
+    // 获取前缀表达式最后一个元素
+    peekInfix() {
+      let val = this.infix[this.infix.length - 1];
+      return val == undefined ? "" : val;
+    },
+
+    // 判断是否为运算符
+    isOp(op) {
+      return op && this.opList.indexOf(op) !== -1;
+    },
+
+    // 进行运算符的运算
+    opCalc(b, op, a) {
+      return op === "+"
+        ? (Number(a) + Number(b)).toFixed(2)
+        : op === "-"
+        ? (Number(a) - Number(b)).toFixed(2)
+        : 0;
     },
   },
 };

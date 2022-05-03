@@ -51,7 +51,7 @@
         </view>
         <mbill-keyboard
           ref="keyboard"
-          :pnum="pnum"
+          :pnum="inputResult"
           @confirm="handlerConfirmNum"
           @input="handlerInputNum"
         />
@@ -102,9 +102,8 @@ export default {
         month: now.getMonth() + 1,
         day: now.getDate(),
       },
-      pnum: 0,
-      input: 0,
-      inputResult: 0,
+      input: "",
+      inputResult: "24",
       scrollHeight: 0,
       assetList: [],
     };
@@ -125,7 +124,7 @@ export default {
           query.select(".amount").fields({ size: true });
           query.select(".key-board").fields({ size: true });
           query.exec((data) => {
-            console.log(data);
+            // console.log(data);
             data.map((i) => {
               that.scrollHeight += i.height;
             });
@@ -206,11 +205,13 @@ export default {
   padding: 10px 15px 0 15px;
   background-image: radial-gradient();
   .total {
+    height: 40px;
     font-size: 30px;
     font-weight: bold;
   }
   .input {
-    margin-bottom: 15px;
+    height: 22px;
+    margin-bottom: 8px;
   }
 }
 
