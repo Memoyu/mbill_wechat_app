@@ -37,9 +37,9 @@ export default {
   name: "mbill-keyboard",
   props: {
     leng: {
-      //输入长度
+      //输入长度 默认：5 例如：23456.77 -> 向下取整，则为5位
       type: [String, Number],
-      default: 8,
+      default: 5,
     },
     pnum: {
       //初始化数量
@@ -96,12 +96,11 @@ export default {
       if (!isNaN(parseInt(e, 10))) {
         // 构建中缀表达式并显示
         let infixRe = this.buildInfix(e, "add");
-        console.log(infixRe);
         this.calculate();
         return;
       }
 
-      // 操作：清除、删除、计算等于
+      // 操作：删除
       if ("del" == e) {
         // 重新构建中缀表达式
         let infixRe = this.buildInfix(this.nameToOp[e], "del");
@@ -131,11 +130,10 @@ export default {
 
     // 计算输入
     calculate() {
-      console.log(this.infix);
       this.infixToSuffix();
       var suffixRe = this.calcSuffix();
       this.$emit("input", {
-        input: this.infix.join(""),
+        input: this.infix.join(" "),
         result: suffixRe == undefined ? "" : suffixRe,
       });
       return suffixRe;
@@ -156,8 +154,6 @@ export default {
             this.infix.push(tempVal);
           }
         }
-
-        // this.lastVal = this.infix[this.infix.length - 1];
         return this.infix;
       }
       // 添加操作，首先得判断运算符是否重复
@@ -169,10 +165,12 @@ export default {
         }
         // 两个连续的数字
         else if (!this.isOp(val) && !this.isOp(last)) {
+          console.log(last);
+          if (!this.isDecimalRange(last)) return this.infix;
+          if (!this.isLengRange(last)) return this.infix;
           tempVal = last + val;
           this.infix.pop();
           this.infix.push(tempVal);
-
           return this.infix;
         }
         // 首个数字正负数
@@ -193,6 +191,7 @@ export default {
       }
       // 更改操作，比如%的预运算
       else if (type === "dot") {
+        if (!this.isLengRange(this.peekInfix())) return this.infix;
         tempVal = this.infix.pop();
         if (tempVal.indexOf(".") < 0) {
           this.infix.push(tempVal + ".");
@@ -263,6 +262,26 @@ export default {
       return val == undefined ? "" : val;
     },
 
+    // 是否是小数
+    isDecimal(val) {
+      return val.indexOf(".") !== -1;
+    },
+
+    // 是否在小数范围内
+    isDecimalRange(val) {
+      if (!this.isDecimal(val)) return true;
+      let sp = val.split(".");
+      if (sp[1].length < this.decimal) return true;
+      return false;
+    },
+
+    // 是否在数值长度内
+    isLengRange(val) {
+      let fVal = Math.floor(Number(val));
+      console.log(fVal);
+      return String(fVal).length < this.leng;
+    },
+
     // 判断是否为运算符
     isOp(op) {
       return op && this.opList.indexOf(op) !== -1;
@@ -271,9 +290,9 @@ export default {
     // 进行运算符的运算
     opCalc(b, op, a) {
       return op === "+"
-        ? (Number(a) + Number(b)).toFixed(2)
+        ? (Number(a) + Number(b)).toFixed(this.decimal)
         : op === "-"
-        ? (Number(a) - Number(b)).toFixed(2)
+        ? (Number(a) - Number(b)).toFixed(this.decimal)
         : 0;
     },
   },
