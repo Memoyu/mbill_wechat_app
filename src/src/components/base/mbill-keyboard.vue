@@ -7,7 +7,8 @@
         class="key"
         hover-class="key-click"
         hover-stay-time="50"
-        @click="handlerClickNum(numKey.value)"
+        @longtap="handlerLongTap(numKey.value)"
+        @tap="handlerClickNum(numKey.value)"
       >
         <text v-if="!numKey.icon">{{ numKey.value }}</text>
         <i
@@ -92,6 +93,10 @@ export default {
   methods: {
     // 输入
     handlerClickNum(e) {
+      if ("confirm" == e) {
+        this.handlerConfirm();
+        return;
+      }
       // 数字：0-9
       if (!isNaN(parseInt(e, 10))) {
         // 构建中缀表达式并显示
@@ -122,10 +127,17 @@ export default {
         this.calculate();
       }
     },
+    // 长按
+    handlerLongTap(e) {
+      if ("del" != e) return;
+      this.infix = [];
+      this.suffix = [];
+      this.calculate();
+    },
 
     // 确定
     handlerConfirm() {
-      this.$emit("confirm", input);
+      this.$emit("confirm");
     },
 
     // 计算输入

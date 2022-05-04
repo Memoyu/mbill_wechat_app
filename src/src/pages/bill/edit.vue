@@ -30,10 +30,16 @@
       </view>
       <view class="amount">
         <view class="x-start">
-          <text class="total">￥</text>
-          <view class="y-start">
-            <view class="total">{{ inputResult }}</view>
-            <view class="input">{{ input }}</view>
+          <text class="large-font">￥</text>
+          <view class="total y-start">
+            <view class="large-font">{{ inputResult }}</view>
+            <scroll-view
+              class="input"
+              scroll-x="true"
+              :scroll-left="inputTextLeng"
+            >
+              <text class="input-text">{{ input }} </text>
+            </scroll-view>
           </view>
         </view>
         <mbill-end-split-line count="50" />
@@ -102,8 +108,9 @@ export default {
         month: now.getMonth() + 1,
         day: now.getDate(),
       },
+      inputTextLeng: 0,
       input: "",
-      inputResult: "24",
+      inputResult: "",
       scrollHeight: 0,
       assetList: [],
     };
@@ -113,6 +120,7 @@ export default {
   },
   onShow() {},
   methods: {
+    // 计算高度，动态调整scroll 高度
     dynamicHeight() {
       let that = this;
       uni.getSystemInfo({
@@ -134,6 +142,19 @@ export default {
         },
       });
     },
+
+    // 滚动输入的表达式，始终展示最后
+    scrollInputText() {
+      uni
+        .createSelectorQuery()
+        .select(".input-text")
+        .boundingClientRect((res) => {
+          console.log(res);
+          this.inputTextLeng = res.right;
+        })
+        .exec();
+    },
+
     handlerTypeSelected(type) {
       this.selectedType = type;
     },
@@ -159,12 +180,14 @@ export default {
       this.$refs.popupHi.open();
     },
     handlerInputNum(e) {
-      console.log(e);
+      // console.log(e);
       this.input = e.input;
       this.inputResult = e.result;
+      this.scrollInputText();
+      console.log(this.$refs);
     },
-    handlerConfirmNum(e) {
-      console.log("cof " + e);
+    handlerConfirmNum() {
+      console.log("cof ");
     },
   },
 };
@@ -185,19 +208,19 @@ export default {
     .item {
       color: $grey-text-color;
       padding: 3px 8px;
-      border: 1rpx solid $grey-text-color;
+      border: 1rpx solid $light-color;
       border-radius: 30rpx;
     }
     .item-select {
       color: $primary-text-color;
-      background: $grey-text-color;
+      background: $light-color;
     }
   }
   .date {
     font-size: 12px;
     padding: 3px 8px;
     border-radius: 30rpx;
-    background: $grey-text-color;
+    background: $light-color;
   }
 }
 .amount {
@@ -205,13 +228,37 @@ export default {
   padding: 10px 15px 0 15px;
   background-image: radial-gradient();
   .total {
+    width: 100%;
+    overflow: hidden;
+  }
+  .large-font {
     height: 40px;
     font-size: 30px;
     font-weight: bold;
   }
+
   .input {
+    white-space: nowrap;
+    display: flex;
+    overflow-x: auto;
+    overflow-y: hidden;
     height: 22px;
     margin-bottom: 8px;
+    .input-text {
+      display: inline-block;
+      flex-shrink: 0;
+      position: relative;
+      display: inline-block;
+      background-size: contain;
+      background-repeat: no-repeat;
+    }
+    ::-webkit-scrollbar {
+      display: none;
+      width: 0 !important;
+      height: 0 !important;
+      -webkit-appearance: none;
+      background: transparent;
+    }
   }
 }
 
