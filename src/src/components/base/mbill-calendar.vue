@@ -5,11 +5,11 @@
       height: expand ? 'auto' : minHeight + 'px',
     }"
   >
-    <view class="calendar-title">
+    <view class="calendar-title" id="calendar-title">
       <picker
         class="time-picker"
         mode="date"
-        @change="pickerChange"
+        @change="handlerPickerChange"
         fields="month"
         :value="date"
       >
@@ -26,10 +26,10 @@
         </view>
       </view>
     </view>
-    <view class="day">
+    <view class="day" id="date-title">
       <view
         class="day-item"
-        v-for="(item, index) in ['日', '一', '二', '三', '四', '五', '六']"
+        v-for="(item, index) in ['一', '二', '三', '四', '五', '六', '日']"
         :key="index"
       >
         {{ item }}
@@ -51,7 +51,7 @@
           class="day-item"
           v-for="(item2, index2) in item"
           :key="index2"
-          @tap="dayClick(index2)"
+          @tap="handlerDayClick(index2)"
         >
           <!-- 不是本月的天数颜色为灰色 -->
           <view
@@ -100,46 +100,76 @@ export default {
       startLeft: 0,
       comH: "auto",
       minHeight: 0,
+      fixedHeight: 0,
     };
-  },
-  onReady() {
-    let titleH = uni.createSelectorQuery().in(this).select(".calendar-title");
-    titleH
-      .boundingClientRect((data) => {
-        this.minHeight = data.height + 30;
-      })
-      .exec();
   },
 
   created() {
-    /*调用初始化当前考勤*/
+    let query = uni.createSelectorQuery().in(this);
+    query.select("#calendar-title").fields({ size: true });
+    query.select("#date-title").fields({ size: true });
+    query.exec((data) => {
+      console.log(data);
+      // 30 为边距
+      this.minHeight = data[0].height + 30;
+      this.fixedHeight = this.minHeight + data[1].height;
+    });
+
+    /*调用初始化当前日期*/
     this.getThreeMonth();
   },
 
   methods: {
     //时间改变触发
-    pickerChange({ detail }) {
+    handlerPickerChange({ detail }) {
       let date = new Date(detail.value);
       let year = date.getFullYear();
       let month = date.getMonth() + 1;
       if (year !== this.nowYear || month !== this.nowMonth) {
         this.nowYear = year;
         this.nowMonth = month;
-        this.date = new Date(this.nowYear, this.nowMonth - 1);
+        this.changeMonth(this.nowYear, this.nowMonth);
       }
-      this.syy();
-      this.xyy();
+      this.getThreeMonth();
       this.getCurrentMonthHeight();
+      this.changeMonthEvent();
     },
 
-    // 日期模块松手
-    touchend(e) {
-      // 根据移动距离判断跳转上一月还是下一月
-      if (this.dayLeft > 100) this.syy();
-      if (this.dayLeft < -100) this.xyy();
-      this.dayLeft = 0;
-      this.date = new Date(this.nowYear, this.nowMonth - 1);
-      this.getCurrentMonthHeight();
+    //点击某一天
+    handlerDayClick(index) {
+      // 如果 点击本月的日期
+      let targetIndex = index;
+      if (this.monthList[1][index].fromMonth != "nowMonth") {
+        //点击 哪一天
+        let day = this.monthList[1][index].day;
+        if (this.monthList[1][index].fromMonth == "nextMonth") {
+          // 如果 点击下一月的日期 跳转下一月
+          this.xyy();
+        } else if (this.monthList[1][index].fromMonth == "lastMonth") {
+          // 如果 点击上一月的日期 跳转上一月
+          this.syy();
+        }
+        targetIndex = this.monthList[1].findIndex(
+          (e) => e.fromMonth == "nowMonth" && e.day == day
+        );
+      }
+
+      // 如果 点击本月的日期
+      this.monthList.map((m, i) => {
+        m.map((item, inx) => {
+          if (targetIndex == inx && i == 1) {
+            item.className = "active";
+            this.selectedDate = {
+              year: this.nowYear,
+              month: this.nowMonth,
+              day: item.day,
+            };
+            this.$emit("change", this.selectedDate);
+          } else {
+            item.className = "";
+          }
+        });
+      });
     },
 
     // 日期模块点击
@@ -153,6 +183,15 @@ export default {
       this.dayLeft = e.touches[0].pageX - this.startLeft;
     },
 
+    // 日期模块松手
+    touchend(e) {
+      // 根据移动距离判断跳转上一月还是下一月
+      if (this.dayLeft > 100) this.syy();
+      if (this.dayLeft < -100) this.xyy();
+      this.dayLeft = 0;
+      this.getCurrentMonthHeight();
+    },
+
     /*获取上一月*/
     syy() {
       if (this.nowMonth == 1) {
@@ -163,6 +202,8 @@ export default {
       }
       this.nowMonth = parseInt(this.nowMonth) - 1;
       this.getThreeMonth();
+      this.changeMonth(this.nowYear, this.nowMonth);
+      this.changeMonthEvent();
     },
 
     /*获取下一月*/
@@ -175,6 +216,8 @@ export default {
       }
       this.nowMonth = parseInt(this.nowMonth) + 1;
       this.getThreeMonth();
+      this.changeMonth(this.nowYear, this.nowMonth);
+      this.changeMonthEvent();
     },
 
     // 获取三月日期
@@ -227,13 +270,14 @@ export default {
 
       //获取本月的一号是星期几 0星期天
       var s = new Date(Year + "/" + Month + "/" + "01").getDay();
+      if (s == 0) s = 7;
       var lastYear = Month == 1 ? Year - 1 : Year;
       //上月月份
       var lastMonth = Month == 1 ? 12 : Month - 1;
       // 上月天数
       var lastMonthDay = days_per_month[lastMonth - 1];
       // 补上 上月日期
-      for (var i = s - 1; i >= 0; i--) {
+      for (var i = s - 2; i >= 0; i--) {
         var day = parseInt(lastMonthDay) - i;
         dateList.push({
           year: lastYear,
@@ -261,12 +305,13 @@ export default {
 
       //获取本月最后一天是星期几 0星期天
       var l = new Date(Year + "/" + Month + "/" + nowMonthDay).getDay();
+      if (l == 0) l = 7;
       var nextYear = Month == 12 ? Year + 1 : Year;
       //下月月份
       var nextMonth = Month == 12 ? 1 : Month + 1;
-      if (l < 6) {
+      if (l < 7) {
         // 补上 下月日期
-        for (var d = 1; d <= 6 - l; d++) {
+        for (var d = 1; d <= 7 - l; d++) {
           dateList.push({
             year: nextYear,
             month: nextMonth,
@@ -290,7 +335,7 @@ export default {
           : 0
         : 0;
     },
-
+    // 是否选中日期
     isActive(y, m, d) {
       if (
         y == this.selectedDate.year &&
@@ -302,7 +347,7 @@ export default {
 
       return "";
     },
-
+    // 是否标记日期
     isTag(y, m, d) {
       let tag = false;
       this.tags.map((t) => {
@@ -313,73 +358,15 @@ export default {
       return tag;
     },
 
-    //点击某一天
-    dayClick(index) {
-      // 如果 点击本月的日期
-      let targetIndex = index;
-      if (this.monthList[1][index].fromMonth != "nowMonth") {
-        //点击 哪一天
-        let day = this.monthList[1][index].day;
-        if (this.monthList[1][index].fromMonth == "nextMonth") {
-          // 如果 点击下一月的日期 跳转下一月
-          this.xyy();
-        } else if (this.monthList[1][index].fromMonth == "lastMonth") {
-          // 如果 点击上一月的日期 跳转上一月
-          this.syy();
-        }
-        targetIndex = this.monthList[1].findIndex(
-          (e) => e.fromMonth == "nowMonth" && e.day == day
-        );
-      }
-      // // 如果 点击本月的日期
-      // if (this.monthList[1][index].fromMonth == "nowMonth") {
-      //   this.monthList[1].map((item, inx) => {
-      //     if (index == inx) {
-      //       item.className = "active";
-      //       this.selectedDate = {
-      //         year: this.nowYear,
-      //         month: this.nowMonth,
-      //         day: item.day,
-      //       };
-      //       this.$emit("change", this.selectedDate);
-      //     } else {
-      //       item.className = "";
-      //     }
-      //   });
-      //   return;
-      // }
-
-      // 如果 点击本月的日期
-
-      this.monthList.map((m, i) => {
-        m.map((item, inx) => {
-          if (targetIndex == inx && i == 1) {
-            item.className = "active";
-            this.selectedDate = {
-              year: this.nowYear,
-              month: this.nowMonth,
-              day: item.day,
-            };
-            this.$emit("change", this.selectedDate);
-          } else {
-            item.className = "";
-          }
-        });
-      });
-
-      // //对应日期 选中状态
-      // let nowIndex = this.monthList[1].findIndex(
-      //   (e) => e.fromMonth == "nowMonth" && e.day == day
-      // );
-      // this.monthList[1][nowIndex].className = "active";
-      // this.selectedDate = {
-      //   year: this.nowYear,
-      //   month: this.nowMonth,
-      //   day: this.monthList[1][nowIndex].day,
-      // };
-      // this.$emit("change", this.selectedDate);
+    // 触发月份变更
+    changeMonth(year, month) {
+      this.date = new Date(year, month);
     },
 
+    // 触发月份变更
+    changeMonthEvent() {},
+
+    // 获取当前日期选项高度，用于计算当前组件日期高度
     getCurrentMonthHeight() {
       let dayH = uni.createSelectorQuery().in(this).select(".item-text");
       dayH
@@ -387,6 +374,8 @@ export default {
           let dayCount = this.monthList[1].length;
           let dayHCount = dayCount / 7;
           this.comH = dayHCount * data.height;
+          // 10 为上下边距
+          this.$emit("sizechange", this.fixedHeight + this.comH + 10);
         })
         .exec();
     },

@@ -12,7 +12,7 @@
 import { mixin } from "@/mixins/tabbar.js";
 
 export default {
-  mixins: [mixin], //混入文件
+  mixins: [mixin], //混入 文件
   data() {
     return {};
   },

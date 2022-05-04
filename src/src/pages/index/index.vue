@@ -8,6 +8,7 @@
           :expand="expand"
           :tags="tags"
           @change="handlerDateChange"
+          @sizechange="handlerSizeChange"
         />
       </view>
       <view
@@ -96,7 +97,7 @@ export default {
         },
       ],
       pH: 0,
-      tH: 0,
+      tabbarHeight: getApp().globalData.tabbarHeight,
       expandHeight: 25,
       scrollHeight: 0,
       scrollMaxHeight: 0,
@@ -104,41 +105,61 @@ export default {
     };
   },
   onLoad() {
-    this.dynamicHeight();
+    this.getFixedHeight();
+    this.getDynamicHeight();
   },
   onShow() {
     this.setTabBarIndex(0);
+    console.log("h", this.tabbarHeight);
   },
   methods: {
-    dynamicHeight() {
+    getFixedHeight() {
       let that = this;
       uni.getSystemInfo({
         success(res) {
-          console.log(res);
-          that.tH = res.screenHeight - res.windowHeight - 12;
           that.pH = res.windowHeight; //windoHeight为窗口高度，主要使用的是这个
-          let query = uni.createSelectorQuery();
-          query.select(".calendar").fields({ size: true });
-          query.select(".calendar-expand").fields({ size: true });
-          query.exec((data) => {
-            // console.log(data);
-            data.map((i) => {
-              that.scrollHeight += i.height;
-            });
-            that.scrollHeight = that.pH - that.scrollHeight;
-            that.scrollMaxHeight = that.scrollHeight;
-          });
         },
+      });
+    },
+    getDynamicHeight(h) {
+      if (h) {
+        console.log("dooooo" + h);
+        this.scrollHeight = this.pH - this.tabbarHeight - h - this.expandHeight;
+        this.scrollMaxHeight = this.scrollHeight;
+        console.log(
+          this.pH,
+          this.tabbarHeight,
+          h,
+          this.expandHeight,
+          this.scrollHeight
+        );
+        return;
+      }
+
+      let query = uni.createSelectorQuery();
+      query.select(".calendar").fields({ size: true });
+      query.exec((data) => {
+        // console.log(data);
+        let elHeight = data[0].height;
+        // console.log(this.pH, this.tabbarHeight, elHeight);
+        this.scrollHeight =
+          this.pH - this.tabbarHeight - elHeight - this.expandHeight;
+        this.scrollMaxHeight = this.scrollHeight;
+        // console.log(this.scrollMaxHeight);
       });
     },
     handlerDateChange(e) {
       console.log(e);
     },
+    handlerSizeChange(h) {
+      this.getDynamicHeight(h);
+    },
     handlerExpandView() {
-      let minHeight = this.$refs.calendar.minHeight;
+      let minHeight = this.$refs.calendar.minHeight + 10;
       console.log(minHeight);
       if (this.expand) {
-        this.scrollHeight = this.pH - minHeight - this.tH - this.expandHeight;
+        this.scrollHeight =
+          this.pH - minHeight - this.tabbarHeight - this.expandHeight;
         this.expand = false;
       } else {
         this.scrollHeight = this.scrollMaxHeight;

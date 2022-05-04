@@ -1,5 +1,8 @@
 <script>
 export default {
+  globalData: {
+    tabbarHeight: 48,
+  },
   onLaunch: function () {
     console.log("App Launch");
   },
