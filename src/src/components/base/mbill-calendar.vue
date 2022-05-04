@@ -427,7 +427,7 @@ export default {
     display: flex;
     width: 300%;
     position: relative;
-    transition: all 0.1s linear;
+    transition: all 0.2s cubic-bezier(0, 0, 0.2, 1);
   }
 
   .title {

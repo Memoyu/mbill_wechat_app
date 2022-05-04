@@ -123,16 +123,8 @@ export default {
     },
     getDynamicHeight(h) {
       if (h) {
-        console.log("dooooo" + h);
         this.scrollHeight = this.pH - this.tabbarHeight - h - this.expandHeight;
         this.scrollMaxHeight = this.scrollHeight;
-        console.log(
-          this.pH,
-          this.tabbarHeight,
-          h,
-          this.expandHeight,
-          this.scrollHeight
-        );
         return;
       }
 

@@ -1,9 +1,9 @@
 export const mixin = {
     methods: {
         setTabBarIndex(index) {
-            if (typeof this.$root.$mp.page.getTabBar === 'function' &&
-                this.$root.$mp.page.getTabBar()) {
-                this.$root.$mp.page.getTabBar().setData({
+            if (typeof this.$scope.getTabBar === 'function' &&
+                this.$scope.getTabBar()) {
+                this.$scope.getTabBar().setData({
                     selected: index,
                 })
             }

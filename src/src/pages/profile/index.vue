@@ -2,7 +2,9 @@
   <view>
     <view class="content">
       <view>
-        <text class="title">个人</text>
+        <view class="title">个人</view>
+        <view class="title">个人</view>
+        <view class="title">个人</view>
       </view>
     </view>
   </view>
@@ -12,7 +14,7 @@
 import { mixin } from "@/mixins/tabbar.js";
 
 export default {
-  mixins: [mixin], //混入 文件
+  mixins: [mixin], //混入文件
   data() {
     return {};
   },

@@ -11,19 +11,19 @@
 		{
 			"path": "pages/index/index",
 			"style": {
-				"navigationBarTitleText": "首页"
+				"navigationBarTitleText": ""
 			}
 		},
 		{
 			"path": "pages/bill/edit",
 			"style": {
-				"navigationBarTitleText": "记账"
+				"navigationBarTitleText": ""
 			}
 		},
 		{
 			"path": "pages/profile/index",
 			"style": {
-				"navigationBarTitleText": "个人"
+				"navigationBarTitleText": ""
 			}
 		}
 	],
