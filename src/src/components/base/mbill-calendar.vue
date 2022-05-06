@@ -1,69 +1,53 @@
 <template>
   <view
-    class="calendar"
+    class="mbill-calendar"
     :style="{
-      height: expand ? 'auto' : minHeight + 'px',
+      height: expand ? 'auto' : '0px',
     }"
   >
-    <view class="calendar-title" id="calendar-title">
-      <picker
-        class="time-picker"
-        mode="date"
-        @change="handlerPickerChange"
-        fields="month"
-        :value="date"
-      >
-        <text class="now-date">{{ nowYear }}年{{ nowMonth }}月</text>
-      </picker>
-      <view class="statement">
-        <view class="statement-text">
-          <text class="text">总收入</text>
-          <text class="total">￥100222</text>
-        </view>
-        <view class="statement-text">
-          <text class="text">总支出</text>
-          <text class="total">￥100222</text>
-        </view>
-      </view>
-    </view>
-    <view class="day" id="date-title">
-      <view
-        class="day-item"
-        v-for="(item, index) in ['一', '二', '三', '四', '五', '六', '日']"
-        :key="index"
-      >
-        {{ item }}
-      </view>
-    </view>
-
-    <!-- 日期 -->
-    <view
-      class="threeMonth"
-      @touchstart="touchstart"
-      @touchmove="touchmove"
-      @touchend="touchend"
-      :style="{ left: 'calc(-100% + ' + dayLeft + 'px)', height: comH + 'px' }"
-    >
-      <!-- 遍历集合三个月的列表 -->
-      <view class="day" v-for="(item, index) in monthList" :key="index">
-        <!-- 遍历每个月的天数 -->
+    <view class="calendar-container">
+      <view class="week" id="week-title">
         <view
-          class="day-item"
-          v-for="(item2, index2) in item"
-          :key="index2"
-          @tap="handlerDayClick(index2)"
+          class="week-title"
+          v-for="(item, index) in ['一', '二', '三', '四', '五', '六', '日']"
+          :key="index"
         >
-          <!-- 不是本月的天数颜色为灰色 -->
+          {{ item }}
+        </view>
+      </view>
+
+      <!-- 日期 -->
+      <view
+        class="threeMonth"
+        @touchstart="touchstart"
+        @touchmove="touchmove"
+        @touchend="touchend"
+        :style="{
+          left: 'calc(-100% + ' + dayLeft + 'px)',
+          height: comH + 'px',
+        }"
+      >
+        <!-- 遍历集合三个月的列表 -->
+        <view class="day" v-for="(item, index) in monthList" :key="index">
+          <!-- 遍历每个月的天数 -->
           <view
-            :class="[
-              'item-text',
-              item2.className,
-              item2.fromMonth == 'nowMonth'
-                ? 'item-text-dark'
-                : 'item-text-grey',
-            ]"
-            ><text>{{ item2.day }}</text>
-            <view v-if="item2.isTag" class="status-point" />
+            class="day-item"
+            v-for="(item2, index2) in item"
+            :key="index2"
+            @tap="handlerDayClick(index2)"
+          >
+            <!-- 不是本月的天数颜色为灰色 -->
+            <view
+              :class="[
+                'item-text',
+                item2.className,
+                item2.fromMonth == 'nowMonth'
+                  ? 'item-text-dark'
+                  : 'item-text-grey',
+              ]"
+              ><text>{{ item2.day }}</text>
+              <view v-if="item2.isTag" class="status-point" />
+            </view>
           </view>
         </view>
       </view>
@@ -84,10 +68,13 @@ export default {
       type: Array,
       default: [],
     },
+    date: {
+      type: Object,
+      default: {},
+    },
   },
   data() {
     return {
-      date: currentDate,
       nowYear: currentDate.getFullYear(), //获取年份
       nowMonth: currentDate.getMonth() + 1, //获取月份
       selectedDate: {
@@ -99,40 +86,38 @@ export default {
       dayLeft: 0,
       startLeft: 0,
       comH: "auto",
-      minHeight: 0,
       fixedHeight: 0,
     };
   },
 
   created() {
     let query = uni.createSelectorQuery().in(this);
-    query.select("#calendar-title").fields({ size: true });
-    query.select("#date-title").fields({ size: true });
+    query.select("#week-title").fields({ size: true });
     query.exec((data) => {
-      console.log(data);
-      // 30 为边距
-      this.minHeight = data[0].height + 30;
-      this.fixedHeight = this.minHeight + data[1].height;
+      this.fixedHeight = data[0].height;
     });
 
     /*调用初始化当前日期*/
     this.getThreeMonth();
   },
+  watch: {
+    date(newValue, oldValue) {
+      console.log(newValue);
+      this.dateChange(newValue);
+    },
+  },
 
   methods: {
     //时间改变触发
-    handlerPickerChange({ detail }) {
-      let date = new Date(detail.value);
-      let year = date.getFullYear();
-      let month = date.getMonth() + 1;
+    dateChange(date) {
+      let year = date.year;
+      let month = date.month;
       if (year !== this.nowYear || month !== this.nowMonth) {
         this.nowYear = year;
         this.nowMonth = month;
-        this.changeMonth(this.nowYear, this.nowMonth);
       }
       this.getThreeMonth();
       this.getCurrentMonthHeight();
-      this.changeMonthEvent();
     },
 
     //点击某一天
@@ -198,12 +183,11 @@ export default {
         this.nowYear = parseInt(this.nowYear) - 1;
         this.nowMonth = 12;
         this.getThreeMonth();
-        return;
+      } else {
+        this.nowMonth = parseInt(this.nowMonth) - 1;
+        this.getThreeMonth();
       }
-      this.nowMonth = parseInt(this.nowMonth) - 1;
-      this.getThreeMonth();
-      this.changeMonth(this.nowYear, this.nowMonth);
-      this.changeMonthEvent();
+      this.changeMonthEvent(this.nowYear, this.nowMonth);
     },
 
     /*获取下一月*/
@@ -212,12 +196,11 @@ export default {
         this.nowYear = parseInt(this.nowYear) + 1;
         this.nowMonth = 1;
         this.getThreeMonth();
-        return;
+      } else {
+        this.nowMonth = parseInt(this.nowMonth) + 1;
+        this.getThreeMonth();
       }
-      this.nowMonth = parseInt(this.nowMonth) + 1;
-      this.getThreeMonth();
-      this.changeMonth(this.nowYear, this.nowMonth);
-      this.changeMonthEvent();
+      this.changeMonthEvent(this.nowYear, this.nowMonth);
     },
 
     // 获取三月日期
@@ -359,12 +342,9 @@ export default {
     },
 
     // 触发月份变更
-    changeMonth(year, month) {
-      this.date = new Date(year, month);
+    changeMonthEvent(year, month) {
+      this.$emit("changemonth", { year, month });
     },
-
-    // 触发月份变更
-    changeMonthEvent() {},
 
     // 获取当前日期选项高度，用于计算当前组件日期高度
     getCurrentMonthHeight() {
@@ -375,7 +355,7 @@ export default {
           let dayHCount = dayCount / 7;
           this.comH = dayHCount * data.height;
           // 10 为上下边距
-          this.$emit("sizechange", this.fixedHeight + this.comH + 10);
+          this.$emit("sizechange", this.fixedHeight + this.comH);
         })
         .exec();
     },
@@ -384,98 +364,80 @@ export default {
 </script>
 
 <style lang="scss" scope>
-.calendar {
-  margin: 0 auto;
-  padding: 5px 5px;
-  width: auto;
-  background-color: $bright-color;
+.mbill-calendar {
+  // padding: 5px 5px;
+  border-radius: 18px;
+  background-color: white;
   overflow: hidden;
 
-  .calendar-title {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    margin: 15px;
-    align-items: center;
+  .calendar-container {
+    margin: 5px 0;
 
-    .now-date {
-      font-size: 15px;
+    .threeMonth {
+      display: flex;
+      width: 300%;
+      position: relative;
+      transition: all 0.2s cubic-bezier(0, 0, 0.2, 1);
+    }
+
+    .title {
+      font-size: 35rpx;
       font-weight: bold;
+      padding-bottom: 30rpx;
     }
 
-    .statement {
+    .week {
       display: flex;
+      padding: 0 10px;
+      justify-content: space-around;
+      .week-title {
+        margin: 10px 0;
+      }
     }
 
-    .statement-text {
-      margin-left: 20px;
+    .day {
       display: flex;
-      flex-direction: column;
-      align-items: center;
-
-      .text {
-        font-size: 11px;
-      }
-      .total {
-        font-size: 13px;
-        font-weight: bold;
-      }
-    }
-  }
-
-  .threeMonth {
-    display: flex;
-    width: 300%;
-    position: relative;
-    transition: all 0.2s cubic-bezier(0, 0, 0.2, 1);
-  }
-
-  .title {
-    font-size: 35rpx;
-    font-weight: bold;
-    padding-bottom: 30rpx;
-  }
-
-  .day {
-    display: flex;
-    position: relative;
-    width: 100%;
-    justify-content: space-around;
-    flex-wrap: wrap;
-    text-align: center;
-    align-content: flex-start;
-    .day-item {
-      width: 14%;
-      .item-text {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        border-radius: 50%;
-        width: 100%;
-        padding-top: calc(50% - 0.8em);
-        padding-bottom: calc(50% + 0.8em);
-        height: 0;
-        &-dark {
-          color: $primary-text-color;
-        }
-        &-grey {
-          color: $grey-text-color;
-        }
-      }
-      .status-point {
-        &::after {
-          display: block;
-          content: "";
-          width: 5px;
-          height: 5px;
+      position: relative;
+      width: 100%;
+      padding: 0 10px;
+      justify-content: space-around;
+      flex-wrap: wrap;
+      text-align: center;
+      align-content: flex-start;
+      .day-item {
+        width: 13%;
+        .item-text {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
           border-radius: 50%;
-          background: $dark-color;
+          width: 100%;
+          padding-top: calc(50% - 0.8em);
+          padding-bottom: calc(50% + 0.8em);
+          height: 0;
+          &-dark {
+            color: $primary-text-color;
+          }
+          &-grey {
+            color: $grey-text-color;
+          }
         }
-      }
+        .status-point {
+          &::after {
+            display: block;
+            content: "";
+            margin-top: 50%;
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: $dark-color;
+          }
+        }
 
-      .active {
-        background-color: $primary-color;
-        color: $light-text-color;
+        .active {
+          background-color: $primary-color;
+          color: $light-text-color;
+        }
       }
     }
   }

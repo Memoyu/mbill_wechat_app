@@ -1,15 +1,42 @@
 <template>
   <view>
     <view class="content">
-      <view class="calendar">
-        <mbill-calendar
-          ref="calendar"
-          class="calendar"
-          :expand="expand"
-          :tags="tags"
-          @change="handlerDateChange"
-          @sizechange="handlerSizeChange"
-        />
+      <view class="calendar-content" id="calendar-content">
+        <view class="bg" />
+        <view class="date-title" id="date-title">
+          <picker
+            class="time-picker"
+            mode="date"
+            @change="handlerPickerChange"
+            fields="month"
+            :value="pickerDate"
+          >
+            <text class="now-date"
+              >{{ pickerDateText.year }}年{{ pickerDateText.month }}月</text
+            >
+          </picker>
+          <view class="statement">
+            <view class="statement-text">
+              <text class="text">总收入</text>
+              <text class="total">￥100222</text>
+            </view>
+            <view class="statement-text">
+              <text class="text">总支出</text>
+              <text class="total">￥100222</text>
+            </view>
+          </view>
+        </view>
+        <view class="calendar">
+          <mbill-calendar
+            ref="calendar"
+            :expand="expand"
+            :tags="tags"
+            :date="calendarDate"
+            @change="handlerDateChange"
+            @changemonth="handlerMonthChange"
+            @sizechange="handlerSizeChange"
+          />
+        </view>
       </view>
       <view
         :style="{ height: expandHeight + 'px' }"
@@ -21,16 +48,21 @@
           :class="['iconfont', 'icon-' + (expand ? 'top' : 'bottom')]"
         />
       </view>
+
       <scroll-view
-        class="items"
+        class="statement-item"
         :style="{
           height: scrollHeight + 'px',
         }"
         scroll-y="true"
       >
-        <p v-for="(item, index) in Array(100).fill(1)" :key="index">
+        <view
+          v-for="(item, index) in Array(100).fill(1)"
+          :key="index"
+          style="width: 80%"
+        >
           123132123132123 {{ index }}
-        </p>
+        </view>
       </scroll-view>
     </view>
   </view>
@@ -39,10 +71,20 @@
 <script>
 import { mixin } from "@/mixins/tabbar.js";
 
+const now = new Date();
 export default {
   mixins: [mixin], //混入文件
   data() {
     return {
+      calendarDate: {
+        year: now.getFullYear(),
+        month: now.getMonth() + 1,
+      },
+      pickerDate: new Date(now.getFullYear(), now.getMonth() + 1),
+      pickerDateText: {
+        year: now.getFullYear(),
+        month: now.getMonth() + 1,
+      },
       expand: true,
       tags: [
         {
@@ -97,6 +139,7 @@ export default {
         },
       ],
       pH: 0,
+      dateTitleHeight: 0,
       tabbarHeight: getApp().globalData.tabbarHeight,
       expandHeight: 25,
       scrollHeight: 0,
@@ -123,31 +166,58 @@ export default {
     },
     getDynamicHeight(h) {
       if (h) {
-        this.scrollHeight = this.pH - this.tabbarHeight - h - this.expandHeight;
+        this.scrollHeight =
+          this.pH -
+          this.tabbarHeight -
+          h -
+          this.expandHeight -
+          this.dateTitleHeight -
+          10;
         this.scrollMaxHeight = this.scrollHeight;
         return;
       }
 
       let query = uni.createSelectorQuery();
-      query.select(".calendar").fields({ size: true });
+      query.select("#calendar-content").fields({ size: true });
+      query.select("#date-title").fields({ size: true });
       query.exec((data) => {
         // console.log(data);
         let elHeight = data[0].height;
-        // console.log(this.pH, this.tabbarHeight, elHeight);
+        console.log(this.pH, this.tabbarHeight, elHeight);
         this.scrollHeight =
           this.pH - this.tabbarHeight - elHeight - this.expandHeight;
         this.scrollMaxHeight = this.scrollHeight;
+        this.dateTitleHeight = data[1].height + 30;
         // console.log(this.scrollMaxHeight);
+        console.log(this.dateTitleHeight);
       });
     },
+
+    handlerMonthChange(date) {
+      console.log(date);
+      this.pickerDateText = date;
+      this.pickerDate = new Date(date.year, date.month);
+    },
+
+    handlerPickerChange({ detail }) {
+      let d = new Date(detail.value);
+      this.calendarDate = {
+        year: d.getFullYear(),
+        month: d.getMonth() + 1,
+      };
+
+      this.pickerDateText = this.calendarDate;
+    },
+
     handlerDateChange(e) {
       console.log(e);
     },
     handlerSizeChange(h) {
+      console.log(h);
       this.getDynamicHeight(h);
     },
     handlerExpandView() {
-      let minHeight = this.$refs.calendar.minHeight + 10;
+      let minHeight = this.dateTitleHeight;
       console.log(minHeight);
       if (this.expand) {
         this.scrollHeight =
@@ -168,29 +238,59 @@ export default {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-}
+  .calendar-content {
+    .bg {
+      z-index: -1;
+      position: absolute;
+      top: 0;
+      background-color: $light-color;
+      width: 100%;
+      height: 30%;
+      border-radius: 0 0 15px 15px;
+    }
+    .date-title {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      margin: 15px;
+      align-items: center;
 
-.calendar-expand {
-  // background: linear-gradient(rgba(247, 235, 252, 1), rgba(255, 0, 0, 0));
-  text-align: center;
-}
+      .now-date {
+        font-size: 15px;
+        font-weight: bold;
+      }
 
-.logo {
-  height: 200rpx;
-  width: 200rpx;
-  margin: 200rpx auto 50rpx auto;
-}
+      .statement {
+        display: flex;
+      }
 
-.text-area {
-  display: flex;
-  justify-content: center;
-}
+      .statement-text {
+        margin-left: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
 
-.title {
-  font-size: 36rpx;
-  color: #8f8f94;
-}
-.items {
-  transition: all 0.1s linear;
+        .text {
+          font-size: 11px;
+        }
+        .total {
+          font-size: 13px;
+          font-weight: bold;
+        }
+      }
+    }
+    .calendar {
+      margin: 0 10px;
+    }
+  }
+  .calendar-expand {
+    // background: linear-gradient(rgba(247, 235, 252, 1), rgba(255, 0, 0, 0));
+    text-align: center;
+  }
+
+  .statement-item {
+    background: white;
+    border-radius: 15px 15px 0 0;
+  }
 }
 </style>

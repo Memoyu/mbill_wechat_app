@@ -30,7 +30,7 @@
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "mbill",
-		"navigationBarBackgroundColor": "#F4EEFF",
+		"navigationBarBackgroundColor": "#DCD6F7",
 		"backgroundColor": "#F8F8F8"
 	},
 	"tabBar": {
