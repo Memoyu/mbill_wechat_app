@@ -77,23 +77,18 @@
       </view>
       <view>
         <scroll-view
-          class="items"
           :style="{
             height: scrollHeight + 'px',
           }"
           scroll-y="true"
         >
-          <p v-for="(item, index) in Array(100).fill(1)" :key="index">
-            这是账单类型 {{ index }}
-          </p>
+          <mb-ca-group />
         </scroll-view>
       </view>
       <uni-popup ref="popupHi" type="bottom">
         <view class="popup-box">
-          <scroll-view class="items" scroll-y="true">
-            <p v-for="(item, index) in Array(100).fill(1)" :key="index">
-              这是账户列表 {{ index }}
-            </p>
+          <scroll-view class="asset" scroll-y="true">
+            <mb-as-group />
           </scroll-view>
         </view>
       </uni-popup>
@@ -103,10 +98,11 @@
 
 <script>
 import mbillEndSplitLine from "../../components/base/mbill-end-split-line.vue";
+import MbillCategoryGroup from "../../components/category/mbill-category-group.vue";
 const now = new Date();
 
 export default {
-  components: { mbillEndSplitLine },
+  components: { mbillEndSplitLine, MbillCategoryGroup },
   data() {
     return {
       selectedType: 0,
@@ -306,12 +302,9 @@ export default {
   }
 }
 .popup-box {
-  text-align: center;
   background-color: #fff;
-  padding: 30rpx;
   border-radius: 10rpx;
-  font-size: 28rpx;
-  .items {
+  .asset {
     height: 350px;
   }
 }
