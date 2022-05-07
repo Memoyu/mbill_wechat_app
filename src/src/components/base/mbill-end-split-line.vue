@@ -1,5 +1,5 @@
 <template>
-  <view class="item-wrapper">
+  <view class="mbill-end-split-line">
     <view
       v-for="(item, index) in Array(count).fill(1)"
       :key="index"
@@ -22,18 +22,18 @@ export default {
     },
     deepColor: {
       type: String,
-      default: "#ffffff",
+      default: "#f6f6f6",
     },
     lightColor: {
       type: String,
-      default: "#ffffff",
+      default: "#f6f6f6",
     },
   },
 };
 </script>
 
-<style lang="scss">
-.item-wrapper {
+<style lang="scss" scope>
+.mbill-end-split-line {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -41,10 +41,10 @@ export default {
   width: 100%;
 }
 .item {
-  flex-basis: 6px;
+  flex-basis: 8px;
   flex-shrink: 0;
   flex-grow: 0;
-  height: 3px;
+  height: 4px;
   border-radius: 6px 6px 0 0;
   margin: 0 2px;
   // background: radial-gradient(circle farthest-side at bottom, #ffffff, #ffffff);

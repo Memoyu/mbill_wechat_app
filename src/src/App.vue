@@ -21,6 +21,6 @@ export default {
 @import "@/static/styles/utils.scss";
 
 page {
-  background-color: #f6f6f6; //$grey-light-color;
+  background-color: $grey-bright-color;
 }
 </style>

@@ -42,10 +42,10 @@
             </scroll-view>
           </view>
         </view>
-        <mbill-end-split-line count="50" />
+        <mbill-end-split-line />
       </view>
-      <view class="key-board">
-        <view class="x-start">
+      <view class="key-board-container">
+        <view class="key-board-header x-start">
           <view class="x-ac choose-asset" @tap="handlerChooseAsset">
             <i class="iconfont icon-assets icon" />
             <text class="text">选择账户</text>
@@ -130,7 +130,7 @@ export default {
           let query = uni.createSelectorQuery().in(that);
           query.select(".header").fields({ size: true });
           query.select(".amount").fields({ size: true });
-          query.select(".key-board").fields({ size: true });
+          query.select(".key-board-container").fields({ size: true });
           query.exec((data) => {
             // console.log(data);
             data.map((i) => {
@@ -196,7 +196,7 @@ export default {
 <style lang="scss" scope>
 .header {
   padding: 10px 10px;
-  background: $bright-color;
+  background: $light-color;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -206,25 +206,25 @@ export default {
     flex-direction: row;
     justify-content: space-between;
     .item {
-      color: $grey-text-color;
+      color: $light-text-color;
       padding: 3px 8px;
-      border: 1rpx solid $light-color;
+      border: 1rpx solid $bright-color;
       border-radius: 30rpx;
     }
     .item-select {
       color: $primary-text-color;
-      background: $light-color;
+      background: $bright-color;
     }
   }
   .date {
     font-size: 12px;
     padding: 3px 8px;
     border-radius: 30rpx;
-    background: $light-color;
+    background: $bright-color;
   }
 }
 .amount {
-  background: $bright-color;
+  background: $light-color;
   padding: 10px 15px 0 15px;
   background-image: radial-gradient();
   .total {
@@ -262,18 +262,24 @@ export default {
   }
 }
 
-.choose-asset {
-  margin-right: 20px;
-}
-.icon {
-  margin: 0 10px;
-  font-size: 20px;
-}
-
-.key-board {
+.key-board-container {
   position: absolute;
   bottom: 0;
-  padding-top: 7px;
+  left: 0;
+  right: 0;
+  .key-board-header {
+    padding: 10px 10px 0 10px;
+    background: #fff;
+    .choose-asset {
+      margin-right: 20px;
+      .text {
+        display: -webkit-box; /*弹性伸缩盒子模型显示*/
+        -webkit-box-orient: vertical; /*排列方式*/
+        -webkit-line-clamp: 1; /*显示文本行数(这里控制多少行隐藏)*/
+        overflow: hidden; /*溢出隐藏*/
+      }
+    }
+  }
 }
 .popup-box {
   text-align: center;
@@ -284,5 +290,10 @@ export default {
   .items {
     height: 350px;
   }
+}
+
+.icon {
+  margin-right: 10px;
+  font-size: 20px;
 }
 </style>

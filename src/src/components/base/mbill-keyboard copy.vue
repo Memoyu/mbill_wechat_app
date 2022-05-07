@@ -1,5 +1,5 @@
 <template>
-  <view class="board x-bc">
+  <view class="mbill-keyboard x-bc">
     <view class="key-num">
       <view
         v-for="(numKey, index) in numKeyList"
@@ -17,7 +17,7 @@
         />
       </view>
     </view>
-    <view class="btn">
+    <view class="key-operator">
       <view
         v-for="(op, index) in operatorList"
         :key="index"
@@ -199,7 +199,7 @@ export default {
 </script>
 
 <style lang="scss" scope>
-.board {
+.mbill-keyboard {
   background-color: #ffffff;
   padding-bottom: 20rpx;
   .key-num {
@@ -220,7 +220,7 @@ export default {
     }
   }
 
-  .btn {
+  .key-operator {
     width: 190rpx;
 
     .operator {
