@@ -1,0 +1,129 @@
+<template>
+  <view class="mbill-bill-date-group">
+    <view v-for="(d, dind) in data" :key="dind">
+      <view class="group-date">{{ d.date }}</view>
+      <view class="group-item">
+        <mb-bill-item
+          v-for="(item, index) in d.items"
+          :key="index"
+          :data="item"
+        />
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+export default {
+  name: "mbill-bill-date-group",
+  props: {
+    data: {
+      type: Array,
+      default: [
+        {
+          date: "1日 周六",
+          items: [
+            {
+              type: 0,
+              category: "奶茶",
+              icon: "/static/assets/tea.png",
+              amount: 30495.2,
+              desc: "这是备注来着",
+              time: "13:30",
+            },
+            {
+              type: 1,
+              category: "奶茶1",
+              icon: "/static/assets/tea.png",
+              amount: 30495.3,
+              desc: "这是备注来着1",
+              time: "13:30",
+            },
+            {
+              type: 1,
+              category: "奶茶2",
+              icon: "/static/assets/tea.png",
+              amount: 30495.5,
+              desc: "这是备注来着2",
+              time: "13:30",
+            },
+          ],
+        },
+        {
+          date: "2日 周日",
+          items: [
+            {
+              type: 0,
+              category: "奶茶",
+              icon: "/static/assets/tea.png",
+              amount: 33.2,
+              desc: "这是备注来着",
+              time: "13:30",
+            },
+            {
+              type: 1,
+              category: "奶茶1",
+              icon: "/static/assets/tea.png",
+              amount: 44.3,
+              desc: "这是备注来着1",
+              time: "13:30",
+            },
+            {
+              type: 0,
+              category: "奶茶2",
+              icon: "/static/assets/tea.png",
+              amount: 555.5,
+              desc: "这是备注来着2",
+              time: "13:30",
+            },
+          ],
+        },
+        {
+          date: "3日 周一",
+          items: [
+            {
+              type: 0,
+              category: "奶茶",
+              icon: "/static/assets/tea.png",
+              amount: 33.2,
+              desc: "这是备注来着",
+              time: "13:30",
+            },
+            {
+              type: 1,
+              category: "奶茶1",
+              icon: "/static/assets/tea.png",
+              amount: 44.3,
+              desc: "这是备注来着1",
+              time: "13:30",
+            },
+            {
+              type: 0,
+              category: "奶茶2",
+              icon: "/static/assets/tea.png",
+              amount: 555.5,
+              desc: "这是备注来着2",
+              time: "13:30",
+            },
+          ],
+        },
+      ],
+    },
+  },
+};
+</script>
+
+<style lang="scss" scope>
+.mbill-bill-date-group {
+  margin: 0 10px;
+  .group-date {
+    padding: 10px 20px;
+    font-weight: bold;
+  }
+  .group-item {
+    padding: 5px 0;
+    border-radius: 13px;
+    background: white;
+  }
+}
+</style>

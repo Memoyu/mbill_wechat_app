@@ -55,7 +55,7 @@
             </scroll-view>
           </view>
         </view>
-        <mbill-end-split-line />
+        <mb-base-end-split-line />
       </view>
       <view class="key-board-container">
         <view class="key-board-header x-start">
@@ -68,7 +68,7 @@
             <input type="text" placeholder="备注" />
           </view>
         </view>
-        <mbill-keyboard
+        <mb-b-keyboard
           ref="keyboard"
           :pnum="inputResult"
           @confirm="handlerConfirmNum"

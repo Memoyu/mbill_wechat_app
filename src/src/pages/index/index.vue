@@ -27,7 +27,7 @@
           </view>
         </view>
         <view class="calendar">
-          <mbill-calendar
+          <mb-b-calendar
             ref="calendar"
             :expand="expand"
             :tags="tags"
@@ -56,13 +56,11 @@
         }"
         scroll-y="true"
       >
-        <view
-          v-for="(item, index) in Array(100).fill(1)"
-          :key="index"
-          style="width: 80%"
-        >
-          123132123132123 {{ index }}
-        </view>
+        <!-- <view v-for="(item, index) in Array(20).fill(1)" :key="index">
+          <mbill-bill-item></mbill-bill-item>
+        </view> -->
+        <!-- <mb-bill-date-group /> -->
+        <mb-bill-month-group />
       </scroll-view>
     </view>
   </view>
@@ -160,12 +158,13 @@ export default {
       let that = this;
       uni.getSystemInfo({
         success(res) {
-          that.pH = res.windowHeight; //windoHeight为窗口高度，主要使用的是这个
+          that.pH = res.windowHeight - 5; // 多出的5px，不让底部触底
         },
       });
     },
     getDynamicHeight(h) {
       if (h) {
+        // 10 为日历原本有上下为5的边距
         this.scrollHeight =
           this.pH -
           this.tabbarHeight -
@@ -187,9 +186,10 @@ export default {
         this.scrollHeight =
           this.pH - this.tabbarHeight - elHeight - this.expandHeight;
         this.scrollMaxHeight = this.scrollHeight;
+        // 30 为时间时间选择栏的上下为15的边距
         this.dateTitleHeight = data[1].height + 30;
         // console.log(this.scrollMaxHeight);
-        console.log(this.dateTitleHeight);
+        // console.log(this.dateTitleHeight);
       });
     },
 
@@ -289,7 +289,7 @@ export default {
   }
 
   .statement-item {
-    background: white;
+    // background: white;
     border-radius: 15px 15px 0 0;
   }
 }
