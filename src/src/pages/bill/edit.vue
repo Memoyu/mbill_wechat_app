@@ -125,7 +125,7 @@ export default {
   },
   onLoad() {
     this.dynamicHeight();
-    console.log(now);
+    // console.log(now);
   },
   onShow() {},
   methods: {
@@ -135,7 +135,6 @@ export default {
       uni.getSystemInfo({
         success(res) {
           let pH = res.windowHeight;
-          let h = 0;
           let query = uni.createSelectorQuery().in(that);
           query.select(".header").fields({ size: true });
           query.select(".amount").fields({ size: true });
@@ -158,7 +157,7 @@ export default {
         .createSelectorQuery()
         .select(".input-text")
         .boundingClientRect((res) => {
-          console.log(res);
+          // console.log(res);
           this.inputTextLeng = res.right;
         })
         .exec();
@@ -197,7 +196,7 @@ export default {
       this.input = e.input;
       this.inputResult = e.result;
       this.scrollInputText();
-      console.log(this.$refs);
+      // console.log(this.$refs);
     },
     handlerConfirmNum() {
       console.log("cof ");
@@ -216,13 +215,13 @@ export default {
   align-items: center;
   .type-content {
     font-size: 15px;
-    width: 130px;
+    width: 140px;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     .item {
       color: $light-text-color;
-      padding: 3px 8px;
+      padding: 5px 15px;
       border: 1rpx solid $bright-color;
       border-radius: 30rpx;
     }

@@ -11,9 +11,15 @@
             fields="month"
             :value="pickerDate"
           >
-            <text class="now-date"
-              >{{ pickerDateText.year }}年{{ pickerDateText.month }}月</text
-            >
+            <view class="x-c">
+              <text class="now-date"
+                >{{ pickerDateText.year }}年{{ pickerDateText.month }}月</text
+              >
+              <i
+                class="iconfont icon-bottom"
+                style="margin-left: 5px; font-size: 13px"
+              />
+            </view>
           </picker>
           <view class="statement">
             <view class="statement-text">
@@ -151,7 +157,6 @@ export default {
   },
   onShow() {
     this.setTabBarIndex(0);
-    console.log("h", this.tabbarHeight);
   },
   methods: {
     getFixedHeight() {
@@ -182,7 +187,7 @@ export default {
       query.exec((data) => {
         // console.log(data);
         let elHeight = data[0].height;
-        console.log(this.pH, this.tabbarHeight, elHeight);
+        // console.log(this.pH, this.tabbarHeight, elHeight);
         this.scrollHeight =
           this.pH - this.tabbarHeight - elHeight - this.expandHeight;
         this.scrollMaxHeight = this.scrollHeight;
@@ -194,7 +199,7 @@ export default {
     },
 
     handlerMonthChange(date) {
-      console.log(date);
+      // console.log(date);
       this.pickerDateText = date;
       this.pickerDate = new Date(date.year, date.month);
     },
@@ -213,12 +218,12 @@ export default {
       console.log(e);
     },
     handlerSizeChange(h) {
-      console.log(h);
+      // console.log(h);
       this.getDynamicHeight(h);
     },
     handlerExpandView() {
       let minHeight = this.dateTitleHeight;
-      console.log(minHeight);
+      // console.log(minHeight);
       if (this.expand) {
         this.scrollHeight =
           this.pH - minHeight - this.tabbarHeight - this.expandHeight;

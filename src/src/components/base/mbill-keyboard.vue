@@ -88,7 +88,8 @@ export default {
   created() {
     //自定义初始化值
     let pnum = this.pnum;
-    this.infix.push(pnum);
+    if (pnum !== "" && pnum !== undefined && pnum !== null)
+      this.infix.push(pnum);
   },
   methods: {
     // 输入
@@ -113,7 +114,8 @@ export default {
       }
       // 预运算：小数点
       else if ("." == e) {
-        if (!this.infix.length || this.isOp(this.peekInfix())) {
+        console.log(this.infix.length);
+        if (this.infix.length <= 0 || this.isOp(this.peekInfix())) {
           return;
         }
 
@@ -249,8 +251,8 @@ export default {
       this.result = [];
       let last = this.peekInfix();
       let len = this.isOp(last) ? this.suffix.length - 1 : this.suffix.length;
-      console.log(this.infix);
-      console.log(this.suffix);
+      // console.log(this.infix);
+      // console.log(this.suffix);
       for (var i = 0; i < len; i++) {
         // 数值，直接压入结果集
         if (!this.isOp(this.suffix[i])) {
