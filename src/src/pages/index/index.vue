@@ -284,7 +284,7 @@ export default {
     }
   }
   .calendar-expand {
-    // background: linear-gradient(rgba(247, 235, 252, 1), rgba(255, 0, 0, 0));
+    width: 100%;
     text-align: center;
   }
 

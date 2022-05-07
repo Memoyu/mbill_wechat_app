@@ -2,7 +2,7 @@
   <view>
     <view class="content">
       <view class="header">
-        <view class="type">
+        <view class="type-content">
           <view
             v-for="(type, index) in typeList"
             :key="index"
@@ -11,22 +11,35 @@
             >{{ type.title }}</view
           >
         </view>
-        <picker
-          class="time-picker"
-          mode="date"
-          @change="handlerPicker"
-          fields="day"
-          :value="selectedDate"
-          :end="pickerEnd"
-        >
-          <view class="x-ac date">
-            <text> {{ selectedDateText }}</text>
-            <i
-              class="iconfont icon-bottom"
-              style="margin-left: 3px; font-size: 12px"
-            />
-          </view>
-        </picker>
+        <view class="date-content x-start">
+          <picker
+            class="date-picker"
+            mode="date"
+            @change="handlerDatePicker"
+            fields="day"
+            :value="selectedDate"
+            :end="pickerEnd"
+          >
+            <view class="x-ac date">
+              <text> {{ selectedDateText }}</text>
+            </view>
+          </picker>
+
+          <picker
+            class="time-picker"
+            mode="time"
+            @change="handlerTimePicker"
+            :value="selectedTime"
+          >
+            <view class="x-ac time">
+              <text> {{ selectedTime }}</text>
+              <i
+                class="iconfont icon-bottom"
+                style="margin-left: 3px; font-size: 12px"
+              />
+            </view>
+          </picker>
+        </view>
       </view>
       <view class="amount">
         <view class="x-start">
@@ -102,12 +115,11 @@ export default {
         { value: 1, title: "收入" },
       ],
       pickerEnd: `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`,
+      selectedDate: `${now.getFullYear()}-${
+        now.getMonth() + 1
+      }-${now.getDate()}`,
       selectedDateText: "今日",
-      selectedDate: {
-        year: now.getFullYear(),
-        month: now.getMonth() + 1,
-        day: now.getDate(),
-      },
+      selectedTime: `${now.getHours()}:${now.getMinutes()}`,
       inputTextLeng: 0,
       input: "",
       inputResult: "",
@@ -117,6 +129,7 @@ export default {
   },
   onLoad() {
     this.dynamicHeight();
+    console.log(now);
   },
   onShow() {},
   methods: {
@@ -158,9 +171,9 @@ export default {
     handlerTypeSelected(type) {
       this.selectedType = type;
     },
-    handlerPicker(e) {
-      console.log(e);
-      let date = new Date(e.detail.value);
+    handlerDatePicker({ detail }) {
+      let date = new Date(detail.value);
+      this.selectedDate = date;
       let year = date.getFullYear();
       let month = date.getMonth() + 1;
       let day = date.getDate();
@@ -175,6 +188,10 @@ export default {
       } else {
         this.selectedDateText = year + "年" + month + "月" + day + "日";
       }
+    },
+
+    handlerTimePicker({ detail }) {
+      this.selectedTime = detail.value;
     },
     handlerChooseAsset() {
       this.$refs.popupHi.open();
@@ -195,12 +212,14 @@ export default {
 
 <style lang="scss" scope>
 .header {
-  padding: 10px 10px;
+  padding: 0 10px;
   background: $light-color;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  .type {
+  align-items: center;
+  .type-content {
+    font-size: 15px;
     width: 130px;
     display: flex;
     flex-direction: row;
@@ -216,16 +235,21 @@ export default {
       background: $bright-color;
     }
   }
-  .date {
-    font-size: 12px;
-    padding: 3px 8px;
-    border-radius: 30rpx;
+  .date-content {
     background: $bright-color;
+    border-radius: 30rpx;
+    font-size: 15px;
+    .date {
+      padding: 3px 4px 3px 8px;
+    }
+    .time {
+      padding: 3px 8px 3px 0;
+    }
   }
 }
 .amount {
   background: $light-color;
-  padding: 10px 15px 0 15px;
+  padding: 0 10px;
   background-image: radial-gradient();
   .total {
     width: 100%;

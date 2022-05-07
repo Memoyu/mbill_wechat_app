@@ -314,7 +314,7 @@ export default {
 <style lang="scss" scope>
 .board {
   background-color: #ffffff;
-  padding-bottom: 20rpx;
+  padding: 0 10px 10px 10px;
   .key-num {
     width: 534rpx;
     display: flex;
