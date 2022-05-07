@@ -114,7 +114,7 @@ export default {
       }
       // 预运算：小数点
       else if ("." == e) {
-        console.log(this.infix.length);
+        // console.log(this.infix.length);
         if (this.infix.length <= 0 || this.isOp(this.peekInfix())) {
           return;
         }

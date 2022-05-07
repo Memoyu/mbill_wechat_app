@@ -1,6 +1,6 @@
 <template>
   <view>
-    <view class="content">
+    <view class="container">
       <view class="header">
         <view class="type-content">
           <view

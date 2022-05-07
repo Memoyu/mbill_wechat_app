@@ -24,6 +24,18 @@
 			}
 		},
 		{
+			"path": "pages/bill/asset/edit",
+			"style": {
+				"navigationBarTitleText": "编辑账户"
+			}
+		},
+		{
+			"path": "pages/bill/category/edit",
+			"style": {
+				"navigationBarTitleText": "编辑分类"
+			}
+		},
+		{
 			"path": "pages/profile/index",
 			"style": {
 				"navigationBarTitleText": ""

@@ -1,6 +1,6 @@
 <template>
   <view>
-    <view class="content">
+    <view class="container">
       <view class="calendar-content" id="calendar-content">
         <view class="bg" />
         <view class="date-title" id="date-title">
@@ -238,7 +238,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.content {
+.container {
   display: flex;
   flex-direction: column;
   align-items: center;

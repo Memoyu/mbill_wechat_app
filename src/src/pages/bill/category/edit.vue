@@ -2,25 +2,18 @@
   <view>
     <view class="container">
       <view>
-        <view class="title">个人</view>
-        <view class="title">个人</view>
-        <view class="title">个人</view>
+        <view class="title">编辑分类</view>
       </view>
     </view>
   </view>
 </template>
 
 <script>
-import { mixin } from "@/mixins/tabbar.js";
-
 export default {
-  mixins: [mixin], //混入文件
   data() {
     return {};
   },
-  onShow() {
-    this.setTabBarIndex(1);
-  },
+  onShow() {},
   onLoad() {},
   methods: {},
 };

@@ -13,6 +13,7 @@
         </view>
       </view>
     </view>
+    <view class="to-add-asset" @tap="toAddAsset">添加账户</view>
   </view>
 </template>
 
@@ -84,7 +85,11 @@ export default {
       ],
     },
   },
-  methods: {},
+  methods: {
+    toAddAsset() {
+      uni.navigateTo({ url: "/pages/bill/asset/edit" });
+    },
+  },
 };
 </script>
 
@@ -116,6 +121,10 @@ export default {
         font-size: 13px;
       }
     }
+  }
+  .to-add-asset {
+    margin-bottom: 15px;
+    text-align: center;
   }
 }
 </style>

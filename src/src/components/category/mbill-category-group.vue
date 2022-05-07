@@ -13,6 +13,7 @@
         </view>
       </view>
     </view>
+    <view class="to-add-category" @tap="toAddCategory">添加分类</view>
   </view>
 </template>
 
@@ -142,7 +143,11 @@ export default {
       ],
     },
   },
-  methods: {},
+  methods: {
+    toAddCategory() {
+      uni.navigateTo({ url: "/pages/bill/category/edit" });
+    },
+  },
 };
 </script>
 
@@ -174,6 +179,10 @@ export default {
         font-size: 13px;
       }
     }
+  }
+  .to-add-category {
+    margin-bottom: 15px;
+    text-align: center;
   }
 }
 </style>
