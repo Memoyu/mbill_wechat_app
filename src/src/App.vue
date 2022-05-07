@@ -22,5 +22,11 @@ export default {
 
 page {
   background-color: $grey-bright-color;
+  height: 100%;
+  .container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
 }
 </style>
