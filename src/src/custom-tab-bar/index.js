@@ -5,7 +5,7 @@ Component({
     selectedColor: "#A6B1E1",
     list: [{
       "pagePath": "/pages/index/index",
-      "text": "账目"
+      "text": "账本"
     },
     {
       "pagePath": "/pages/profile/index",

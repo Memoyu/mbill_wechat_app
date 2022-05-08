@@ -6,18 +6,21 @@
         <i class="iconfont icon-list header-item" />
         <i class="iconfont icon-list header-item" />
       </view>
-      <view class="profile-info">
+      <view
+        class="profile-info"
+        @tap="handlerNavigateTo('/pages/profile/user-detail')"
+      >
         <image class="image" mode="widthFix" :src="user.avatar" />
         <view class="user-info">
           <text class="user-name">{{ user.name }}</text>
           <text class="user-days">已经记账{{ user.days }}天</text>
         </view>
-        <i class="iconfont icon-to user-to-detail" />
+        <i class="iconfont icon-to to-detail-icon" />
       </view>
       <view class="profile-asset">
-        <view class="le le-3"></view>
-        <view class="le le-2"></view>
-        <view class="le le-1"></view>
+        <view class="le le-3" />
+        <view class="le le-2" />
+        <view class="le le-1"> </view>
         <view class="profile-setting">
           <!-- <view class="manage-func">
             <view class="func-item">
@@ -33,6 +36,23 @@
               <i class="iconfont icon-assets func-icon" />
             </view>
           </view> -->
+          <view class="cells">
+            <view
+              class="cell-item"
+              @tap="handlerNavigateTo(item.path)"
+              v-for="(item, index) in cells"
+              :key="index"
+            >
+              <i :class="['iconfont', 'icon-' + item.icon, 'cell-item-icon']" />
+              <view class="cell-item-content">
+                <view class="item-title x-bc">
+                  <text>{{ item.title }}</text>
+                  <i class="iconfont icon-to to-detail-icon" />
+                </view>
+                <view v-if="index < cells.length - 1" class="bottom-line" />
+              </view>
+            </view>
+          </view>
         </view>
       </view>
     </view>
@@ -51,13 +71,31 @@ export default {
         name: "Memoyu",
         days: 360,
       },
+      cells: [
+        {
+          title: "账户管理",
+          icon: "qianbao",
+          path: "/pages/bill/asset/manage",
+        },
+        {
+          title: "分类管理",
+          icon: "biaoqian",
+          path: "/pages/bill/category/manage",
+        },
+        { title: "系统设置", icon: "shezhi", path: "/pages/profile/setting" },
+      ],
     };
   },
   onShow() {
     this.setTabBarIndex(1);
   },
   onLoad() {},
-  methods: {},
+  methods: {
+    handlerNavigateTo(path) {
+      console.log(path);
+      uni.navigateTo({ url: path });
+    },
+  },
 };
 </script>
 
@@ -108,10 +146,6 @@ export default {
         color: $bright-color;
       }
     }
-    .user-to-detail {
-      font-size: 12px;
-      color: $bright-color;
-    }
   }
   .profile-asset {
     position: relative;
@@ -123,6 +157,7 @@ export default {
       height: 140px;
       left: 50%;
       transform: translate(-50%, 0);
+      box-shadow: 0 0 15px #888888b6;
     }
     .le-1 {
       top: 30px;
@@ -145,7 +180,9 @@ export default {
       border-radius: 14px;
       background: white;
       width: 100%;
-      height: 200px;
+      padding: 15px 0;
+      // height: 200px;
+
       .manage-func {
         display: flex;
         align-items: center;
@@ -164,7 +201,38 @@ export default {
           }
         }
       }
+      .cells {
+        margin: 15px;
+        .cell-item {
+          // background: yellow;
+          display: flex;
+          align-items: flex-start;
+          font-size: 18px;
+          padding: 15px 0 0 0;
+
+          .cell-item-icon {
+            margin-right: 15px;
+            font-size: 27px;
+          }
+          .cell-item-content {
+            width: 100%;
+            .item-title {
+              width: 100%;
+              margin-bottom: 15px;
+            }
+            .bottom-line {
+              height: 1px;
+              background: $bright-color;
+              width: 100%;
+            }
+          }
+        }
+      }
     }
+  }
+  .to-detail-icon {
+    font-size: 12px;
+    color: $bright-color;
   }
 }
 </style>

@@ -30,15 +30,39 @@
 			}
 		},
 		{
+			"path": "pages/bill/asset/manage",
+			"style": {
+				"navigationBarTitleText": "账户管理"
+			}
+		},
+		{
 			"path": "pages/bill/category/edit",
 			"style": {
 				"navigationBarTitleText": "编辑分类"
 			}
 		},
 		{
+			"path": "pages/bill/category/manage",
+			"style": {
+				"navigationBarTitleText": "分类管理"
+			}
+		},
+		{
 			"path": "pages/profile/index",
 			"style": {
 				"navigationBarTitleText": ""
+			}
+		},
+		{
+			"path": "pages/profile/setting",
+			"style": {
+				"navigationBarTitleText": "设置"
+			}
+		},
+		{
+			"path": "pages/profile/user-detail",
+			"style": {
+				"navigationBarTitleText": "个人信息"
 			}
 		}
 	],
