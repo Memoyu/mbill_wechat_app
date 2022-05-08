@@ -89,20 +89,20 @@ export default {
     background-color: #ffffff;
     border-radius: 25px 25px 0 0;
     .circle {
-      width: 40rpx;
-      height: 40rpx;
-      border-radius: 40%;
+      width: 30rpx;
+      height: 30rpx;
+      border-radius: 50%;
       background-color: $grey-bright-color;
       position: absolute;
       top: 40%;
       transform: translate(0, -50%);
     }
     .left-circle {
-      left: -20rpx;
+      left: -15rpx;
     }
 
     .right-circle {
-      right: -20rpx;
+      right: -15rpx;
     }
     .order-line {
       position: absolute;
