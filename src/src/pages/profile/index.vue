@@ -2,10 +2,10 @@
   <view>
     <view class="container">
       <view class="bg" />
-      <view class="profile-header">
+      <!-- <view class="profile-header">
         <i class="iconfont icon-list header-item" />
         <i class="iconfont icon-list header-item" />
-      </view>
+      </view> -->
       <view
         class="profile-info"
         @tap="handlerNavigateTo('/pages/profile/user-detail')"
@@ -18,38 +18,54 @@
         <i class="iconfont icon-to to-detail-icon" />
       </view>
       <view class="profile-asset">
-        <view class="le le-3" />
-        <view class="le le-2" />
-        <view class="le le-1"> </view>
-        <view class="profile-setting">
-          <!-- <view class="manage-func">
-            <view class="func-item">
-              <i class="iconfont icon-assets func-icon" />
-            </view>
-            <view class="func-item">
-              <i class="iconfont icon-assets func-icon" />
-            </view>
-            <view class="func-item">
-              <i class="iconfont icon-assets func-icon" />
-            </view>
-            <view class="func-item">
-              <i class="iconfont icon-assets func-icon" />
-            </view>
-          </view> -->
-          <view class="cells">
+        <view class="le le-shadow le-3" />
+        <view class="le le-shadow le-2" />
+        <view class="le le-shadow le-1 x-c">
+          <view class="preview-stats x-bc">
             <view
-              class="cell-item"
-              @tap="handlerNavigateTo(item.path)"
-              v-for="(item, index) in cells"
+              class="stats-item"
+              v-for="(item, index) in preStats"
               :key="index"
             >
-              <i :class="['iconfont', 'icon-' + item.icon, 'cell-item-icon']" />
-              <view class="cell-item-content">
-                <view class="item-title x-bc">
-                  <text>{{ item.title }}</text>
-                  <i class="iconfont icon-to to-detail-icon" />
+              <view class="stats-amount">{{ item.amount }}</view>
+              <view class="stats-title">{{ item.title }}</view>
+            </view>
+          </view>
+        </view>
+        <view class="le profile-setting">
+          <view class="grid-func func">
+            <view class="grids">
+              <view
+                class="grid-item x-c"
+                @tap="handlerNavigateTo(item.path)"
+                v-for="(item, index) in grids"
+                :key="index"
+              >
+                <view class="y-b">
+                  <i :class="['iconfont', 'icon-' + item.icon, 'func-icon']" />
+                  <view>{{ item.title }}</view>
                 </view>
-                <view v-if="index < cells.length - 1" class="bottom-line" />
+              </view>
+            </view>
+          </view>
+          <view class="cells-func func">
+            <view class="cells">
+              <view
+                class="cell-item"
+                @tap="handlerNavigateTo(item.path)"
+                v-for="(item, index) in cells"
+                :key="index"
+              >
+                <i
+                  :class="['iconfont', 'icon-' + item.icon, 'cell-item-icon']"
+                />
+                <view class="cell-item-content">
+                  <view class="item-title x-bc">
+                    <text>{{ item.title }}</text>
+                    <i class="iconfont icon-to to-detail-icon" />
+                  </view>
+                  <view v-if="index < cells.length - 1" class="bottom-line" />
+                </view>
               </view>
             </view>
           </view>
@@ -71,6 +87,42 @@ export default {
         name: "Memoyu",
         days: 360,
       },
+      preStats: [
+        {
+          amount: "1345.00",
+          title: "存入金额/元",
+        },
+        {
+          amount: "1002.00",
+          title: "预购金额/元",
+        },
+        {
+          amount: "13245.00",
+          title: "支出金额/元",
+        },
+      ],
+      grids: [
+        {
+          title: "搜索",
+          icon: "search",
+          path: "/pages/bill/search",
+        },
+        {
+          title: "汇总",
+          icon: "summary",
+          path: "/pages/bill/summary",
+        },
+        {
+          title: "统计",
+          icon: "stats",
+          path: "/pages/bill/stats/index",
+        },
+        {
+          title: "预购",
+          icon: "preorder",
+          path: "/pages/profile/preorder/index",
+        },
+      ],
       cells: [
         {
           title: "账户管理",
@@ -157,73 +209,97 @@ export default {
       height: 140px;
       left: 50%;
       transform: translate(-50%, 0);
+    }
+    .le-shadow {
       box-shadow: 0 0 15px #888888b6;
     }
     .le-1 {
       top: 30px;
-      width: 95%;
+      width: 90%;
       background: $dark-color;
+      .preview-stats {
+        width: 100%;
+        margin: 20px;
+        .stats-item {
+          text-align: center;
+          .stats-amount {
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+          }
+          .stats-title {
+            color: $grey-text-color;
+            font-size: 12px;
+          }
+        }
+      }
     }
     .le-2 {
       top: 15px;
-      width: 90%;
+      width: 85%;
       background: $primary-color;
     }
     .le-3 {
-      width: 85%;
+      width: 80%;
       background: $bright-color;
     }
 
     .profile-setting {
       position: absolute;
       top: 140px;
-      border-radius: 14px;
-      background: white;
-      width: 100%;
-      padding: 15px 0;
-      // height: 200px;
-
-      .manage-func {
-        display: flex;
-        align-items: center;
-        flex-direction: row;
-        justify-content: space-around;
-        margin: 15px;
-        .func-item {
-          height: 40px;
-          width: 40px;
-          padding: 10px;
-          border-radius: 50%;
-          background: $dark-color;
-          text-align: center;
-          .func-icon {
-            font-size: 23px;
+      width: 95%;
+      .func {
+        padding: 7px 0;
+        border-radius: 14px;
+        background: white;
+        margin-bottom: 15px;
+      }
+      .grid-func {
+        .grids {
+          display: flex;
+          align-items: center;
+          flex-direction: row;
+          justify-content: space-around;
+          margin: 10px;
+          .grid-item {
+            height: 60px;
+            width: 60px;
+            border-radius: 50%;
+            align-items: center;
+            background: $grey-bright-color;
+            text-align: center;
+            font-size: 14px;
+            .func-icon {
+              color: $primary-color;
+              font-size: 23px;
+            }
           }
         }
       }
-      .cells {
-        margin: 15px;
-        .cell-item {
-          // background: yellow;
-          display: flex;
-          align-items: flex-start;
-          font-size: 18px;
-          padding: 15px 0 0 0;
+      .cells-func {
+        .cells {
+          margin: 0 15px;
+          .cell-item {
+            display: flex;
+            align-items: flex-start;
+            font-size: 16px;
+            padding: 15px 0 0 0;
 
-          .cell-item-icon {
-            margin-right: 15px;
-            font-size: 27px;
-          }
-          .cell-item-content {
-            width: 100%;
-            .item-title {
-              width: 100%;
-              margin-bottom: 15px;
+            .cell-item-icon {
+              margin-right: 15px;
+              font-size: 25px;
             }
-            .bottom-line {
-              height: 1px;
-              background: $bright-color;
+            .cell-item-content {
               width: 100%;
+              .item-title {
+                width: 100%;
+                margin-bottom: 15px;
+              }
+              .bottom-line {
+                height: 1px;
+                background: $bright-color;
+                width: 100%;
+              }
             }
           }
         }

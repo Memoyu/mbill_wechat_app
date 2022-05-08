@@ -24,6 +24,24 @@
 			}
 		},
 		{
+			"path": "pages/bill/search",
+			"style": {
+				"navigationBarTitleText": "搜索"
+			}
+		},
+		{
+			"path": "pages/bill/summary",
+			"style": {
+				"navigationBarTitleText": "汇总"
+			}
+		},
+		{
+			"path": "pages/bill/stats/index",
+			"style": {
+				"navigationBarTitleText": "统计"
+			}
+		},
+		{
 			"path": "pages/bill/asset/edit",
 			"style": {
 				"navigationBarTitleText": "编辑账户"
@@ -63,6 +81,12 @@
 			"path": "pages/profile/user-detail",
 			"style": {
 				"navigationBarTitleText": "个人信息"
+			}
+		},
+		{
+			"path": "pages/profile/preorder/index",
+			"style": {
+				"navigationBarTitleText": "预购"
 			}
 		}
 	],
