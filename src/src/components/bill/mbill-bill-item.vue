@@ -54,7 +54,7 @@ export default {
     .image {
       margin-right: 10px;
       border-radius: 50%;
-      background: yellow;
+      // background: yellow;
       height: 35px;
       width: 35px;
     }
