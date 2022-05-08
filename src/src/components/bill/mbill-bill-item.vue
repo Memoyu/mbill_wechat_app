@@ -1,5 +1,5 @@
 <template>
-  <view class="mbill-bill-item">
+  <view class="mbill-bill-item" @tap="handlerToDetail(data.id)">
     <view class="bill-icon">
       <image class="image" :src="data.icon" />
     </view>
@@ -36,6 +36,9 @@ export default {
           return "income";
       }
     },
+    handlerToDetail(id) {
+      uni.navigateTo({ url: `/pages/bill/detail?id=${id}` });
+    },
   },
 };
 </script>
@@ -45,7 +48,7 @@ export default {
   // background: beige;
   display: flex;
   border-radius: 10px;
-  margin: 15px;
+  padding: 10px;
   align-items: center;
   .bill-icon {
     .image {

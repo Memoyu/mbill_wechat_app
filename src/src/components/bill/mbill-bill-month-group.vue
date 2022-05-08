@@ -30,6 +30,7 @@ export default {
               date: "1月19日 周一",
               items: [
                 {
+                  id: 1,
                   type: 0,
                   category: "奶茶",
                   icon: "/static/assets/tea.png",
@@ -38,6 +39,7 @@ export default {
                   time: "13:30",
                 },
                 {
+                  id: 2,
                   type: 1,
                   category: "奶茶1",
                   icon: "/static/assets/tea.png",
@@ -46,6 +48,7 @@ export default {
                   time: "13:30",
                 },
                 {
+                  id: 3,
                   type: 1,
                   category: "奶茶2",
                   icon: "/static/assets/tea.png",
@@ -59,6 +62,7 @@ export default {
               date: "2月10日 周二",
               items: [
                 {
+                  id: 4,
                   type: 0,
                   category: "奶茶",
                   icon: "/static/assets/tea.png",
@@ -67,6 +71,7 @@ export default {
                   time: "13:30",
                 },
                 {
+                  id: 5,
                   type: 1,
                   category: "奶茶1",
                   icon: "/static/assets/tea.png",
@@ -75,6 +80,7 @@ export default {
                   time: "13:30",
                 },
                 {
+                  id: 6,
                   type: 1,
                   category: "奶茶2",
                   icon: "/static/assets/tea.png",
@@ -88,6 +94,7 @@ export default {
               date: "4月10日 周三",
               items: [
                 {
+                  id: 7,
                   type: 0,
                   category: "奶茶",
                   icon: "/static/assets/tea.png",
@@ -96,6 +103,7 @@ export default {
                   time: "13:30",
                 },
                 {
+                  id: 8,
                   type: 1,
                   category: "奶茶1",
                   icon: "/static/assets/tea.png",
@@ -104,6 +112,7 @@ export default {
                   time: "13:30",
                 },
                 {
+                  id: 9,
                   type: 1,
                   category: "奶茶2",
                   icon: "/static/assets/tea.png",
@@ -122,6 +131,7 @@ export default {
               date: "1月19日 周一",
               items: [
                 {
+                  id: 10,
                   type: 0,
                   category: "奶茶",
                   icon: "/static/assets/tea.png",
@@ -130,6 +140,7 @@ export default {
                   time: "13:30",
                 },
                 {
+                  id: 11,
                   type: 1,
                   category: "奶茶1",
                   icon: "/static/assets/tea.png",
@@ -138,6 +149,7 @@ export default {
                   time: "13:30",
                 },
                 {
+                  id: 12,
                   type: 1,
                   category: "奶茶2",
                   icon: "/static/assets/tea.png",
@@ -151,6 +163,7 @@ export default {
               date: "2月10日 周二",
               items: [
                 {
+                  id: 13,
                   type: 0,
                   category: "奶茶",
                   icon: "/static/assets/tea.png",
@@ -159,6 +172,7 @@ export default {
                   time: "13:30",
                 },
                 {
+                  id: 4,
                   type: 1,
                   category: "奶茶1",
                   icon: "/static/assets/tea.png",
@@ -167,6 +181,7 @@ export default {
                   time: "13:30",
                 },
                 {
+                  id: 14,
                   type: 1,
                   category: "奶茶2",
                   icon: "/static/assets/tea.png",
@@ -180,6 +195,7 @@ export default {
               date: "4月10日 周三",
               items: [
                 {
+                  id: 15,
                   type: 0,
                   category: "奶茶",
                   icon: "/static/assets/tea.png",
@@ -188,6 +204,7 @@ export default {
                   time: "13:30",
                 },
                 {
+                  id: 16,
                   type: 1,
                   category: "奶茶1",
                   icon: "/static/assets/tea.png",
@@ -196,6 +213,7 @@ export default {
                   time: "13:30",
                 },
                 {
+                  id: 17,
                   type: 1,
                   category: "奶茶2",
                   icon: "/static/assets/tea.png",
@@ -214,6 +232,7 @@ export default {
               date: "1月19日 周一",
               items: [
                 {
+                  id: 18,
                   type: 0,
                   category: "奶茶",
                   icon: "/static/assets/tea.png",
@@ -222,6 +241,7 @@ export default {
                   time: "13:30",
                 },
                 {
+                  id: 19,
                   type: 1,
                   category: "奶茶1",
                   icon: "/static/assets/tea.png",
@@ -230,6 +250,7 @@ export default {
                   time: "13:30",
                 },
                 {
+                  id: 20,
                   type: 1,
                   category: "奶茶2",
                   icon: "/static/assets/tea.png",
@@ -243,6 +264,7 @@ export default {
               date: "2月10日 周二",
               items: [
                 {
+                  id: 21,
                   type: 0,
                   category: "奶茶",
                   icon: "/static/assets/tea.png",
@@ -251,6 +273,7 @@ export default {
                   time: "13:30",
                 },
                 {
+                  id: 22,
                   type: 1,
                   category: "奶茶1",
                   icon: "/static/assets/tea.png",
@@ -259,6 +282,7 @@ export default {
                   time: "13:30",
                 },
                 {
+                  id: 23,
                   type: 1,
                   category: "奶茶2",
                   icon: "/static/assets/tea.png",
@@ -272,6 +296,7 @@ export default {
               date: "4月10日 周三",
               items: [
                 {
+                  id: 24,
                   type: 0,
                   category: "奶茶",
                   icon: "/static/assets/tea.png",
@@ -280,6 +305,7 @@ export default {
                   time: "13:30",
                 },
                 {
+                  id: 25,
                   type: 1,
                   category: "奶茶1",
                   icon: "/static/assets/tea.png",
@@ -288,6 +314,7 @@ export default {
                   time: "13:30",
                 },
                 {
+                  id: 26,
                   type: 1,
                   category: "奶茶2",
                   icon: "/static/assets/tea.png",

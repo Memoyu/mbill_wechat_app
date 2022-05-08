@@ -14,11 +14,19 @@
 		{
 			"path": "pages/index/index",
 			"style": {
-				"navigationBarTitleText": ""
+				"navigationBarTitleText": "",
+				"navigationBarBackgroundColor": "#DCD6F7"
 			}
 		},
 		{
 			"path": "pages/bill/edit",
+			"style": {
+				"navigationBarTitleText": "",
+				"navigationBarBackgroundColor": "#DCD6F7"
+			}
+		},
+		{
+			"path": "pages/bill/detail",
 			"style": {
 				"navigationBarTitleText": ""
 			}
@@ -68,7 +76,8 @@
 		{
 			"path": "pages/profile/index",
 			"style": {
-				"navigationBarTitleText": ""
+				"navigationBarTitleText": "",
+				"navigationBarBackgroundColor": "#DCD6F7"
 			}
 		},
 		{
@@ -93,7 +102,7 @@
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "mbill",
-		"navigationBarBackgroundColor": "#DCD6F7",
+		"navigationBarBackgroundColor": "#f6f6f6",
 		"backgroundColor": "#F8F8F8"
 	},
 	"tabBar": {

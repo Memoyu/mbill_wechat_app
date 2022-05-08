@@ -55,7 +55,7 @@
             </scroll-view>
           </view>
         </view>
-        <mb-base-end-split-line />
+        <mb-b-end-split-line />
       </view>
       <view class="key-board-container">
         <view class="key-board-header x-start">
