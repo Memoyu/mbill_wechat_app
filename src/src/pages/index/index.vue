@@ -154,6 +154,15 @@ export default {
   onLoad() {
     this.getFixedHeight();
     this.getDynamicHeight();
+
+    // test
+    this.$http
+      .post("account/wxlogin", {
+        code: "code",
+      })
+      .then((res) => {
+        console.log(res);
+      });
   },
   onShow() {
     this.setTabBarIndex(0);

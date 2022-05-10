@@ -979,7 +979,7 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
-"@dcloudio/types@^2.6.6":
+"@dcloudio/types@^2.0.16", "@dcloudio/types@^2.6.6":
   version "2.6.6"
   resolved "https://registry.yarnpkg.com/@dcloudio/types/-/types-2.6.6.tgz#66227f83ee0fb7902dc27ebb0a1bb332e8cf31b9"
   integrity sha512-ChLbkLuXfWxaj6VcsCcspIyC9+xIYKAJX++f50oCzUWbApslGwRpJ12wqS9k5Eg5euaHSzmyE0JfpZlNFpBk6w==
@@ -7070,6 +7070,13 @@ lru-cache@^6.0.0:
   integrity sha512-Jo6dJ04CmSjuznwJSS3pUeWmd/H0ffTlkXXgwZi+eq1UCmqQwCh+eLsYOYCwY991i2Fah4h1BEMCx4qThGbsiA==
   dependencies:
     yallist "^4.0.0"
+
+luch-request@^3.0.7:
+  version "3.0.7"
+  resolved "https://registry.yarnpkg.com/luch-request/-/luch-request-3.0.7.tgz#5894fc3d3ff62622b042c84953c1192ccdeafaa5"
+  integrity sha512-rYTgAO0CiAMjuotvwhtEREQ6mh/qdgYO2a+cKDv2VPnww/MdNaHMGMpsPY6VvJCOtfH7kV9lDujjuihhlu1xmg==
+  dependencies:
+    "@dcloudio/types" "^2.0.16"
 
 make-dir@^2.0.0, make-dir@^2.1.0:
   version "2.1.0"
