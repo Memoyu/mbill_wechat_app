@@ -264,14 +264,14 @@ export default {
           .grid-item {
             height: 60px;
             width: 60px;
-            border-radius: 50%;
+            // border-radius: 50%;
             align-items: center;
-            background: $grey-bright-color;
+            // background: $grey-bright-color;
             text-align: center;
             font-size: 14px;
             .func-icon {
               color: $primary-color;
-              font-size: 23px;
+              font-size: 25px;
             }
           }
         }
