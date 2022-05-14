@@ -28,11 +28,10 @@ http.interceptors.request.use((config) => { /* 请求之前拦截器。可以使
         ...config.header,
         Authorization: getTokenStorage()
     }
-    /*
-   if (!token) { // 如果token不存在，return Promise.reject(config) 会取消本次请求
-     return Promise.reject(config)
-   }
-   */
+    // const token = uni.getStorageSync('token')
+    // if (!token) { // 如果token不存在，return Promise.reject(config) 会取消本次请求
+    //     return Promise.reject(config)
+    // }
     return config
 }, (config) => {
     return Promise.reject(config)

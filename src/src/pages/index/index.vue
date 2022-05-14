@@ -156,13 +156,10 @@ export default {
     this.getDynamicHeight();
 
     // test
-    this.$http
-      .post("account/wxlogin", {
-        code: "code",
-      })
-      .then((res) => {
-        console.log(res);
-      });
+    console.log(this.$api);
+    this.$api.login({ code: "code" }).then((res) => {
+      console.log(res);
+    });
   },
   onShow() {
     this.setTabBarIndex(0);
