@@ -19,7 +19,7 @@
 
 <script>
 export default {
-  name: "mbill-end-split-line",
+  name: "mbill-bottom-btn",
   props: {
     ltext: {
       type: String,

@@ -1,79 +1,82 @@
 <template>
-  <view>
-    <view class="container">
-      <view class="calendar-content" id="calendar-content">
-        <view class="bg" />
-        <view class="date-title" id="date-title">
-          <picker
-            class="time-picker"
-            mode="date"
-            @change="handlerPickerChange"
-            fields="month"
-            :value="pickerDate"
-          >
-            <view class="x-c">
-              <text class="now-date"
-                >{{ pickerDateText.year }}年{{ pickerDateText.month }}月</text
-              >
-              <i
-                class="iconfont icon-bottom"
-                style="margin-left: 5px; font-size: 13px"
-              />
-            </view>
-          </picker>
-          <view class="statement">
-            <view class="statement-text">
-              <text class="text">总收入</text>
-              <text class="total">￥100222</text>
-            </view>
-            <view class="statement-text">
-              <text class="text">总支出</text>
-              <text class="total">￥100222</text>
-            </view>
+  <view class="container">
+    <!-- 日历 -->
+    <view class="calendar-content" id="calendar-content">
+      <view class="bg" />
+      <view class="date-title" id="date-title">
+        <picker
+          class="time-picker"
+          mode="date"
+          @change="handlerPickerChange"
+          fields="month"
+          :value="pickerDate"
+        >
+          <view class="x-c">
+            <text class="now-date"
+              >{{ pickerDateText.year }}年{{ pickerDateText.month }}月</text
+            >
+            <i
+              class="iconfont icon-bottom"
+              style="margin-left: 5px; font-size: 13px"
+            />
+          </view>
+        </picker>
+        <view class="statement">
+          <view class="statement-text">
+            <text class="text">总收入</text>
+            <text class="total">￥100222</text>
+          </view>
+          <view class="statement-text">
+            <text class="text">总支出</text>
+            <text class="total">￥100222</text>
           </view>
         </view>
-        <view class="calendar">
-          <mb-b-calendar
-            ref="calendar"
-            :expand="expand"
-            :tags="tags"
-            :date="calendarDate"
-            @change="handlerDateChange"
-            @changemonth="handlerMonthChange"
-            @sizechange="handlerSizeChange"
-          />
-        </view>
       </view>
-      <view
-        :style="{ height: expandHeight + 'px' }"
-        class="calendar-expand"
-        @tap="handlerExpandView"
-      >
-        <i
-          style="font-size: 20px"
-          :class="['iconfont', 'icon-' + (expand ? 'top' : 'bottom')]"
+      <view class="calendar">
+        <mb-b-calendar
+          ref="calendar"
+          :expand="expand"
+          :tags="tags"
+          :date="calendarDate"
+          @change="handlerDateChange"
+          @changemonth="handlerMonthChange"
+          @sizechange="handlerSizeChange"
         />
       </view>
-
-      <scroll-view
-        class="statement-item"
-        :style="{
-          height: scrollHeight + 'px',
-        }"
-        scroll-y="true"
-      >
-        <!-- <view v-for="(item, index) in Array(20).fill(1)" :key="index">
+    </view>
+    <!-- 展开、收缩 -->
+    <view
+      :style="{ height: expandHeight + 'px' }"
+      class="calendar-expand"
+      @tap="handlerExpandView"
+    >
+      <i
+        style="font-size: 20px"
+        :class="['iconfont', 'icon-' + (expand ? 'top' : 'bottom')]"
+      />
+    </view>
+    <!-- 账单列表 -->
+    <scroll-view
+      class="statement-item"
+      :style="{
+        height: scrollHeight + 'px',
+      }"
+      scroll-y="true"
+    >
+      <!-- <view v-for="(item, index) in Array(20).fill(1)" :key="index">
           <mbill-bill-item></mbill-bill-item>
         </view> -->
-        <!-- <mb-bill-date-group /> -->
-        <mb-bill-month-group />
-      </scroll-view>
-    </view>
+      <!-- <mb-bill-date-group /> -->
+      <mb-bill-month-group />
+    </scroll-view>
+    <!-- 登录 -->
+    <mb-b-auth-modal :show="true" />
   </view>
 </template>
 
 <script>
 import { mixin } from "@/mixins/tabbar.js";
+import { mapGetters } from "vuex";
 
 const now = new Date();
 export default {
@@ -151,18 +154,17 @@ export default {
       state: 1,
     };
   },
+  // 是否登录
+  computed: {
+    ...mapGetters(["isLogin"]),
+  },
   onLoad() {
     this.getFixedHeight();
     this.getDynamicHeight();
-
-    // test
-    console.log(this.$api);
-    this.$api.login({ code: "code" }).then((res) => {
-      console.log(res);
-    });
   },
   onShow() {
     this.setTabBarIndex(0);
+    uni.hideTabBar();
   },
   methods: {
     getFixedHeight() {

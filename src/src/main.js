@@ -2,7 +2,7 @@ import Vue from 'vue'
 import App from './App'
 import store from '@/store'
 import tip from '@/common/utils/tip.js'
-import { http } from '@/api/service.js'
+import api from '@/api/api.js'
 
 Vue.config.productionTip = false
 
@@ -11,7 +11,7 @@ Vue.prototype.$store = store;
 // tip
 Vue.prototype.$tip = tip;
 // request请求
-Vue.prototype.$http = http
+Vue.prototype.$api = api
 
 App.mpType = 'app'
 const app = new Vue({
