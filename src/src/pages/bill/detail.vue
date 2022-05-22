@@ -1,6 +1,6 @@
 <template>
   <view>
-    <view class="container">
+    <view class="b-container">
       <view class="bill-detail-bg">
         <view class="circle left-circle" />
         <view class="circle right-circle" />
@@ -72,113 +72,107 @@ export default {
 </script>
 
 <style lang="scss" scope>
-.container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  .bill-detail-bg {
+.bill-detail-bg {
+  position: absolute;
+  border-radius: 14px;
+  top: 0;
+  left: 50%;
+  transform: translate(-50%, 10%);
+  width: 80%;
+  // height: 200px;
+  padding: 10px 0;
+  background-color: #ffffff;
+  border-radius: 25px 25px 0 0;
+  .circle {
+    width: 30rpx;
+    height: 30rpx;
+    border-radius: 50%;
+    background-color: $grey-bright-color;
     position: absolute;
-    border-radius: 14px;
-    top: 0;
-    left: 50%;
-    transform: translate(-50%, 10%);
-    width: 80%;
-    // height: 200px;
-    padding: 10px 0;
-    background-color: #ffffff;
-    border-radius: 25px 25px 0 0;
-    .circle {
-      width: 30rpx;
-      height: 30rpx;
-      border-radius: 50%;
-      background-color: $grey-bright-color;
-      position: absolute;
-      top: 40%;
-      transform: translate(0, -50%);
-    }
-    .left-circle {
-      left: -15rpx;
-    }
-
-    .right-circle {
-      right: -15rpx;
-    }
-    .order-line {
-      position: absolute;
-      top: 40%;
-      z-index: 99;
-      width: 100%;
-      height: 2px;
-      background-image: linear-gradient(
-        to right,
-        $grey-bright-color 50%,
-        $grey-bright-color 50%,
-        transparent 0%
-      );
-      background-size: 14px 3px;
-      background-repeat: repeat-x;
-    }
-    .bottom-line {
-      width: 100%;
-      position: fixed;
-      left: 0;
-      bottom: 0;
-    }
-    .bill-detail-header {
-      text-align: center;
-      .detail-image {
-        border-radius: 50%;
-        height: 60px;
-        width: 60px;
-      }
-      .detail-category {
-        margin-top: 3%;
-        font-size: 25px;
-        font-weight: bold;
-      }
-      .detail-desc {
-        margin-top: 3%;
-        color: $grey-text-color;
-        font-size: 15px;
-      }
-    }
-    .bill-detail-content {
-      margin-top: 20%;
-      margin-bottom: 20%;
-      text-align: center;
-
-      .detail-amount {
-        font-size: 30px;
-        font-weight: bold;
-      }
-      .expend {
-        color: $expend-color;
-      }
-      .income {
-        color: $income-color;
-      }
-      .detail-asset {
-        color: $grey-text-color;
-        font-size: 15px;
-      }
-      .detail-date {
-        margin-top: 5%;
-        color: $grey-text-color;
-        font-size: 15px;
-      }
-      .detail-address {
-        margin-top: 5%;
-        color: $grey-text-color;
-        font-size: 15px;
-      }
-    }
+    top: 40%;
+    transform: translate(0, -50%);
   }
-  .bottom-operate {
+  .left-circle {
+    left: -15rpx;
+  }
+
+  .right-circle {
+    right: -15rpx;
+  }
+  .order-line {
+    position: absolute;
+    top: 40%;
+    z-index: 99;
     width: 100%;
-    position: absolute;
-    bottom: 0;
-    margin-bottom: 20px;
+    height: 2px;
+    background-image: linear-gradient(
+      to right,
+      $grey-bright-color 50%,
+      $grey-bright-color 50%,
+      transparent 0%
+    );
+    background-size: 14px 3px;
+    background-repeat: repeat-x;
   }
+  .bottom-line {
+    width: 100%;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+  }
+  .bill-detail-header {
+    text-align: center;
+    .detail-image {
+      border-radius: 50%;
+      height: 60px;
+      width: 60px;
+    }
+    .detail-category {
+      margin-top: 3%;
+      font-size: 25px;
+      font-weight: bold;
+    }
+    .detail-desc {
+      margin-top: 3%;
+      color: $grey-text-color;
+      font-size: 15px;
+    }
+  }
+  .bill-detail-content {
+    margin-top: 20%;
+    margin-bottom: 20%;
+    text-align: center;
+
+    .detail-amount {
+      font-size: 30px;
+      font-weight: bold;
+    }
+    .expend {
+      color: $expend-color;
+    }
+    .income {
+      color: $income-color;
+    }
+    .detail-asset {
+      color: $grey-text-color;
+      font-size: 15px;
+    }
+    .detail-date {
+      margin-top: 5%;
+      color: $grey-text-color;
+      font-size: 15px;
+    }
+    .detail-address {
+      margin-top: 5%;
+      color: $grey-text-color;
+      font-size: 15px;
+    }
+  }
+}
+.bottom-operate {
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+  margin-bottom: 20px;
 }
 </style>

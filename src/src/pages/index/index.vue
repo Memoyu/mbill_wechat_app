@@ -1,5 +1,5 @@
 <template>
-  <view class="container">
+  <view class="b-container">
     <!-- 日历 -->
     <view class="calendar-content" id="calendar-content">
       <view class="bg" />
@@ -244,64 +244,58 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  .calendar-content {
-    .bg {
-      z-index: -1;
-      position: absolute;
-      top: 0;
-      background-color: $light-color;
-      width: 100%;
-      height: 30%;
-      border-radius: 0 0 15px 15px;
+.calendar-content {
+  .bg {
+    z-index: -1;
+    position: absolute;
+    top: 0;
+    background-color: $light-color;
+    width: 100%;
+    height: 30%;
+    border-radius: 0 0 15px 15px;
+  }
+  .date-title {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin: 15px;
+    align-items: center;
+
+    .now-date {
+      font-size: 15px;
+      font-weight: bold;
     }
-    .date-title {
+
+    .statement {
       display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-      margin: 15px;
+    }
+
+    .statement-text {
+      margin-left: 20px;
+      display: flex;
+      flex-direction: column;
       align-items: center;
 
-      .now-date {
-        font-size: 15px;
+      .text {
+        font-size: 11px;
+      }
+      .total {
+        font-size: 13px;
         font-weight: bold;
       }
-
-      .statement {
-        display: flex;
-      }
-
-      .statement-text {
-        margin-left: 20px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-
-        .text {
-          font-size: 11px;
-        }
-        .total {
-          font-size: 13px;
-          font-weight: bold;
-        }
-      }
-    }
-    .calendar {
-      margin: 0 10px;
     }
   }
-  .calendar-expand {
-    width: 100%;
-    text-align: center;
+  .calendar {
+    margin: 0 10px;
   }
+}
+.calendar-expand {
+  width: 100%;
+  text-align: center;
+}
 
-  .statement-item {
-    // background: white;
-    border-radius: 15px 15px 0 0;
-  }
+.statement-item {
+  // background: white;
+  border-radius: 15px 15px 0 0;
 }
 </style>

@@ -1,9 +1,7 @@
 <template>
   <view>
-    <view class="container">
-      <view>
-        <view class="title">登录</view>
-      </view>
+    <view class="b-container">
+      <view> </view>
     </view>
   </view>
 </template>
@@ -20,15 +18,4 @@ export default {
 </script>
 
 <style>
-.container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-.title {
-  font-size: 36rpx;
-  color: #8f8f94;
-}
 </style>

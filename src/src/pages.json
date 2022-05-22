@@ -93,6 +93,12 @@
 			}
 		},
 		{
+			"path": "pages/profile/login",
+			"style": {
+				"navigationBarTitleText": "登录"
+			}
+		},
+		{
 			"path": "pages/profile/user-detail",
 			"style": {
 				"navigationBarTitleText": "个人信息"
