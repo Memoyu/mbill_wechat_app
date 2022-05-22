@@ -44,6 +44,12 @@
 			}
 		},
 		{
+			"path": "pages/bill/preorder/index",
+			"style": {
+				"navigationBarTitleText": "预购"
+			}
+		},
+		{
 			"path": "pages/bill/stats/index",
 			"style": {
 				"navigationBarTitleText": "统计"
@@ -90,12 +96,6 @@
 			"path": "pages/profile/user-detail",
 			"style": {
 				"navigationBarTitleText": "个人信息"
-			}
-		},
-		{
-			"path": "pages/profile/preorder/index",
-			"style": {
-				"navigationBarTitleText": "预购"
 			}
 		}
 	],

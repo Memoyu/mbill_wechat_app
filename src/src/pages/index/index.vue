@@ -69,8 +69,6 @@
       <!-- <mb-bill-date-group /> -->
       <mb-bill-month-group />
     </scroll-view>
-    <!-- 登录 -->
-    <mb-b-auth-modal :show="true" />
   </view>
 </template>
 

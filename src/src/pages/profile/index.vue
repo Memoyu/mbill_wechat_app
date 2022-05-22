@@ -120,7 +120,7 @@ export default {
         {
           title: "预购",
           icon: "preorder",
-          path: "/pages/profile/preorder/index",
+          path: "/pages/bill/preorder/index",
         },
       ],
       cells: [
