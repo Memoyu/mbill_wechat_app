@@ -1,3 +1,3 @@
-export const IS_LOGIN = 'IS_LOGIN' //是否已登录
+export const SET_TOKEN = 'SET_TOKEN' //设置token
 
-export const USER_INFO = 'USER_INFO' //用户信息
+export const SET_USER = 'SET_USER' //设置用户信息

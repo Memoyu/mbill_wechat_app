@@ -1,4 +1,5 @@
 import { RouterMount, createRouter } from 'uni-simple-router'
+import { ACCESS_TOKEN } from "@/common/utils/constants"
 
 const router = createRouter({
     encodeURI: true,
@@ -14,7 +15,7 @@ const whiteList = ['/pages/profile/login']
 //全局路由前置守卫
 router.beforeEach((to, from, next) => {
     console.log("路由守卫");
-    let token = uni.getStorageSync('token');
+    let token = uni.getStorageSync(ACCESS_TOKEN);
     if (token) {
         next()
     } else {
