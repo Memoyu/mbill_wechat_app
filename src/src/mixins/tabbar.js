@@ -1,4 +1,4 @@
-export const mixin = {
+export const tabbar = {
     methods: {
         setTabBarIndex(index) {
             if (typeof this.$scope.getTabBar === 'function' &&

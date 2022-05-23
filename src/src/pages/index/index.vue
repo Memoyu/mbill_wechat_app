@@ -73,12 +73,12 @@
 </template>
 
 <script>
-import { mixin } from "@/mixins/tabbar.js";
+import { router, tabbar } from "@/mixins";
 import { mapGetters } from "vuex";
 
 const now = new Date();
 export default {
-  mixins: [mixin], //混入文件
+  mixins: [router, tabbar], //混入文件
   data() {
     return {
       calendarDate: {

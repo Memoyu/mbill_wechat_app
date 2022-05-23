@@ -20,6 +20,7 @@
 		},
 		{
 			"path": "pages/bill/edit",
+			"name": "edit",
 			"style": {
 				"navigationBarTitleText": "",
 				"navigationBarBackgroundColor": "#DCD6F7"

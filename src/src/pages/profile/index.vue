@@ -76,10 +76,10 @@
 </template>
 
 <script>
-import { mixin } from "@/mixins/tabbar.js";
+import { tabbar } from "@/mixins";
 
 export default {
-  mixins: [mixin], //混入文件
+  mixins: [tabbar], //混入文件
   data() {
     return {
       user: {

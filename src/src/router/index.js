@@ -3,6 +3,10 @@ import { RouterMount, createRouter } from 'uni-simple-router'
 const router = createRouter({
     encodeURI: true,
     platform: process.env.VUE_APP_PLATFORM,
+    detectBeforeLock: (router, to, navType) => { // 配置解锁[重要]。关闭跳转路由锁
+        router.$lockStatus = false;
+    },
+    // detectBeforeLock: () => { router.$lockStatus = false; },
     routes: [...ROUTES]
 });
 
@@ -20,6 +24,8 @@ router.beforeEach((to, from, next) => {
             next({ path: '/pages/profile/login' })
         }
     }
+
+    // next()
 });
 // 全局路由后置守卫
 router.afterEach((to, from) => {
