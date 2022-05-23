@@ -152,10 +152,6 @@ export default {
       state: 1,
     };
   },
-  // 是否登录
-  computed: {
-    ...mapGetters(["isLogin"]),
-  },
   onLoad() {
     this.getFixedHeight();
     this.getDynamicHeight();

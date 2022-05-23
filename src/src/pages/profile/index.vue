@@ -10,10 +10,12 @@
         class="profile-info"
         @tap="handlerNavigateTo('/pages/profile/user-detail')"
       >
-        <image class="image" mode="widthFix" :src="user.avatar" />
+        <image class="image" mode="widthFix" :src="user.avatarUrl" />
         <view class="user-info">
-          <text class="user-name">{{ user.name }}</text>
-          <text class="user-days">已经记账{{ user.days }}天</text>
+          <text class="user-name">{{ user.nickname }}</text>
+          <text class="user-days" v-if="user.days > 0"
+            >已经记账{{ user.days }}天</text
+          >
         </view>
         <i class="iconfont icon-to to-detail-icon" />
       </view>
@@ -82,11 +84,12 @@ export default {
   mixins: [tabbar], //混入文件
   data() {
     return {
-      user: {
-        avatar: "/static/assets/avatar.png",
-        name: "Memoyu",
-        days: 360,
-      },
+      defaultAvatar: "/static/assets/avatar.png",
+      // user: {
+      //   avatar: "/static/assets/avatar.png",
+      //   name: "Memoyu",
+      //   days: 360,
+      // },
       preStats: [
         {
           amount: "1345.00",
@@ -138,12 +141,19 @@ export default {
       ],
     };
   },
+  computed: {
+    user() {
+      console.log(this.$store);
+      return this.$store.getters.user;
+    },
+  },
   onShow() {
     this.setTabBarIndex(1);
   },
   onLoad() {},
   methods: {
     handlerNavigateTo(path) {
+      console.log("yonghu ", this.user);
       console.log(path);
       uni.navigateTo({ url: path });
     },
@@ -175,8 +185,8 @@ export default {
     margin: 0 20px;
     display: flex;
     align-items: center;
-    flex-direction: row;
-    justify-content: space-between;
+    // justify-content: space-between;
+
     .image {
       background: white;
       border-radius: 50%;

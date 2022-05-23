@@ -4,14 +4,16 @@ import { ACCESS_TOKEN, LOGIN_USER } from "@/common/utils/constants"
 import { SET_TOKEN, SET_USER } from "../type"
 
 const state = {
-    isLogin: uni.getStorageSync(ACCESS_TOKEN) || false, // 是否登陆
-    token: '',
+    token: uni.getStorageSync(ACCESS_TOKEN), // 是否登陆
     refreshToken: '',
-    user: {},
+    user: uni.getStorageSync(LOGIN_USER) || {
+        avatarUrl: "/static/assets/avatar.png",
+        nickname: "请先登录",
+        days: 0,
+    },
 }
 
 const getters = {
-    isLogin: state => state.isLogin,
     token: state => state.token,
     refreshToken: state => state.refreshToken,
     user: state => state.user,
@@ -22,10 +24,10 @@ const mutations = {
         state.token = token
         state.refreshToken = refreshToken
     },
-    [SET_USER]: (state, { avatar, nickname, lastLoginTime }) => {
-        state.user.avatar = avatar
+    [SET_USER]: (state, { avatarUrl, nickname, days }) => {
+        state.user.avatarUrl = avatarUrl
         state.user.nickname = nickname
-        state.user.lastLoginTime = lastLoginTime
+        state.user.days = days
     }
 }
 
@@ -53,17 +55,9 @@ const actions = {
         })
     },
     // 登出
-    Logout({ commit, state }) {
-        return new Promise((resolve) => {
-            let logoutToken = state.token;
-            commit(SET_TOKEN, '')
-            uni.removeStorageSync(ACCESS_TOKEN)
-            api.logout(logoutToken).then(() => {
-                resolve()
-            }).catch(() => {
-                resolve()
-            })
-        })
+    Logout({ commit }) {
+        commit(SET_TOKEN, '')
+        uni.removeStorageSync(ACCESS_TOKEN)
     },
 
 }

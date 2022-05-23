@@ -1,27 +1,27 @@
 <template>
-  <view>
-    <view class="b-container">
-      <view>
-        <view class="title">用户详情</view>
-      </view>
-    </view>
+  <view class="b-container">
+    <button type="primary" @tap="handlerLogout">注销</button>
   </view>
 </template>
 
 <script>
+import { mapActions } from "vuex";
+
 export default {
   data() {
     return {};
   },
   onShow() {},
   onLoad() {},
-  methods: {},
+  methods: {
+    ...mapActions(["Logout"]),
+    handlerLogout() {
+      this.Logout();
+      this.$Router.replaceAll({ name: "login" });
+    },
+  },
 };
 </script>
 
-<style>
-.title {
-  font-size: 36rpx;
-  color: #8f8f94;
-}
+<style lang="scss" scope>
 </style>
