@@ -1,12 +1,13 @@
 import Request from 'luch-request'
 import tip from '@/common/utils/tip.js'
 import { API_URL } from '@/env.js'
+import { ACCESS_TOKEN } from "@/common/utils/constants"
 
 
 const getTokenStorage = () => {
     let token = ''
     try {
-        token = "Bearer " + uni.getStorageSync('token')
+        token = "Bearer " + uni.getStorageSync(ACCESS_TOKEN)
     } catch (e) {
     }
     return token
@@ -28,7 +29,7 @@ http.interceptors.request.use((config) => { /* 请求之前拦截器。可以使
         ...config.header,
         Authorization: getTokenStorage()
     }
-    // const token = uni.getStorageSync('token')
+    // const token = uni.getStorageSync(ACCESS_TOKEN)
     // if (!token) { // 如果token不存在，return Promise.reject(config) 会取消本次请求
     //     return Promise.reject(config)
     // }
@@ -47,7 +48,7 @@ http.interceptors.response.use(async (response) => { /* 请求之后拦截器。
     console.log(response)
     if (response) {
         let data = response.data
-        const token = uni.getStorageSync('token')
+        const token = uni.getStorageSync(ACCESS_TOKEN)
         console.log("------异常响应------", token)
         console.log("------异常响应------", data.status)
         switch (data.status) {

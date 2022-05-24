@@ -105,6 +105,14 @@ export default {
       console.log(newValue);
       this.dateChange(newValue);
     },
+
+    tags(newValue, oldValue) {
+      this.monthList.map((m) =>
+        m.map((d) => {
+          d.isTag = this.isTag(d.year, d.month, d.day);
+        })
+      );
+    },
   },
 
   methods: {
@@ -230,6 +238,8 @@ export default {
         month = parseInt(this.nowMonth) + 1;
       }
       this.monthList.push(this.getCalendar(year, month));
+
+      console.log("日期", this.monthList);
     },
 
     //获取某月日期

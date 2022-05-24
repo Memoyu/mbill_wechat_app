@@ -56,7 +56,7 @@ export default {
         province: user.province,
       })
         .then((res) => {
-          console.log(res);
+          // console.log(res);
           this.loading = false;
           if (res.data.success) {
             this.$tip.success("登录成功!");

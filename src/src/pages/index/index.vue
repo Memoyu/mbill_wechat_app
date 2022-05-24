@@ -92,7 +92,7 @@ export default {
       },
       expand: true,
       tags: [
-        {
+        /*{
           year: 2022,
           month: 4,
           day: 3,
@@ -141,7 +141,7 @@ export default {
           year: 2022,
           month: 5,
           day: 10,
-        },
+        },*/
       ],
       pH: 0,
       dateTitleHeight: 0,
@@ -162,9 +162,31 @@ export default {
   },
   onShow() {
     this.setTabBarIndex(0);
-    uni.hideTabBar();
+    this.initData();
   },
   methods: {
+    // 初始化数据
+    initData() {
+      console.log(this.pickerDate);
+      this.getHasBillDays(this.pickerDate);
+    },
+    // 获取指定月份范围内的账单日期
+    getHasBillDays(date) {
+      let year = date.getFullYear();
+      let month = date.getMonth();
+      console.log(year, month);
+      this.$api
+        .hasBillDays({
+          beginDate: new Date(year, month - 1),
+          endDate: new Date(year, month + 1),
+        })
+        .then((res) => {
+          // console.log(res);
+          if (res.data.code === 0) {
+            this.tags = res.data.result;
+          }
+        });
+    },
     getFixedHeight() {
       let that = this;
       uni.getSystemInfo({
