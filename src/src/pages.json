@@ -96,6 +96,7 @@
 		},
 		{
 			"path": "pages/profile/login",
+			"name": "login",
 			"style": {
 				"navigationBarTitleText": "登录"
 			}
