@@ -239,7 +239,7 @@ export default {
       }
       this.monthList.push(this.getCalendar(year, month));
 
-      console.log("日期", this.monthList);
+      // console.log("日期", this.monthList);
     },
 
     //获取某月日期

@@ -24,11 +24,11 @@
         <view class="statement">
           <view class="statement-text">
             <text class="text">总收入</text>
-            <text class="total">￥100222</text>
+            <text class="total">￥{{ monthTotal.income }}</text>
           </view>
           <view class="statement-text">
             <text class="text">总支出</text>
-            <text class="total">￥100222</text>
+            <text class="total">￥{{ monthTotal.expend }}</text>
           </view>
         </view>
       </view>
@@ -67,7 +67,7 @@
           <mbill-bill-item></mbill-bill-item>
         </view> -->
       <!-- <mb-bill-date-group /> -->
-      <mb-bill-month-group />
+      <mb-bill-date-group />
     </scroll-view>
   </view>
 </template>
@@ -143,6 +143,10 @@ export default {
           day: 10,
         },*/
       ],
+      monthTotal: {
+        income: "0.0",
+        expend: "0.0",
+      },
       pH: 0,
       dateTitleHeight: 0,
       tabbarHeight: getApp().globalData.tabbarHeight,
@@ -163,14 +167,15 @@ export default {
   methods: {
     // 初始化数据
     initData() {
-      console.log(this.pickerDate);
+      // console.log(this.pickerDate);
+      this.getMonthTotalStat(this.pickerDate);
       this.getHasBillDays(this.pickerDate);
     },
     // 获取指定月份范围内的账单日期
     getHasBillDays(date) {
       let year = date.getFullYear();
       let month = date.getMonth();
-      console.log(year, month);
+      // console.log(year, month);
       this.$api
         .hasBillDays({
           beginDate: new Date(year, month - 1),
@@ -183,6 +188,22 @@ export default {
           }
         });
     },
+
+    // 获取指定月份账单总金额
+    getMonthTotalStat(date) {
+      let year = date.getFullYear();
+      let month = date.getMonth();
+      this.$api
+        .monthTotalStat({
+          month: new Date(year, month),
+        })
+        .then((res) => {
+          if (res.data.code === 0) {
+            this.monthTotal = res.data.result;
+          }
+        });
+    },
+
     getFixedHeight() {
       let that = this;
       uni.getSystemInfo({
