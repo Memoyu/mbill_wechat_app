@@ -1,18 +1,18 @@
 <template>
-  <view class="mbill-bill-item" @tap="handlerToDetail(data.id)">
+  <view class="mbill-bill-item" @tap="handlerToDetail(bill.id)">
     <view class="bill-icon">
-      <image class="image" :src="data.icon" />
+      <image class="image" :src="bill.categoryIcon" />
     </view>
     <view class="bill-content">
       <view class="content-title">
-        <view class="title">{{ data.category }}</view>
+        <view class="title">{{ bill.category }}</view>
         <view class="info">
-          <text class="time">{{ data.time }}</text>
-          <text class="note">{{ data.desc }}</text>
+          <text class="time">{{ bill.time }}</text>
+          <text class="note">{{ bill.description }}</text>
         </view>
       </view>
       <view class="content-amount">
-        <text :class="[getTypeClass(data.type)]"> {{ data.amount }} </text>
+        <text :class="[getTypeClass(bill.type)]"> {{ bill.amount }} </text>
       </view>
     </view>
   </view>
@@ -22,7 +22,7 @@
 export default {
   name: "mbill-bill-item",
   props: {
-    data: {
+    bill: {
       type: Object,
       default: {},
     },
@@ -67,6 +67,7 @@ export default {
     justify-content: space-between;
     .content-title {
       .title {
+        margin-bottom: 5px;
         font-weight: bold;
       }
       .info {

@@ -38,7 +38,7 @@
           :expand="expand"
           :tags="tags"
           :date="calendarDate"
-          @change="handlerDateChange"
+          @change="handlerDayChange"
           @changemonth="handlerMonthChange"
           @sizechange="handlerSizeChange"
         />
@@ -62,12 +62,9 @@
         height: scrollHeight + 'px',
       }"
       scroll-y="true"
+      @scrolltolower="lowerBottom"
     >
-      <!-- <view v-for="(item, index) in Array(20).fill(1)" :key="index">
-          <mbill-bill-item></mbill-bill-item>
-        </view> -->
-      <!-- <mb-bill-date-group /> -->
-      <mb-bill-date-group />
+      <mb-bill-day-group :groups="groups" />
     </scroll-view>
   </view>
 </template>
@@ -91,6 +88,10 @@ export default {
         month: now.getMonth() + 1,
       },
       expand: true,
+      monthTotal: {
+        income: "0.0",
+        expend: "0.0",
+      },
       tags: [
         /*{
           year: 2022,
@@ -143,10 +144,13 @@ export default {
           day: 10,
         },*/
       ],
-      monthTotal: {
-        income: "0.0",
-        expend: "0.0",
+      billPage: {
+        page: 1,
+        size: 15,
       },
+      billTotal: 0,
+      groups: [],
+      loading: false,
       pH: 0,
       dateTitleHeight: 0,
       tabbarHeight: getApp().globalData.tabbarHeight,
@@ -167,14 +171,14 @@ export default {
   methods: {
     // 初始化数据
     initData() {
-      // console.log(this.pickerDate);
-      this.getMonthTotalStat(this.pickerDate);
-      this.getHasBillDays(this.pickerDate);
+      this.getMonthTotalStat();
+      this.getHasBillDays();
+      this.initMonthBills();
     },
     // 获取指定月份范围内的账单日期
-    getHasBillDays(date) {
-      let year = date.getFullYear();
-      let month = date.getMonth();
+    getHasBillDays() {
+      let year = this.pickerDate.getFullYear();
+      let month = this.pickerDate.getMonth();
       // console.log(year, month);
       this.$api
         .hasBillDays({
@@ -190,12 +194,10 @@ export default {
     },
 
     // 获取指定月份账单总金额
-    getMonthTotalStat(date) {
-      let year = date.getFullYear();
-      let month = date.getMonth();
+    getMonthTotalStat() {
       this.$api
         .monthTotalStat({
-          month: new Date(year, month),
+          month: this.pickerDate,
         })
         .then((res) => {
           if (res.data.code === 0) {
@@ -203,6 +205,54 @@ export default {
           }
         });
     },
+
+    // 初始化、切换月份重新加载账单
+    initMonthBills() {
+      this.billPage.page = 1;
+      this.groups = [];
+      this.getMonthBills();
+    },
+
+    // 获取账单分页数据，组装数据
+    getMonthBills() {
+      this.loading = true;
+      this.$api
+        .monthBills({
+          month: this.pickerDate,
+          ...this.billPage,
+        })
+        .then((res) => {
+          if (res.data.code === 0) {
+            this.billTotal = res.data.result.total;
+            let items = res.data.result.items;
+            if (this.groups.length > 0) {
+              this.groups.forEach((g) => {
+                items.forEach((item, i) => {
+                  if (item.day == g.day) {
+                    g.items = g.items.concat(item.items);
+                    items.splice(i, 1);
+                  }
+                });
+              });
+              console.log(items);
+              this.groups = this.groups.concat(items);
+            } else {
+              this.groups = items;
+            }
+            this.loading = false;
+          }
+        });
+    },
+
+    // scroll触底事件
+    lowerBottom() {
+      // console.log("触底加载");
+      if (this.billPage.page * this.billPage.size >= this.billTotal) return;
+      this.billPage.page += 1;
+      this.getMonthBills();
+    },
+
+    //#region 组件初始化
 
     getFixedHeight() {
       let that = this;
@@ -244,9 +294,10 @@ export default {
     },
 
     handlerMonthChange(date) {
-      // console.log(date);
+      console.log("date", date);
       this.pickerDateText = date;
       this.pickerDate = new Date(date.year, date.month);
+      this.initData();
     },
 
     handlerPickerChange({ detail }) {
@@ -255,11 +306,12 @@ export default {
         year: d.getFullYear(),
         month: d.getMonth() + 1,
       };
-
+      this.pickerDate = d;
       this.pickerDateText = this.calendarDate;
+      this.initData();
     },
 
-    handlerDateChange(e) {
+    handlerDayChange(e) {
       console.log(e);
     },
     handlerSizeChange(h) {
@@ -278,6 +330,7 @@ export default {
         this.expand = true;
       }
     },
+    //#endregion
   },
 };
 </script>

@@ -1,12 +1,12 @@
 <template>
   <view class="mbill-bill-date-group">
-    <view v-for="(d, dind) in data" :key="dind">
-      <view class="group-date">{{ d.date }}</view>
+    <view v-for="(g, dind) in groups" :key="dind">
+      <view class="group-date">{{ g.day }}日 {{ g.week }}</view>
       <view class="group-item">
         <mb-bill-item
-          v-for="(item, index) in d.items"
+          v-for="(item, index) in g.items"
           :key="index"
-          :data="item"
+          :bill="item"
         />
       </view>
     </view>
@@ -17,10 +17,10 @@
 export default {
   name: "mbill-bill-date-group",
   props: {
-    data: {
+    groups: {
       type: Array,
       default: [
-        {
+        /*{
           date: "1日 周六",
           items: [
             {
@@ -115,7 +115,7 @@ export default {
               time: "13:30",
             },
           ],
-        },
+        },*/
       ],
     },
   },
