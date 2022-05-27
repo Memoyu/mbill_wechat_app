@@ -17,7 +17,6 @@ export default {
     ...mapActions(["Logout"]),
     handlerLogout() {
       this.Logout();
-      this.$Router.replaceAll({ name: "login" });
     },
   },
 };
