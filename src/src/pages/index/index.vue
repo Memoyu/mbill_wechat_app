@@ -65,6 +65,7 @@
       @scrolltolower="lowerBottom"
     >
       <mb-bill-day-group :groups="groups" />
+      <mb-b-empty v-if="groups.length <= 0" />
     </scroll-view>
     <mb-bill-day-list-popup
       height="70"

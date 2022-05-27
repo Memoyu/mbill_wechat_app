@@ -5,9 +5,20 @@
     type="bottom"
     @change="handlerPopup"
   >
-    <view class="popup-content" :style="{ height: contentHeight + 'px' }">
-      <view class="popup-content-title">{{ title }}</view>
-      <mb-bill-item v-for="(item, index) in items" :key="index" :bill="item" />
+    <view class="bill-popup-content" :style="{ height: contentHeight + 'px' }">
+      <view class="bill-popup-title">{{ title }}</view>
+      <scroll-view
+        scroll-y="true"
+        class="bill-popup-items"
+        :style="{ height: contentHeight - 34 + 'px' }"
+      >
+        <mb-bill-item
+          v-for="(item, index) in items"
+          :key="index"
+          :bill="item"
+        />
+      </scroll-view>
+      <mb-b-empty v-if="items.length <= 0" />
     </view>
   </uni-popup>
 </template>
@@ -82,10 +93,17 @@ export default {
 
 <style lang="scss" scope>
 .mbill-bill-day-list-popup {
-  .popup-content {
+  .bill-popup-content {
+    display: flex;
+    flex-direction: column;
     background-color: #fff;
     border-radius: 10rpx;
-    .popup-content-title {
+    .bill-popup-items {
+      height: 100%;
+      .bill-popup-items-scroll {
+      }
+    }
+    .bill-popup-title {
       text-align: center;
       padding: 5px;
       font-size: 18px;
