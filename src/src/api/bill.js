@@ -2,6 +2,11 @@ import { http } from './service.js'
 
 const bill = {
 
+    // 获取账单详情
+    billDetail(params) {
+        return http.get('bill/detail', { params: params })
+    },
+
     // 获取指定月份账单总金额
     monthTotalStat(params) {
         return http.get('bill/stat/month-total', { params: params })

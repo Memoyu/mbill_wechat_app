@@ -172,10 +172,10 @@ export default {
   onLoad() {
     this.getFixedHeight();
     this.getDynamicHeight();
+    this.initData();
   },
   onShow() {
     this.setTabBarIndex(0);
-    this.initData();
   },
   methods: {
     // 初始化数据

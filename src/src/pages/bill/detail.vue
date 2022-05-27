@@ -6,17 +6,18 @@
         <view class="circle right-circle" />
         <view class="order-line"> </view>
         <view class="bill-detail-header">
-          <image class="detail-image" :src="data.icon" />
-          <view class="detail-category">{{ data.category }}</view>
-          <view class="detail-desc">{{ data.desc }}</view>
+          <image class="detail-image" :src="bill.categoryIcon" />
+          <view class="detail-category">{{ bill.category }}</view>
+          <view class="detail-desc">{{ bill.description }}</view>
         </view>
         <view class="bill-detail-content">
-          <view :class="['detail-amount', getTypeClass(data.type)]">{{
-            data.amount
-          }}</view>
-          <view class="detail-asset">{{ data.asset }}</view>
-          <view class="detail-date">{{ data.date }}</view>
-          <view class="detail-address">{{ data.address }}</view>
+          <view :class="['detail-amount', amountClass]">
+            <view style="font-size: 20px">￥</view>
+            <view> {{ bill.amountFormat }}</view>
+          </view>
+          <view class="detail-asset">{{ bill.asset }}</view>
+          <view class="detail-date">{{ bill.timeFormat }}</view>
+          <view class="detail-address">{{ bill.address }}</view>
         </view>
         <mb-b-end-split-line class="bottom-line" />
       </view>
@@ -28,31 +29,45 @@
 </template>
 
 <script>
-import MbillBottomBtn from "../../components/base/mbill-bottom-btn.vue";
-import mbillBillItem from "../../components/bill/mbill-bill-item.vue";
 export default {
-  components: { mbillBillItem, MbillBottomBtn },
   data() {
     return {
-      data: {
-        id: 7,
-        type: 0,
-        category: "奶茶",
-        asset: "微信支付",
-        icon: "/static/assets/tea.png",
-        amount: 33.2,
-        desc: "这是备注来着",
-        date: "星期日 2022/05/08 13:30",
-        address:
-          "广东省广州市白云区萧岗东约大街50号22222222222222222222222222222",
+      amountClass: "expend",
+      bill: {
+        // id: 7,
+        // type: 0,
+        // category: "奶茶",
+        // asset: "微信支付",
+        // categoryIcon: "/static/assets/tea.png",
+        // amountFormat: 33.2,
+        // description: "这是备注来着",
+        // time: "2022/05/08 13:30",
+        // timeFormat: "星期日 2022/05/08 13:30",
+        // address:
+        //   "广东省广州市白云区萧岗东约大街50号22222222222222222222222222222",
       },
     };
   },
   onLoad(option) {
     console.log(option.id);
+    this.getBillDetail(option.id);
   },
   onShow() {},
   methods: {
+    getBillDetail(id) {
+      this.$api
+        .billDetail({
+          id: id,
+        })
+        .then((res) => {
+          if (res.data.code === 0) {
+            let result = res.data.result;
+            this.bill = result;
+
+            this.amountClass = this.getTypeClass(this.bill.type);
+          }
+        });
+    },
     getTypeClass(type) {
       switch (type) {
         case 0:
@@ -89,7 +104,7 @@ export default {
     border-radius: 50%;
     background-color: $grey-bright-color;
     position: absolute;
-    top: 40%;
+    top: 170px;
     transform: translate(0, -50%);
   }
   .left-circle {
@@ -101,7 +116,7 @@ export default {
   }
   .order-line {
     position: absolute;
-    top: 40%;
+    top: 170px;
     z-index: 99;
     width: 100%;
     height: 2px;
@@ -144,8 +159,12 @@ export default {
     text-align: center;
 
     .detail-amount {
+      display: flex;
+      justify-content: center;
+      align-items: baseline;
       font-size: 30px;
       font-weight: bold;
+      margin-bottom: 5px;
     }
     .expend {
       color: $expend-color;
@@ -158,12 +177,12 @@ export default {
       font-size: 15px;
     }
     .detail-date {
-      margin-top: 5%;
+      margin-top: 13px;
       color: $grey-text-color;
       font-size: 15px;
     }
     .detail-address {
-      margin-top: 5%;
+      margin-top: 13px;
       color: $grey-text-color;
       font-size: 15px;
     }
