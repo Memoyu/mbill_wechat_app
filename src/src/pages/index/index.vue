@@ -66,6 +66,12 @@
     >
       <mb-bill-day-group :groups="groups" />
     </scroll-view>
+    <mb-bill-day-list-popup
+      height="70"
+      :show="popShow"
+      :date="popDate"
+      @change="handlerBillsOnDayPopup"
+    />
   </view>
 </template>
 
@@ -151,6 +157,8 @@ export default {
       billTotal: 0,
       groups: [],
       loading: false,
+      popShow: false,
+      popDate: {},
       pH: 0,
       dateTitleHeight: 0,
       tabbarHeight: getApp().globalData.tabbarHeight,
@@ -182,8 +190,8 @@ export default {
       // console.log(year, month);
       this.$api
         .hasBillDays({
-          beginDate: new Date(year, month - 1),
-          endDate: new Date(year, month + 1),
+          beginDate: `${year}-${month - 1}`,
+          endDate: `${year}-${month + 1}`,
         })
         .then((res) => {
           // console.log(res);
@@ -195,9 +203,11 @@ export default {
 
     // 获取指定月份账单总金额
     getMonthTotalStat() {
+      let year = this.pickerDate.getFullYear();
+      let month = this.pickerDate.getMonth();
       this.$api
         .monthTotalStat({
-          month: this.pickerDate,
+          month: `${year}-${month}`,
         })
         .then((res) => {
           if (res.data.code === 0) {
@@ -311,9 +321,14 @@ export default {
       this.pickerDateText = this.calendarDate;
       this.initData();
     },
-
+    handlerBillsOnDayPopup(e) {
+      this.setTabBarShow(!e.show);
+      this.popShow = e.show;
+    },
     handlerDayChange(e) {
-      console.log(e);
+      console.log("选中日期：", e);
+      this.popDate = e;
+      this.popShow = true;
     },
     handlerSizeChange(h) {
       // console.log(h);
@@ -390,5 +405,11 @@ export default {
 .statement-item {
   // background: white;
   border-radius: 15px 15px 0 0;
+}
+
+.popup-box {
+  .asset {
+    height: 350px;
+  }
 }
 </style>

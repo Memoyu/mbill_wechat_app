@@ -7,6 +7,14 @@ export const tabbar = {
                     selected: index,
                 })
             }
+        },
+        setTabBarShow(show) {
+            if (typeof this.$scope.getTabBar === 'function' &&
+                this.$scope.getTabBar()) {
+                this.$scope.getTabBar().setData({
+                    show: show,
+                })
+            }
         }
     }
 }

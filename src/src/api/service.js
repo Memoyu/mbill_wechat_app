@@ -101,10 +101,7 @@ http.interceptors.response.use(async (response) => { /* 请求之后拦截器。
                 break
         }
     }
-    return Promise.reject(response).catch(r => {
-        // throw new error;
-        console.log("r")
-    });
+    return Promise.reject(response);
 })
 
 export {

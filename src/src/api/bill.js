@@ -17,6 +17,10 @@ const bill = {
         return http.get('bill/month/pages', { params: params })
     },
 
+    // 获取指定日期账单
+    dayBills(params) {
+        return http.get('bill/day', { params: params })
+    },
 }
 
 export default bill;
