@@ -1,3 +1,5 @@
-export const ACCESS_TOKEN = 'Access-Token'
-export const REFRESH_TOKEN = 'Refresh-Token'
-export const LOGIN_USER = 'Login-User'
+export const ACCESS_TOKEN = 'accessToken'
+export const REFRESH_TOKEN = 'refreshToken'
+export const LOGIN_USER = 'loginUser'
+
+export const LOCATION_STATUS = 'locationStatus'

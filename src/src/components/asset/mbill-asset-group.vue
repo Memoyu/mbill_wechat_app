@@ -30,15 +30,26 @@ export default {
       type: Array,
       default: [],
     },
+    select: {
+      type: Number,
+      default: 0,
+    },
   },
   data() {
     return {
       selectedId: 0,
     };
   },
+  watch: {
+    select(value) {
+      // console.log("账户", value);
+      this.selectedId = value;
+    },
+  },
   methods: {
     handlerSelectedItem(item) {
       this.selectedId = item.id;
+      this.$emit("selected", item);
     },
     handlerAddAsset() {
       this.$Router.push({ name: "asset-edit" });
@@ -52,26 +63,24 @@ export default {
   margin: 0 10px;
   .asset-group {
     font-weight: bold;
-    margin-top: 10px;
+    margin-top: 15px;
     margin-bottom: 5px;
   }
   .asset-item {
     display: grid;
-    grid-template-columns: repeat(auto-fill, 60px);
-    grid-gap: 10px;
+    grid-template-columns: repeat(auto-fill, 70px);
     justify-content: center;
     .item-content {
       display: flex;
-      padding: 5px 0;
       flex-direction: column;
       align-items: center;
       border-radius: 10px;
+      padding: 7px 0;
       .image {
         height: 35px;
         width: 35px;
       }
       .text {
-        margin-top: 8px;
         color: $grey-black-text-color;
         font-size: 13px;
       }

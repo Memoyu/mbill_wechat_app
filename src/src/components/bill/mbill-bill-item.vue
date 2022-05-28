@@ -31,9 +31,9 @@ export default {
     getTypeClass(type) {
       switch (type) {
         case 0:
-          return "expend";
+          return "expend-color";
         case 1:
-          return "income";
+          return "income-color";
       }
     },
     handlerToDetail(id) {
@@ -82,12 +82,6 @@ export default {
     }
     .content-amount {
       font-weight: bold;
-      .expend {
-        color: $expend-color;
-      }
-      .income {
-        color: $income-color;
-      }
     }
   }
 }

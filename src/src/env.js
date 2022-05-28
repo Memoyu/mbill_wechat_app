@@ -10,3 +10,4 @@ const ENV_API_URL = {
 
 export const BASE_URL = ENV_BASE_URL[process.env.NODE_ENV || 'development']; //域名
 export const API_URL = ENV_API_URL[process.env.NODE_ENV || 'development']; //后台接口域名
+export const AMAP_KEY = '24bd397816f5e71366ffc9a848e41389'; //高德地图Key

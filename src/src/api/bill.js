@@ -4,6 +4,16 @@ const bill = {
     //#region   账单信息
 
     // 获取账单详情
+    addBill(params) {
+        return http.post('bill', params)
+    },
+
+    // 获取账单详情
+    editBill(params) {
+        return http.put('bill', params)
+    },
+
+    // 获取账单详情
     billDetail(params) {
         return http.get('bill/detail', { params: params })
     },

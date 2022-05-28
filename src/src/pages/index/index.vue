@@ -78,6 +78,7 @@
 
 <script>
 import { router, tabbar } from "@/mixins";
+import datetime from "@/common/utils/datetime";
 
 const now = new Date();
 export default {
@@ -88,7 +89,7 @@ export default {
         year: now.getFullYear(),
         month: now.getMonth() + 1,
       },
-      pickerDate: new Date(now.getFullYear(), now.getMonth() + 1),
+      pickerDate: datetime.getCurDate(),
       pickerDateText: {
         year: now.getFullYear(),
         month: now.getMonth() + 1,
@@ -170,10 +171,10 @@ export default {
   },
   onLoad() {
     this.getFixedHeight();
-    this.initData();
   },
   onShow() {
     this.setTabBarIndex(0);
+    this.initData();
   },
   onReady() {
     this.getDynamicHeight();
@@ -197,13 +198,15 @@ export default {
 
     // 获取指定月份范围内的账单日期
     getHasBillDays() {
-      let year = this.pickerDate.getFullYear();
-      let month = this.pickerDate.getMonth();
-      // console.log(year, month);
+      // 会涉及跨年，需要处理
+      let date = new Date(this.pickerDate);
+      let prev = datetime.getPrevMonth(date);
+      let next = datetime.getNextMonth(date);
+      // console.log(prev, next);
       this.$api
         .hasBillDays({
-          beginDate: `${year}-${month - 1}`,
-          endDate: `${year}-${month + 1}`,
+          beginDate: `${prev.year}-${prev.month}`,
+          endDate: `${next.year}-${next.month}`,
         })
         .then((res) => {
           // console.log(res);
@@ -215,11 +218,10 @@ export default {
 
     // 获取指定月份账单总金额
     getMonthTotalStat() {
-      let year = this.pickerDate.getFullYear();
-      let month = this.pickerDate.getMonth();
+      // console.log("Total", this.pickerDate);
       this.$api
         .monthTotalStat({
-          month: `${year}-${month}`,
+          month: datetime.getCurDate(new Date(this.pickerDate)),
         })
         .then((res) => {
           if (res.data.code === 0) {
@@ -233,7 +235,7 @@ export default {
       this.loading = true;
       this.$api
         .monthBills({
-          month: this.pickerDate,
+          month: datetime.getCurDate(new Date(this.pickerDate)),
           ...this.billPage,
         })
         .then((res) => {
@@ -315,7 +317,8 @@ export default {
     handlerMonthChange(date) {
       // console.log("date", date);
       this.pickerDateText = date;
-      this.pickerDate = new Date(date.year, date.month);
+      this.pickerDate = `${date.year}-${date.month}`;
+      // console.log(this.pickerDate.toLocaleDateString());
       this.initData();
     },
 
@@ -328,12 +331,11 @@ export default {
 
     // 选择日期
     handlerPickerChange({ detail }) {
+      // console.log(detail.value);
       let d = new Date(detail.value);
-      this.calendarDate = {
-        year: d.getFullYear(),
-        month: d.getMonth() + 1,
-      };
-      this.pickerDate = d;
+      this.calendarDate = datetime.getCurDateObj(d);
+      // console.log("calendarDate", this.calendarDate);
+      this.pickerDate = datetime.getCurDate(d);
       this.pickerDateText = this.calendarDate;
       this.initData();
     },

@@ -68,9 +68,12 @@ const actions = {
                     commit(SET_TOKEN, token)
                     resolve(response)
                 } else {
+                    console.log("抛出去");
                     resolve(response)
                 }
-            })
+            }).catch(e => {
+                reject(e);
+            });
         })
     },
     // 登出

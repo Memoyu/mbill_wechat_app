@@ -30,15 +30,26 @@ export default {
       type: Array,
       default: [],
     },
+    select: {
+      type: Number,
+      default: 0,
+    },
   },
   data() {
     return {
       selectedId: 0,
     };
   },
+  watch: {
+    select(value) {
+      // console.log("分类", value);
+      this.selectedId = value;
+    },
+  },
   methods: {
     handlerSelectedItem(item) {
       this.selectedId = item.id;
+      this.$emit("selected", item);
     },
 
     // 跳转新增分类页面
@@ -55,6 +66,7 @@ export default {
   .category-group {
     font-weight: bold;
     margin-top: 15px;
+    margin-bottom: 5px;
   }
   .category-item {
     display: grid;

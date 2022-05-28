@@ -2,13 +2,16 @@
   <view>
     <view class="container">
       <!-- 账单类型、时间 -->
-      <view class="header">
+      <view class="header" id="edit-header">
         <view class="type-content">
           <view
             v-for="(type, index) in typeList"
             :key="index"
-            :class="['item', selectedType == type.value ? 'item-select' : '']"
-            @tap="handlerTypeSelected(type.value)"
+            :class="[
+              'item',
+              model.type == type.id ? `item-select ${type.color}` : '',
+            ]"
+            @tap="handlerTypeSelected(type)"
             >{{ type.title }}</view
           >
         </view>
@@ -18,7 +21,7 @@
             mode="date"
             @change="handlerDatePicker"
             fields="day"
-            :value="selectedDate"
+            :value="model.date"
             :end="pickerEnd"
           >
             <view class="x-ac date">
@@ -30,10 +33,10 @@
             class="time-picker"
             mode="time"
             @change="handlerTimePicker"
-            :value="selectedTime"
+            :value="model.time"
           >
             <view class="x-ac time">
-              <text> {{ selectedTime }}</text>
+              <text> {{ model.time }}</text>
               <i
                 class="iconfont icon-bottom"
                 style="margin-left: 3px; font-size: 12px"
@@ -44,17 +47,19 @@
       </view>
 
       <!-- 输入金额 -->
-      <view class="amount">
-        <view class="x-start">
-          <text class="large-font">￥</text>
+      <view class="amount" id="edit-amount">
+        <view class="amount-input">
+          <text :class="['char', typeColor]">￥</text>
           <view class="total y-start">
-            <view class="large-font">{{ inputResult }}</view>
+            <view :class="['large-font', typeColor]">{{ model.amount }}</view>
             <scroll-view
               class="input"
               scroll-x="true"
               :scroll-left="inputTextLeng"
             >
-              <text class="input-text">{{ input }} </text>
+              <text class="input-amount-text" id="input-amount-text"
+                >{{ input }}
+              </text>
             </scroll-view>
           </view>
         </view>
@@ -70,25 +75,51 @@
           }"
           scroll-y="true"
         >
-          <mb-ca-group :groups="categoryGroups" />
+          <mb-ca-group
+            :select="model.categoryId"
+            :groups="categoryGroups"
+            @selected="handlerSelectedCategory"
+          />
         </scroll-view>
       </view>
 
       <!-- 数字键盘 -->
-      <view class="key-board-container">
+      <view class="key-board-container" id="edit-key-board-container">
+        <view class="location x-start">
+          <i
+            :class="[
+              'iconfont',
+              'icon-location',
+              'icon',
+              !locationStatus ? 'icon-color' : '',
+            ]"
+            @click="handlerSwitchChange"
+          />
+          <input
+            type="text"
+            class="input-text"
+            v-model="model.address"
+            placeholder="地址"
+          />
+        </view>
         <view class="key-board-header x-start">
           <view class="x-ac choose-asset" @tap="handlerChooseAsset">
             <i class="iconfont icon-assets icon" />
-            <text class="text">选择账户</text>
+            <text class="text">{{ model.asset }}</text>
           </view>
           <view class="x-ac">
             <i class="iconfont icon-edit icon" />
-            <input type="text" placeholder="备注" />
+            <input
+              type="text"
+              class="input-text"
+              v-model="model.description"
+              placeholder="备注"
+            />
           </view>
         </view>
         <mb-b-keyboard
           ref="keyboard"
-          :pnum="inputResult"
+          :pnum="initAmount"
           @confirm="handlerConfirmNum"
           @input="handlerInputNum"
         />
@@ -98,7 +129,11 @@
       <uni-popup ref="assetPopup" type="bottom">
         <view class="asset-popup">
           <scroll-view class="asset-list" scroll-y="true">
-            <mb-as-group :groups="assetGroups" />
+            <mb-as-group
+              :select="model.assetId"
+              :groups="assetGroups"
+              @selected="handlerSelectedAsset"
+            />
           </scroll-view>
         </view>
       </uni-popup>
@@ -107,48 +142,124 @@
 </template>
 
 <script>
-const now = new Date();
+import Location from "@/common/utils/location";
+import { LOCATION_STATUS } from "@/common/utils/constants";
 
+const now = new Date();
 export default {
   data() {
     return {
-      selectedType: 0,
+      bill: {
+        id: 0,
+        type: 0,
+        amount: 0,
+        categoryId: 0,
+        assetId: 0,
+        description: "",
+        address: "",
+        time: "",
+      },
+      model: {
+        id: 0,
+        type: 0,
+        categoryId: 0,
+        assetId: 0,
+        asset: "选择账户",
+        description: "",
+        address: "",
+        amount: "0",
+        time: `${now.getHours()}:${now.getMinutes()}`,
+      },
+      date: now.toLocaleDateString(),
+      initAmount: "0",
+      typeColor: "",
       typeList: [
-        { value: 0, title: "支出" },
-        { value: 1, title: "收入" },
+        { id: 0, title: "支出", color: "expend-color" },
+        { id: 1, title: "收入", color: "income-color" },
       ],
-      pickerEnd: `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`,
-      selectedDate: `${now.getFullYear()}-${
-        now.getMonth() + 1
-      }-${now.getDate()}`,
+      pickerEnd: now.toLocaleDateString(),
       selectedDateText: "今日",
-      selectedTime: `${now.getHours()}:${now.getMinutes()}`,
       inputTextLeng: 0,
       input: "",
-      inputResult: "",
       scrollHeight: 0,
       categoryGroups: [],
       assetGroups: [],
+      locationStatus: uni.getStorageSync(LOCATION_STATUS) || false,
     };
   },
-  onLoad() {
+  onLoad(option) {
+    // console.log(option);
     this.initData();
+    // console.log(option.id);
+    if (option.id == undefined) {
+      if (this.locationStatus) this.getLocation();
+    } else {
+      this.getBillDetail(option.id);
+    }
   },
   onShow() {},
   onReady() {
     this.dynamicHeight();
   },
-  methods: {
-    initData() {
+
+  watch: {
+    "model.type"(val) {
+      console.log("账单类型变更", val);
+      let type = this.typeList[val];
+      // this.model.type = type.id;
+      this.typeColor = type.color;
       this.getCategoryGroups();
-      this.getAssetGroups();
+    },
+    date(val) {
+      console.log("日期变更", val);
+      let date = new Date(val);
+      let year = date.getFullYear();
+      let month = date.getMonth() + 1;
+      let day = date.getDate();
+      if (
+        year == now.getFullYear() &&
+        month == now.getMonth() + 1 &&
+        day == now.getDate()
+      ) {
+        this.selectedDateText = "今日";
+      } else if (year == now.getFullYear()) {
+        this.selectedDateText = month + "月" + day + "日";
+      } else {
+        this.selectedDateText = year + "年" + month + "月" + day + "日";
+      }
+    },
+  },
+
+  methods: {
+    // 初始化数据
+    initData() {
+      this.typeColor = this.typeList[0].color;
+      this.getCategoryGroups();
     },
 
     //#region 接口请求
 
+    // 获取账单详情
+    getBillDetail(id) {
+      this.$api
+        .billDetail({
+          id: id,
+        })
+        .then((res) => {
+          if (res.data.code === 0) {
+            let result = res.data.result;
+            this.model = result;
+            this.initAmount = result.amount;
+            let dateTime = new Date(result.time);
+            this.date = dateTime.toLocaleDateString();
+            this.model.time = `${dateTime.getHours()}:${dateTime.getMinutes()}`;
+          }
+        });
+    },
+
     // 获取账单分类
     getCategoryGroups() {
-      this.$api.categoryGroups({ type: this.selectedType }).then((res) => {
+      this.$api.categoryGroups({ type: this.model.type }).then((res) => {
         if (res.data.code === 0) {
           this.categoryGroups = res.data.result;
         }
@@ -175,15 +286,15 @@ export default {
         success(res) {
           let pH = res.windowHeight;
           let query = uni.createSelectorQuery().in(that);
-          query.select(".header").fields({ size: true });
-          query.select(".amount").fields({ size: true });
-          query.select(".key-board-container").fields({ size: true });
+          query.select("#edit-header").fields({ size: true });
+          query.select("#edit-amount").fields({ size: true });
+          query.select("#edit-key-board-container").fields({ size: true });
           query.exec((data) => {
             // console.log(data);
             data.map((i) => {
               that.scrollHeight += i.height;
             });
-            that.scrollHeight = pH - that.scrollHeight - 5; // 5 为amount margin
+            that.scrollHeight = pH - that.scrollHeight;
             // console.log(that.scrollHeight);
           });
         },
@@ -194,7 +305,7 @@ export default {
     scrollInputText() {
       uni
         .createSelectorQuery()
-        .select(".input-text")
+        .select("#input-amount-text")
         .boundingClientRect((res) => {
           // console.log(res);
           this.inputTextLeng = res.right;
@@ -204,37 +315,25 @@ export default {
 
     // 账单类型选择
     handlerTypeSelected(type) {
-      this.selectedType = type;
-      this.getCategoryGroups();
+      this.model.type = type.id;
+      this.model.categoryId = 0;
     },
 
     // 日期选择
     handlerDatePicker({ detail }) {
-      let date = new Date(detail.value);
-      this.selectedDate = date;
-      let year = date.getFullYear();
-      let month = date.getMonth() + 1;
-      let day = date.getDate();
-      if (
-        year == now.getFullYear() &&
-        month == now.getMonth() + 1 &&
-        day == now.getDate()
-      ) {
-        this.selectedDateText = "今日";
-      } else if (year == now.getFullYear()) {
-        this.selectedDateText = month + "月" + day + "日";
-      } else {
-        this.selectedDateText = year + "年" + month + "月" + day + "日";
-      }
+      // console.log(this.model.date);
+      this.date = detail.value;
+      this.model.date = detail.value;
     },
 
     // 时间选择
     handlerTimePicker({ detail }) {
-      this.selectedTime = detail.value;
+      this.model.time = detail.value;
     },
 
     // 弹出账户选择
     handlerChooseAsset() {
+      this.getAssetGroups();
       this.$refs.assetPopup.open();
     },
 
@@ -242,14 +341,91 @@ export default {
     handlerInputNum(e) {
       // console.log(e);
       this.input = e.input;
-      this.inputResult = e.result;
+      this.model.amount = e.result;
       this.scrollInputText();
       // console.log(this.$refs);
     },
 
     // 键盘确认
     handlerConfirmNum() {
-      console.log("cof ");
+      this.bill = {
+        id: this.model.id,
+        type: this.model.type,
+        amount: Number(this.model.amount),
+        categoryId: this.model.categoryId,
+        assetId: this.model.assetId,
+        description: this.model.description,
+        address: this.model.address,
+        time: `${this.date} ${this.model.time}`,
+      };
+
+      if (this.bill.amount === 0 || isNaN(this.bill.amount)) {
+        this.$tip.toast("金额不能为零");
+        return false;
+      }
+
+      if (this.bill.categoryId <= 0) {
+        this.$tip.toast("请选择分类");
+        return false;
+      }
+
+      if (this.bill.assetId <= 0) {
+        this.$tip.toast("请选择账户");
+        return false;
+      }
+
+      if (this.bill.id <= 0) {
+        this.$api.addBill(this.bill).then((res) => {
+          if (res.data.code === 0) {
+            this.$Router.back();
+          } else {
+            this.$tip.error(res.data.message);
+          }
+        });
+      } else {
+        this.$api.editBill(this.bill).then((res) => {
+          if (res.data.code === 0) {
+            this.$Router.back();
+          } else {
+            this.$tip.error(res.data.message);
+          }
+        });
+      }
+
+      console.log("cof ", this.bill);
+    },
+
+    // 选中账单分类
+    handlerSelectedCategory(item) {
+      this.model.categoryId = item.id;
+    },
+
+    // 选中账单账户
+    handlerSelectedAsset(item) {
+      this.model.assetId = item.id;
+      this.model.asset = item.name;
+      this.$refs.assetPopup.close();
+    },
+
+    // 位置信息获取开关切换
+    handlerSwitchChange() {
+      console.log("调用位置", this.locationStatus);
+      this.locationStatus = !this.locationStatus;
+      uni.setStorageSync(LOCATION_STATUS, this.locationStatus);
+      if (this.locationStatus) {
+        this.getLocation();
+      } else {
+        // 关闭获取地理位置
+        this.model.address = "";
+      }
+    },
+
+    // 获取定位地址
+    getLocation() {
+      Location.getLocation().then((res) => {
+        let rd = res.regeocodeData;
+        this.model.address = rd.formatted_address;
+      });
     },
 
     //#endregion
@@ -278,7 +454,7 @@ export default {
       border-radius: 30rpx;
     }
     .item-select {
-      color: $primary-text-color;
+      font-weight: bold;
       background: $bright-color;
     }
   }
@@ -299,6 +475,15 @@ export default {
   padding: 0 10px;
   margin-bottom: 5px;
   background-image: radial-gradient();
+  .amount-input {
+    display: flex;
+    align-items: flex-start;
+    align-items: baseline;
+  }
+  .char {
+    font-size: 20px;
+    font-weight: bold;
+  }
   .total {
     width: 100%;
     overflow: hidden;
@@ -316,7 +501,7 @@ export default {
     overflow-y: hidden;
     height: 22px;
     margin-bottom: 8px;
-    .input-text {
+    .input-amount-text {
       display: inline-block;
       flex-shrink: 0;
       position: relative;
@@ -339,18 +524,26 @@ export default {
   bottom: 0;
   left: 0;
   right: 0;
+  .location {
+    padding: 10px 10px 0 10px;
+    background: #fff;
+  }
   .key-board-header {
     padding: 10px 10px 0 10px;
     background: #fff;
     .choose-asset {
       margin-right: 20px;
-      .text {
-        display: -webkit-box; /*弹性伸缩盒子模型显示*/
-        -webkit-box-orient: vertical; /*排列方式*/
-        -webkit-line-clamp: 1; /*显示文本行数(这里控制多少行隐藏)*/
-        overflow: hidden; /*溢出隐藏*/
-      }
     }
+    .text {
+      color: $primary-color;
+      display: -webkit-box; /*弹性伸缩盒子模型显示*/
+      -webkit-box-orient: vertical; /*排列方式*/
+      -webkit-line-clamp: 1; /*显示文本行数(这里控制多少行隐藏)*/
+      overflow: hidden; /*溢出隐藏*/
+    }
+  }
+  .input-text {
+    width: 100%;
   }
 }
 .asset-popup {
@@ -363,7 +556,11 @@ export default {
 }
 
 .icon {
+  color: $primary-color;
   margin-right: 10px;
   font-size: 20px;
+}
+.icon-color {
+  color: $bright-color;
 }
 </style>

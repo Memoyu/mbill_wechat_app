@@ -85,11 +85,20 @@ export default {
       },
     };
   },
+  watch: {
+    pnum(value) {
+      value = value.toString();
+      if (
+        value !== "" &&
+        value !== "0" &&
+        value !== undefined &&
+        value !== null
+      )
+        this.infix.push(value);
+    },
+  },
   created() {
-    //自定义初始化值
-    let pnum = this.pnum;
-    if (pnum !== "" && pnum !== undefined && pnum !== null)
-      this.infix.push(pnum);
+    // console.log("punm", this.pnum);
   },
   methods: {
     // 输入
@@ -148,7 +157,7 @@ export default {
       var suffixRe = this.calcSuffix();
       this.$emit("input", {
         input: this.infix.join(" "),
-        result: suffixRe == undefined ? "" : suffixRe,
+        result: suffixRe == undefined ? "0" : suffixRe,
       });
       return suffixRe;
     },
@@ -161,7 +170,7 @@ export default {
       if (type === "del") {
         if (this.infix.length > 0) {
           tempVal = this.infix.pop();
-          console.log(tempVal);
+          // console.log(tempVal);
           tempVal = tempVal.substr(0, tempVal.length - 1);
           // 删除末尾一位数
           if (tempVal.length > 0) {
@@ -179,7 +188,7 @@ export default {
         }
         // 两个连续的数字
         else if (!this.isOp(val) && !this.isOp(last)) {
-          console.log(last);
+          // console.log(last);
           if (!this.isDecimalRange(last)) return this.infix;
           if (!this.isLengRange(last)) return this.infix;
           tempVal = last + val;
@@ -292,7 +301,7 @@ export default {
     // 是否在数值长度内
     isLengRange(val) {
       let fVal = Math.floor(Number(val));
-      console.log(fVal);
+      // console.log(fVal);
       return String(fVal).length < this.leng;
     },
 

@@ -32,7 +32,8 @@
 export default {
   data() {
     return {
-      amountClass: "expend",
+      id: 0,
+      amountClass: "expend-color",
       bill: {
         // id: 7,
         // type: 0,
@@ -49,11 +50,14 @@ export default {
     };
   },
   onLoad(option) {
-    console.log(option.id);
-    this.getBillDetail(option.id);
+    // console.log(option.id);
+    this.id = option.id;
   },
-  onShow() {},
+  onShow() {
+    this.getBillDetail(this.id);
+  },
   methods: {
+    // 获取账单详情
     getBillDetail(id) {
       this.$api
         .billDetail({
@@ -63,21 +67,14 @@ export default {
           if (res.data.code === 0) {
             let result = res.data.result;
             this.bill = result;
-
-            this.amountClass = this.getTypeClass(this.bill.type);
+            this.amountClass =
+              this.bill.type == 0 ? "expend-color" : "income-color";
           }
         });
     },
-    getTypeClass(type) {
-      switch (type) {
-        case 0:
-          return "expend";
-        case 1:
-          return "income";
-      }
-    },
     handlerEdit() {
-      console.log("编辑");
+      // console.log("编辑");
+      this.$Router.push({ name: "bill-edit", params: { id: this.bill.id } });
     },
     handlerDel() {
       console.log("删除");
@@ -165,12 +162,6 @@ export default {
       font-size: 30px;
       font-weight: bold;
       margin-bottom: 5px;
-    }
-    .expend {
-      color: $expend-color;
-    }
-    .income {
-      color: $income-color;
     }
     .detail-asset {
       color: $grey-text-color;

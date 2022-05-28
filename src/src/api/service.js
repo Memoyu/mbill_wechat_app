@@ -73,10 +73,16 @@ http.interceptors.response.use(async (response) => { /* 请求之后拦截器。
                 if (!isRefreshing) {
                     isRefreshing = true
                     return store.dispatch('RefreshToken').then((res) => {
-                        console.log("请求集合", requests);
-                        requests.forEach((cb) => cb(res.data.result.accessToken))
-                        requests = [] // 重新请求完清空
-                        return http.request(response.config);
+                        let result = res.data.result;
+                        console.log(result);
+                        if (result.success) {
+                            console.log("请求集合", requests);
+                            requests.forEach((cb) => cb(res.data.result.accessToken))
+                            requests = [] // 重新请求完清空
+                            return http.request(response.config);
+                        } else {
+                            store.dispatch('Logout');
+                        }
                     }).catch(error => {
                         store.dispatch('Logout');
                     }).finally(() => {
@@ -93,11 +99,7 @@ http.interceptors.response.use(async (response) => { /* 请求之后拦截器。
                 }
                 break
             default:
-                tip.error({
-                    duration: 0,
-                    forbidClick: true,
-                    message: data.message
-                });
+                tip.error(data.message);
                 break
         }
     }
