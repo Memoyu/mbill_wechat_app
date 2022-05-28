@@ -1,19 +1,20 @@
 <template>
   <view class="mbill-category-group">
-    <view v-for="(d, dind) in data" :key="dind">
-      <view class="category-group">{{ d.date }}</view>
+    <view v-for="(d, dind) in groups" :key="dind">
+      <view class="category-group">{{ d.name }}</view>
       <view class="category-item">
         <view
           class="item-content"
-          v-for="(item, index) in d.items"
+          v-for="(item, index) in d.childs"
           :key="index"
         >
-          <image class="image" :src="item.icon" />
+          <image class="image" :src="item.iconUrl" />
           <text class="text">{{ item.name }}</text>
         </view>
       </view>
     </view>
-    <view class="to-add-category" @tap="toAddCategory">添加分类</view>
+    <!-- TODO:完成分类的添加 -->
+    <view class="to-add-category" @tap="handlerAddCategory">添加分类</view>
   </view>
 </template>
 
@@ -21,130 +22,13 @@
 export default {
   name: "mbill-category-group",
   props: {
-    data: {
+    groups: {
       type: Array,
-      default: [
-        {
-          date: "伙食餐饮",
-          items: [
-            {
-              icon: "/static/assets/tea.png",
-              name: "奶茶",
-            },
-            {
-              icon: "/static/assets/tea.png",
-              name: "做饭食材",
-            },
-            {
-              icon: "/static/assets/tea.png",
-              name: "饮料",
-            },
-            {
-              icon: "/static/assets/tea.png",
-              name: "一日三餐",
-            },
-            {
-              icon: "/static/assets/tea.png",
-              name: "奶茶2",
-            },
-            {
-              icon: "/static/assets/tea.png",
-              name: "做饭食材2",
-            },
-            {
-              icon: "/static/assets/tea.png",
-              name: "饮料2",
-            },
-            {
-              icon: "/static/assets/tea.png",
-              name: "一日三餐2",
-            },
-          ],
-        },
-        {
-          date: "交通出行",
-          items: [
-            {
-              icon: "/static/assets/tea.png",
-              name: "高铁",
-            },
-            {
-              icon: "/static/assets/tea.png",
-              name: "出租车",
-            },
-            {
-              icon: "/static/assets/tea.png",
-              name: "地铁",
-            },
-            {
-              icon: "/static/assets/tea.png",
-              name: "公交",
-            },
-          ],
-        },
-        {
-          date: "医疗保障",
-          items: [
-            {
-              icon: "/static/assets/tea.png",
-              name: "药品",
-            },
-            {
-              icon: "/static/assets/tea.png",
-              name: "就诊",
-            },
-            {
-              icon: "/static/assets/tea.png",
-              name: "保险",
-            },
-            {
-              icon: "/static/assets/tea.png",
-              name: "检查",
-            },
-          ],
-        },
-        {
-          date: "伙食餐饮222",
-          items: [
-            {
-              icon: "/static/assets/tea.png",
-              name: "奶茶",
-            },
-            {
-              icon: "/static/assets/tea.png",
-              name: "做饭食材",
-            },
-            {
-              icon: "/static/assets/tea.png",
-              name: "饮料",
-            },
-            {
-              icon: "/static/assets/tea.png",
-              name: "一日三餐",
-            },
-            {
-              icon: "/static/assets/tea.png",
-              name: "奶茶2",
-            },
-            {
-              icon: "/static/assets/tea.png",
-              name: "做饭食材2",
-            },
-            {
-              icon: "/static/assets/tea.png",
-              name: "饮料2",
-            },
-            {
-              icon: "/static/assets/tea.png",
-              name: "一日三餐2",
-            },
-          ],
-        },
-      ],
+      default: [],
     },
   },
   methods: {
-    toAddCategory() {
+    handlerAddCategory() {
       uni.navigateTo({ url: "/pages/bill/category/edit" });
     },
   },
@@ -175,12 +59,15 @@ export default {
         width: 35px;
       }
       .text {
+        margin-top: 8px;
         color: $grey-black-text-color;
         font-size: 13px;
       }
     }
   }
   .to-add-category {
+    color: $dark-color;
+    font-weight: bold;
     margin-bottom: 15px;
     text-align: center;
   }

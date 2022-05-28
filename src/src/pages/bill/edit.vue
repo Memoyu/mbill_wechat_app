@@ -1,6 +1,7 @@
 <template>
   <view>
     <view class="container">
+      <!-- 账单类型、时间 -->
       <view class="header">
         <view class="type-content">
           <view
@@ -41,6 +42,8 @@
           </picker>
         </view>
       </view>
+
+      <!-- 输入金额 -->
       <view class="amount">
         <view class="x-start">
           <text class="large-font">￥</text>
@@ -57,6 +60,21 @@
         </view>
         <mb-b-end-split-line />
       </view>
+
+      <!-- 账单分类选择 -->
+      <view>
+        <scroll-view
+          class="category-groups"
+          :style="{
+            height: scrollHeight + 'px',
+          }"
+          scroll-y="true"
+        >
+          <mb-ca-group :groups="categoryGroups" />
+        </scroll-view>
+      </view>
+
+      <!-- 数字键盘 -->
       <view class="key-board-container">
         <view class="key-board-header x-start">
           <view class="x-ac choose-asset" @tap="handlerChooseAsset">
@@ -75,20 +93,12 @@
           @input="handlerInputNum"
         />
       </view>
-      <view>
-        <scroll-view
-          :style="{
-            height: scrollHeight + 'px',
-          }"
-          scroll-y="true"
-        >
-          <mb-ca-group />
-        </scroll-view>
-      </view>
-      <uni-popup ref="popupHi" type="bottom">
-        <view class="popup-box">
-          <scroll-view class="asset" scroll-y="true">
-            <mb-as-group />
+
+      <!-- 账单账户弹窗 -->
+      <uni-popup ref="assetPopup" type="bottom">
+        <view class="asset-popup">
+          <scroll-view class="asset-list" scroll-y="true">
+            <mb-as-group :groups="assetGroups" />
           </scroll-view>
         </view>
       </uni-popup>
@@ -97,12 +107,9 @@
 </template>
 
 <script>
-import mbillEndSplitLine from "../../components/base/mbill-end-split-line.vue";
-import MbillCategoryGroup from "../../components/category/mbill-category-group.vue";
 const now = new Date();
 
 export default {
-  components: { mbillEndSplitLine, MbillCategoryGroup },
   data() {
     return {
       selectedType: 0,
@@ -120,15 +127,47 @@ export default {
       input: "",
       inputResult: "",
       scrollHeight: 0,
-      assetList: [],
+      categoryGroups: [],
+      assetGroups: [],
     };
   },
   onLoad() {
-    this.dynamicHeight();
-    // console.log(now);
+    this.initData();
   },
   onShow() {},
+  onReady() {
+    this.dynamicHeight();
+  },
   methods: {
+    initData() {
+      this.getCategoryGroups();
+      this.getAssetGroups();
+    },
+
+    //#region 接口请求
+
+    // 获取账单分类
+    getCategoryGroups() {
+      this.$api.categoryGroups({ type: this.selectedType }).then((res) => {
+        if (res.data.code === 0) {
+          this.categoryGroups = res.data.result;
+        }
+      });
+    },
+
+    // 获取账单账户
+    getAssetGroups() {
+      this.$api.assetGroups().then((res) => {
+        if (res.data.code === 0) {
+          this.assetGroups = res.data.result;
+        }
+      });
+    },
+
+    //#endregion
+
+    //#region 组件初始化
+
     // 计算高度，动态调整scroll 高度
     dynamicHeight() {
       let that = this;
@@ -163,9 +202,13 @@ export default {
         .exec();
     },
 
+    // 账单类型选择
     handlerTypeSelected(type) {
       this.selectedType = type;
+      this.getCategoryGroups();
     },
+
+    // 日期选择
     handlerDatePicker({ detail }) {
       let date = new Date(detail.value);
       this.selectedDate = date;
@@ -185,12 +228,17 @@ export default {
       }
     },
 
+    // 时间选择
     handlerTimePicker({ detail }) {
       this.selectedTime = detail.value;
     },
+
+    // 弹出账户选择
     handlerChooseAsset() {
-      this.$refs.popupHi.open();
+      this.$refs.assetPopup.open();
     },
+
+    // 键盘输入
     handlerInputNum(e) {
       // console.log(e);
       this.input = e.input;
@@ -198,9 +246,13 @@ export default {
       this.scrollInputText();
       // console.log(this.$refs);
     },
+
+    // 键盘确认
     handlerConfirmNum() {
       console.log("cof ");
     },
+
+    //#endregion
   },
 };
 </script>
@@ -280,6 +332,9 @@ export default {
     }
   }
 }
+.category-groups {
+  padding: 10px 0;
+}
 
 .key-board-container {
   position: absolute;
@@ -300,10 +355,11 @@ export default {
     }
   }
 }
-.popup-box {
+.asset-popup {
   background-color: #fff;
   border-radius: 10rpx;
-  .asset {
+  .asset-list {
+    padding: 10px 0;
     height: 350px;
   }
 }

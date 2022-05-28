@@ -65,7 +65,7 @@
       @scrolltolower="lowerBottom"
     >
       <mb-bill-day-group :groups="groups" />
-      <mb-b-empty v-if="groups.length <= 0" />
+      <!-- <mb-b-empty v-if="groups.length <= 0" /> -->
     </scroll-view>
     <mb-bill-day-list-popup
       height="70"
@@ -78,7 +78,6 @@
 
 <script>
 import { router, tabbar } from "@/mixins";
-import { mapGetters } from "vuex";
 
 const now = new Date();
 export default {
@@ -171,11 +170,13 @@ export default {
   },
   onLoad() {
     this.getFixedHeight();
-    this.getDynamicHeight();
     this.initData();
   },
   onShow() {
     this.setTabBarIndex(0);
+  },
+  onReady() {
+    this.getDynamicHeight();
   },
   methods: {
     // 初始化数据
@@ -184,6 +185,16 @@ export default {
       this.getHasBillDays();
       this.initMonthBills();
     },
+
+    //#region 接口请求
+
+    // 初始化、切换月份重新加载账单
+    initMonthBills() {
+      this.billPage.page = 1;
+      this.groups = [];
+      this.getMonthBills();
+    },
+
     // 获取指定月份范围内的账单日期
     getHasBillDays() {
       let year = this.pickerDate.getFullYear();
@@ -217,13 +228,6 @@ export default {
         });
     },
 
-    // 初始化、切换月份重新加载账单
-    initMonthBills() {
-      this.billPage.page = 1;
-      this.groups = [];
-      this.getMonthBills();
-    },
-
     // 获取账单分页数据，组装数据
     getMonthBills() {
       this.loading = true;
@@ -255,16 +259,11 @@ export default {
         });
     },
 
-    // scroll触底事件
-    lowerBottom() {
-      // console.log("触底加载");
-      if (this.billPage.page * this.billPage.size >= this.billTotal) return;
-      this.billPage.page += 1;
-      this.getMonthBills();
-    },
+    //#endregion
 
     //#region 组件初始化
 
+    // 获取固定高度值
     getFixedHeight() {
       let that = this;
       uni.getSystemInfo({
@@ -274,6 +273,7 @@ export default {
       });
     },
 
+    // 动态计算scroll view 高度
     getDynamicHeight(h) {
       if (h) {
         // 10 为日历原本有上下为5的边距
@@ -294,24 +294,39 @@ export default {
       query.exec((data) => {
         // console.log(data);
         let elHeight = data[0].height;
-        // console.log(this.pH, this.tabbarHeight, elHeight);
+        /*console.log(
+          "参数",
+          this.pH,
+          this.tabbarHeight,
+          elHeight,
+          this.expandHeight
+        );*/
         this.scrollHeight =
           this.pH - this.tabbarHeight - elHeight - this.expandHeight;
         this.scrollMaxHeight = this.scrollHeight;
         // 30 为时间时间选择栏的上下为15的边距
         this.dateTitleHeight = data[1].height + 30;
-        // console.log(this.scrollMaxHeight);
+        // console.log("初始化高度", this.scrollMaxHeight);
         // console.log(this.dateTitleHeight);
       });
     },
 
+    // 日历月份变更
     handlerMonthChange(date) {
-      console.log("date", date);
+      // console.log("date", date);
       this.pickerDateText = date;
       this.pickerDate = new Date(date.year, date.month);
       this.initData();
     },
 
+    // 选中具体日期时弹窗展示账单
+    handlerDayChange(e) {
+      // console.log("选中日期：", e);
+      this.popDate = e;
+      this.popShow = true;
+    },
+
+    // 选择日期
     handlerPickerChange({ detail }) {
       let d = new Date(detail.value);
       this.calendarDate = {
@@ -322,19 +337,20 @@ export default {
       this.pickerDateText = this.calendarDate;
       this.initData();
     },
+
+    // 弹窗状态改变触发
     handlerBillsOnDayPopup(e) {
       this.setTabBarShow(!e.show);
       this.popShow = e.show;
     },
-    handlerDayChange(e) {
-      console.log("选中日期：", e);
-      this.popDate = e;
-      this.popShow = true;
-    },
+
+    // 日历size发生变更
     handlerSizeChange(h) {
-      // console.log(h);
+      // console.log("日历尺寸", h);
       this.getDynamicHeight(h);
     },
+
+    // 展开、收缩scroll-view
     handlerExpandView() {
       let minHeight = this.dateTitleHeight;
       // console.log(minHeight);
@@ -346,6 +362,14 @@ export default {
         this.scrollHeight = this.scrollMaxHeight;
         this.expand = true;
       }
+    },
+
+    // scroll触底事件
+    lowerBottom() {
+      // console.log("触底加载");
+      if (this.billPage.page * this.billPage.size >= this.billTotal) return;
+      this.billPage.page += 1;
+      this.getMonthBills();
     },
     //#endregion
   },

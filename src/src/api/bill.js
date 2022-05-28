@@ -1,6 +1,7 @@
 import { http } from './service.js'
 
 const bill = {
+    //#region   账单信息
 
     // 获取账单详情
     billDetail(params) {
@@ -26,6 +27,26 @@ const bill = {
     dayBills(params) {
         return http.get('bill/day', { params: params })
     },
+
+    //#endregion
+
+    //#region 账单分类
+
+    // 获取分组后的账单分类
+    categoryGroups(params) {
+        return http.get('category/groups', { params: params })
+    },
+
+    //#endregion
+
+    //#region 账单账户
+
+    // 获取分组后的账单账户
+    assetGroups(params) {
+        return http.get('asset/groups', { params: params })
+    },
+
+    //#endregion
 }
 
 export default bill;
