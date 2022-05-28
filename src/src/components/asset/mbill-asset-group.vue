@@ -4,9 +4,13 @@
       <view class="asset-group">{{ d.name }}</view>
       <view class="asset-item">
         <view
-          class="item-content"
+          :class="[
+            'item-content',
+            selectedId === item.id ? 'asset-item-selected' : '',
+          ]"
           v-for="(item, index) in d.childs"
           :key="index"
+          @click="handlerSelectedItem(item)"
         >
           <image class="image" :src="item.iconUrl" />
           <text class="text">{{ item.name }}</text>
@@ -27,9 +31,17 @@ export default {
       default: [],
     },
   },
+  data() {
+    return {
+      selectedId: 0,
+    };
+  },
   methods: {
+    handlerSelectedItem(item) {
+      this.selectedId = item.id;
+    },
     handlerAddAsset() {
-      uni.navigateTo({ url: "/pages/bill/asset/edit" });
+      this.$Router.push({ name: "asset-edit" });
     },
   },
 };
@@ -44,16 +56,16 @@ export default {
     margin-bottom: 5px;
   }
   .asset-item {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    align-content: flex-start;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 60px);
+    grid-gap: 10px;
+    justify-content: center;
     .item-content {
-      width: 20%;
-      margin-bottom: 15px;
       display: flex;
+      padding: 5px 0;
       flex-direction: column;
       align-items: center;
+      border-radius: 10px;
       .image {
         height: 35px;
         width: 35px;
@@ -64,6 +76,9 @@ export default {
         font-size: 13px;
       }
     }
+  }
+  .asset-item-selected {
+    background-color: $light-color;
   }
   .to-add-asset {
     color: $dark-color;

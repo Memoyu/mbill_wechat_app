@@ -4,9 +4,13 @@
       <view class="category-group">{{ d.name }}</view>
       <view class="category-item">
         <view
-          class="item-content"
+          :class="[
+            'item-content',
+            selectedId === item.id ? 'category-item-selected' : '',
+          ]"
           v-for="(item, index) in d.childs"
           :key="index"
+          @click="handlerSelectedItem(item)"
         >
           <image class="image" :src="item.iconUrl" />
           <text class="text">{{ item.name }}</text>
@@ -27,9 +31,19 @@ export default {
       default: [],
     },
   },
+  data() {
+    return {
+      selectedId: 0,
+    };
+  },
   methods: {
+    handlerSelectedItem(item) {
+      this.selectedId = item.id;
+    },
+
+    // 跳转新增分类页面
     handlerAddCategory() {
-      uni.navigateTo({ url: "/pages/bill/category/edit" });
+      this.$Router.push({ name: "category-edit" });
     },
   },
 };
@@ -40,30 +54,30 @@ export default {
   margin: 0 10px;
   .category-group {
     font-weight: bold;
-    margin-top: 10px;
-    margin-bottom: 5px;
+    margin-top: 15px;
   }
   .category-item {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    align-content: flex-start;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 70px);
+    justify-content: center;
     .item-content {
-      width: 20%;
-      margin-bottom: 15px;
       display: flex;
       flex-direction: column;
       align-items: center;
+      border-radius: 10px;
+      padding: 7px 0;
       .image {
         height: 35px;
         width: 35px;
       }
       .text {
-        margin-top: 8px;
         color: $grey-black-text-color;
         font-size: 13px;
       }
     }
+  }
+  .category-item-selected {
+    background-color: $light-color;
   }
   .to-add-category {
     color: $dark-color;

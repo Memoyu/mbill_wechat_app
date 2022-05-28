@@ -183,7 +183,7 @@ export default {
             data.map((i) => {
               that.scrollHeight += i.height;
             });
-            that.scrollHeight = pH - that.scrollHeight;
+            that.scrollHeight = pH - that.scrollHeight - 5; // 5 为amount margin
             // console.log(that.scrollHeight);
           });
         },
@@ -297,6 +297,7 @@ export default {
 .amount {
   background: $light-color;
   padding: 0 10px;
+  margin-bottom: 5px;
   background-image: radial-gradient();
   .total {
     width: 100%;
@@ -331,9 +332,6 @@ export default {
       background: transparent;
     }
   }
-}
-.category-groups {
-  padding: 10px 0;
 }
 
 .key-board-container {
