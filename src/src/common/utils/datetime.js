@@ -1,3 +1,5 @@
+const weeks = ["周日", "周一", "周二", "周三", "周四", "周五", "周六"];
+
 function getCurDate(date) {
     var myDate = new Date()
     if (date !== null && date !== undefined) {
@@ -108,6 +110,15 @@ function getPrevMonth(date) {
     return { year, month }
 }
 
+function getCurWeek(date) {
+    var myDate = new Date()
+    if (date !== null && date !== undefined) {
+        myDate = date
+    }
+    var l = myDate.getDay();
+    return weeks[l];
+}
+
 module.exports = {
     getCurDateTime,
     getCurDate,
@@ -118,4 +129,5 @@ module.exports = {
     getCurTime,
     getNextMonth,
     getPrevMonth,
+    getCurWeek,
 }

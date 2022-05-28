@@ -144,6 +144,12 @@
 <script>
 import Location from "@/common/utils/location";
 import { LOCATION_STATUS } from "@/common/utils/constants";
+import datetime from "@/common/utils/datetime";
+import {
+  ADD_INDEX_BILL,
+  MODIFY_INDEX_BILL,
+  DEL_INDEX_BILL,
+} from "@/store/type";
 
 const now = new Date();
 export default {
@@ -170,14 +176,14 @@ export default {
         amount: "0",
         time: `${now.getHours()}:${now.getMinutes()}`,
       },
-      date: now.toLocaleDateString(),
+      date: datetime.getCurDate(),
       initAmount: "0",
       typeColor: "",
       typeList: [
         { id: 0, title: "支出", color: "expend-color" },
         { id: 1, title: "收入", color: "income-color" },
       ],
-      pickerEnd: now.toLocaleDateString(),
+      pickerEnd: datetime.getCurDate(),
       selectedDateText: "今日",
       inputTextLeng: 0,
       input: "",
@@ -377,6 +383,9 @@ export default {
       if (this.bill.id <= 0) {
         this.$api.addBill(this.bill).then((res) => {
           if (res.data.code === 0) {
+            let bill = res.data.result;
+            console.log("添加成功", { bill, date: this.bill.time });
+            this.$store.commit(ADD_INDEX_BILL, { bill, date: this.bill.time });
             this.$Router.back();
           } else {
             this.$tip.error(res.data.message);

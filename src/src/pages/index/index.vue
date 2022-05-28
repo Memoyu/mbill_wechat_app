@@ -24,11 +24,11 @@
         <view class="statement">
           <view class="statement-text">
             <text class="text">总收入</text>
-            <text class="total">￥{{ monthTotal.income }}</text>
+            <text class="total">￥{{ indexStat.income }}</text>
           </view>
           <view class="statement-text">
             <text class="text">总支出</text>
-            <text class="total">￥{{ monthTotal.expend }}</text>
+            <text class="total">￥{{ indexStat.expend }}</text>
           </view>
         </view>
       </view>
@@ -36,7 +36,7 @@
         <mb-b-calendar
           ref="calendar"
           :expand="expand"
-          :tags="tags"
+          :tags="indexTags"
           :date="calendarDate"
           @change="handlerDayChange"
           @changemonth="handlerMonthChange"
@@ -64,7 +64,7 @@
       scroll-y="true"
       @scrolltolower="lowerBottom"
     >
-      <mb-bill-day-group :groups="groups" />
+      <mb-bill-day-group :groups="indexBills" />
       <!-- <mb-b-empty v-if="groups.length <= 0" /> -->
     </scroll-view>
     <mb-bill-day-list-popup
@@ -77,6 +77,7 @@
 </template>
 
 <script>
+import { mapActions, mapState } from "vuex";
 import { router, tabbar } from "@/mixins";
 import datetime from "@/common/utils/datetime";
 
@@ -94,69 +95,12 @@ export default {
         year: now.getFullYear(),
         month: now.getMonth() + 1,
       },
-      expand: true,
-      monthTotal: {
-        income: "0.0",
-        expend: "0.0",
-      },
-      tags: [
-        /*{
-          year: 2022,
-          month: 4,
-          day: 3,
-        },
-        {
-          year: 2022,
-          month: 4,
-          day: 4,
-        },
-        {
-          year: 2022,
-          month: 4,
-          day: 5,
-        },
-        {
-          year: 2022,
-          month: 4,
-          day: 6,
-        },
-        {
-          year: 2022,
-          month: 4,
-          day: 8,
-        },
-        {
-          year: 2022,
-          month: 4,
-          day: 10,
-        },
-        {
-          year: 2022,
-          month: 5,
-          day: 5,
-        },
-        {
-          year: 2022,
-          month: 5,
-          day: 6,
-        },
-        {
-          year: 2022,
-          month: 5,
-          day: 8,
-        },
-        {
-          year: 2022,
-          month: 5,
-          day: 10,
-        },*/
-      ],
-      billPage: {
+      indexPage: {
         page: 1,
         size: 15,
       },
-      billTotal: 0,
-      groups: [],
+      indexTotal: 0,
+      expand: true,
       loading: false,
       popShow: false,
       popDate: {},
@@ -169,95 +113,49 @@ export default {
       state: 1,
     };
   },
+  computed: {
+    ...mapState({
+      indexStat: (state) => state.bill.indexStat,
+      indexTags: (state) => state.bill.indexTags,
+      indexBills: (state) => state.bill.indexBills,
+    }),
+  },
   onLoad() {
     this.getFixedHeight();
+    this.initData();
   },
   onShow() {
     this.setTabBarIndex(0);
-    this.initData();
   },
   onReady() {
     this.getDynamicHeight();
   },
   methods: {
+    ...mapActions(["getIndexTotalStat", "getIndexBillTags", "getIndexBills"]),
     // 初始化数据
     initData() {
-      this.getMonthTotalStat();
-      this.getHasBillDays();
-      this.initMonthBills();
+      this.getIndexTotalStat(this.pickerDate);
+      this.getIndexBillTags(this.pickerDate);
+      this.indexPage.page = 1;
+      this.getMonthBills(true);
     },
 
     //#region 接口请求
 
     // 初始化、切换月份重新加载账单
-    initMonthBills() {
-      this.billPage.page = 1;
-      this.groups = [];
-      this.getMonthBills();
-    },
-
-    // 获取指定月份范围内的账单日期
-    getHasBillDays() {
-      // 会涉及跨年，需要处理
-      let date = new Date(this.pickerDate);
-      let prev = datetime.getPrevMonth(date);
-      let next = datetime.getNextMonth(date);
-      // console.log(prev, next);
-      this.$api
-        .hasBillDays({
-          beginDate: `${prev.year}-${prev.month}`,
-          endDate: `${next.year}-${next.month}`,
-        })
-        .then((res) => {
-          // console.log(res);
-          if (res.data.code === 0) {
-            this.tags = res.data.result;
-          }
-        });
-    },
-
-    // 获取指定月份账单总金额
-    getMonthTotalStat() {
-      // console.log("Total", this.pickerDate);
-      this.$api
-        .monthTotalStat({
-          month: datetime.getCurDate(new Date(this.pickerDate)),
-        })
-        .then((res) => {
-          if (res.data.code === 0) {
-            this.monthTotal = res.data.result;
-          }
-        });
-    },
-
-    // 获取账单分页数据，组装数据
-    getMonthBills() {
+    getMonthBills(init = false) {
+      if (this.loading) return;
       this.loading = true;
-      this.$api
-        .monthBills({
-          month: datetime.getCurDate(new Date(this.pickerDate)),
-          ...this.billPage,
-        })
+      this.getIndexBills({
+        date: this.pickerDate,
+        page: this.indexPage,
+        isInit: init,
+      })
         .then((res) => {
-          if (res.data.code === 0) {
-            this.billTotal = res.data.result.total;
-            let items = res.data.result.items;
-            if (this.groups.length > 0) {
-              this.groups.forEach((g) => {
-                items.forEach((item, i) => {
-                  if (item.day == g.day) {
-                    g.items = g.items.concat(item.items);
-                    items.splice(i, 1);
-                  }
-                });
-              });
-              console.log(items);
-              this.groups = this.groups.concat(items);
-            } else {
-              this.groups = items;
-            }
-            this.loading = false;
-          }
+          this.indexTotal = res;
+        })
+        .finally(() => {
+          this.loading = false;
         });
     },
 
@@ -368,9 +266,10 @@ export default {
 
     // scroll触底事件
     lowerBottom() {
-      // console.log("触底加载");
-      if (this.billPage.page * this.billPage.size >= this.billTotal) return;
-      this.billPage.page += 1;
+      console.log("触底加载");
+      if (this.indexPage.page * this.indexPage.size >= this.indexTotal) return;
+      console.log("加载");
+      this.indexPage.page += 1;
       this.getMonthBills();
     },
     //#endregion
