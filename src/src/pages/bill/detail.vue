@@ -29,6 +29,8 @@
 </template>
 
 <script>
+import { DEL_INDEX_BILL } from "@/store/type";
+
 export default {
   data() {
     return {
@@ -54,14 +56,14 @@ export default {
     this.id = option.id;
   },
   onShow() {
-    this.getBillDetail(this.id);
+    this.getBillDetail();
   },
   methods: {
     // 获取账单详情
-    getBillDetail(id) {
+    getBillDetail() {
       this.$api
         .billDetail({
-          id: id,
+          id: this.id,
         })
         .then((res) => {
           if (res.data.code === 0) {
@@ -77,7 +79,23 @@ export default {
       this.$Router.push({ name: "bill-edit", params: { id: this.bill.id } });
     },
     handlerDel() {
-      console.log("删除");
+      // console.log("删除");
+      let pages = getCurrentPages(); //当前页
+      let beforePage = pages[pages.length - 2];
+      // console.log(beforePage);
+      let that = this;
+      this.$tip.choose("是否删除该条账单？", {}, "提示").then(async () => {
+        that.$api.delBill(this.id).then((res) => {
+          if (res.data.code === 0) {
+            // 如果是首页，进行数据处理
+            if (beforePage.route === "pages/index/index") {
+              // console.log("处理数据");
+              this.$store.commit(DEL_INDEX_BILL, this.id);
+            }
+            this.$Router.back();
+          }
+        });
+      });
     },
   },
 };

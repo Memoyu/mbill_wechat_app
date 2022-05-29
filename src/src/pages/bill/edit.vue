@@ -145,11 +145,7 @@
 import Location from "@/common/utils/location";
 import { LOCATION_STATUS } from "@/common/utils/constants";
 import datetime from "@/common/utils/datetime";
-import {
-  ADD_INDEX_BILL,
-  MODIFY_INDEX_BILL,
-  DEL_INDEX_BILL,
-} from "@/store/type";
+import { ADD_INDEX_BILL, MODIFY_INDEX_BILL } from "@/store/type";
 
 const now = new Date();
 export default {

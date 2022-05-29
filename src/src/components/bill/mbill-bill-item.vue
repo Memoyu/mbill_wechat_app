@@ -12,7 +12,9 @@
         </view>
       </view>
       <view class="content-amount">
-        <text :class="[getTypeClass(bill.type)]"> {{ bill.amount }} </text>
+        <text :class="[getTypeClass(bill.type)]">
+          {{ bill.amountFormat }}
+        </text>
       </view>
     </view>
   </view>

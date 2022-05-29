@@ -8,10 +8,17 @@ const bill = {
         return http.post('bill', params)
     },
 
+    // 删除账单详情
+    delBill(params) {
+        return http.delete('bill', params)
+    },
+
     // 获取账单详情
     editBill(params) {
         return http.put('bill', params)
     },
+
+
 
     // 获取账单详情
     billDetail(params) {
