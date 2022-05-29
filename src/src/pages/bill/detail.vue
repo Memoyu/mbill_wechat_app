@@ -40,9 +40,9 @@ export default {
         // id: 7,
         // type: 0,
         // category: "奶茶",
-        // asset: "微信支付",
+        // asset: "账户",
         // categoryIcon: "/static/assets/tea.png",
-        // amountFormat: 33.2,
+        amountFormat: "0.0",
         // description: "这是备注来着",
         // time: "2022/05/08 13:30",
         // timeFormat: "星期日 2022/05/08 13:30",
@@ -72,6 +72,9 @@ export default {
             this.amountClass =
               this.bill.type == 0 ? "expend-color" : "income-color";
           }
+        })
+        .catch((err) => {
+          this.$tip.error("请求错误！");
         });
     },
     handlerEdit() {

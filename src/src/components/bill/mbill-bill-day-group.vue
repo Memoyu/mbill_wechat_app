@@ -18,7 +18,7 @@ export default {
   name: "mbill-bill-date-group",
   props: {
     groups: {
-      type: Array,
+      optionalTypes: Array,
       default: [
         /*{
           date: "1日 周六",

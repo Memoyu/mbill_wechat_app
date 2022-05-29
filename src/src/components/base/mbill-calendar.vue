@@ -65,7 +65,7 @@ export default {
       default: true,
     },
     tags: {
-      type: Array,
+      optionalTypes: Array,
       default: [],
     },
     date: {
