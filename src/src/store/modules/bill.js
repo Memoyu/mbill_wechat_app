@@ -141,7 +141,7 @@ const mutations = {
             });
         }
     },
-    [MODIFY_INDEX_BILL]: (state, bill) => {
+    [MODIFY_INDEX_BILL]: (state, { bill, date }) => {
 
     },
     [DEL_INDEX_BILL]: (state, id) => {
@@ -191,7 +191,6 @@ const mutations = {
                         }
                     } catch (e) {
                     };
-
                     throw new Error("Ok"); // 跳出循环
                 }
             }
@@ -201,7 +200,10 @@ const mutations = {
 }
 
 const actions = {
-    // 获取指定月份账单总金额
+
+    //#region  首页
+
+    // 获取首页指定月份账单总金额
     getIndexTotalStat({ commit }, params) {
         // console.log("Total", params);
         api.monthTotalStat({
@@ -213,7 +215,7 @@ const actions = {
         });
     },
 
-    // 获取指定月份范围内的账单日期
+    // 获取首页指定月份范围内的账单日期
     getIndexBillTags({ commit }, params) {
         // 会涉及跨年，需要处理
         let date = new Date(params);
@@ -231,7 +233,7 @@ const actions = {
         });
     },
 
-    // 获取账单分页数据，组装数据
+    // 获取首页账单分页数据，组装数据
     getIndexBills({ commit }, { date, page, isInit }) {
         return new Promise((resolve, reject) => {
             // console.log("init", isInit);
@@ -258,6 +260,77 @@ const actions = {
             });
         });
     },
+
+    // 修改首页账单项
+    modifyIndexBill({ commit }, { bill, date }) {
+        // console.log("store edit", bill);
+        // 更改后会影响首页的字段：日期、时间、金额、账单类型
+        let year = datetime.getCurYear(new Date(date));
+        let month = datetime.getCurMonth(new Date(date));
+        let day = datetime.getCurDay(new Date(date));
+        // console.log("store mut", year, month, day, state.indexCurMonth);
+        if (year == state.indexCurMonth.year && month === state.indexCurMonth.month) { // 年份、月份不变的情况下直接处理
+            try {
+                state.indexBills.forEach((g) => {
+                    g.items.forEach((item, i) => {
+                        // 找到元素
+                        if (item.id === bill.id) {
+
+                            g.items[i] = bill; // 覆盖源数据，此时item是不受影响的
+                            // 如果时间不一致，排一下序就行
+                            if (g.items[i].time != item.time) {
+                                console.log("进行排序", g.items);
+                                g.items = g.items.sort((d1, d2) => {
+                                    return new Date(`2000-09-25 ${d1.time}`) < new Date(`2000-09-25 ${d2.time}`) ? 1 : -1
+                                });
+                            }
+
+                            // 如果金额、账单类型不相等，进行统计调整
+                            if (g.items[i].amount != item.amount || g.items[i].type != item.type) {
+                                let op = item.amount < g.items[i].amount ? 0 : 1; // 源数据 小于 改后数据，则统计需要增加，否则减少
+                                let diff = Math.abs(item.amount - g.items[i].amount);
+                                // 确定当前账单类型，没改变类型则只需要更改对应类型的统计
+                                if (g.items[i].type == item.type) {
+                                    if (g.items[i].type == 0) { // 支出
+                                        state.indexStat.expend = calcTotalStat(state.indexStat.expend, diff, op)
+                                    } else if (g.items[i].type == 1) { // 收入
+                                        state.indexStat.income = calcTotalStat(state.indexStat.income, diff, op)
+                                    }
+                                } else {
+                                    if (g.items[i].type == 0) { // 收入 -> 支出
+                                        // 支出直接加上改后的金额
+                                        state.indexStat.expend = calcTotalStat(state.indexStat.expend, g.items[i].amount, 0)
+                                        // 收入直接减去原本的金额
+                                        state.indexStat.income = calcTotalStat(state.indexStat.income, item.amount, 1)
+                                    } else if (g.items[i].type == 1) { // 支出 -> 收入
+                                        // 支出直接减去原本的金额
+                                        state.indexStat.expend = calcTotalStat(state.indexStat.expend, item.amount, 1)
+                                        // 收入直接加上改后的金额
+                                        state.indexStat.income = calcTotalStat(state.indexStat.income, g.items[i].amount, 0)
+                                    }
+                                }
+                            }
+
+
+                            // 如果更改日期（具体几号），先移除，在添加  (整体操作必须在最后做)
+                            if (day != g.day) {
+                                commit(DEL_INDEX_BILL, bill.id);
+                                commit(ADD_INDEX_BILL, { bill, date });
+                            }
+
+
+                            throw new Error("Ok"); // 跳出循环
+                        }
+                    });
+                });
+            } catch (e) {
+            };
+        } else { // 变更年份、月份则需要删除
+            commit(DEL_INDEX_BILL, bill.id);
+        }
+    }
+
+    //#endregion
 }
 
 //#region 公共处理

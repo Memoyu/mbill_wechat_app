@@ -21,7 +21,7 @@
             mode="date"
             @change="handlerDatePicker"
             fields="day"
-            :value="model.date"
+            :value="date"
             :end="pickerEnd"
           >
             <view class="x-ac date">
@@ -142,6 +142,7 @@
 </template>
 
 <script>
+import { mapActions } from "vuex";
 import Location from "@/common/utils/location";
 import { LOCATION_STATUS } from "@/common/utils/constants";
 import datetime from "@/common/utils/datetime";
@@ -233,6 +234,7 @@ export default {
   },
 
   methods: {
+    ...mapActions(["modifyIndexBill"]),
     // 初始化数据
     initData() {
       this.typeColor = this.typeList[0].color;
@@ -253,7 +255,7 @@ export default {
             this.model = result;
             this.initAmount = result.amount;
             let dateTime = new Date(result.time);
-            this.date = dateTime.toLocaleDateString();
+            this.date = datetime.getCurDate(dateTime);
             this.model.time = `${dateTime.getHours()}:${dateTime.getMinutes()}`;
           }
         });
@@ -380,7 +382,7 @@ export default {
         this.$api.addBill(this.bill).then((res) => {
           if (res.data.code === 0) {
             let bill = res.data.result;
-            console.log("添加成功", { bill, date: this.bill.time });
+            // console.log("添加成功", { bill, date: this.bill.time });
             this.$store.commit(ADD_INDEX_BILL, { bill, date: this.bill.time });
             this.$Router.back();
           } else {
@@ -390,6 +392,12 @@ export default {
       } else {
         this.$api.editBill(this.bill).then((res) => {
           if (res.data.code === 0) {
+            let bill = res.data.result;
+            console.log("编辑成功", { bill, date: this.bill.time });
+            this.modifyIndexBill({
+              bill,
+              date: this.bill.time,
+            });
             this.$Router.back();
           } else {
             this.$tip.error(res.data.message);
