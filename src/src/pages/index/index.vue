@@ -65,7 +65,7 @@
       @scrolltolower="lowerBottom"
     >
       <mb-bill-day-group :groups="indexBills" />
-      <!-- <mb-b-empty v-if="groups.length <= 0" /> -->
+      <mb-b-empty v-if="indexBills.length <= 0" />
     </scroll-view>
     <mb-bill-day-list-popup
       height="70"
@@ -266,9 +266,9 @@ export default {
 
     // scroll触底事件
     lowerBottom() {
-      console.log("触底加载");
+      // console.log("触底加载");
       if (this.indexPage.page * this.indexPage.size >= this.indexTotal) return;
-      console.log("加载");
+      // console.log("加载");
       this.indexPage.page += 1;
       this.getMonthBills();
     },
