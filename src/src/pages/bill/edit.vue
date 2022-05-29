@@ -94,6 +94,7 @@
               !locationStatus ? 'icon-color' : '',
             ]"
             @click="handlerSwitchChange"
+            @longtap="handlerSwitchLongtap"
           />
           <input
             type="text"
@@ -420,24 +421,34 @@ export default {
       this.$refs.assetPopup.close();
     },
 
-    // 位置信息获取开关切换
+    // 位置信息获取开关切换(点击获取)
     handlerSwitchChange() {
-      console.log("调用位置", this.locationStatus);
+      // console.log("获取位置", this.locationStatus);
+      if (this.locationStatus) {
+        this.getLocation();
+      }
+    },
+
+    // 位置信息获取开关切换(长按开关)
+    handlerSwitchLongtap() {
+      // console.log("长按");
       this.locationStatus = !this.locationStatus;
       uni.setStorageSync(LOCATION_STATUS, this.locationStatus);
       if (this.locationStatus) {
         this.getLocation();
+        this.$tip.toast("自动获取地址信息已开启");
       } else {
         // 关闭获取地理位置
-        this.model.address = "";
+        // this.model.address = "";
+        this.$tip.toast("自动获取地址信息已关闭");
       }
     },
 
     // 获取定位地址
     getLocation() {
       Location.getLocation().then((res) => {
-        let rd = res.regeocodeData;
-        this.model.address = rd.formatted_address;
+        console.log("位置信息", res);
+        this.model.address = res.address;
       });
     },
 
