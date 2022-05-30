@@ -18,11 +18,9 @@ const bill = {
         return http.put('bill', params)
     },
 
-
-
     // 获取账单详情
     billDetail(params) {
-        return http.get('bill/detail', { params: params })
+        return http.get('bill', { params: params })
     },
 
     // 获取指定月份账单总金额
