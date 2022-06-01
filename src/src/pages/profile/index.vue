@@ -21,15 +21,18 @@
       </view>
       <view class="profile-asset">
         <view class="le le-shadow le-3" />
-        <view class="le le-shadow le-2" />
-        <view class="le le-shadow le-1 x-c">
+        <view class="le le-shadow le-2">
+          <view class="preview-stats-refresh x-ac">
+            <i
+              class="iconfont icon-shuaxin icon"
+              @click="getProfileTotalStat"
+            />
+          </view>
+        </view>
+        <view class="le le-shadow le-1">
           <view class="preview-stats x-bc">
-            <view
-              class="stats-item"
-              v-for="(item, index) in preStats"
-              :key="index"
-            >
-              <view class="stats-amount">{{ item.amount }}</view>
+            <view class="stats-item" v-for="(item, index) in rows" :key="index">
+              <view class="stats-amount">{{ profileStat[item.index] }}</view>
               <view class="stats-title">{{ item.title }}</view>
             </view>
           </view>
@@ -78,6 +81,7 @@
 </template>
 
 <script>
+import { mapActions, mapState } from "vuex";
 import { tabbar } from "@/mixins";
 
 export default {
@@ -85,22 +89,17 @@ export default {
   data() {
     return {
       defaultAvatar: "/static/assets/avatar.png",
-      // user: {
-      //   avatar: "/static/assets/avatar.png",
-      //   name: "Memoyu",
-      //   days: 360,
-      // },
-      preStats: [
+      rows: [
         {
-          amount: "1345.00",
-          title: "存入金额/元",
+          index: "income",
+          title: "收入金额/元",
         },
         {
-          amount: "1002.00",
+          index: "preOrder",
           title: "预购金额/元",
         },
         {
-          amount: "13245.00",
+          index: "expend",
           title: "支出金额/元",
         },
       ],
@@ -142,16 +141,19 @@ export default {
     };
   },
   computed: {
-    user() {
-      console.log(this.$store);
-      return this.$store.getters.user;
-    },
+    ...mapState({
+      user: (state) => state.account.user,
+      profileStat: (state) => state.bill.profileStat,
+    }),
   },
   onShow() {
     this.setTabBarIndex(1);
   },
-  onLoad() {},
+  onLoad() {
+    this.getProfileTotalStat();
+  },
   methods: {
+    ...mapActions(["getProfileTotalStat"]),
     handlerNavigateTo(path) {
       console.log("yonghu ", this.user);
       console.log(path);
@@ -228,8 +230,7 @@ export default {
       width: 90%;
       background: $dark-color;
       .preview-stats {
-        width: 100%;
-        margin: 20px;
+        margin: 35px 20px;
         .stats-item {
           text-align: center;
           .stats-amount {
@@ -248,6 +249,15 @@ export default {
       top: 15px;
       width: 85%;
       background: $primary-color;
+      .preview-stats-refresh {
+        margin-top: -6px;
+        color: white;
+        .icon {
+          font-size: 20px;
+          width: 30px;
+          text-align: center;
+        }
+      }
     }
     .le-3 {
       width: 80%;

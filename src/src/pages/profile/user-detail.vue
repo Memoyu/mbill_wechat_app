@@ -1,6 +1,28 @@
 <template>
   <view class="b-container">
-    <button type="primary" @tap="handlerLogout">注销</button>
+    <image class="image" mode="widthFix" :src="user.avatarUrl" />
+    <view class="user-cells">
+      <view class="cells">
+        <view
+          class="cell-item"
+          @tap="handlerNavigateTo(item.path)"
+          v-for="(item, index) in cells"
+          :key="index"
+        >
+          <view class="cell-item-content">
+            <view class="item-content x-bc">
+              <text>{{ item.title }}</text>
+              <view class="item-content-text">
+                <text class="text">{{ user[item.index] }}</text>
+                <i class="iconfont icon-to right-icon" />
+              </view>
+            </view>
+            <view class="bottom-line" />
+          </view>
+        </view>
+      </view>
+    </view>
+    <view class="logout" @click="handlerLogout">退出登录</view>
   </view>
 </template>
 
@@ -9,13 +31,39 @@ import { mapActions } from "vuex";
 
 export default {
   data() {
-    return {};
+    return {
+      cells: [
+        {
+          title: "昵称",
+          index: "nickname",
+        },
+        {
+          title: "性别",
+          index: "gender",
+        },
+        {
+          title: "手机号",
+          index: "phone",
+        },
+        {
+          title: "邮箱",
+          index: "email",
+        },
+      ],
+    };
+  },
+  computed: {
+    user() {
+      // console.log(this.$store);
+      return this.$store.getters.user;
+    },
   },
   onShow() {},
   onLoad() {},
   methods: {
     ...mapActions(["Logout"]),
     handlerLogout() {
+      console.log(this.user);
       this.Logout();
     },
   },
@@ -23,4 +71,57 @@ export default {
 </script>
 
 <style lang="scss" scope>
+.image {
+  background: white;
+  border-radius: 50%;
+  width: 80px;
+  height: 80px;
+  margin: 40px 0;
+}
+.user-cells {
+  width: 100%;
+  .cells {
+    margin: 0 15px;
+    .cell-item {
+      display: flex;
+      align-items: flex-start;
+      font-size: 16px;
+      padding: 15px 0 0 0;
+
+      .cell-item-content {
+        width: 100%;
+        .item-content {
+          width: 100%;
+          margin-bottom: 15px;
+          .item-content-text {
+            display: flex;
+            align-items: center;
+            .text {
+              margin-right: 10px;
+            }
+            .right-icon {
+              color: $grey-color;
+            }
+          }
+        }
+        .bottom-line {
+          height: 1px;
+          background: $grey-color;
+          width: 100%;
+        }
+      }
+    }
+  }
+}
+.logout {
+  position: absolute;
+  bottom: 5%;
+  font-weight: bold;
+  color: $dark-color;
+  text-align: center;
+  border-radius: 20px;
+  border: 2px solid $primary-color;
+  padding: 10px 0;
+  width: 70%;
+}
 </style>

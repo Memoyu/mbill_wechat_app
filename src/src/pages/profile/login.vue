@@ -57,13 +57,13 @@ export default {
       })
         .then((res) => {
           // console.log(res);
-          this.loading = false;
           if (res.data.success) {
             this.$tip.success("登录成功!");
             this.$Router.replaceAll({ name: "index" });
           } else {
             this.$tip.alert(res.data.msg);
           }
+          this.loading = false;
         })
         .catch((err) => {
           this.loading = false;

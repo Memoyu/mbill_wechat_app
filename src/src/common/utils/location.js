@@ -19,7 +19,7 @@ export default {
                     qqmapsdk.reverseGeocoder({
                         location: uni.getStorageSync(USER_LOCATION) || '',
                         success: function (res) {
-                            console.log("地址信息", res)
+                            // console.log("地址信息", res)
                             resolve(res.result);
                         },
                         fail: function (error) {
@@ -30,7 +30,7 @@ export default {
                 }
 
                 let _locationChangeFn = res => {
-                    console.log('location change', res);
+                    // console.log('location change', res);
                     uni.setStorageSync(USER_LOCATION, `${res.latitude},${res.longitude}`)
                     getRegeo();
                     wx.offLocationChange();
@@ -42,7 +42,7 @@ export default {
                 let timeDiff = curTime - time
                 let leavel = timeDiff % (3600 * 1000); // 计算剩余小时后剩余的毫秒数
                 let sec = Math.floor(leavel / 1000); // 计算剩余的分钟数
-                console.log(curTime, time, leavel, sec);
+                // console.log(curTime, time, leavel, sec);
                 if (sec < 60) {
                     getRegeo();
                 }
@@ -53,7 +53,7 @@ export default {
                             wx.onLocationChange(_locationChangeFn);
                         },
                         fail: err => {
-                            console.log('获取当前位置失败', err);
+                            // console.log('获取当前位置失败', err);
                             wx.showModal({
                                 title: '温馨提示',
                                 content: '获取权限失败，需要获取您的地理位置才能为您提供更好的服务！是否授权获取地理位置？',

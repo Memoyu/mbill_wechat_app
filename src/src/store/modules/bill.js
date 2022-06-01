@@ -3,6 +3,7 @@ import api from "@/api/api"
 import datetime from "@/common/utils/datetime";
 import {
     INDEX_BILL_STAT,
+    PROFILE_BILL_STAT,
     INDEX_BILL_TAGS,
     INDEX_CUR_MONTH,
     ADD_INDEX_BILL,
@@ -22,12 +23,23 @@ const state = {
     },
     indexTags: [],
     indexBills: [],
+
+    profileStat: {
+        expend: 0,
+        expendFormat: "0",
+        income: 0,
+        incomeFormat: "0",
+        preOrder: 0,
+        preOrderFormat: "0",
+    },
 }
 
 const getters = {
     indexStat: state => state.indexStat,
     indexTags: state => state.indexTags,
     indexBills: state => state.indexBills,
+
+    profileStat: state => state.profileStat,
 }
 
 const mutations = {
@@ -54,8 +66,10 @@ const mutations = {
             //1、 处理统计数据
             if (bill.type == 0) {
                 state.indexStat.expend = calcTotalStat(state.indexStat.expend, bill.amount, 0)
+                state.profileStat.expend = calcTotalStat(state.profileStat.expend, bill.amount, 0)
             } else {
                 state.indexStat.income = calcTotalStat(state.indexStat.income, bill.amount, 0)
+                state.profileStat.income = calcTotalStat(state.profileStat.income, bill.amount, 0)
             }
             // 顺便加个格式化的金额
             bill.amountFormat = calcTotalStat("0", bill.amount, 0);
@@ -79,17 +93,21 @@ const mutations = {
             //3、 处理子项插入
             let hasGroup = true;
             try {
-                state.indexBills.forEach((g) => {
-                    if (day === g.day) { // 如果存在这一天的分组
-                        g.items.push(bill);
-                        g.items = g.items.sort((d1, d2) => {
-                            return new Date(`2000-09-25 ${d1.time}`) < new Date(`2000-09-25 ${d2.time}`) ? 1 : -1
-                        });
-                        throw new Error("Ok"); // 跳出循环
-                    } else { // 否则构造分组
-                        hasGroup = false;
-                    }
-                })
+                if (state.indexBills.length > 0) {
+                    state.indexBills.forEach((g) => {
+                        if (day === g.day) { // 如果存在这一天的分组
+                            g.items.push(bill);
+                            g.items = g.items.sort((d1, d2) => {
+                                return new Date(`2000-09-25 ${d1.time}`) < new Date(`2000-09-25 ${d2.time}`) ? 1 : -1
+                            });
+                            throw new Error("Ok"); // 跳出循环
+                        } else { // 否则构造分组
+                            hasGroup = false;
+                        }
+                    })
+                } else {
+                    hasGroup = false;
+                }
             } catch (e) {
                 hasGroup = true;
             };
@@ -141,9 +159,6 @@ const mutations = {
             });
         }
     },
-    [MODIFY_INDEX_BILL]: (state, { bill, date }) => {
-
-    },
     [DEL_INDEX_BILL]: (state, id) => {
         try {
             // console.log("store mut del", id);
@@ -167,8 +182,10 @@ const mutations = {
                     // console.log("src ", bill);
                     if (bill.type == 0) {
                         state.indexStat.expend = calcTotalStat(state.indexStat.expend, bill.amount, 1)
+                        state.profileStat.expend = calcTotalStat(state.profileStat.expend, bill.amount, 1)
                     } else {
                         state.indexStat.income = calcTotalStat(state.indexStat.income, bill.amount, 1)
+                        state.profileStat.income = calcTotalStat(state.profileStat.income, bill.amount, 1)
                     }
 
                     //  3、处理标识
@@ -196,7 +213,10 @@ const mutations = {
             }
         } catch (e) {
         };
-    }
+    },
+    [PROFILE_BILL_STAT]: (state, stat) => {
+        state.profileStat = stat;
+    },
 }
 
 const actions = {
@@ -293,20 +313,27 @@ const actions = {
                                 if (g.items[i].type == item.type) {
                                     if (g.items[i].type == 0) { // 支出
                                         state.indexStat.expend = calcTotalStat(state.indexStat.expend, diff, op)
+                                        state.profileStat.expend = calcTotalStat(state.profileStat.expend, diff, op)
                                     } else if (g.items[i].type == 1) { // 收入
                                         state.indexStat.income = calcTotalStat(state.indexStat.income, diff, op)
+                                        state.profileStat.income = calcTotalStat(state.profileStat.income, diff, op)
                                     }
                                 } else {
                                     if (g.items[i].type == 0) { // 收入 -> 支出
                                         // 支出直接加上改后的金额
                                         state.indexStat.expend = calcTotalStat(state.indexStat.expend, g.items[i].amount, 0)
+                                        state.profileStat.expend = calcTotalStat(state.profileStat.expend, g.items[i].amount, 0)
                                         // 收入直接减去原本的金额
                                         state.indexStat.income = calcTotalStat(state.indexStat.income, item.amount, 1)
+                                        state.profileStat.income = calcTotalStat(state.profileStat.income, item.amount, 1)
                                     } else if (g.items[i].type == 1) { // 支出 -> 收入
                                         // 支出直接减去原本的金额
                                         state.indexStat.expend = calcTotalStat(state.indexStat.expend, item.amount, 1)
+                                        state.profileStat.expend = calcTotalStat(state.profileStat.expend, item.amount, 1)
                                         // 收入直接加上改后的金额
                                         state.indexStat.income = calcTotalStat(state.indexStat.income, g.items[i].amount, 0)
+                                        state.profileStat.income = calcTotalStat(state.profileStat.income, g.items[i], 0)
+
                                     }
                                 }
                             }
@@ -328,7 +355,23 @@ const actions = {
         } else { // 变更年份、月份则需要删除
             commit(DEL_INDEX_BILL, bill.id);
         }
-    }
+    },
+
+    //#endregion
+
+    //#region 个人页面
+
+    // 获取首页指定月份账单总金额
+    getProfileTotalStat({ commit }) {
+        // console.log("Total", params);
+        api.yearTotalStat({
+            year: datetime.getCurYear(),
+        }).then((res) => {
+            if (res.data.code === 0) {
+                commit(PROFILE_BILL_STAT, res.data.result)
+            }
+        });
+    },
 
     //#endregion
 }

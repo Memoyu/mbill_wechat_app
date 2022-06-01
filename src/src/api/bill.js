@@ -28,6 +28,11 @@ const bill = {
         return http.get('bill/stat/month-total', { params: params })
     },
 
+    // 获取指定月份账单总金额
+    yearTotalStat(params) {
+        return http.get('bill/stat/year-total', { params: params })
+    },
+
     // 获取日期范围内存在账单的日期
     hasBillDays(params) {
         return http.get('bill/date/has-bill-days', { params: params })

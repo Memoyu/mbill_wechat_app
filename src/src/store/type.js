@@ -25,3 +25,10 @@ export const MODIFY_INDEX_BILL = 'MODIFY_INDEX_BILL'
 export const DEL_INDEX_BILL = 'DEL_INDEX_BILL'
 
 //#endregion
+
+//#region 个人页面
+
+// 个人页面统计
+export const PROFILE_BILL_STAT = 'PROFILE_BILL_STAT'
+
+//#endregion
