@@ -48,7 +48,8 @@
 		{
 			"path": "pages/bill/preorder/index",
 			"style": {
-				"navigationBarTitleText": "预购"
+				"navigationBarTitleText": "预购",
+				"navigationBarBackgroundColor": "#DCD6F7"
 			}
 		},
 		{
