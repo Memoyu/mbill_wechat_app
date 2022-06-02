@@ -28,7 +28,6 @@
               <text> {{ selectedDateText }}</text>
             </view>
           </picker>
-
           <picker
             class="time-picker"
             mode="time"
@@ -37,10 +36,7 @@
           >
             <view class="x-ac time">
               <text> {{ model.time }}</text>
-              <i
-                class="iconfont icon-bottom"
-                style="margin-left: 3px; font-size: 12px"
-              />
+              <i class="iconfont icon-bottom icon-down" />
             </view>
           </picker>
         </view>
@@ -486,11 +482,22 @@ export default {
     background: $bright-color;
     border-radius: 30rpx;
     font-size: 15px;
-    .date {
-      padding: 3px 4px 3px 8px;
+    .date-picker {
+      .date {
+        padding: 3px 4px 3px 8px;
+      }
     }
-    .time {
-      padding: 3px 8px 3px 0;
+
+    .time-picker {
+      .time {
+        border-left: solid $light-color 1px;
+        align-items: baseline;
+        padding: 3px 8px 3px 3px;
+      }
+      .icon-down {
+        font-size: 10px;
+        margin-left: 5px;
+      }
     }
   }
 }
@@ -501,7 +508,7 @@ export default {
   background-image: radial-gradient();
   .amount-input {
     display: flex;
-    align-items: flex-start;
+    // align-items: flex-start;
     align-items: baseline;
   }
   .char {

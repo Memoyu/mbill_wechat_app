@@ -67,6 +67,10 @@ const bill = {
     },
 
     //#endregion
+
+    //#region 预购清单
+
+    //#endregion
 }
 
 export default bill;

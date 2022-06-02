@@ -5,20 +5,15 @@
       <view class="bg" />
       <view class="date-title" id="date-title">
         <picker
-          class="time-picker"
+          class="date-picker"
           mode="date"
           @change="handlerPickerChange"
           fields="month"
           :value="pickerDate"
         >
-          <view class="x-c">
-            <text class="now-date"
-              >{{ pickerDateText.year }}年{{ pickerDateText.month }}月</text
-            >
-            <i
-              class="iconfont icon-bottom"
-              style="margin-left: 5px; font-size: 13px"
-            />
+          <view class="now-date x-c">
+            <text>{{ pickerDateText.year }}年{{ pickerDateText.month }}月</text>
+            <i class="iconfont icon-bottom icon-down" />
           </view>
         </picker>
         <view class="statement">
@@ -294,12 +289,17 @@ export default {
     justify-content: space-between;
     margin: 15px;
     align-items: center;
-
-    .now-date {
-      font-size: 15px;
-      font-weight: bold;
+    .date-picker {
+      .now-date {
+        font-size: 15px;
+        font-weight: bold;
+        align-items: baseline;
+        .icon-down {
+          font-size: 10px;
+          margin-left: 5px;
+        }
+      }
     }
-
     .statement {
       display: flex;
     }
