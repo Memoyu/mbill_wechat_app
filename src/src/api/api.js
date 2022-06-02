@@ -1,7 +1,9 @@
-import account from './account.js'
-import bill from './bill.js'
+import account from './account'
+import bill from './bill'
+import preOrder from './pre-order'
 
 export default {
     ...account,
     ...bill,
+    ...preOrder
 }

@@ -3,7 +3,7 @@ import { http } from './service.js'
 const bill = {
     //#region   账单信息
 
-    // 获取账单详情
+    // 新增账单详情
     addBill(params) {
         return http.post('bill', params)
     },
@@ -69,6 +69,11 @@ const bill = {
     //#endregion
 
     //#region 预购清单
+
+    // 新增预购分组
+    addPreOrderGroup(params) {
+        return http.post('pre-order/group', params)
+    },
 
     //#endregion
 }

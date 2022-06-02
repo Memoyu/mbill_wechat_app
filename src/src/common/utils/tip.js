@@ -78,7 +78,7 @@ export default class Tips {
         title: title,
         icon: icon,
         mask: true,
-        duration: 1000
+        duration: 2000
       });
     }, 300);
 
@@ -96,9 +96,9 @@ export default class Tips {
   static alert(title) {
     uni.showToast({
       title: title,
-      image: "../../static/assets/tip/alert.png",
+      image: "/static/assets/tip/alert.png",
       mask: true,
-      duration: 1500
+      duration: 2000
     });
   }
 
@@ -109,9 +109,9 @@ export default class Tips {
   static error(title, onHide) {
     uni.showToast({
       title: title,
-      image: "../../static/assets/tip/error.png",
+      image: "/static/assets/tip/error.png",
       mask: true,
-      duration: 1500
+      duration: 2000
     });
     // 隐藏结束回调
     if (onHide) {

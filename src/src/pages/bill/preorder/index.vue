@@ -50,14 +50,28 @@
     <!-- 弹窗 -->
     <uni-popup ref="addGroupDialog" type="dialog">
       <uni-popup-dialog
-        ref="inputClose"
         mode="input"
         title="新建预购组"
-        :value="inputGroupName"
         placeholder="请输入分组名称"
+        before-close="true"
         @confirm="handlerAddGroupDialogConfirm"
         @close="handlerAddGroupDialogClose"
-      ></uni-popup-dialog>
+      >
+        <view class="add-group-input y-bc">
+          <input
+            type="text"
+            class="input"
+            v-model="inputGroup.name"
+            placeholder="分组名称"
+          />
+          <input
+            type="text"
+            class="input"
+            v-model="inputGroup.description"
+            placeholder="描述一下"
+          />
+        </view>
+      </uni-popup-dialog>
     </uni-popup>
   </view>
 </template>
@@ -68,7 +82,7 @@ import datetime from "@/common/utils/datetime";
 export default {
   data() {
     return {
-      inputGroupName: "",
+      inputGroup: {},
       pickerDate: datetime.getCurDate(),
       pickerDateText: {
         year: datetime.getCurYear(),
@@ -89,7 +103,31 @@ export default {
       this.$refs.addGroupDialog.open();
     },
     handlerAddGroupDialogConfirm() {
-      this.$refs.addGroupDialog.close();
+      console.log(this.inputGroup);
+      if (this.inputGroup.name == "" || this.inputGroup.name.length > 20) {
+        this.$tip.toast("请输入分组名称");
+        return;
+      }
+      if (this.inputGroup.name == "" || this.inputGroup.name.length > 20) {
+        this.$tip.toast("分组名称不超过20个字符");
+        return;
+      }
+      if (
+        this.inputGroup.description != undefined &&
+        this.inputGroup.description.length > 200
+      ) {
+        this.$tip.toast("分组描述不超过200个字符");
+        return;
+      }
+      this.$api.addPreOrderGroup(this.inputGroup).then((res) => {
+        if (res.data.code === 0) {
+          // console.log(res);
+          this.$refs.addGroupDialog.close();
+          this.inputGroup = {};
+        } else {
+          this.$tip.alert(res.data.message);
+        }
+      });
     },
     handlerAddGroupDialogClose() {
       this.$refs.addGroupDialog.close();
@@ -175,5 +213,16 @@ export default {
   background-color: $primary-color;
   padding: 10px 0;
   width: 70%;
+}
+.add-group-input {
+  width: 100%;
+  .input {
+    text-align: center;
+    width: 100%;
+    padding: 5px;
+    margin-bottom: 8px;
+    border-radius: 8px;
+    border: 1px solid $grey-color;
+  }
 }
 </style>
