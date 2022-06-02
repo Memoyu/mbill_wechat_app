@@ -77,6 +77,7 @@
 </template>
 
 <script>
+import { mapActions, mapState } from "vuex";
 import datetime from "@/common/utils/datetime";
 
 export default {
@@ -94,14 +95,56 @@ export default {
         done: 0,
         undone: 0,
       },
+      page: {
+        page: 1,
+        size: 15,
+      },
+      pageTotal: 0,
+      loading: false,
     };
   },
   onShow() {},
-  onLoad() {},
+  onLoad() {
+    this.initData();
+  },
   methods: {
+    ...mapActions(["getPreOrderGroups"]),
+    // 初始化数据
+    initData() {
+      this.getGroups(true);
+    },
+
+    // 初始化、切换月份重新加载分组
+    getGroups(init = false) {
+      if (this.loading) return;
+      this.loading = true;
+      this.getPreOrderGroups({
+        date: this.pickerDate,
+        page: this.page,
+        isInit: init,
+      })
+        .then((res) => {
+          this.pageTotal = res;
+        })
+        .finally(() => {
+          this.loading = false;
+        });
+    },
+
+    // 选择日期
+    handlerPickerChange({ detail }) {
+      // console.log(detail.value);
+      let d = new Date(detail.value);
+      this.date = datetime.getCurDateObj(d);
+      this.pickerDate = datetime.getCurDate(d);
+      this.pickerDateText = this.date;
+      this.initData();
+    },
+
     handlerAddGroup() {
       this.$refs.addGroupDialog.open();
     },
+
     handlerAddGroupDialogConfirm() {
       console.log(this.inputGroup);
       if (this.inputGroup.name == "" || this.inputGroup.name.length > 20) {
@@ -129,6 +172,7 @@ export default {
         }
       });
     },
+
     handlerAddGroupDialogClose() {
       this.$refs.addGroupDialog.close();
     },

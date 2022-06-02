@@ -32,3 +32,10 @@ export const DEL_INDEX_BILL = 'DEL_INDEX_BILL'
 export const PROFILE_BILL_STAT = 'PROFILE_BILL_STAT'
 
 //#endregion
+
+//#region 预购清单
+
+// 预购清单
+export const ADD_PRE_ORDER_GROUPS = 'ADD_PRE_ORDER_GROUPS'
+
+//#endregion

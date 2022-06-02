@@ -67,15 +67,6 @@ const bill = {
     },
 
     //#endregion
-
-    //#region 预购清单
-
-    // 新增预购分组
-    addPreOrderGroup(params) {
-        return http.post('pre-order/group', params)
-    },
-
-    //#endregion
 }
 
 export default bill;
