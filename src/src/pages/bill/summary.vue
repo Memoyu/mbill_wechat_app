@@ -1,9 +1,7 @@
 <template>
-  <view>
-    <view class="b-container">
-      <view>
-        <view class="title">汇总</view>
-      </view>
+  <view class="b-container">
+    <view>
+      <view class="title">汇总</view>
     </view>
   </view>
 </template>

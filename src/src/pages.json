@@ -6,6 +6,7 @@
 			"mb-bill-(.*)": "@/components/bill/mbill-bill-$1.vue",
 			"mb-ca-(.*)": "@/components/category/mbill-category-$1.vue",
 			"mb-as-(.*)": "@/components/asset/mbill-asset-$1.vue",
+			"mb-po-(.*)": "@/components/pre-order/mbill-po-$1.vue",
 			// uni-ui 规则如下配置
 			"^uni-(.*)": "@dcloudio/uni-ui/lib/uni-$1/uni-$1.vue"
 		}
@@ -46,9 +47,16 @@
 			}
 		},
 		{
-			"path": "pages/bill/preorder/index",
+			"path": "pages/bill/pre-order/index",
 			"style": {
 				"navigationBarTitleText": "预购",
+				"navigationBarBackgroundColor": "#DCD6F7"
+			}
+		},
+		{
+			"path": "pages/bill/pre-order/list",
+			"style": {
+				"navigationBarTitleText": "预购清单",
 				"navigationBarBackgroundColor": "#DCD6F7"
 			}
 		},

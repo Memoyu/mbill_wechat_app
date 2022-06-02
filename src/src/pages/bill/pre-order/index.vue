@@ -1,7 +1,7 @@
 <template>
   <view class="b-container">
     <!-- 头部操作 -->
-    <view class="header">
+    <view class="group-header" id="group-header">
       <view class="date-title" id="date-title">
         <picker
           class="date-picker"
@@ -26,7 +26,7 @@
             </view>
             <view class="pre-order-stat-text">
               <text class="text">预购金额</text>
-              <text class="total">￥{{ stat.amount }}</text>
+              <text class="total">{{ stat.amount }}</text>
             </view>
           </view>
           <view class="bottom-line" />
@@ -43,15 +43,35 @@
         </view>
       </view>
     </view>
+    <!-- 分组列表 -->
+    <view class="group-content">
+      <scroll-view
+        :style="{
+          height: scrollHeight + 'px',
+        }"
+        scroll-y="true"
+        @scrolltolower="lowerBottom"
+      >
+        <view class="group-content-items" v-for="(g, ind) in groups" :key="ind">
+          <mb-po-group-item :group="g" @edit="handlerEditGroup" />
+        </view>
+        <view style="height: 50px" />
+        <mb-b-empty v-if="groups.length <= 0" />
+      </scroll-view>
+    </view>
     <!-- 底部按钮 -->
-    <view class="add-pre-order-group" @click="handlerAddGroup"
-      >新建预购分组</view
-    >
+    <view class="bottom-operate" id="bottom-operate">
+      <mb-b-bottom-btn
+        onlyone="true"
+        @ltap="handlerAddGroup"
+        ltext="新建分组"
+      />
+    </view>
     <!-- 弹窗 -->
     <uni-popup ref="addGroupDialog" type="dialog">
       <uni-popup-dialog
         mode="input"
-        title="新建预购组"
+        :title="dialogTitle"
         placeholder="请输入分组名称"
         before-close="true"
         @confirm="handlerAddGroupDialogConfirm"
@@ -83,7 +103,12 @@ import datetime from "@/common/utils/datetime";
 export default {
   data() {
     return {
-      inputGroup: {},
+      scrollHeight: 0,
+      dialogTitle: "新建预购组",
+      inputGroup: {
+        name: "",
+        description: "",
+      },
       pickerDate: datetime.getCurDate(),
       pickerDateText: {
         year: datetime.getCurYear(),
@@ -103,7 +128,15 @@ export default {
       loading: false,
     };
   },
+  computed: {
+    ...mapState({
+      groups: (state) => state.preOrder.preOrderGroups,
+    }),
+  },
   onShow() {},
+  onReady() {
+    this.dynamicHeight();
+  },
   onLoad() {
     this.initData();
   },
@@ -113,6 +146,8 @@ export default {
     initData() {
       this.getGroups(true);
     },
+
+    //#region 组件事件
 
     // 初始化、切换月份重新加载分组
     getGroups(init = false) {
@@ -131,6 +166,30 @@ export default {
         });
     },
 
+    //#endregion
+
+    //#region 组件事件
+
+    // 计算高度，动态调整scroll 高度
+    dynamicHeight() {
+      let that = this;
+      uni.getSystemInfo({
+        success(res) {
+          let pH = res.windowHeight;
+          let query = uni.createSelectorQuery().in(that);
+          query.select("#group-header").fields({ size: true });
+          // query.select("#bottom-operate").fields({ size: true });
+          query.exec((data) => {
+            // console.log(data);
+            data.map((i) => {
+              that.scrollHeight += i.height;
+            });
+            that.scrollHeight = pH - that.scrollHeight;
+          });
+        },
+      });
+    },
+
     // 选择日期
     handlerPickerChange({ detail }) {
       // console.log(detail.value);
@@ -146,20 +205,20 @@ export default {
     },
 
     handlerAddGroupDialogConfirm() {
-      console.log(this.inputGroup);
-      if (this.inputGroup.name == "" || this.inputGroup.name.length > 20) {
+      // console.log(this.inputGroup);
+      if (!this.inputGroup.name || this.inputGroup.name == "") {
         this.$tip.toast("请输入分组名称");
         return;
       }
-      if (this.inputGroup.name == "" || this.inputGroup.name.length > 20) {
-        this.$tip.toast("分组名称不超过20个字符");
+      if (this.inputGroup.name.length > 20) {
+        this.$tip.toast("分组名称不超过10个字符");
         return;
       }
       if (
-        this.inputGroup.description != undefined &&
+        this.inputGroup.description != "" &&
         this.inputGroup.description.length > 200
       ) {
-        this.$tip.toast("分组描述不超过200个字符");
+        this.$tip.toast("分组描述不超过40个字符");
         return;
       }
       this.$api.addPreOrderGroup(this.inputGroup).then((res) => {
@@ -176,20 +235,30 @@ export default {
     handlerAddGroupDialogClose() {
       this.$refs.addGroupDialog.close();
     },
+
+    // scroll触底事件
+    lowerBottom() {},
+    // 选中预购分组
+    handlerEditGroup(group) {
+      console.log("分组", group);
+      this.dialogTitle = "编辑预购组";
+      this.inputGroup = group;
+      this.$refs.addGroupDialog.open();
+    },
+    //#endregion
   },
 };
 </script>
 
 <style lang="scss" scope>
-.header {
+.group-header {
   width: 100%;
   .date-title {
-    height: 70px;
     background-color: $light-color;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    padding: 15px;
+    padding: 10px;
     align-items: center;
     border-radius: 0 0 15px 15px;
 
@@ -247,16 +316,19 @@ export default {
     }
   }
 }
-.add-pre-order-group {
+.group-content {
+  width: 95%;
+  .group-content-items {
+    margin-top: 10px;
+    padding: 5px 0;
+    border-radius: 13px;
+    background: white;
+  }
+}
+.bottom-operate {
+  width: 100%;
   position: absolute;
-  bottom: 5%;
-  font-weight: bold;
-  color: $dark-color;
-  text-align: center;
-  border-radius: 20px;
-  background-color: $primary-color;
-  padding: 10px 0;
-  width: 70%;
+  bottom: 0;
 }
 .add-group-input {
   width: 100%;

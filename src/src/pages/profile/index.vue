@@ -122,7 +122,7 @@ export default {
         {
           title: "预购",
           icon: "preorder",
-          path: "/pages/bill/preorder/index",
+          path: "/pages/bill/pre-order/index",
         },
       ],
       cells: [
@@ -155,8 +155,8 @@ export default {
   methods: {
     ...mapActions(["getProfileTotalStat"]),
     handlerNavigateTo(path) {
-      console.log("yonghu ", this.user);
-      console.log(path);
+      // console.log("yonghu ", this.user);
+      // console.log(path);
       uni.navigateTo({ url: path });
     },
   },

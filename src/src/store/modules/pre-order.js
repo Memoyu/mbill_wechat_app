@@ -21,8 +21,8 @@ const mutations = {
             // console.log("store groups", groups);
             // 剩余集合并入并排序
             state.preOrderGroups = state.preOrderGroups.concat(groups);
-            state.preOrderGroups = state.preOrderGroups.sort((b1, b2) => {
-                return b1.day < b2.day ? 1 : -1
+            state.preOrderGroups = state.preOrderGroups.sort((g1, g2) => {
+                return new Date(g1.createTime) < new Date(g2.createTime) ? 1 : -1
             });
         }
     },
@@ -46,7 +46,7 @@ const actions = {
                     if (state.preOrderGroups.length > 0) {
                         commit(ADD_PRE_ORDER_GROUPS, { groups: items, isCover: false })
                     } else {
-                        console.log(res.data.result);
+                        // console.log(res.data.result);
                         // this.groups = items;
                         commit(ADD_PRE_ORDER_GROUPS, { groups: items, isCover: true })
                     }

@@ -1,15 +1,23 @@
 <template>
   <view class="mbill-bottom-btn">
-    <view class="bottom-btn-grid">
+    <view :class="[onlyone ? 'bottom-btn-grid-only-one' : 'bottom-btn-grid']">
       <view
-        class="btn bottom-left-btn"
-        :style="{ color: lcolor }"
+        :class="['btn', 'bottom-left-btn']"
+        :style="{
+          color: lcolor,
+          background: lbcolor,
+          width: onlyone ? '90%' : '60%',
+        }"
         @tap="handlerLBtnTap"
         >{{ ltext }}</view
       >
       <view
-        class="btn bottom-right-btn"
-        :style="{ color: rcolor }"
+        v-if="!onlyone"
+        :class="['btn', 'bottom-right-btn']"
+        :style="{
+          color: rcolor,
+          background: rbcolor,
+        }"
         @tap="handlerRBtnTap"
         >{{ rtext }}</view
       >
@@ -21,6 +29,10 @@
 export default {
   name: "mbill-bottom-btn",
   props: {
+    onlyone: {
+      type: Boolean,
+      default: false,
+    },
     ltext: {
       type: String,
       default: "编辑",
@@ -36,6 +48,14 @@ export default {
     rcolor: {
       type: String,
       default: "#d55251",
+    },
+    lbcolor: {
+      type: String,
+      default: "#ffffff",
+    },
+    rbcolor: {
+      type: String,
+      default: "#ffffff",
     },
   },
   methods: {
@@ -59,18 +79,30 @@ export default {
     justify-content: space-between;
     text-align: center;
     padding: 0 10px;
-    .btn {
-      border-radius: 12px;
-      padding: 10px 0;
-      background: white;
-      font-weight: bold;
-    }
     .bottom-left-btn {
       width: 60%;
     }
     .bottom-right-btn {
       width: 35%;
     }
+  }
+
+  .bottom-btn-grid-only-one {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    text-align: center;
+    padding: 0 10px;
+    .bottom-left-btn {
+      width: 90%;
+    }
+  }
+
+  .btn {
+    border: 1px solid $bright-color;
+    border-radius: 12px;
+    padding: 10px 0;
+    font-weight: bold;
   }
 }
 </style>
