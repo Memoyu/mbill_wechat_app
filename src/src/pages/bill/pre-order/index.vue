@@ -37,7 +37,7 @@
             </view>
             <view class="pre-order-stat-text">
               <text class="text">未完成</text>
-              <text class="total">{{ stat.undone }}</text>
+              <text class="total">{{ stat.unDone }}</text>
             </view>
           </view>
         </view>
@@ -60,7 +60,7 @@
             @click="handlerSwipeClick($event, g)"
           >
             <view class="group-content-items">
-              <mb-po-group-item :group="g" @edit="handlerEditGroup" />
+              <mb-po-group-item :group="g" />
             </view>
           </uni-swipe-action-item>
         </uni-swipe-action>
@@ -88,7 +88,7 @@
         <input
           type="text"
           class="input"
-          v-model="inputGroup.name"
+          v-model="group.name"
           placeholder="名称"
         />
       </view>
@@ -97,7 +97,7 @@
         <input
           type="text"
           class="input"
-          v-model="inputGroup.description"
+          v-model="group.description"
           placeholder="描述一下咯"
         />
       </view>
@@ -107,6 +107,10 @@
 
 <script>
 import { mapActions, mapState } from "vuex";
+import {
+  ADD_PRE_ORDER_INDEX_GROUP,
+  EDIT_PRE_ORDER_INDEX_GROUP,
+} from "@/store/type";
 import datetime from "@/common/utils/datetime";
 
 export default {
@@ -127,12 +131,12 @@ export default {
         year: datetime.getCurYear(),
         month: datetime.getCurMonth(),
       },
-      stat: {
-        total: 0,
-        amount: 0,
-        done: 0,
-        undone: 0,
-      },
+      // stat: {
+      //   total: 0,
+      //   amount: 0,
+      //   done: 0,
+      //   undone: 0,
+      // },
       page: {
         page: 1,
         size: 15,
@@ -154,7 +158,8 @@ export default {
   },
   computed: {
     ...mapState({
-      groups: (state) => state.preOrder.preOrderGroups,
+      stat: (state) => state.preOrder.IndexStat,
+      groups: (state) => state.preOrder.IndexGroups,
     }),
   },
   onShow() {},
@@ -165,9 +170,10 @@ export default {
     this.initData();
   },
   methods: {
-    ...mapActions(["getPreOrderGroups"]),
+    ...mapActions(["getIndexPreOrderStats", "getPreOrderGroups"]),
     // 初始化数据
     initData() {
+      this.getIndexPreOrderStats(this.pickerDate);
       this.getGroups(true);
     },
 
@@ -192,6 +198,32 @@ export default {
 
     addGroup(group) {
       this.$api.addPreOrderGroup(group).then((res) => {
+        if (res.data.code === 0) {
+          // console.log(res);
+          this.$refs.addGroupDialog.hide();
+          this.$store.commit(ADD_PRE_ORDER_INDEX_GROUP, res.data.result);
+          this.group = {};
+        } else {
+          this.$tip.alert(res.data.message);
+        }
+      });
+    },
+
+    editGroup(group) {
+      this.$api.editPreOrderGroup(group).then((res) => {
+        if (res.data.code === 0) {
+          // console.log(res);
+          this.$refs.addGroupDialog.hide();
+          this.$store.commit(EDIT_PRE_ORDER_INDEX_GROUP, res.data.result);
+          this.group = {};
+        } else {
+          this.$tip.alert(res.data.message);
+        }
+      });
+    },
+
+    delGroup(group) {
+      this.$api.delPreOrderGroup(group.id).then((res) => {
         if (res.data.code === 0) {
           // console.log(res);
           this.$refs.addGroupDialog.hide();
@@ -243,7 +275,7 @@ export default {
     },
 
     handlerReqEditGroup() {
-      // console.log(this.group);
+      console.log(this.group);
       if (!this.group.name || this.group.name == "") {
         this.$tip.toast("请输入分组名称");
         return;
@@ -260,23 +292,29 @@ export default {
       if (this.dialodOptions.ltext == "新建") {
         this.addGroup(this.group);
       } else {
+        this.editGroup(this.group);
       }
     },
 
     // scroll触底事件
     lowerBottom() {},
 
-    // 选中预购分组
-    handlerEditGroup(group) {},
-
-    handlerSwipeClick(e, group) {
-      console.log("swipeClick", e, group);
+    handlerSwipeClick(e, g) {
+      // console.log("swipeClick", e, group);
       if (e.index == 0) {
         this.dialogTitle = "编辑预购组";
-        this.group = group;
         this.dialodOptions.ltext = "编辑";
+        var gCopy = {};
+        for (var key in g) {
+          gCopy[key] = g[key];
+        }
+        this.group = gCopy;
         this.$refs.addGroupDialog.show(this.dialodOptions);
-      } else {
+      } else if (e.index == 1) {
+        // 删除
+        this.$tip.choose("是否删除该预购分组？", {}, "提示").then(async () => {
+          that.delPreOrder(o);
+        });
       }
     },
     //#endregion

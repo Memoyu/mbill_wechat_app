@@ -35,7 +35,16 @@ export const PROFILE_BILL_STAT = 'PROFILE_BILL_STAT'
 
 //#region 预购清单
 
-// 预购清单
-export const ADD_PRE_ORDER_GROUPS = 'ADD_PRE_ORDER_GROUPS'
+// 新增预购清单首页分组
+export const ADD_PRE_ORDER_INDEX_GROUP = 'ADD_PRE_ORDER_INDEX_GROUP'
+
+// 新增预购清单首页分组集合
+export const ADD_PRE_ORDER_INDEX_GROUPS = 'ADD_PRE_ORDER_INDEX_GROUPS'
+
+// 编辑预购清单首页分组
+export const EDIT_PRE_ORDER_INDEX_GROUP = 'EDIT_PRE_ORDER_INDEX_GROUP'
+
+// 获取预购清单首页统计
+export const PRE_ORDER_INDEX_STAT = 'PRE_ORDER_INDEX_STAT'
 
 //#endregion

@@ -2,10 +2,21 @@ import { http } from './service.js'
 
 const preOrder = {
 
-    // 新增预购分组
+    //#region 预购分组
 
+    // 新增预购分组
     addPreOrderGroup(params) {
         return http.post('pre-order/group', params)
+    },
+
+    // 编辑预购分组
+    editPreOrderGroup(params) {
+        return http.put('pre-order/group', params)
+    },
+
+    // 新增预购分组
+    delPreOrderGroup(params) {
+        return http.delete('pre-order/group', params)
     },
 
     // 获取指定月份日分组分页账单
@@ -20,10 +31,9 @@ const preOrder = {
 
     //#endregion
 
-    // 新增预购
+    //#region 预购
 
     // 新增预购
-
     addPreOrder(params) {
         return http.post('pre-order', params)
     },
@@ -33,9 +43,24 @@ const preOrder = {
         return http.put('pre-order', params)
     },
 
+    // 编辑预购状态
+    editPreOrderStatus(params) {
+        return http.put('pre-order/status', params)
+    },
+
+    // 编辑预购状态
+    delPreOrder(params) {
+        return http.delete('pre-order', params)
+    },
+
     // 获取指定分组分页预购
     groupPreOrders(params) {
         return http.get('pre-order/pages', { params: params })
+    },
+
+    // 获取指定分组预购清单统计
+    indexPreOrderStat(params) {
+        return http.get('pre-order/index/stat', { params: params })
     },
 
     //#endregion

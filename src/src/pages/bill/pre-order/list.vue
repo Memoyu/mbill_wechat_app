@@ -215,10 +215,23 @@ export default {
         if (res.data.code === 0) {
           // console.log(res);
           this.$refs.editOrderDialog.hide();
-          this.order = {};
           this.orders.unshift(res.data.result);
           this.stat.unDone += 1;
           this.stat.amount += Number(order.amount).fixed(2);
+          this.order = {};
+        } else {
+          this.$tip.alert(res.data.message);
+        }
+      });
+    },
+
+    // 编辑预购状态
+    editPreOrderStatus(order, status) {
+      this.$api.editPreOrderStatus({ id: order.id, status }).then((res) => {
+        if (res.data.code === 0) {
+          // console.log(res);
+          this.$refs.editOrderDialog.hide();
+          this.updateLocalStatus(order, status);
         } else {
           this.$tip.alert(res.data.message);
         }
@@ -231,16 +244,98 @@ export default {
         if (res.data.code === 0) {
           // console.log(res);
           this.$refs.editOrderDialog.hide();
+          this.updateLocalItem(res.data.result);
           this.order = {};
-          this.orders.forEach((o) => {
-            if (order.id == o.id) {
-              o = res.data.res;
-            }
-          });
         } else {
           this.$tip.alert(res.data.message);
         }
       });
+    },
+
+    // 删除预购
+    delPreOrder(order) {
+      this.$api.delPreOrder(order.id).then((res) => {
+        if (res.data.code === 0) {
+          // console.log(res);
+          this.$refs.editOrderDialog.hide();
+          this.delLocalItem(order);
+        } else {
+          this.$tip.alert(res.data.message);
+        }
+      });
+    },
+
+    // 调整本地数据(主要为状态变更)
+    updateLocalStatus(order, status) {
+      try {
+        for (let i = 0; i < this.orders.length; i++) {
+          if (order.id == this.orders[i].id) {
+            this.orders[i].status = status;
+            throw new Error("Ok"); // 跳出循环
+          }
+        }
+      } catch (e) {}
+      if (status == 0) {
+        this.stat.done -= 1;
+        this.stat.unDone += 1;
+        // TODO：调整上级页面的完成数
+      } else if (status == 1) {
+        this.stat.done += 1;
+        this.stat.unDone -= 1;
+        // TODO：调整上级页面的完成数
+      }
+    },
+
+    // 调整本地数据(主要为金额等变更)
+    updateLocalItem(newOrder) {
+      let oldOrder = null;
+      try {
+        for (let i = 0; i < this.orders.length; i++) {
+          if (newOrder.id == this.orders[i].id) {
+            oldOrder = this.orders[i];
+            this.orders[i] = newOrder;
+            throw new Error("Ok"); // 跳出循环
+          }
+        }
+      } catch (e) {}
+      if (oldOrder == null) return;
+      let diff = Math.abs(
+        Number(oldOrder.amount) - Number(newOrder.amount)
+      ).fixed(2);
+      // console.log("diff", oldOrder, newOrder, diff);
+      if (oldOrder.amount < newOrder.amount) {
+        this.stat.amount += diff;
+        // TODO：增加个人页面 预购金额
+      } else if (oldOrder.amount > newOrder.amount) {
+        this.stat.amount -= diff;
+        // TODO：减少个人页面 预购金额
+      }
+    },
+
+    // 调整本地数据(主要为数据移除)
+    delLocalItem(order) {
+      // console.log("删除", order);
+      try {
+        for (let i = 0; i < this.orders.length; i++) {
+          if (order.id == this.orders[i].id) {
+            // console.log("找到了");
+            this.orders.splice(i, 1);
+            throw new Error("Ok"); // 跳出循环
+          }
+        }
+      } catch (e) {}
+
+      // 减少金额
+      this.stat.amount -= order.amount;
+      // TODO：调整上级页面的金额
+      // 减少完成或未完成
+      if (order.status == 0) {
+        this.stat.unDone -= 1;
+        // TODO：调整上级页面的完成数
+      } else if (order.status == 1) {
+        this.stat.done -= 1;
+        // TODO：调整上级页面的完成数
+      }
     },
 
     //#endregion
@@ -308,6 +403,23 @@ export default {
     // scroll触底事件
     lowerBottom() {},
 
+    // 滑动操作触发
+    handlerSwipeClick(e, o) {
+      // console.log(e);
+      if (e.index == 0) {
+        // 修改状态
+        if (e.content.text == this.doneSwipeOps[0].text)
+          this.editPreOrderStatus(o, 1);
+        else if (e.content.text == this.unDoneSwipeOps[0].text)
+          this.editPreOrderStatus(o, 0);
+      } else if (e.index == 1) {
+        let that = this;
+        // 删除
+        this.$tip.choose("是否删除该条预购？", {}, "提示").then(async () => {
+          that.delPreOrder(o);
+        });
+      }
+    },
     //#endregion
   },
 };
