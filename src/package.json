@@ -64,8 +64,8 @@
     "@dcloudio/uni-quickapp-webview": "^2.0.1-34720220422002",
     "@dcloudio/uni-stat": "^2.0.1-34720220422002",
     "@dcloudio/uni-ui": "^1.4.14",
-    "@vue/shared": "^3.0.0",
-    "core-js": "^3.22.4",
+    "@vue/shared": "^3.2.36",
+    "core-js": "^3.22.8",
     "flyio": "^0.6.2",
     "luch-request": "^3.0.7",
     "regenerator-runtime": "^0.12.1",
@@ -76,7 +76,7 @@
   },
   "devDependencies": {
     "@babel/runtime": "~7.12.0",
-    "@dcloudio/types": "^2.6.6",
+    "@dcloudio/types": "^2.6.11",
     "@dcloudio/uni-automator": "^2.0.1-34720220422002",
     "@dcloudio/uni-cli-i18n": "^2.0.1-34720220422002",
     "@dcloudio/uni-cli-shared": "^2.0.1-34720220422002",
@@ -95,7 +95,7 @@
     "mini-types": "*",
     "miniprogram-api-typings": "*",
     "postcss-comment": "^2.0.0",
-    "sass": "^1.51.0",
+    "sass": "^1.52.2",
     "sass-loader": "10.1.1",
     "vue-template-compiler": "^2.6.11"
   },

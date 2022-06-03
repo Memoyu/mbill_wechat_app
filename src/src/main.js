@@ -5,6 +5,13 @@ import tip from '@/common/utils/tip.js'
 import api from '@/api/api.js'
 import { router, RouterMount } from '@/router'
 
+
+Number.prototype.fixed = function (len) {
+  len = isNaN(len) ? 0 : len
+  var num = Math.pow(10, len)
+  return Math.round(this * num) / num
+}
+
 Vue.use(router)
 
 Vue.config.productionTip = false

@@ -22,7 +22,13 @@
         </view>
       </view>
     </view>
-    <view class="logout" @click="handlerLogout">退出登录</view>
+    <view class="bottom-operate" id="bottom-operate">
+      <mb-b-bottom-btn
+        onlyone="true"
+        @ltap="handlerAddOrder"
+        ltext="退出登录"
+      />
+    </view>
   </view>
 </template>
 
@@ -113,15 +119,10 @@ export default {
     }
   }
 }
-.logout {
+.bottom-operate {
+  width: 100%;
   position: absolute;
-  bottom: 5%;
-  font-weight: bold;
-  color: $dark-color;
-  text-align: center;
-  border-radius: 20px;
-  border: 2px solid $primary-color;
-  padding: 10px 0;
-  width: 70%;
+  bottom: 0;
+  margin-bottom: 20px;
 }
 </style>

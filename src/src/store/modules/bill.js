@@ -384,13 +384,6 @@ const actions = {
  * 1 相减
  */
 const calcTotalStat = (src, incr, op) => {
-
-    Number.prototype.fixed = function (len) {
-        len = isNaN(len) ? 0 : len
-        var num = Math.pow(10, len)
-        return Math.round(this * num) / num
-    }
-
     let sum = 0;
     let f = Number(src.replace(/,/g, ''));
     let l = Number(incr)

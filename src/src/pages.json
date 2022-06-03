@@ -56,7 +56,7 @@
 		{
 			"path": "pages/bill/pre-order/list",
 			"style": {
-				"navigationBarTitleText": "预购清单",
+				"navigationBarTitleText": "",
 				"navigationBarBackgroundColor": "#DCD6F7"
 			}
 		},

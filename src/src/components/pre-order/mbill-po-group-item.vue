@@ -1,7 +1,7 @@
 <template>
   <view class="mbill-po-group-item">
-    <view class="group-item-content" @click="handlerToList(group.id)">
-      <view class="content-title" @tap.stop="handlerEdit(group)">
+    <view class="group-item-content" @click="handlerToList(group)">
+      <view class="content-title">
         <view class="title">{{ group.name }}</view>
         <view class="info">
           <text class="time">{{ group.time }}</text>
@@ -30,8 +30,10 @@ export default {
     },
   },
   methods: {
-    handlerToList(id) {
-      uni.navigateTo({ url: `/pages/bill/pre-order/list?id=${id}` });
+    handlerToList(group) {
+      uni.navigateTo({
+        url: `/pages/bill/pre-order/list?id=${group.id}`,
+      });
     },
     handlerEdit(group) {
       this.$emit("edit", group);

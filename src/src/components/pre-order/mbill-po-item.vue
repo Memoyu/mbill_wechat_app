@@ -1,19 +1,21 @@
 <template>
-  <view class="mbill-po-item" @tap="handlerToDetail(order.id)">
-    <view class="order-icon">
-      <image class="image" :src="order.categoryIcon" />
+  <view
+    :class="['mbill-po-item', order.status == 0 ? '' : 'mbill-po-item-line']"
+    @tap="handlerToDetail(order)"
+  >
+    <view :class="['order-icon', 'x-c']" :style="{ background: order.color }">
+      <view class="icon-text"
+        ><text>{{ order.description[0] }}</text></view
+      >
     </view>
     <view class="order-content">
-      <view class="content-title">
-        <view class="title">{{ order.category }}</view>
-        <view class="info">
-          <text class="time">{{ order.time }}</text>
-          <text class="note">{{ order.description }}</text>
-        </view>
+      <view class="content-title y-start">
+        <text class="note">{{ order.description }}</text>
+        <text class="time">{{ order.time }}</text>
       </view>
       <view class="content-amount">
-        <text :class="[getTypeClass(order.type)]">
-          {{ order.amountFormat }}
+        <text class="expend-color">
+          {{ order.amount }}
         </text>
       </view>
     </view>
@@ -29,17 +31,28 @@ export default {
       default: {},
     },
   },
+  data() {
+    return {
+      iconColors: [
+        "#7C3E66",
+        "#F2EBE9",
+        "#A5BECC",
+        "#243A73",
+        "#313552",
+        "#B8405E",
+        "#2EB086",
+        "#EEE6CE",
+      ],
+    };
+  },
   methods: {
-    getTypeClass(type) {
-      switch (type) {
-        case 0:
-          return "expend-color";
-        case 1:
-          return "income-color";
-      }
+    getColor() {
+      return this.iconColors[
+        Math.floor(Math.random() * this.iconColors.length)
+      ];
     },
-    handlerToDetail(id) {
-      uni.navigateTo({ url: `/pages/bill/detail?id=${id}` });
+    handlerToDetail() {
+      this.$emit("select", this.order);
     },
   },
 };
@@ -51,14 +64,16 @@ export default {
   display: flex;
   border-radius: 10px;
   padding: 10px 18px;
-  align-items: center;
+
   .order-icon {
-    .image {
-      margin-right: 10px;
-      border-radius: 50%;
-      // background: yellow;
-      height: 35px;
-      width: 35px;
+    margin-right: 10px;
+    border-radius: 50%;
+    .icon-text {
+      color: #fff;
+      text-align: center;
+      font-size: 20px;
+      line-height: 45px;
+      width: 45px;
     }
   }
   .order-content {
@@ -68,23 +83,30 @@ export default {
     flex-direction: row;
     justify-content: space-between;
     .content-title {
-      .title {
-        margin-bottom: 5px;
-        font-weight: bold;
+      color: $grey-text-color;
+      font-size: 13px;
+      .time {
+        margin-right: 5px;
       }
-      .info {
-        color: $grey-text-color;
-        font-size: 13px;
-        .time {
-          margin-right: 5px;
-        }
-        .note {
-        }
+      .note {
+        font-size: 16px;
       }
     }
     .content-amount {
       font-weight: bold;
     }
+  }
+}
+.mbill-po-item-line {
+  &:before {
+    content: "";
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    border: 17px solid $expend-color;
+    border-radius: 0 0 10px;
+    border-top-color: transparent;
+    border-left-color: transparent;
   }
 }
 </style>

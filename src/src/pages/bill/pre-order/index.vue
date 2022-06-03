@@ -52,9 +52,18 @@
         scroll-y="true"
         @scrolltolower="lowerBottom"
       >
-        <view class="group-content-items" v-for="(g, ind) in groups" :key="ind">
-          <mb-po-group-item :group="g" @edit="handlerEditGroup" />
-        </view>
+        <uni-swipe-action ref="swipeAction">
+          <uni-swipe-action-item
+            v-for="g in groups"
+            :key="g.id"
+            :right-options="swipeOptions"
+            @click="handlerSwipeClick($event, g)"
+          >
+            <view class="group-content-items">
+              <mb-po-group-item :group="g" @edit="handlerEditGroup" />
+            </view>
+          </uni-swipe-action-item>
+        </uni-swipe-action>
         <view style="height: 50px" />
         <mb-b-empty v-if="groups.length <= 0" />
       </scroll-view>
@@ -68,31 +77,31 @@
       />
     </view>
     <!-- 弹窗 -->
-    <uni-popup ref="addGroupDialog" type="dialog">
-      <uni-popup-dialog
-        mode="input"
-        :title="dialogTitle"
-        placeholder="请输入分组名称"
-        before-close="true"
-        @confirm="handlerAddGroupDialogConfirm"
-        @close="handlerAddGroupDialogClose"
-      >
-        <view class="add-group-input y-bc">
-          <input
-            type="text"
-            class="input"
-            v-model="inputGroup.name"
-            placeholder="分组名称"
-          />
-          <input
-            type="text"
-            class="input"
-            v-model="inputGroup.description"
-            placeholder="描述一下"
-          />
-        </view>
-      </uni-popup-dialog>
-    </uni-popup>
+    <mb-b-edit-dialog
+      ref="addGroupDialog"
+      height="25"
+      class="edit-group-input"
+      @ltap="handlerReqEditGroup"
+    >
+      <view class="input-item x-bc">
+        <text class="title">分组名称</text>
+        <input
+          type="text"
+          class="input"
+          v-model="inputGroup.name"
+          placeholder="名称"
+        />
+      </view>
+      <view class="input-item x-bc">
+        <text class="title">分组描述</text>
+        <input
+          type="text"
+          class="input"
+          v-model="inputGroup.description"
+          placeholder="描述一下咯"
+        />
+      </view>
+    </mb-b-edit-dialog>
   </view>
 </template>
 
@@ -104,8 +113,12 @@ export default {
   data() {
     return {
       scrollHeight: 0,
-      dialogTitle: "新建预购组",
-      inputGroup: {
+      dialodOptions: {
+        onlyone: true,
+        ltext: "新建",
+        rtext: "取消",
+      },
+      group: {
         name: "",
         description: "",
       },
@@ -126,6 +139,17 @@ export default {
       },
       pageTotal: 0,
       loading: false,
+      swipeOptions: [
+        {
+          text: "编辑",
+        },
+        {
+          text: "删除",
+          style: {
+            backgroundColor: "rgb(255,58,49)",
+          },
+        },
+      ],
     };
   },
   computed: {
@@ -166,6 +190,18 @@ export default {
         });
     },
 
+    addGroup(group) {
+      this.$api.addPreOrderGroup(group).then((res) => {
+        if (res.data.code === 0) {
+          // console.log(res);
+          this.$refs.addGroupDialog.hide();
+          this.group = {};
+        } else {
+          this.$tip.alert(res.data.message);
+        }
+      });
+    },
+
     //#endregion
 
     //#region 组件事件
@@ -201,49 +237,47 @@ export default {
     },
 
     handlerAddGroup() {
-      this.$refs.addGroupDialog.open();
+      this.group = {};
+      this.dialodOptions.ltext = "新建";
+      this.$refs.addGroupDialog.show(this.dialodOptions);
     },
 
-    handlerAddGroupDialogConfirm() {
-      // console.log(this.inputGroup);
-      if (!this.inputGroup.name || this.inputGroup.name == "") {
+    handlerReqEditGroup() {
+      // console.log(this.group);
+      if (!this.group.name || this.group.name == "") {
         this.$tip.toast("请输入分组名称");
         return;
       }
-      if (this.inputGroup.name.length > 20) {
+      if (this.group.name.length > 20) {
         this.$tip.toast("分组名称不超过10个字符");
         return;
       }
-      if (
-        this.inputGroup.description != "" &&
-        this.inputGroup.description.length > 200
-      ) {
+      if (this.group.description != "" && this.group.description.length > 200) {
         this.$tip.toast("分组描述不超过40个字符");
         return;
       }
-      this.$api.addPreOrderGroup(this.inputGroup).then((res) => {
-        if (res.data.code === 0) {
-          // console.log(res);
-          this.$refs.addGroupDialog.close();
-          this.inputGroup = {};
-        } else {
-          this.$tip.alert(res.data.message);
-        }
-      });
-    },
-
-    handlerAddGroupDialogClose() {
-      this.$refs.addGroupDialog.close();
+      console.log(this.dialodOptions.ltext);
+      if (this.dialodOptions.ltext == "新建") {
+        this.addGroup(this.group);
+      } else {
+      }
     },
 
     // scroll触底事件
     lowerBottom() {},
+
     // 选中预购分组
-    handlerEditGroup(group) {
-      console.log("分组", group);
-      this.dialogTitle = "编辑预购组";
-      this.inputGroup = group;
-      this.$refs.addGroupDialog.open();
+    handlerEditGroup(group) {},
+
+    handlerSwipeClick(e, group) {
+      console.log("swipeClick", e, group);
+      if (e.index == 0) {
+        this.dialogTitle = "编辑预购组";
+        this.group = group;
+        this.dialodOptions.ltext = "编辑";
+        this.$refs.addGroupDialog.show(this.dialodOptions);
+      } else {
+      }
     },
     //#endregion
   },
@@ -322,23 +356,41 @@ export default {
     margin-top: 10px;
     padding: 5px 0;
     border-radius: 13px;
-    background: white;
+    flex: 1;
+    // padding: 0 15px;
+    position: relative;
+    background-color: #fff;
+    // border-bottom-color: #f5f5f5;
+    // border-bottom-width: 1px;
+    // border-bottom-style: solid;
+  }
+  .uni-swipe_button {
+    border-radius: 13px;
+    margin: 0 5px;
+    margin-top: 10px;
   }
 }
+
+.edit-group-input {
+  .input-item {
+    margin-top: 10px;
+    .title {
+      color: $grey-text-color;
+    }
+    .input {
+      text-align: right;
+      padding: 5px;
+      margin-bottom: 8px;
+    }
+  }
+  .input-desc {
+    margin-top: 18px;
+  }
+}
+
 .bottom-operate {
   width: 100%;
   position: absolute;
   bottom: 0;
-}
-.add-group-input {
-  width: 100%;
-  .input {
-    text-align: center;
-    width: 100%;
-    padding: 5px;
-    margin-bottom: 8px;
-    border-radius: 8px;
-    border: 1px solid $grey-color;
-  }
 }
 </style>
