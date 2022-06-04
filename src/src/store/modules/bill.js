@@ -79,7 +79,7 @@ const mutations = {
             bill.amountFormat = calcTotalStat("0", bill.amount, 0);
 
             //2、 处理标识数据
-            let hasTag = true;
+            let hasTag = false;
             try {
                 state.indexTags.forEach((t) => {
                     if (year === t.year && month === t.month && day === t.day) {
@@ -92,6 +92,7 @@ const mutations = {
             } catch (e) {
                 hasTag = true;
             };
+            // console.log("进来Tag了", { year, month, day, total: 1 });
             if (!hasTag) state.indexTags.push({ year, month, day, total: 1 })
 
             //3、 处理子项插入
@@ -395,8 +396,9 @@ const actions = {
  * 1 相减
  */
 const calcTotalStat = (src, incr, op) => {
+    // console.log("src", src, incr, op);
     let sum = 0;
-    let f = Number(src.replace(/,/g, ''));
+    let f = Number(src.toString().replace(/,/g, ''));
     let l = Number(incr)
     if (op === 0) {
         let t = f + l;

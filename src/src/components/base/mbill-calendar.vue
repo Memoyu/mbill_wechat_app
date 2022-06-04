@@ -429,7 +429,7 @@ export default {
             color: $primary-text-color;
           }
           &-grey {
-            color: $grey-text-color;
+            color: $grey-color;
           }
         }
         .status-point {

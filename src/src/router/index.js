@@ -14,7 +14,7 @@ const router = createRouter({
 const whiteList = ['/pages/profile/login']
 //全局路由前置守卫
 router.beforeEach((to, from, next) => {
-    console.log("路由守卫");
+    // console.log("路由守卫");
     let token = uni.getStorageSync(ACCESS_TOKEN);
     if (token) {
         next()
@@ -30,7 +30,7 @@ router.beforeEach((to, from, next) => {
 });
 // 全局路由后置守卫
 router.afterEach((to, from) => {
-    console.log('跳转结束')
+    // console.log('跳转结束')
 })
 
 export {

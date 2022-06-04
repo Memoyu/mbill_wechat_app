@@ -2,15 +2,13 @@
   <view>
     <view class="container">
       <view class="bg" />
-      <!-- <view class="profile-header">
-        <i class="iconfont icon-list header-item" />
-        <i class="iconfont icon-list header-item" />
-      </view> -->
       <view
         class="profile-info"
         @tap="handlerNavigateTo('/pages/profile/user-detail')"
       >
-        <image class="image" mode="widthFix" :src="user.avatarUrl" />
+        <view class="avatar-image">
+          <image class="image" mode="widthFix" :src="user.avatarUrl" />
+        </view>
         <view class="user-info">
           <text class="user-name">{{ user.nickname }}</text>
           <text class="user-days" v-if="user.days > 0"
@@ -189,12 +187,14 @@ export default {
     align-items: center;
     // justify-content: space-between;
 
-    .image {
-      background: white;
-      border-radius: 50%;
-      width: 80px;
-      height: 80px;
+    .avatar-image {
       margin-right: 20px;
+      .image {
+        background: white;
+        border-radius: 50%;
+        width: 80px;
+        height: 80px;
+      }
     }
     .user-info {
       width: 100%;

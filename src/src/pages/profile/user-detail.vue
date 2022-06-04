@@ -23,11 +23,7 @@
       </view>
     </view>
     <view class="bottom-operate" id="bottom-operate">
-      <mb-b-bottom-btn
-        onlyone="true"
-        @ltap="handlerAddOrder"
-        ltext="退出登录"
-      />
+      <mb-b-bottom-btn onlyone="true" @ltap="handlerLogout" ltext="退出登录" />
     </view>
   </view>
 </template>
@@ -38,6 +34,14 @@ import { mapActions } from "vuex";
 export default {
   data() {
     return {
+      user: {
+        avatarUrl: "/static/assets/avatar.png",
+        email: "",
+        gender: "未知",
+        nickname: "未知",
+        phone: "",
+        username: "未知",
+      },
       cells: [
         {
           title: "昵称",
@@ -59,15 +63,33 @@ export default {
     };
   },
   computed: {
-    user() {
+    cacheUser() {
       // console.log(this.$store);
       return this.$store.getters.user;
     },
   },
   onShow() {},
-  onLoad() {},
+  onLoad() {
+    this.getUserDetail();
+  },
   methods: {
     ...mapActions(["Logout"]),
+
+    // 获取用户详情
+    getUserDetail() {
+      this.$api
+        .userDetail({
+          id: this.cacheUser.id,
+        })
+        .then((res) => {
+          // console.log("列表", res);
+          if (res.data.code === 0) {
+            this.user = res.data.result;
+          }
+        });
+    },
+
+    // 退出登录
     handlerLogout() {
       console.log(this.user);
       this.Logout();
