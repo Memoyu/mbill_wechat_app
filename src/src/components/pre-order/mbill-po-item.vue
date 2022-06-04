@@ -14,7 +14,7 @@
         <text class="time">{{ order.time }}</text>
       </view>
       <view class="content-amount">
-        <text class="expend-color">
+        <text :class="[order.status == 0 ? 'income-color' : 'expend-color']">
           {{ order.amount }}
         </text>
       </view>
@@ -32,25 +32,9 @@ export default {
     },
   },
   data() {
-    return {
-      iconColors: [
-        "#7C3E66",
-        "#F2EBE9",
-        "#A5BECC",
-        "#243A73",
-        "#313552",
-        "#B8405E",
-        "#2EB086",
-        "#EEE6CE",
-      ],
-    };
+    return {};
   },
   methods: {
-    getColor() {
-      return this.iconColors[
-        Math.floor(Math.random() * this.iconColors.length)
-      ];
-    },
     handlerToDetail() {
       this.$emit("select", this.order);
     },

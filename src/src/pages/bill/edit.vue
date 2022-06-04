@@ -149,6 +149,8 @@ const now = new Date();
 export default {
   data() {
     return {
+      isOrder: false, // 是否为预购转账单
+      order: {}, // 预购信息
       bill: {
         id: 0,
         type: 0,
@@ -190,6 +192,14 @@ export default {
   onLoad(option) {
     // console.log(option);
     this.initData();
+
+    // 校验是否为预购过来的
+    if (option.order != undefined) {
+      console.log("预购Id", option.order);
+      this.isOrder = true;
+      this.getPreOrder(option.order);
+    }
+
     // console.log(option.id);
     if (option.id == undefined) {
       if (this.locationStatus) this.getLocation();
@@ -239,6 +249,30 @@ export default {
     },
 
     //#region 接口请求
+
+    // 获取账单详情
+    getPreOrder(id) {
+      this.$api
+        .getPreOrder({
+          id: id,
+        })
+        .then((res) => {
+          if (res.data.code === 0) {
+            console.log("预购信息", res.data.result);
+            let result = res.data.result;
+            this.model.description = result.description;
+            this.model.amount = result.amount;
+            this.initAmount = result.amount;
+            this.order = result;
+            // let dateTime = new Date(result.time);
+            // this.date = datetime.getCurDate(dateTime);
+            // this.model.time = `${dateTime.getHours()}:${dateTime.getMinutes()}`;
+          } else {
+            this.$tip.error(res.data.message);
+            this.isOrder = false;
+          }
+        });
+    },
 
     // 获取账单详情
     getBillDetail(id) {
@@ -316,6 +350,10 @@ export default {
 
     // 账单类型选择
     handlerTypeSelected(type) {
+      if (this.isOrder && type.id == 1) {
+        this.$tip.toast("预购无法转成收入类型");
+        return;
+      }
       this.model.type = type.id;
       this.model.categoryId = 0;
     },
@@ -381,6 +419,8 @@ export default {
             let bill = res.data.result;
             // console.log("添加成功", { bill, date: this.bill.time });
             this.$store.commit(ADD_INDEX_BILL, { bill, date: this.bill.time });
+            // 如果是预购转账单，此处需要处理
+            this.orderToBill(bill.id);
             this.$Router.back();
           } else {
             this.$tip.error(res.data.message);
@@ -390,7 +430,7 @@ export default {
         this.$api.editBill(this.bill).then((res) => {
           if (res.data.code === 0) {
             let bill = res.data.result;
-            console.log("编辑成功", { bill, date: this.bill.time });
+            // console.log("编辑成功", { bill, date: this.bill.time });
             this.modifyIndexBill({
               bill,
               date: this.bill.time,
@@ -401,8 +441,18 @@ export default {
           }
         });
       }
+      // console.log("cof ", this.bill);
+    },
 
-      console.log("cof ", this.bill);
+    // 预购转账单处理
+    orderToBill(billId) {
+      // 先校验，是否为预购
+      if (!this.isOrder) return;
+      // 获取上一个页面（如果账单过来，必须是预购列表页面），并调用其方法
+      let pages = getCurrentPages(); //获取页面栈
+      let beforePage = pages[pages.length - 2]; //上一页
+      console.log(beforePage);
+      beforePage.$vm.completedToBillCallback(this.order.id, billId); //直接调用上一页的方法
     },
 
     // 选中账单分类

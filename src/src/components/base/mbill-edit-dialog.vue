@@ -75,7 +75,9 @@ export default {
       this.$refs.editDialogPopup.close();
     },
 
-    handlerPopup(e) {},
+    handlerPopup(e) {
+      this.$emit("change", e);
+    },
 
     handlerLeft() {
       // console.log("左边按下");

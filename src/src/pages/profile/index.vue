@@ -22,12 +22,12 @@
       <view class="profile-asset">
         <view class="le le-shadow le-3" />
         <view class="le le-shadow le-2">
-          <view class="preview-stats-refresh x-ac">
+          <!-- <view class="preview-stats-refresh x-ac">
             <i
               class="iconfont icon-shuaxin icon"
               @click="getProfileTotalStat"
             />
-          </view>
+          </view> -->
         </view>
         <view class="le le-shadow le-1">
           <view class="preview-stats x-bc">

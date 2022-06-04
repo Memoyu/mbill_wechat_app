@@ -4,6 +4,7 @@ import datetime from "@/common/utils/datetime";
 import {
     INDEX_BILL_STAT,
     PROFILE_BILL_STAT,
+    PROFILE_BILL_STAT_PRE_ORDER_AMOUNT,
     INDEX_BILL_TAGS,
     INDEX_CUR_MONTH,
     ADD_INDEX_BILL,
@@ -46,15 +47,18 @@ const mutations = {
     [INDEX_BILL_STAT]: (state, stat) => {
         state.indexStat = stat;
     },
+
     [INDEX_BILL_TAGS]: (state, tags) => {
         state.indexTags = tags;
     },
+
     [INDEX_CUR_MONTH]: (state, date) => {
         let year = datetime.getCurYear(new Date(date));
         let month = datetime.getCurMonth(new Date(date));
         state.indexCurMonth = { year, month };
         // console.log("store curdate", state.indexCurMonth);
     },
+
     [ADD_INDEX_BILL]: (state, { bill, date }) => {
         // console.log("store mut", bill);
         let year = datetime.getCurYear(new Date(date));
@@ -126,6 +130,7 @@ const mutations = {
             }
         }
     },
+
     [ADD_INDEX_BILLS]: (state, { bills, isCover }) => {
         // 是否直接覆盖
         if (isCover) state.indexBills = bills;
@@ -159,6 +164,7 @@ const mutations = {
             });
         }
     },
+
     [DEL_INDEX_BILL]: (state, id) => {
         try {
             // console.log("store mut del", id);
@@ -214,8 +220,13 @@ const mutations = {
         } catch (e) {
         };
     },
+
     [PROFILE_BILL_STAT]: (state, stat) => {
         state.profileStat = stat;
+    },
+
+    [PROFILE_BILL_STAT_PRE_ORDER_AMOUNT]: (state, { amount, op }) => {
+        state.profileStat.preOrder = calcTotalStat(state.profileStat.preOrder, amount, op)
     },
 }
 

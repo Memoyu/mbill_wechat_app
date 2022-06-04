@@ -53,6 +53,11 @@ const preOrder = {
         return http.delete('pre-order', params)
     },
 
+    // 获取预购信息
+    getPreOrder(params) {
+        return http.get('pre-order', { params: params })
+    },
+
     // 获取指定分组分页预购
     groupPreOrders(params) {
         return http.get('pre-order/pages', { params: params })

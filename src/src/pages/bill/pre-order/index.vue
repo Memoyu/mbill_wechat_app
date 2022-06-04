@@ -81,6 +81,7 @@
       ref="addGroupDialog"
       height="25"
       class="edit-group-input"
+      @change="handlerDialogChange"
       @ltap="handlerReqEditGroup"
     >
       <view class="input-item x-bc">
@@ -89,6 +90,7 @@
           type="text"
           class="input"
           v-model="group.name"
+          alwaysEmbed="true"
           placeholder="名称"
         />
       </view>
@@ -98,6 +100,7 @@
           type="text"
           class="input"
           v-model="group.description"
+          alwaysEmbed="true"
           placeholder="描述一下咯"
         />
       </view>
@@ -108,8 +111,10 @@
 <script>
 import { mapActions, mapState } from "vuex";
 import {
-  ADD_PRE_ORDER_INDEX_GROUP,
-  EDIT_PRE_ORDER_INDEX_GROUP,
+  GROUP_INDEX_ADD_GROUP,
+  GROUP_INDEX_EDIT_GROUP,
+  GROUP_INDEX_DEL_GROUP,
+  PROFILE_BILL_STAT_PRE_ORDER_AMOUNT,
 } from "@/store/type";
 import datetime from "@/common/utils/datetime";
 
@@ -131,12 +136,6 @@ export default {
         year: datetime.getCurYear(),
         month: datetime.getCurMonth(),
       },
-      // stat: {
-      //   total: 0,
-      //   amount: 0,
-      //   done: 0,
-      //   undone: 0,
-      // },
       page: {
         page: 1,
         size: 15,
@@ -201,8 +200,7 @@ export default {
         if (res.data.code === 0) {
           // console.log(res);
           this.$refs.addGroupDialog.hide();
-          this.$store.commit(ADD_PRE_ORDER_INDEX_GROUP, res.data.result);
-          this.group = {};
+          this.$store.commit(GROUP_INDEX_ADD_GROUP, res.data.result);
         } else {
           this.$tip.alert(res.data.message);
         }
@@ -214,8 +212,7 @@ export default {
         if (res.data.code === 0) {
           // console.log(res);
           this.$refs.addGroupDialog.hide();
-          this.$store.commit(EDIT_PRE_ORDER_INDEX_GROUP, res.data.result);
-          this.group = {};
+          this.$store.commit(GROUP_INDEX_EDIT_GROUP, res.data.result);
         } else {
           this.$tip.alert(res.data.message);
         }
@@ -227,7 +224,11 @@ export default {
         if (res.data.code === 0) {
           // console.log(res);
           this.$refs.addGroupDialog.hide();
-          this.group = {};
+          this.$store.commit(GROUP_INDEX_DEL_GROUP, group);
+          this.$store.commit(PROFILE_BILL_STAT_PRE_ORDER_AMOUNT, {
+            amount: group.amount,
+            op: 1,
+          });
         } else {
           this.$tip.alert(res.data.message);
         }
@@ -262,16 +263,19 @@ export default {
     handlerPickerChange({ detail }) {
       // console.log(detail.value);
       let d = new Date(detail.value);
-      this.date = datetime.getCurDateObj(d);
       this.pickerDate = datetime.getCurDate(d);
-      this.pickerDateText = this.date;
+      this.pickerDateText = datetime.getCurDateObj(d);
       this.initData();
     },
 
     handlerAddGroup() {
-      this.group = {};
       this.dialodOptions.ltext = "新建";
       this.$refs.addGroupDialog.show(this.dialodOptions);
+    },
+
+    // 弹窗变更
+    handlerDialogChange({ show }) {
+      if (!show) this.group = {};
     },
 
     handlerReqEditGroup() {
@@ -297,13 +301,21 @@ export default {
     },
 
     // scroll触底事件
-    lowerBottom() {},
+    lowerBottom() {
+      // console.log("触底加载");
+      if (this.page.page * this.page.size >= this.pageTotal) return;
+      // console.log("加载");
+      this.page.page += 1;
+      this.getGroups();
+    },
 
     handlerSwipeClick(e, g) {
       // console.log("swipeClick", e, group);
       if (e.index == 0) {
         this.dialogTitle = "编辑预购组";
         this.dialodOptions.ltext = "编辑";
+
+        // 深拷贝
         var gCopy = {};
         for (var key in g) {
           gCopy[key] = g[key];
@@ -312,8 +324,9 @@ export default {
         this.$refs.addGroupDialog.show(this.dialodOptions);
       } else if (e.index == 1) {
         // 删除
+        var that = this;
         this.$tip.choose("是否删除该预购分组？", {}, "提示").then(async () => {
-          that.delPreOrder(o);
+          that.delGroup(g);
         });
       }
     },
@@ -392,7 +405,7 @@ export default {
   width: 95%;
   .group-content-items {
     margin-top: 10px;
-    padding: 5px 0;
+    padding: 3px 0;
     border-radius: 13px;
     flex: 1;
     // padding: 0 15px;
