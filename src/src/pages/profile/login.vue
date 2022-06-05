@@ -77,7 +77,7 @@ export default {
       });
     },
     handleToLogin(data) {
-      console.log("userinfo", data);
+      // console.log("userinfo", data);
       this.Login({
         code: data.code,
         avatarUrl: data.avatarUrl,
