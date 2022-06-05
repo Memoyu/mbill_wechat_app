@@ -2,6 +2,9 @@
   <view>
     <view class="container">
       <view class="bg" />
+      <!-- <view class="profile-header">
+        <i class="iconfont .icon-weather-thunderstorm-sun header-item" />
+      </view> -->
       <view
         class="profile-info"
         @tap="handlerNavigateTo('/pages/profile/user-detail')"
@@ -177,8 +180,8 @@ export default {
     flex-direction: row;
     justify-content: flex-end;
     .header-item {
-      margin: 10px 15px;
-      font-size: 20px;
+      margin: 0 15px;
+      font-size: 25px;
     }
   }
   .profile-info {

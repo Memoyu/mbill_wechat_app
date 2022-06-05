@@ -81,12 +81,12 @@
 
       <!-- 数字键盘 -->
       <view class="key-board-container" id="edit-key-board-container">
-        <view class="location x-start">
+        <view class="key-board-header-location x-ac">
           <i
             :class="[
               'iconfont',
               'icon-location',
-              'icon',
+              'icon-padding ',
               !locationStatus ? 'icon-color' : '',
             ]"
             @click="handlerSwitchChange"
@@ -94,21 +94,23 @@
           />
           <input
             type="text"
-            class="input-text"
+            class="input-address-text"
             v-model="model.address"
             placeholder="地址"
           />
         </view>
-        <view class="key-board-header x-start">
+        <view class="key-board-header-desc x-start">
           <view class="x-ac choose-asset" @tap="handlerChooseAsset">
             <i class="iconfont icon-assets icon" />
-            <text class="text">{{ model.asset }}</text>
+            <text :class="[model.assetId == 0 ? 'text' : 'text-choose']">{{
+              model.asset
+            }}</text>
           </view>
           <view class="x-ac">
             <i class="iconfont icon-edit icon" />
             <input
               type="text"
-              class="input-text"
+              class="input-desc-text"
               v-model="model.description"
               placeholder="备注"
             />
@@ -472,6 +474,8 @@ export default {
       // console.log("获取位置", this.locationStatus);
       if (this.locationStatus) {
         this.getLocation();
+      } else {
+        this.$tip.toast("长按开启自动获取地址哦！");
       }
     },
 
@@ -554,7 +558,7 @@ export default {
 .amount {
   background: $light-color;
   padding: 0 10px;
-  margin-bottom: 5px;
+  margin-bottom: 4px;
   background-image: radial-gradient();
   .amount-input {
     display: flex;
@@ -605,25 +609,30 @@ export default {
   bottom: 0;
   left: 0;
   right: 0;
-  .location {
-    padding: 10px 10px 0 10px;
+  .key-board-header-location {
     background: #fff;
   }
-  .key-board-header {
-    padding: 10px 10px 0 10px;
+  .key-board-header-desc {
     background: #fff;
     .choose-asset {
       margin-right: 20px;
     }
+
     .text {
       color: $primary-color;
+    }
+
+    .text-choose {
       display: -webkit-box; /*弹性伸缩盒子模型显示*/
       -webkit-box-orient: vertical; /*排列方式*/
       -webkit-line-clamp: 1; /*显示文本行数(这里控制多少行隐藏)*/
       overflow: hidden; /*溢出隐藏*/
     }
   }
-  .input-text {
+  .input-address-text {
+    width: 100%;
+  }
+  .input-desc-text {
     width: 100%;
   }
 }
@@ -638,7 +647,13 @@ export default {
 
 .icon {
   color: $primary-color;
-  margin-right: 10px;
+  padding: 5px 10px;
+  font-size: 20px;
+}
+
+.icon-padding {
+  color: $primary-color;
+  padding: 10px 10px;
   font-size: 20px;
 }
 .icon-color {

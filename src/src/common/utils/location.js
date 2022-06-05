@@ -15,28 +15,6 @@ export default {
         let { locationEnabled } = wx.getSystemInfoSync();
         if (locationEnabled) {
             return new Promise((resolve, reject) => {
-                let getRegeo = () => {
-                    qqmapsdk.reverseGeocoder({
-                        location: uni.getStorageSync(USER_LOCATION) || '',
-                        success: function (res) {
-                            // console.log("地址信息", res)
-                            resolve(res.result);
-                        },
-                        fail: function (error) {
-                            tip.toast("获取位置信息失败, 请检查手机定位是否开启");
-                            reject(error);
-                        },
-                    });
-                }
-
-                let _locationChangeFn = res => {
-                    // console.log('location change', res);
-                    uni.setStorageSync(USER_LOCATION, `${res.latitude},${res.longitude}`)
-                    getRegeo();
-                    wx.offLocationChange();
-                    wx.stopLocationUpdate();
-                };
-
                 let curTime = new Date().getTime();
                 let time = uni.getStorageSync(GET_LOCATION_TIME) || curTime - 60005 // 加一分多钟
                 let timeDiff = curTime - time
@@ -44,53 +22,93 @@ export default {
                 let sec = Math.floor(leavel / 1000); // 计算剩余的分钟数
                 // console.log(curTime, time, leavel, sec);
                 if (sec < 60) {
-                    getRegeo();
+                    this.formatLocation().then((res) => {
+                        resolve(res);
+                    }).catch(err => {
+                        tip.error("获取地址失败")
+                        console.log("reverseGeocoder获取地址信息失败", err);
+                        reject(err)
+                    })
+                } else {
+                    this.getUserLocation().then(res => {
+                        uni.setStorageSync(GET_LOCATION_TIME, curTime)
+                        this.formatLocation().then((res) => {
+                            resolve(res);
+                        }).catch(err => {
+                            tip.error("获取地址失败")
+                            console.log("reverseGeocoder获取地址信息失败", err);
+                            reject(err)
+                        })
+                    }).catch(err => {
+                        tip.error("获取位置失败")
+                        console.log("getLocation获取地理位置失败", err);
+                        reject(err)
+                    })
                 }
-                else {
-                    uni.setStorageSync(GET_LOCATION_TIME, curTime)
-                    wx.startLocationUpdate({
+            });
+        } else {
+            tip.toast('请检查手机定位是否开启')
+            reject("未开启手机定位")
+        }
+    },
+
+    getUserLocation() {
+        return new Promise((resolve, reject) => {
+            uni.getLocation({
+                type: "gcj02", // 返回可以用于wx.openLocation的经纬度
+                success: (res) => {
+                    uni.setStorageSync(USER_LOCATION, `${res.latitude},${res.longitude}`)
+                    resolve(res);
+                },
+                fail: (err) => {
+                    console.log(err);
+                    wx.showModal({
+                        title: '温馨提示',
+                        content: '获取权限失败，需要获取您的地理位置才能为您提供更好的服务！是否授权获取地理位置？',
+                        confirmText: '前往设置',
+                        cancelText: '取消',
                         success: res => {
-                            wx.onLocationChange(_locationChangeFn);
-                        },
-                        fail: err => {
-                            // console.log('获取当前位置失败', err);
-                            wx.showModal({
-                                title: '温馨提示',
-                                content: '获取权限失败，需要获取您的地理位置才能为您提供更好的服务！是否授权获取地理位置？',
-                                confirmText: '前往设置',
-                                cancelText: '取消',
-                                success: res => {
-                                    if (res.confirm) {
-                                        wx.openSetting({
-                                            success: async res => {
-                                                console.log(res);
-                                                if (res.authSetting[
-                                                    'scope.userLocation']) {
-                                                    wx.showToast({
-                                                        title: '授权成功请继续',
-                                                        icon: 'success'
-                                                    })
-                                                }
-                                                getRegeo();
-                                            }
-                                        });
+                            if (res.confirm) {
+                                wx.openSetting({
+                                    success: async res => {
+                                        console.log(res);
+                                        if (res.authSetting[
+                                            'scope.userLocation']) {
+                                            tip.toast('授权成功，请继续')
+                                            this.getUserLocation().then(res => {
+                                                resolve(res);
+                                            })
+                                        } else {
+                                            tip.toast('授权失败，请检查设置！')
+                                        }
                                     }
-                                }
-                            });
-                            // reject(err);
+                                });
+                            } else {
+                                reject("用户取消了授权地理位置")
+                            }
+                        },
+                        fail: (err) => {
+                            reject(err)
                         }
                     });
                 }
             });
-        } else {
-            wx.showToast({
-                title: '请检查手机定位是否开启',
-                icon: 'none'
-            })
-            return new Promise((resolve, reject) => {
-                reject()
-            })
-        }
+        });
     },
+
+    formatLocation() {
+        return new Promise((resolve, reject) => {
+            qqmapsdk.reverseGeocoder({
+                location: uni.getStorageSync(USER_LOCATION) || '',
+                success: function (res) {
+                    // console.log("地址信息", res)
+                    resolve(res.result);
+                },
+                fail: function (error) {
+                    reject(error)
+                },
+            });
+        });
+    }
 
 }
