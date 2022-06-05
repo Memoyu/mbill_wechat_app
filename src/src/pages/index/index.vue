@@ -7,7 +7,7 @@
         <picker
           class="date-picker"
           mode="date"
-          @change="handlerPickerChange"
+          @change="handlePickerChange"
           fields="month"
           :value="pickerDate"
         >
@@ -33,9 +33,9 @@
           :expand="expand"
           :tags="indexTags"
           :date="calendarDate"
-          @change="handlerDayChange"
-          @changemonth="handlerMonthChange"
-          @sizechange="handlerSizeChange"
+          @change="handleDayChange"
+          @changemonth="handleMonthChange"
+          @sizechange="handleSizeChange"
         />
       </view>
     </view>
@@ -43,7 +43,7 @@
     <view
       :style="{ height: expandHeight + 'px' }"
       class="calendar-expand"
-      @tap="handlerExpandView"
+      @tap="handleExpandView"
     >
       <i
         style="font-size: 20px"
@@ -66,7 +66,7 @@
       height="70"
       :show="popShow"
       :date="popDate"
-      @change="handlerBillsOnDayPopup"
+      @change="handleBillsOnDayPopup"
     />
   </view>
 </template>
@@ -207,7 +207,7 @@ export default {
     },
 
     // 日历月份变更
-    handlerMonthChange(date) {
+    handleMonthChange(date) {
       // console.log("date", date);
       this.pickerDateText = date;
       this.pickerDate = `${date.year}-${date.month}`;
@@ -216,14 +216,14 @@ export default {
     },
 
     // 选中具体日期时弹窗展示账单
-    handlerDayChange(e) {
+    handleDayChange(e) {
       // console.log("选中日期：", e);
       this.popDate = e;
       this.popShow = true;
     },
 
     // 选择日期
-    handlerPickerChange({ detail }) {
+    handlePickerChange({ detail }) {
       // console.log(detail.value);
       let d = new Date(detail.value);
       this.calendarDate = datetime.getCurDateObj(d);
@@ -234,19 +234,19 @@ export default {
     },
 
     // 弹窗状态改变触发
-    handlerBillsOnDayPopup(e) {
+    handleBillsOnDayPopup(e) {
       this.setTabBarShow(!e.show);
       this.popShow = e.show;
     },
 
     // 日历size发生变更
-    handlerSizeChange(h) {
+    handleSizeChange(h) {
       // console.log("日历尺寸", h);
       this.getDynamicHeight(h);
     },
 
     // 展开、收缩scroll-view
-    handlerExpandView() {
+    handleExpandView() {
       let minHeight = this.dateTitleHeight;
       // console.log(minHeight);
       if (this.expand) {

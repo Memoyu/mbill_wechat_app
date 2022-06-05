@@ -8,7 +8,7 @@
           background: lbcolor,
           width: onlyone ? '90%' : '60%',
         }"
-        @tap="handlerLBtnTap"
+        @tap="handleLBtnTap"
         >{{ ltext }}</view
       >
       <view
@@ -18,7 +18,7 @@
           color: rcolor,
           background: rbcolor,
         }"
-        @tap="handlerRBtnTap"
+        @tap="handleRBtnTap"
         >{{ rtext }}</view
       >
     </view>
@@ -59,10 +59,10 @@ export default {
     },
   },
   methods: {
-    handlerLBtnTap() {
+    handleLBtnTap() {
       this.$emit("ltap");
     },
-    handlerRBtnTap() {
+    handleRBtnTap() {
       this.$emit("rtap");
     },
   },

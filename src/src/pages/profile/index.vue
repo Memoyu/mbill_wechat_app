@@ -7,7 +7,7 @@
       </view> -->
       <view
         class="profile-info"
-        @tap="handlerNavigateTo('/pages/profile/user-detail')"
+        @tap="handleNavigateTo('/pages/profile/user-detail')"
       >
         <view class="avatar-image">
           <image class="image" mode="widthFix" :src="user.avatarUrl" />
@@ -43,7 +43,7 @@
             <view class="grids">
               <view
                 class="grid-item x-c"
-                @tap="handlerNavigateTo(item.path)"
+                @tap="handleNavigateTo(item.path)"
                 v-for="(item, index) in grids"
                 :key="index"
               >
@@ -58,7 +58,7 @@
             <view class="cells">
               <view
                 class="cell-item"
-                @tap="handlerNavigateTo(item.path)"
+                @tap="handleNavigateTo(item.path)"
                 v-for="(item, index) in cells"
                 :key="index"
               >
@@ -155,7 +155,7 @@ export default {
   },
   methods: {
     ...mapActions(["getProfileTotalStat"]),
-    handlerNavigateTo(path) {
+    handleNavigateTo(path) {
       // console.log("yonghu ", this.user);
       // console.log(path);
       uni.navigateTo({ url: path });

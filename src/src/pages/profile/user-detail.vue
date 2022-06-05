@@ -5,7 +5,7 @@
       <view class="cells">
         <view
           class="cell-item"
-          @tap="handlerNavigateTo(item.path)"
+          @tap="handleNavigateTo(item.path)"
           v-for="(item, index) in cells"
           :key="index"
         >
@@ -23,7 +23,7 @@
       </view>
     </view>
     <view class="bottom-operate" id="bottom-operate">
-      <mb-b-bottom-btn onlyone="true" @ltap="handlerLogout" ltext="退出登录" />
+      <mb-b-bottom-btn onlyone="true" @ltap="handleLogout" ltext="退出登录" />
     </view>
   </view>
 </template>
@@ -90,7 +90,7 @@ export default {
     },
 
     // 退出登录
-    handlerLogout() {
+    handleLogout() {
       console.log(this.user);
       this.Logout();
     },

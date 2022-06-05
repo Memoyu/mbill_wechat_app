@@ -3,7 +3,7 @@
     ref="BillDayListPopup"
     class="mbill-bill-day-list-popup"
     type="bottom"
-    @change="handlerPopup"
+    @change="handlePopup"
   >
     <view class="bill-popup-content" :style="{ height: contentHeight + 'px' }">
       <view class="bill-popup-title">{{ title }}</view>
@@ -69,7 +69,7 @@ export default {
     });
   },
   methods: {
-    handlerPopup(e) {
+    handlePopup(e) {
       this.$emit("change", e);
     },
     getDayBills(date) {

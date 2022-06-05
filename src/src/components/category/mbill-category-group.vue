@@ -10,7 +10,7 @@
           ]"
           v-for="(item, index) in d.childs"
           :key="index"
-          @click="handlerSelectedItem(item)"
+          @click="handleSelectedItem(item)"
         >
           <image class="image" :src="item.iconUrl" />
           <text class="text">{{ item.name }}</text>
@@ -18,7 +18,7 @@
       </view>
     </view>
     <!-- TODO:完成分类的添加 -->
-    <view class="to-add-category" @tap="handlerAddCategory">添加分类</view>
+    <view class="to-add-category" @tap="handleAddCategory">添加分类</view>
   </view>
 </template>
 
@@ -47,13 +47,13 @@ export default {
     },
   },
   methods: {
-    handlerSelectedItem(item) {
+    handleSelectedItem(item) {
       this.selectedId = item.id;
       this.$emit("selected", item);
     },
 
     // 跳转新增分类页面
-    handlerAddCategory() {
+    handleAddCategory() {
       this.$Router.push({ name: "category-edit" });
     },
   },

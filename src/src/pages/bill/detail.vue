@@ -22,7 +22,7 @@
         <mb-b-end-split-line class="bottom-line" />
       </view>
       <view class="bottom-operate">
-        <mb-b-bottom-btn @ltap="handlerEdit" @rtap="handlerDel" />
+        <mb-b-bottom-btn @ltap="handleEdit" @rtap="handleDel" />
       </view>
     </view>
   </view>
@@ -77,11 +77,11 @@ export default {
           this.$tip.error("请求错误！");
         });
     },
-    handlerEdit() {
+    handleEdit() {
       // console.log("编辑");
       this.$Router.push({ name: "bill-edit", params: { id: this.bill.id } });
     },
-    handlerDel() {
+    handleDel() {
       // console.log("删除");
       let pages = getCurrentPages(); //当前页
       let beforePage = pages[pages.length - 2];

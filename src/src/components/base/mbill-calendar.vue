@@ -34,7 +34,7 @@
             class="day-item"
             v-for="(item2, index2) in item"
             :key="index2"
-            @tap="handlerDayClick(index2)"
+            @tap="handleDayClick(index2)"
           >
             <!-- 不是本月的天数颜色为灰色 -->
             <view
@@ -129,7 +129,7 @@ export default {
     },
 
     //点击某一天
-    handlerDayClick(index) {
+    handleDayClick(index) {
       // 如果 点击本月的日期
       let targetIndex = index;
       if (this.monthList[1][index].fromMonth != "nowMonth") {

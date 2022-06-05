@@ -3,7 +3,7 @@
     ref="editDialogPopup"
     class="mbill-edit-dialog-popup"
     type="center"
-    @change="handlerPopup"
+    @change="handlePopup"
   >
     <view
       class="edit-dialog-popup-content"
@@ -15,8 +15,8 @@
       <!-- 底部按钮 -->
       <view class="bottom-operate" id="bottom-operate">
         <mb-b-bottom-btn
-          @ltap="handlerLeft"
-          @rtap="handlerRight"
+          @ltap="handleLeft"
+          @rtap="handleRight"
           :onlyone="onlyone"
           :ltext="ltext"
           :rtext="rtext"
@@ -75,17 +75,17 @@ export default {
       this.$refs.editDialogPopup.close();
     },
 
-    handlerPopup(e) {
+    handlePopup(e) {
       this.$emit("change", e);
     },
 
-    handlerLeft() {
+    handleLeft() {
       // console.log("左边按下");
       this.$emit("ltap");
       if (this.autoclose) this.$refs.editDialogPopup.close();
     },
 
-    handlerRight() {
+    handleRight() {
       this.$emit("rtap");
       if (this.autoclose) this.$refs.editDialogPopup.close();
     },

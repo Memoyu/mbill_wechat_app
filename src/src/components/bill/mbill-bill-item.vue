@@ -1,5 +1,5 @@
 <template>
-  <view class="mbill-bill-item" @tap="handlerToDetail(bill.id)">
+  <view class="mbill-bill-item" @tap="handleToDetail(bill.id)">
     <view class="bill-icon">
       <image class="image" :src="bill.categoryIcon" />
     </view>
@@ -38,7 +38,7 @@ export default {
           return "income-color";
       }
     },
-    handlerToDetail(id) {
+    handleToDetail(id) {
       uni.navigateTo({ url: `/pages/bill/detail?id=${id}` });
     },
   },

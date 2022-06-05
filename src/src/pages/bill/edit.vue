@@ -11,7 +11,7 @@
               'item',
               model.type == type.id ? `item-select ${type.color}` : '',
             ]"
-            @tap="handlerTypeSelected(type)"
+            @tap="handleTypeSelected(type)"
             >{{ type.title }}</view
           >
         </view>
@@ -19,7 +19,7 @@
           <picker
             class="date-picker"
             mode="date"
-            @change="handlerDatePicker"
+            @change="handleDatePicker"
             fields="day"
             :value="date"
             :end="pickerEnd"
@@ -31,7 +31,7 @@
           <picker
             class="time-picker"
             mode="time"
-            @change="handlerTimePicker"
+            @change="handleTimePicker"
             :value="model.time"
           >
             <view class="x-ac time">
@@ -74,7 +74,7 @@
           <mb-ca-group
             :select="model.categoryId"
             :groups="categoryGroups"
-            @selected="handlerSelectedCategory"
+            @selected="handleSelectedCategory"
           />
         </scroll-view>
       </view>
@@ -89,8 +89,8 @@
               'icon-padding ',
               !locationStatus ? 'icon-color' : '',
             ]"
-            @click="handlerSwitchChange"
-            @longtap="handlerSwitchLongtap"
+            @click="handleSwitchChange"
+            @longtap="handleSwitchLongtap"
           />
           <input
             type="text"
@@ -100,7 +100,7 @@
           />
         </view>
         <view class="key-board-header-desc x-start">
-          <view class="x-ac choose-asset" @tap="handlerChooseAsset">
+          <view class="x-ac choose-asset" @tap="handleChooseAsset">
             <i class="iconfont icon-assets icon" />
             <text :class="[model.assetId == 0 ? 'text' : 'text-choose']">{{
               model.asset
@@ -119,8 +119,8 @@
         <mb-b-keyboard
           ref="keyboard"
           :pnum="initAmount"
-          @confirm="handlerConfirmNum"
-          @input="handlerInputNum"
+          @confirm="handleConfirmNum"
+          @input="handleInputNum"
         />
       </view>
 
@@ -131,7 +131,7 @@
             <mb-as-group
               :select="model.assetId"
               :groups="assetGroups"
-              @selected="handlerSelectedAsset"
+              @selected="handleSelectedAsset"
             />
           </scroll-view>
         </view>
@@ -351,7 +351,7 @@ export default {
     },
 
     // 账单类型选择
-    handlerTypeSelected(type) {
+    handleTypeSelected(type) {
       if (this.isOrder && type.id == 1) {
         this.$tip.toast("预购无法转成收入类型");
         return;
@@ -361,25 +361,25 @@ export default {
     },
 
     // 日期选择
-    handlerDatePicker({ detail }) {
+    handleDatePicker({ detail }) {
       // console.log(this.model.date);
       this.date = detail.value;
       this.model.date = detail.value;
     },
 
     // 时间选择
-    handlerTimePicker({ detail }) {
+    handleTimePicker({ detail }) {
       this.model.time = detail.value;
     },
 
     // 弹出账户选择
-    handlerChooseAsset() {
+    handleChooseAsset() {
       this.getAssetGroups();
       this.$refs.assetPopup.open();
     },
 
     // 键盘输入
-    handlerInputNum(e) {
+    handleInputNum(e) {
       // console.log(e);
       this.input = e.input;
       this.model.amount = e.result;
@@ -388,7 +388,7 @@ export default {
     },
 
     // 键盘确认
-    handlerConfirmNum() {
+    handleConfirmNum() {
       this.bill = {
         id: this.model.id,
         type: this.model.type,
@@ -458,19 +458,19 @@ export default {
     },
 
     // 选中账单分类
-    handlerSelectedCategory(item) {
+    handleSelectedCategory(item) {
       this.model.categoryId = item.id;
     },
 
     // 选中账单账户
-    handlerSelectedAsset(item) {
+    handleSelectedAsset(item) {
       this.model.assetId = item.id;
       this.model.asset = item.name;
       this.$refs.assetPopup.close();
     },
 
     // 位置信息获取开关切换(点击获取)
-    handlerSwitchChange() {
+    handleSwitchChange() {
       // console.log("获取位置", this.locationStatus);
       if (this.locationStatus) {
         this.getLocation();
@@ -480,7 +480,7 @@ export default {
     },
 
     // 位置信息获取开关切换(长按开关)
-    handlerSwitchLongtap() {
+    handleSwitchLongtap() {
       // console.log("长按");
       this.locationStatus = !this.locationStatus;
       uni.setStorageSync(LOCATION_STATUS, this.locationStatus);

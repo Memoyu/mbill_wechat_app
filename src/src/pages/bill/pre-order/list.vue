@@ -38,10 +38,10 @@
             v-for="(o, ind) in orders"
             :key="ind"
             :right-options="o.status == 0 ? doneSwipeOps : unDoneSwipeOps"
-            @click="handlerSwipeClick($event, o)"
+            @click="handleSwipeClick($event, o)"
           >
             <view class="list-content-items">
-              <mb-po-item :order="o" @select="handlerSelected" />
+              <mb-po-item :order="o" @select="handleSelected" />
             </view>
           </uni-swipe-action-item>
         </uni-swipe-action>
@@ -53,8 +53,8 @@
     <mb-b-edit-dialog
       ref="editOrderDialog"
       class="edit-order-dialog"
-      @change="handlerDialogChange"
-      @ltap="handlerReqEditOrder"
+      @change="handleDialogChange"
+      @ltap="handleReqEditOrder"
     >
       <view class="input-item x-bc">
         <text class="title">金额</text>
@@ -70,7 +70,7 @@
         <picker
           class="date-picker"
           mode="date"
-          @change="handlerPickerChange"
+          @change="handlePickerChange"
           fields="day"
           :value="pickerDate"
         >
@@ -95,11 +95,7 @@
     </mb-b-edit-dialog>
     <!-- 底部按钮 -->
     <view class="bottom-operate" id="bottom-operate">
-      <mb-b-bottom-btn
-        onlyone="true"
-        @ltap="handlerAddOrder"
-        ltext="新建预购"
-      />
+      <mb-b-bottom-btn onlyone="true" @ltap="handleAddOrder" ltext="新建预购" />
     </view>
   </view>
 </template>
@@ -440,25 +436,25 @@ export default {
     },
 
     // 新建预购
-    handlerAddOrder() {
+    handleAddOrder() {
       this.dialogOptions.ltext = "新建";
       this.$refs.editOrderDialog.show(this.dialogOptions);
     },
 
     // 选中预购项触发
-    handlerSelected(order) {
+    handleSelected(order) {
       this.dialogOptions.ltext = "编辑";
       this.order = order;
       this.$refs.editOrderDialog.show(this.dialogOptions);
     },
 
     // 弹窗变更
-    handlerDialogChange({ show }) {
+    handleDialogChange({ show }) {
       if (!show) this.order = {};
     },
 
     // 编辑弹窗触发
-    handlerReqEditOrder() {
+    handleReqEditOrder() {
       var amtreg = /^\d+(\.\d{1,2})?$/;
       if (!amtreg.test(this.order.amount)) {
         this.$tip.toast("请输入正确的金额格式");
@@ -484,7 +480,7 @@ export default {
     },
 
     // 选择日期
-    handlerPickerChange({ detail }) {
+    handlePickerChange({ detail }) {
       // console.log(detail.value);
       let d = new Date(detail.value);
       this.pickerDate = datetime.getCurDate(d);
@@ -501,7 +497,7 @@ export default {
     },
 
     // 滑动操作触发
-    handlerSwipeClick(e, o) {
+    handleSwipeClick(e, o) {
       // console.log(e);
       if (e.index == 0) {
         // 修改状态
