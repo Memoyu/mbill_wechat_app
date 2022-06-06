@@ -7,7 +7,14 @@
       </view> -->
       <view
         class="profile-info"
-        @tap="handleNavigateTo('/pages/profile/user-detail')"
+        @tap="
+          handleNavigateTo({
+            path: isLogin
+              ? '/pages/profile/user-detail'
+              : '/pages/profile/login',
+            needLogin: false,
+          })
+        "
       >
         <view class="avatar-image">
           <image class="image" mode="widthFix" :src="user.avatarUrl" />
@@ -43,7 +50,7 @@
             <view class="grids">
               <view
                 class="grid-item x-c"
-                @tap="handleNavigateTo(item.path)"
+                @tap="handleNavigateTo(item)"
                 v-for="(item, index) in grids"
                 :key="index"
               >
@@ -58,7 +65,7 @@
             <view class="cells">
               <view
                 class="cell-item"
-                @tap="handleNavigateTo(item.path)"
+                @tap="handleNavigateTo(item)"
                 v-for="(item, index) in cells"
                 :key="index"
               >
@@ -82,7 +89,7 @@
 </template>
 
 <script>
-import { mapActions, mapState } from "vuex";
+import { mapActions, mapState, mapGetters } from "vuex";
 import { tabbar } from "@/mixins";
 
 export default {
@@ -109,21 +116,25 @@ export default {
           title: "搜索",
           icon: "search",
           path: "/pages/bill/search",
+          needLogin: true,
         },
         {
           title: "汇总",
           icon: "summary",
           path: "/pages/bill/summary",
+          needLogin: true,
         },
         {
           title: "统计",
           icon: "stats",
           path: "/pages/bill/stats/index",
+          needLogin: true,
         },
         {
           title: "预购",
           icon: "preorder",
           path: "/pages/bill/pre-order/index",
+          needLogin: true,
         },
       ],
       cells: [
@@ -131,21 +142,30 @@ export default {
           title: "账户管理",
           icon: "qianbao",
           path: "/pages/bill/asset/manage",
+          needLogin: true,
         },
         {
           title: "分类管理",
           icon: "biaoqian",
           path: "/pages/bill/category/manage",
+          needLogin: true,
         },
-        { title: "系统设置", icon: "shezhi", path: "/pages/profile/setting" },
+        {
+          title: "系统设置",
+          icon: "shezhi",
+          path: "/pages/profile/setting",
+          needLogin: false,
+        },
       ],
     };
   },
   computed: {
     ...mapState({
+      isLogin: (state) => state.account.isLogin,
       user: (state) => state.account.user,
       profileStat: (state) => state.bill.profileStat,
     }),
+    ...mapGetters(["isLogin"]),
   },
   onShow() {
     this.setTabBarIndex(1);
@@ -155,10 +175,14 @@ export default {
   },
   methods: {
     ...mapActions(["getProfileTotalStat"]),
-    handleNavigateTo(path) {
+    handleNavigateTo(item) {
       // console.log("yonghu ", this.user);
       // console.log(path);
-      uni.navigateTo({ url: path });
+      if (item.needLogin && !this.isLogin) {
+        this.$tip.toast_quick("暂未登录，请先登录！");
+        return;
+      }
+      uni.navigateTo({ url: item.path });
     },
   },
 };

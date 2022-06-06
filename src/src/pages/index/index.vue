@@ -3,7 +3,7 @@
     <!-- 日历 -->
     <view class="calendar-content" id="calendar-content">
       <view class="bg" />
-      <view class="date-title" id="date-title">
+      <view class="date-title">
         <picker
           class="date-picker"
           mode="date"
@@ -60,7 +60,8 @@
       @scrolltolower="lowerBottom"
     >
       <mb-bill-day-group :groups="indexBills" />
-      <mb-b-empty v-if="indexBills.length <= 0" />
+      <mb-b-login-hint v-if="!isLogin" />
+      <mb-b-empty v-if="indexBills.length <= 0 && isLogin" />
     </scroll-view>
     <mb-bill-day-list-popup
       height="70"
@@ -72,7 +73,7 @@
 </template>
 
 <script>
-import { mapActions, mapState } from "vuex";
+import { mapActions, mapState, mapGetters } from "vuex";
 import { router, tabbar } from "@/mixins";
 import datetime from "@/common/utils/datetime";
 
@@ -100,7 +101,7 @@ export default {
       popShow: false,
       popDate: {},
       pH: 0,
-      dateTitleHeight: 0,
+      dateTitleHeight: 62,
       tabbarHeight: getApp().globalData.tabbarHeight,
       expandHeight: 25,
       scrollHeight: 0,
@@ -114,6 +115,7 @@ export default {
       indexTags: (state) => state.bill.indexTags,
       indexBills: (state) => state.bill.indexBills,
     }),
+    ...mapGetters(["isLogin"]),
   },
   onLoad() {
     this.getFixedHeight();
@@ -122,9 +124,7 @@ export default {
   onShow() {
     this.setTabBarIndex(0);
   },
-  onReady() {
-    this.getDynamicHeight();
-  },
+  onReady() {},
   methods: {
     ...mapActions(["getIndexTotalStat", "getIndexBillTags", "getIndexBills"]),
     // 初始化数据
@@ -170,6 +170,7 @@ export default {
 
     // 动态计算scroll view 高度
     getDynamicHeight(h) {
+      // console.log(h);
       if (h) {
         // 10 为日历原本有上下为5的边距
         this.scrollHeight =
@@ -177,15 +178,12 @@ export default {
           this.tabbarHeight -
           h -
           this.expandHeight -
-          this.dateTitleHeight -
-          10;
+          this.dateTitleHeight;
         this.scrollMaxHeight = this.scrollHeight;
         return;
       }
-
       let query = uni.createSelectorQuery();
       query.select("#calendar-content").fields({ size: true });
-      query.select("#date-title").fields({ size: true });
       query.exec((data) => {
         // console.log(data);
         let elHeight = data[0].height;
@@ -200,9 +198,7 @@ export default {
           this.pH - this.tabbarHeight - elHeight - this.expandHeight;
         this.scrollMaxHeight = this.scrollHeight;
         // 30 为时间时间选择栏的上下为15的边距
-        this.dateTitleHeight = data[1].height + 30;
         // console.log("初始化高度", this.scrollMaxHeight);
-        // console.log(this.dateTitleHeight);
       });
     },
 
@@ -217,6 +213,12 @@ export default {
 
     // 选中具体日期时弹窗展示账单
     handleDayChange(e) {
+      console.log(this.isLogin);
+      console.log(this.token);
+      if (!this.isLogin) {
+        this.$tip.toast_quick("暂未登录，请先登录！");
+        return;
+      }
       // console.log("选中日期：", e);
       this.popDate = e;
       this.popShow = true;
@@ -289,6 +291,7 @@ export default {
     justify-content: space-between;
     margin: 15px;
     align-items: center;
+    height: 32px;
     .date-picker {
       .now-date {
         font-size: 15px;

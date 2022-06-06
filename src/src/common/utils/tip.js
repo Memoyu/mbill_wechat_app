@@ -72,12 +72,23 @@ export default class Tips {
     });
   }
 
-  static toast(title, onHide, icon = "none") {
+  static toast_quick(title) {
+    setTimeout(() => {
+      uni.showToast({
+        title: title,
+        icon: "none",
+        mask: false,
+        duration: 2000
+      });
+    }, 300);
+  }
+
+  static toast(title, onHide, icon = "none", mask = true) {
     setTimeout(() => {
       uni.showToast({
         title: title,
         icon: icon,
-        mask: true,
+        mask: mask,
         duration: 2000
       });
     }, 300);

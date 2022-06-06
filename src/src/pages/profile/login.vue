@@ -16,7 +16,7 @@ export default {
     };
   },
   onShow() {
-    uni.hideHomeButton();
+    // uni.hideHomeButton();
   },
   onLoad() {},
   methods: {

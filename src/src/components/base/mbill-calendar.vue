@@ -24,7 +24,7 @@
         @touchend="touchend"
         :style="{
           left: 'calc(-100% + ' + dayLeft + 'px)',
-          height: comH + 'px',
+          height: comH,
         }"
       >
         <!-- 遍历集合三个月的列表 -->
@@ -100,6 +100,11 @@ export default {
     /*调用初始化当前日期*/
     this.getThreeMonth();
   },
+
+  mounted() {
+    this.getCurrentMonthHeight();
+  },
+
   watch: {
     date(newValue, oldValue) {
       console.log(newValue);
@@ -358,14 +363,18 @@ export default {
 
     // 获取当前日期选项高度，用于计算当前组件日期高度
     getCurrentMonthHeight() {
+      let that = this;
       let dayH = uni.createSelectorQuery().in(this).select(".item-text");
       dayH
         .boundingClientRect((data) => {
-          let dayCount = this.monthList[1].length;
+          // console.log(data);
+          let dayCount = that.monthList[1].length;
           let dayHCount = dayCount / 7;
-          this.comH = dayHCount * data.height;
+          let h = dayHCount * data.height;
+          that.comH = h + "px";
           // 10 为上下边距
-          this.$emit("sizechange", this.fixedHeight + this.comH);
+          that.$emit("sizechange", that.fixedHeight + h + 10); // 5的上下边距
+          // console.log(that.comH);
         })
         .exec();
     },

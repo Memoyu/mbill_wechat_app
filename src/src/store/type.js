@@ -1,5 +1,7 @@
 //#region User
 
+//是否登录
+export const IS_LOGIN = 'IS_LOGIN'
 //设置token
 export const SET_TOKEN = 'SET_TOKEN'
 //设置用户信息

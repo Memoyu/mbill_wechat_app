@@ -25,6 +25,15 @@ Component({
       })
     },
     toadd() {
+      var isLogin = wx.getStorageSync('accessToken') || false;
+      if (!isLogin) {
+        wx.showToast({
+          title: "暂未登录，请先登录！",
+          icon: "none",
+          duration: 2000
+        });
+        return
+      }
       wx.navigateTo({ url: '/pages/bill/edit' })
     }
   }

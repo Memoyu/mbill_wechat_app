@@ -15,18 +15,18 @@ const whiteList = ['/pages/profile/login']
 //全局路由前置守卫
 router.beforeEach((to, from, next) => {
     // console.log("路由守卫");
-    let token = uni.getStorageSync(ACCESS_TOKEN);
-    if (token) {
-        next()
-    } else {
-        if (whiteList.indexOf(to.path) !== -1) {
-            next()
-        } else {
-            next({ path: '/pages/profile/login' })
-        }
-    }
+    // let token = uni.getStorageSync(ACCESS_TOKEN);
+    // if (token) {
+    //     next()
+    // } else {
+    //     if (whiteList.indexOf(to.path) !== -1) {
+    //         next()
+    //     } else {
+    //         next({ path: '/pages/profile/login' })
+    //     }
+    // }
 
-    // next()
+    next()
 });
 // 全局路由后置守卫
 router.afterEach((to, from) => {

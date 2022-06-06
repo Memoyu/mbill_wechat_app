@@ -24,16 +24,17 @@ http.setConfig((config) => {
     return config
 })
 
-
+const whiteList = ['account/wxlogin']
 http.interceptors.request.use((config) => { /* 请求之前拦截器。可以使用async await 做异步操作 */
     config.header = {
         ...config.header,
         Authorization: getTokenStorage()
     }
-    // const token = uni.getStorageSync(ACCESS_TOKEN)
-    // if (!token) { // 如果token不存在，return Promise.reject(config) 会取消本次请求
-    //     return Promise.reject(config)
-    // }
+    // console.log("req", config);
+    const token = uni.getStorageSync(ACCESS_TOKEN)
+    if (!token && whiteList.indexOf(config.url) === -1) { // 如果token不存在，return Promise.reject(config) 会取消本次请求
+        return Promise.reject(config)
+    }
     return config
 }, (config) => {
     return Promise.reject(config)
@@ -53,9 +54,10 @@ http.interceptors.response.use(async (response) => { /* 请求之后拦截器。
     return response
 }, async (response) => { // 请求错误做点什么。可以使用async await 做异步操作
     // console.log(response)
-    if (response) {
+    if (response && response.data) {
         let data = response.data
-        const token = uni.getStorageSync(ACCESS_TOKEN)
+        console.log(data);
+        // const token = uni.getStorageSync(ACCESS_TOKEN)
         switch (data.code) {
             case 10000:
             case 10040:
