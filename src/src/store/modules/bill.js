@@ -241,6 +241,7 @@ const actions = {
         api.monthTotalStat({
             month: datetime.getCurDate(new Date(params)),
         }).then((res) => {
+            // console.log("stat", res);
             if (res.data.code === 0) {
                 commit(INDEX_BILL_STAT, res.data.result)
             }
@@ -258,7 +259,7 @@ const actions = {
             beginDate: `${prev.year}-${prev.month}`,
             endDate: `${next.year}-${next.month}`,
         }).then((res) => {
-            // console.log(res);
+            // console.log("tags", res);
             if (res.data.code === 0) {
                 commit(INDEX_BILL_TAGS, res.data.result)
             }
@@ -276,6 +277,7 @@ const actions = {
                 month: month,
                 ...page,
             }).then((res) => {
+                // console.log("list", res);
                 if (res.data.code === 0) {
                     let total = res.data.result.total;
                     let items = res.data.result.items;

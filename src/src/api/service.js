@@ -51,19 +51,16 @@ http.interceptors.response.use(async (response) => { /* 请求之后拦截器。
     // }
     // console.log("响应", response);
     return response
-}, (response) => { // 请求错误做点什么。可以使用async await 做异步操作
+}, async (response) => { // 请求错误做点什么。可以使用async await 做异步操作
     // console.log(response)
     if (response) {
         let data = response.data
         const token = uni.getStorageSync(ACCESS_TOKEN)
-        console.log("------异常响应------", data.code)
         switch (data.code) {
             case 10000:
             case 10040:
-                if (!token || data.message == "Token失效，请重新登录") {
-                    let timeout = setTimeout(tip.alert('登录已过期'), 1000);
-                    store.dispatch('Logout');
-                }
+                tip.alert('登录已过期'), 1000;
+                store.dispatch('Logout');
                 break
             case 10001:
                 tip.error('没有权限');
@@ -72,27 +69,30 @@ http.interceptors.response.use(async (response) => { /* 请求之后拦截器。
                 // console.log("进来啦");
                 if (!isRefreshing) {
                     isRefreshing = true
-                    return store.dispatch('RefreshToken').then((res) => {
-                        let result = res.data.result;
-                        console.log(result);
-                        if (result.success) {
-                            console.log("请求集合", requests);
-                            requests.forEach((cb) => cb(res.data.result.accessToken))
-                            requests = [] // 重新请求完清空
-                            return http.request(response.config);
-                        } else {
+                    return new Promise(resolve => {
+                        store.dispatch('RefreshToken').then((res) => {
+                            let data = res.data;
+                            // console.log("刷新token结果", data);
+                            if (data.success) {
+                                // console.log("请求集合", requests);
+                                requests.forEach((cb) => cb(data.result.accessToken))
+                                requests = [] // 重新请求完清空
+                                resolve(http.request(response.config));
+                            } else {
+                                store.dispatch('Logout');
+                            }
+                        }).catch(error => {
+                            // console.log("请求错误：", error);
                             store.dispatch('Logout');
-                        }
-                    }).catch(error => {
-                        store.dispatch('Logout');
-                    }).finally(() => {
-                        isRefreshing = false
-                    })
+                        }).finally(() => {
+                            isRefreshing = false
+                        })
+                    });
                 } else {
                     return new Promise(resolve => {
                         // 用函数形式将 resolve 存入，等待刷新后再执行
                         requests.push(token => {
-                            response.header.Authorization = `Bearer ${token}`
+                            // response.header.Authorization = `Bearer ${token}`
                             resolve(http.request(response.config))
                         })
                     })
@@ -103,6 +103,7 @@ http.interceptors.response.use(async (response) => { /* 请求之后拦截器。
                 break
         }
     }
+    // console.log("从这走");
     return Promise.reject(response);
 })
 
