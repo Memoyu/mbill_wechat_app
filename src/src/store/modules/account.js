@@ -2,7 +2,7 @@
 import api from "@/api/api"
 import { router } from '@/router'
 import { LOGIN_STATUS, ACCESS_TOKEN, REFRESH_TOKEN, LOGIN_USER } from "@/common/utils/constants"
-import { IS_LOGIN, SET_TOKEN, SET_USER } from "../type"
+import { IS_LOGIN, SET_TOKEN, SET_USER, INIT_BILL } from "../type"
 
 const state = {
     token: uni.getStorageSync(ACCESS_TOKEN) || '', // token
@@ -98,6 +98,9 @@ const actions = {
         commit(SET_USER, state.defUser)
         commit(SET_TOKEN, {})
         commit(IS_LOGIN, false)
+
+        // 初始化账单数据
+        commit(INIT_BILL)
         router.replaceAll({ name: "login" });
     },
 

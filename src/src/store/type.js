@@ -11,6 +11,9 @@ export const SET_USER = 'SET_USER'
 
 //#region Bill
 
+// 初始vuex中的bill数据
+export const INIT_BILL = 'INIT_BILL'
+
 //首页账单统计
 export const INDEX_BILL_STAT = 'INDEX_BILL_STAT'
 //首页账单日期标识

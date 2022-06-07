@@ -2,6 +2,7 @@
 import api from "@/api/api"
 import datetime from "@/common/utils/datetime";
 import {
+    INIT_BILL,
     INDEX_BILL_STAT,
     PROFILE_BILL_STAT,
     PROFILE_BILL_STAT_PRE_ORDER_AMOUNT,
@@ -9,7 +10,6 @@ import {
     INDEX_CUR_MONTH,
     ADD_INDEX_BILL,
     ADD_INDEX_BILLS,
-    MODIFY_INDEX_BILL,
     DEL_INDEX_BILL,
 } from "../type"
 
@@ -44,6 +44,23 @@ const getters = {
 }
 
 const mutations = {
+    [INIT_BILL]: (state) => {
+        state.indexTags = [];
+        state.indexBills = [];
+
+        state.indexStat = {
+            expend: 0,
+            income: 0
+        };
+        state.profileStat = {
+            expend: 0,
+            expendFormat: "0",
+            income: 0,
+            incomeFormat: "0",
+            preOrder: 0,
+            preOrderFormat: "0",
+        };
+    },
     [INDEX_BILL_STAT]: (state, stat) => {
         state.indexStat = stat;
     },
