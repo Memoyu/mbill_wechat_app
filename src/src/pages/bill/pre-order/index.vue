@@ -75,7 +75,7 @@
     <!-- 弹窗 -->
     <mb-b-edit-dialog
       ref="addGroupDialog"
-      height="25"
+      height="150"
       class="edit-group-input"
       @change="handleDialogChange"
       @ltap="handleReqEditGroup"

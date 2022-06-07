@@ -53,6 +53,7 @@
     <mb-b-edit-dialog
       ref="editOrderDialog"
       class="edit-order-dialog"
+      height="180"
       @change="handleDialogChange"
       @ltap="handleReqEditOrder"
     >
@@ -504,9 +505,13 @@ export default {
         if (e.content.text == this.doneSwipeOps[0].text)
           this.$Router.push({ name: "bill-edit", params: { order: o.id } });
         else if (e.content.text == this.unDoneSwipeOps[0].text) {
-          this.editPreOrderStatus(o, 0);
-          // 删除首页指定的账单
-          this.$store.commit(DEL_INDEX_BILL, o.billId);
+          this.$tip
+            .choose("重置后对应账单将会被删除, 是否重置？", {}, "提示")
+            .then(async () => {
+              this.editPreOrderStatus(o, 0);
+              // 删除首页指定的账单
+              this.$store.commit(DEL_INDEX_BILL, o.billId);
+            });
         }
       } else if (e.index == 1) {
         let that = this;

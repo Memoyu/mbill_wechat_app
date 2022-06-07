@@ -7,7 +7,7 @@
   >
     <view
       class="edit-dialog-popup-content"
-      :style="{ width: contentWidth + 'px', height: contentHeight + 'px' }"
+      :style="{ width: contentWidth + 'px', height: height + 'px' }"
     >
       <view class="edit-dialog-input">
         <slot />
@@ -36,10 +36,12 @@ export default {
       type: Boolean,
       default: false,
     },
+    // 弹窗宽度,直接使用像素单位
     height: {
       type: Number,
-      default: 30,
+      default: 200,
     },
+    // 弹窗宽度,直接使用百分比
     width: {
       type: Number,
       default: 90,
@@ -47,7 +49,7 @@ export default {
   },
   data() {
     return {
-      contentHeight: 0,
+      // contentHeight: 0,
       contentWidth: 0,
       onlyone: false,
       ltext: "确定",
@@ -59,7 +61,7 @@ export default {
     uni.getSystemInfo({
       success(res) {
         that.contentWidth = res.windowWidth * (that.width * 0.01);
-        that.contentHeight = res.windowHeight * (that.height * 0.01);
+        // that.contentHeight = res.windowHeight * (that.height * 0.01);
       },
     });
   },
