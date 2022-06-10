@@ -55,6 +55,9 @@ export default {
             // 这里也可以选择性返回需要的字段
             resolve(res);
           },
+          fail: (err) => {
+            reject("登录失败，请稍后再试！");
+          },
         });
       });
       var p2 = new Promise((resolve, reject) => {
@@ -64,17 +67,26 @@ export default {
             // 这里也可以选择性返回需要的字段
             resolve(res.userInfo);
           },
+          fail: (err) => {
+            reject("授权失败！");
+          },
         });
       });
       // 同时执行p1和p2，并在它们都完成后执行then
-      Promise.all([p1, p2]).then((results) => {
-        // results是一个长度为2的数组，放置着p1、p2的resolve
-        this.handleToLogin({
-          // 这里也可以选择性返回需要的字段
-          ...results[0],
-          ...results[1],
+      Promise.all([p1, p2])
+        .then((results) => {
+          // results是一个长度为2的数组，放置着p1、p2的resolve
+          this.handleToLogin({
+            // 这里也可以选择性返回需要的字段
+            ...results[0],
+            ...results[1],
+          });
+        })
+        .catch((err) => {
+          // console.log(err);
+          this.$tip.toast_quick(err);
+          this.loading = false;
         });
-      });
     },
     handleToLogin(data) {
       // console.log("userinfo", data);
