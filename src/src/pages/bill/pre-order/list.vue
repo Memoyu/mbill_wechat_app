@@ -53,7 +53,7 @@
     <mb-b-edit-dialog
       ref="editOrderDialog"
       class="edit-order-dialog"
-      height="180"
+      height="200"
       @change="handleDialogChange"
       @ltap="handleReqEditOrder"
     >

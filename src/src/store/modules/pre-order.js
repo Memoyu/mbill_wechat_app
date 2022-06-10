@@ -70,7 +70,7 @@ const mutations = {
                     state.IndexStat.unDone -= group.unDone;
 
                     // 删除数据
-                    this.orders.splice(i, 1);
+                    state.IndexGroups.splice(i, 1);
                     throw new Error("Ok"); // 跳出循环
                 }
             }

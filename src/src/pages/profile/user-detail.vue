@@ -3,18 +3,13 @@
     <image class="image" mode="widthFix" :src="user.avatarUrl" />
     <view class="user-cells">
       <view class="cells">
-        <view
-          class="cell-item"
-          @tap="handleNavigateTo(item.path)"
-          v-for="(item, index) in cells"
-          :key="index"
-        >
+        <view class="cell-item" v-for="(item, index) in cells" :key="index">
           <view class="cell-item-content">
             <view class="item-content x-bc">
-              <text>{{ item.title }}</text>
+              <text class="item-content-title">{{ item.title }}</text>
               <view class="item-content-text">
                 <text class="text">{{ user[item.index] }}</text>
-                <i class="iconfont icon-to right-icon" />
+                <!-- <i class="iconfont icon-to right-icon" /> -->
               </view>
             </view>
             <view class="bottom-line" />
@@ -109,7 +104,7 @@ export default {
 .user-cells {
   width: 100%;
   .cells {
-    margin: 0 15px;
+    margin: 0 25px;
     .cell-item {
       display: flex;
       align-items: flex-start;
@@ -119,6 +114,9 @@ export default {
       .cell-item-content {
         width: 100%;
         .item-content {
+          .item-content-title {
+            font-weight: bold;
+          }
           width: 100%;
           margin-bottom: 15px;
           .item-content-text {
