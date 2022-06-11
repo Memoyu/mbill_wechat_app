@@ -45,12 +45,12 @@
             </view>
           </uni-swipe-action-item>
         </uni-swipe-action>
-        <mb-b-empty v-if="orders.length <= 0" />
+        <mb-ba-empty v-if="orders.length <= 0" />
         <view style="height: 50px" />
       </scroll-view>
     </view>
     <!-- 编辑弹窗 -->
-    <mb-b-edit-dialog
+    <mb-ba-edit-dialog
       ref="editOrderDialog"
       class="edit-order-dialog"
       height="200"
@@ -93,10 +93,14 @@
           placeholder="描述一下咯"
         />
       </view>
-    </mb-b-edit-dialog>
+    </mb-ba-edit-dialog>
     <!-- 底部按钮 -->
     <view class="bottom-operate" id="bottom-operate">
-      <mb-b-bottom-btn onlyone="true" @ltap="handleAddOrder" ltext="新建预购" />
+      <mb-ba-bottom-btn
+        onlyone="true"
+        @ltap="handleAddOrder"
+        ltext="新建预购"
+      />
     </view>
   </view>
 </template>

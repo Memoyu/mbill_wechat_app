@@ -5,7 +5,7 @@
       <view class="group-year-item">
         <view class="group-month-item" v-for="(m, mind) in d.items" :key="mind">
           <view class="month-item-date">{{ m.date }}</view>
-          <mb-bill-item
+          <mb-b-item
             v-for="(item, index) in m.items"
             :key="index"
             :data="item"

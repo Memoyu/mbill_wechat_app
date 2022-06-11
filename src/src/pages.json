@@ -2,8 +2,9 @@
 	"easycom": {
 		"autoscan": true,
 		"custom": {
-			"mb-b-(.*)": "@/components/base/mbill-$1.vue",
-			"mb-bill-(.*)": "@/components/bill/mbill-bill-$1.vue",
+			"mb-ba-(.*)": "@/components/base/mbill-$1.vue",
+			"mb-b-(.*)": "@/components/bill/mbill-bill-$1.vue",
+			"mb-b-stat-(.*)": "@/components/bill/stat/mbill-bill-stat$1.vue",
 			"mb-ca-(.*)": "@/components/category/mbill-category-$1.vue",
 			"mb-as-(.*)": "@/components/asset/mbill-asset-$1.vue",
 			"mb-po-(.*)": "@/components/pre-order/mbill-po-$1.vue",
@@ -63,7 +64,8 @@
 		{
 			"path": "pages/bill/stats/index",
 			"style": {
-				"navigationBarTitleText": "统计"
+				"navigationBarTitleText": "统计",
+				"navigationBarBackgroundColor": "#DCD6F7"
 			}
 		},
 		{

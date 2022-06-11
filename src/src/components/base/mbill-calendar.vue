@@ -364,8 +364,8 @@ export default {
     // 获取当前日期选项高度，用于计算当前组件日期高度
     getCurrentMonthHeight() {
       let that = this;
-      let dayH = uni.createSelectorQuery().in(this).select(".item-text");
-      dayH
+      let query = uni.createSelectorQuery().in(this).select(".item-text");
+      query
         .boundingClientRect((data) => {
           // console.log(data);
           let dayCount = that.monthList[1].length;

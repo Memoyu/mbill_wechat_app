@@ -3,11 +3,7 @@
     <view v-for="(g, dind) in groups" :key="dind">
       <view class="group-date">{{ g.day }}日 {{ g.week }}</view>
       <view class="group-item">
-        <mb-bill-item
-          v-for="(item, index) in g.items"
-          :key="index"
-          :bill="item"
-        />
+        <mb-b-item v-for="(item, index) in g.items" :key="index" :bill="item" />
       </view>
     </view>
   </view>

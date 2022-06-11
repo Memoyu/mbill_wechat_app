@@ -14,7 +14,7 @@
       </view>
       <!-- 底部按钮 -->
       <view class="bottom-operate" id="bottom-operate">
-        <mb-b-bottom-btn
+        <mb-ba-bottom-btn
           @ltap="handleLeft"
           @rtap="handleRight"
           :onlyone="onlyone"

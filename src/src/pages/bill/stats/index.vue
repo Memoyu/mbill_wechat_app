@@ -1,8 +1,8 @@
 <template>
-  <view>
-    <view class="b-container">
-      <view>
-        <view class="title">统计</view>
+  <view class="b-container">
+    <view class="stat-header" id="stat-header">
+      <view class="stat-header-tab">
+        <mb-ba-tabs :type="tabList" v-model="active" />
       </view>
     </view>
   </view>
@@ -11,7 +11,20 @@
 <script>
 export default {
   data() {
-    return {};
+    return {
+      active: 0,
+      tabList: [
+        {
+          title: "月数据",
+        },
+        {
+          title: "年数据",
+        },
+        {
+          title: "排行榜",
+        },
+      ],
+    };
   },
   onShow() {},
   onLoad() {},
@@ -19,9 +32,13 @@ export default {
 };
 </script>
 
-<style>
-.title {
-  font-size: 36rpx;
-  color: #8f8f94;
+<style lang="scss" scope>
+.stat-header {
+  width: 100%;
+  background-color: $light-color;
+  border-radius: 0 0 15px 15px;
+  &-tab {
+    width: 70%;
+  }
 }
 </style>

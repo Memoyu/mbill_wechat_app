@@ -59,7 +59,7 @@
             </scroll-view>
           </view>
         </view>
-        <mb-b-end-split-line />
+        <mb-ba-end-split-line />
       </view>
 
       <!-- 账单分类选择 -->
@@ -116,7 +116,7 @@
             />
           </view>
         </view>
-        <mb-b-keyboard
+        <mb-ba-keyboard
           ref="keyboard"
           :pnum="initAmount"
           @confirm="handleConfirmNum"

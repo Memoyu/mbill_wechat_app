@@ -18,7 +18,7 @@
       </view>
     </view>
     <view class="bottom-operate" id="bottom-operate">
-      <mb-b-bottom-btn onlyone="true" @ltap="handleLogout" ltext="退出登录" />
+      <mb-ba-bottom-btn onlyone="true" @ltap="handleLogout" ltext="退出登录" />
     </view>
   </view>
 </template>

@@ -12,13 +12,9 @@
         class="bill-popup-items"
         :style="{ height: contentHeight - 34 + 'px' }"
       >
-        <mb-bill-item
-          v-for="(item, index) in items"
-          :key="index"
-          :bill="item"
-        />
+        <mb-b-item v-for="(item, index) in items" :key="index" :bill="item" />
       </scroll-view>
-      <mb-b-empty v-if="items.length <= 0" />
+      <mb-ba-empty v-if="items.length <= 0" />
     </view>
   </uni-popup>
 </template>

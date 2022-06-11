@@ -19,10 +19,10 @@
           <view class="detail-date">{{ bill.timeFormat }}</view>
           <view class="detail-address">{{ bill.address }}</view>
         </view>
-        <mb-b-end-split-line class="bottom-line" />
+        <mb-ba-end-split-line class="bottom-line" />
       </view>
       <view class="bottom-operate">
-        <mb-b-bottom-btn @ltap="handleEdit" @rtap="handleDel" />
+        <mb-ba-bottom-btn @ltap="handleEdit" @rtap="handleDel" />
       </view>
     </view>
   </view>

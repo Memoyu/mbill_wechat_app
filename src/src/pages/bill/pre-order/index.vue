@@ -65,15 +65,19 @@
           </uni-swipe-action-item>
         </uni-swipe-action>
         <view style="height: 50px" />
-        <mb-b-empty v-if="groups.length <= 0" />
+        <mb-ba-empty v-if="groups.length <= 0" />
       </scroll-view>
     </view>
     <!-- 底部按钮 -->
     <view class="bottom-operate" id="bottom-operate">
-      <mb-b-bottom-btn onlyone="true" @ltap="handleAddGroup" ltext="新建分组" />
+      <mb-ba-bottom-btn
+        onlyone="true"
+        @ltap="handleAddGroup"
+        ltext="新建分组"
+      />
     </view>
     <!-- 弹窗 -->
-    <mb-b-edit-dialog
+    <mb-ba-edit-dialog
       ref="addGroupDialog"
       height="170"
       class="edit-group-input"
@@ -100,7 +104,7 @@
           placeholder="描述一下咯"
         />
       </view>
-    </mb-b-edit-dialog>
+    </mb-ba-edit-dialog>
   </view>
 </template>
 

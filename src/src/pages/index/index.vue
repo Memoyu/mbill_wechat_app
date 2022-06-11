@@ -28,7 +28,7 @@
         </view>
       </view>
       <view class="calendar">
-        <mb-b-calendar
+        <mb-ba-calendar
           ref="calendar"
           :expand="expand"
           :tags="indexTags"
@@ -59,11 +59,11 @@
       scroll-y="true"
       @scrolltolower="lowerBottom"
     >
-      <mb-bill-day-group :groups="indexBills" />
-      <mb-b-login-hint v-if="!isLogin" />
-      <mb-b-empty v-if="indexBills.length <= 0 && isLogin" />
+      <mb-b-day-group :groups="indexBills" />
+      <mb-login-hint v-if="!isLogin" />
+      <mb-ba-empty v-if="indexBills.length <= 0 && isLogin" />
     </scroll-view>
-    <mb-bill-day-list-popup
+    <mb-b-day-list-popup
       height="70"
       :show="popShow"
       :date="popDate"
