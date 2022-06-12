@@ -16,7 +16,7 @@
           ]"
           :style="{ color: currentIndex === index ? `${itemColor}` : '' }"
           id="tab-item"
-          @click="select(item, index)"
+          @click="selectTab(item, index)"
         >
           <view class="tab__item-title">
             {{ item.title }}
@@ -88,7 +88,7 @@ export default {
     }
   },
   methods: {
-    select(item, index) {
+    selectTab(item, index) {
       this.$emit("input", index);
     },
     setTabList() {
@@ -157,18 +157,16 @@ export default {
     display: flex;
     font-size: 28rpx;
     white-space: nowrap;
+    line-height: 90rpx;
     &-item-block {
-      // flex: 1;
       padding: 0 30rpx;
       text-align: center;
-      line-height: 90rpx;
       color: $grey-text-color;
       &-active {
         font-weight: bold;
         color: $primary-color;
       }
       &-title {
-        margin: 0 40rpx;
       }
     }
   }

@@ -6,25 +6,38 @@
       :scroll-left="tabsScrollLeft"
       @scroll="scroll"
     >
-      <view :class="['tab', fontsize]" id="tab-list">
+      <view :class="['date-item', fontsize]" id="tab-list">
         <view
           v-for="(item, index) in list"
           :key="index"
           :class="[
-            'tab-item-block',
-            { 'tab-item-block--active': currentIndex === index },
+            'date-item-block',
+            { 'date-item-block-active': currentIndex === index },
           ]"
           :style="{ color: currentIndex === index ? `${itemColor}` : '' }"
-          id="tab-item"
-          @click="select(item, index)"
+          id="date-item"
+          @click="selectDate(item, index)"
         >
-          <view class="tab-item-title">
-            {{ item.title }}
+          <view v-if="type === 'month'" class="date-item-block-month">
+            <view>
+              <text class=""> {{ item.month }}</text>
+              <text class="date-item-block-month-char"> 月</text>
+            </view>
+            <view class="date-item-block-month-year">{{ item.year }}</view>
+          </view>
+          <view v-else-if="type === 'year'" class="date-item-block-month">
+            <view>
+              <text class=""> {{ item.year.slice(2) }}</text>
+              <text class="date-item-block-month-char"> 年</text>
+            </view>
+            <view class="date-item-block-month-year">{{
+              item.year.slice(0, 2)
+            }}</view>
           </view>
         </view>
       </view>
       <view
-        class="tab-line"
+        class="date-line"
         :style="{
           background: lineColor,
           width: lineStyle.width,
@@ -70,53 +83,68 @@ export default {
       tabsScrollLeft: 0,
       duration: 0.3,
       list: [
-        { year: "2022", month: "01", title: "一月" },
-        { year: "2022", month: "02", title: "二月" },
-        { year: "2022", month: "03", title: "三月" },
-        { year: "2022", month: "04", title: "四月" },
-        { year: "2022", month: "05", title: "五月" },
-        { year: "2022", month: "06", title: "六月" },
-        { year: "2022", month: "07", title: "七月" },
-        { year: "2022", month: "08", title: "八月" },
-        { year: "2022", month: "09", title: "九月" },
-        { year: "2022", month: "10", title: "十月" },
-        { year: "2022", month: "11", title: "十一月" },
-        { year: "2022", month: "12", title: "十二月" },
+        { year: "2022", month: "01" },
+        { year: "2022", month: "02" },
+        { year: "2022", month: "03" },
+        { year: "2022", month: "04" },
+        { year: "2022", month: "05" },
+        { year: "2022", month: "06" },
+        { year: "2022", month: "07" },
+        { year: "2022", month: "08" },
+        { year: "2022", month: "09" },
+        { year: "2022", month: "10" },
+        { year: "2022", month: "11" },
+        { year: "2022", month: "12" },
       ],
     };
   },
   watch: {
     type() {
-      this.setTabList();
+      this.setDateList();
     },
     value(val) {
       this.currentIndex = val;
-      this.setTabList();
+      this.setDateList();
     },
   },
   mounted() {
     this.currentIndex = this.value;
-    this.setTabList();
+    this.setDateList();
     if (!this.lineAnimated) {
       this.duration = 0;
     }
   },
   methods: {
-    select(item, index) {
+    selectDate(item, index) {
       this.$emit("input", index);
     },
-    setTabList() {
+    setDateList() {
       this.$nextTick(() => {
-        if (this.type.length > 0) {
-          this.setLine();
-          this.scrollIntoView();
+        if (this.type === "month") {
+        } else {
+          this.list = [
+            { year: "2011", month: "01" },
+            { year: "2012", month: "02" },
+            { year: "2013", month: "03" },
+            { year: "2014", month: "04" },
+            { year: "2015", month: "05" },
+            { year: "2016", month: "06" },
+            { year: "2017", month: "07" },
+            { year: "2018", month: "08" },
+            { year: "2019", month: "09" },
+            { year: "2020", month: "10" },
+            { year: "2021", month: "11" },
+            { year: "2022", month: "12" },
+          ];
         }
+        this.setLine();
+        this.scrollIntoView();
       });
     },
     setLine() {
       let lineWidth = 0,
         lineLeft = 0;
-      this.getElementData(`#tab-item`, (data) => {
+      this.getElementData(`#date-item`, (data) => {
         let el = data[this.currentIndex];
         lineWidth = el.width / 2;
         // lineLeft = el.width * (this.currentIndex + 0.5)  // 此种只能针对每个item长度一致的
@@ -133,7 +161,7 @@ export default {
       let lineLeft = 0;
       this.getElementData("#tab-list", (data) => {
         let list = data[0];
-        this.getElementData(`#tab-item`, (data) => {
+        this.getElementData(`#date-item`, (data) => {
           let el = data[this.currentIndex];
           // lineLeft = el.width * (this.currentIndex + 0.5) - list.width / 2 - this.scrollLeft
           lineLeft =
@@ -166,33 +194,42 @@ export default {
 <style lang="scss">
 .mbill-date-scroll {
   position: relative;
-  .tab {
-    position: relative;
+  ::-webkit-scrollbar {
+    display: none;
+  }
+  .date-item {
+    // position: relative;
     display: flex;
+    justify-content: space-between;
     font-size: 28rpx;
     white-space: nowrap;
-    &-item-block {
-      padding: 0 30rpx;
-      // flex: 1;
+    &-block {
+      padding: 20rpx 20rpx 20rpx 20rpx;
       text-align: center;
-      line-height: 90rpx;
       color: $grey-text-color;
       &-active {
+        border-radius: 25rpx;
+        background-color: $dark-color;
         font-weight: bold;
         color: $primary-color;
       }
-      &-title {
-        margin: 0 40rpx;
+      &-month {
+        &-char {
+          font-size: 22rpx;
+        }
+        &-year {
+          font-size: 20rpx;
+        }
       }
     }
   }
   .small {
-    font-size: 28rpx;
-  }
-  .medium {
     font-size: 30rpx;
   }
-  .tab-line {
+  .medium {
+    font-size: 37rpx;
+  }
+  .date-line {
     display: block;
     height: 6rpx;
     position: absolute;
