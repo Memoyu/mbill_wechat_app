@@ -5,11 +5,33 @@
     type="bottom"
     @change="handlePopup"
   >
-    <view class="bill-popup-content" :style="{ height: contentHeight + 'px' }">
-      <view class="bill-popup-title">{{ title }}</view>
+    <view
+      class="bill-day-popup-content"
+      :style="{ height: contentHeight + 'px' }"
+    >
+      <view class="bill-day-popup-header" id="bill-day-popup-header">
+        <view class="bill-day-popup-header-title">{{ title }}</view>
+        <view class="bill-day-popup-header-amount">
+          <view class="bill-day-popup-header-amount-total">
+            <text class="bill-day-popup-header-amount-title"> 支出 </text>
+            <text class="expend-color">
+              {{ stat.expend }}
+            </text>
+          </view>
+          <view
+            class="bill-day-popup-header-amount-total"
+            style="margin-left: 30rpx"
+          >
+            <text class="bill-day-popup-header-amount-title"> 收入 </text>
+            <text class="income-color">
+              {{ stat.income }}
+            </text>
+          </view>
+        </view>
+      </view>
       <scroll-view
         scroll-y="true"
-        class="bill-popup-items"
+        class="bill-day-popup-items"
         :style="{ height: contentHeight - 34 + 'px' }"
       >
         <mb-b-item v-for="(item, index) in items" :key="index" :bill="item" />
@@ -38,7 +60,8 @@ export default {
   },
   data() {
     return {
-      title: "",
+      stat: {},
+      title: "日",
       items: [],
       contentHeight: 200,
     };
@@ -47,12 +70,7 @@ export default {
     show(val) {
       if (val) {
         this.$refs.BillDayListPopup.open();
-      }
-    },
-    date(val) {
-      if (val) {
-        // console.log("Com", val);
-        this.getDayBills(val);
+        this.getDayBills(this.date);
       }
     },
   },
@@ -69,7 +87,6 @@ export default {
       this.$emit("change", e);
     },
     getDayBills(date) {
-      // console.log("param", param);
       this.$api
         .dayBills({
           date: `${date.year}-${date.month}-${date.day}`,
@@ -78,6 +95,7 @@ export default {
           // console.log("列表", res);
           if (res.data.code === 0) {
             let result = res.data.result;
+            this.stat = result;
             this.title = `${result.day}日 ${result.week}`;
             this.items = result.items;
           }
@@ -89,21 +107,35 @@ export default {
 
 <style lang="scss" scope>
 .mbill-bill-day-list-popup {
-  .bill-popup-content {
+  .bill-day-popup-content {
     display: flex;
     flex-direction: column;
     background-color: #fff;
-    border-radius: 10rpx;
-    .bill-popup-items {
+    border-radius: 20rpx 20rpx 0 0;
+    .bill-day-popup-items {
       height: 100%;
-      .bill-popup-items-scroll {
+      .bill-day-popup-items-scroll {
       }
     }
-    .bill-popup-title {
-      text-align: center;
-      padding: 5px;
-      font-size: 18px;
-      font-weight: bold;
+    .bill-day-popup-header {
+      padding: 20rpx 30rpx;
+      display: flex;
+      justify-content: space-between;
+      &-title {
+        text-align: center;
+        font-size: 18px;
+        font-weight: bold;
+      }
+      &-amount {
+        display: flex;
+        font-size: 40rpx;
+        font-weight: bold;
+        &-title {
+          font-size: 25rpx;
+        }
+        &-total {
+        }
+      }
     }
   }
 }

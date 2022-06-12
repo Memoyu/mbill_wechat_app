@@ -132,7 +132,7 @@ export default {
         }
         .bottom-line {
           height: 1px;
-          background: $grey-color;
+          background: $grey-light-color;
           width: 100%;
         }
       }

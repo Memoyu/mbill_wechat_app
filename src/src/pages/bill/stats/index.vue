@@ -2,8 +2,9 @@
   <view class="b-container">
     <view class="stat-header" id="stat-header">
       <view class="stat-header-tab">
-        <mb-ba-tabs :type="tabList" v-model="active" />
+        <mb-ba-tabs :type="tabList" v-model="tabActive" />
       </view>
+      <mb-ba-date-scroll type="month" v-model="dateActive" />
     </view>
   </view>
 </template>
@@ -12,7 +13,8 @@
 export default {
   data() {
     return {
-      active: 0,
+      dateActive: 0,
+      tabActive: 0,
       tabList: [
         {
           title: "月数据",

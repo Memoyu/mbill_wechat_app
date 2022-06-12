@@ -18,12 +18,18 @@
         </picker>
         <view class="statement">
           <view class="statement-text">
-            <text class="text">总收入</text>
-            <text class="total">￥{{ indexStat.income }}</text>
+            <text class="statement-text-title">总收入</text>
+            <view class="statement-text-total">
+              <text class="statement-text-total-char">￥</text>
+              <text>{{ indexStat.income }}</text>
+            </view>
           </view>
           <view class="statement-text">
-            <text class="text">总支出</text>
-            <text class="total">￥{{ indexStat.expend }}</text>
+            <text class="statement-text-title">总支出</text>
+            <view class="statement-text-total">
+              <text class="statement-text-total-char">￥</text>
+              <text>{{ indexStat.expend }}</text>
+            </view>
           </view>
         </view>
       </view>
@@ -213,8 +219,8 @@ export default {
 
     // 选中具体日期时弹窗展示账单
     handleDayChange(e) {
-      console.log(this.isLogin);
-      console.log(this.token);
+      // console.log(this.isLogin);
+      // console.log(this.token);
       if (!this.isLogin) {
         this.$tip.toast_quick("暂未登录，请先登录！");
         return;
@@ -313,12 +319,15 @@ export default {
       flex-direction: column;
       align-items: center;
 
-      .text {
-        font-size: 11px;
+      &-title {
+        font-size: 25rpx;
       }
-      .total {
-        font-size: 13px;
+      &-total {
+        font-size: 30rpx;
         font-weight: bold;
+        &-char {
+          font-size: 23rpx;
+        }
       }
     }
   }

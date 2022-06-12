@@ -638,7 +638,7 @@ export default {
 }
 .asset-popup {
   background-color: #fff;
-  border-radius: 10rpx;
+  border-radius: 20rpx 20rpx 0 0;
   .asset-list {
     padding: 10px 0;
     height: 350px;

@@ -1,5 +1,5 @@
 <template>
-  <view class="mbill-tabs" v-if="type.length > 0">
+  <view class="mbill-date-scroll" v-if="list.length > 0">
     <scroll-view
       scroll-x="true"
       scroll-with-animation
@@ -8,7 +8,7 @@
     >
       <view :class="['tab', fontsize]" id="tab-list">
         <view
-          v-for="(item, index) in type"
+          v-for="(item, index) in list"
           :key="index"
           :class="[
             'tab-item-block',
@@ -18,7 +18,7 @@
           id="tab-item"
           @click="select(item, index)"
         >
-          <view class="tab__item-title">
+          <view class="tab-item-title">
             {{ item.title }}
           </view>
         </view>
@@ -39,14 +39,14 @@
 
 <script>
 export default {
-  name: "mbill-tabs",
+  name: "mbill-date-scroll",
   props: {
     value: [Number, String],
     type: {
-      // 传值
-      type: Array,
-      default: [],
+      type: String,
+      default: "month",
     },
+
     itemColor: {
       type: String,
       default: "#A6B1E1",
@@ -69,6 +69,20 @@ export default {
       scrollLeft: 0,
       tabsScrollLeft: 0,
       duration: 0.3,
+      list: [
+        { year: "2022", month: "01", title: "一月" },
+        { year: "2022", month: "02", title: "二月" },
+        { year: "2022", month: "03", title: "三月" },
+        { year: "2022", month: "04", title: "四月" },
+        { year: "2022", month: "05", title: "五月" },
+        { year: "2022", month: "06", title: "六月" },
+        { year: "2022", month: "07", title: "七月" },
+        { year: "2022", month: "08", title: "八月" },
+        { year: "2022", month: "09", title: "九月" },
+        { year: "2022", month: "10", title: "十月" },
+        { year: "2022", month: "11", title: "十一月" },
+        { year: "2022", month: "12", title: "十二月" },
+      ],
     };
   },
   watch: {
@@ -150,7 +164,7 @@ export default {
 </script>
 
 <style lang="scss">
-.mbill-tabs {
+.mbill-date-scroll {
   position: relative;
   .tab {
     position: relative;
@@ -158,8 +172,8 @@ export default {
     font-size: 28rpx;
     white-space: nowrap;
     &-item-block {
-      // flex: 1;
       padding: 0 30rpx;
+      // flex: 1;
       text-align: center;
       line-height: 90rpx;
       color: $grey-text-color;

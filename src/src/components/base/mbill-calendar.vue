@@ -179,6 +179,18 @@ export default {
     // 日期模块拖动
     touchmove(e) {
       this.dayLeft = e.touches[0].pageX - this.startLeft;
+
+      // 如果向左滑动（下一个月），则需要判断是否已为当前日期的月份
+      if (this.dayLeft < -100) {
+        let year = currentDate.getFullYear();
+        let month = currentDate.getMonth() + 1;
+        // console.log(this.nowYear, this.nowMonth);
+        // 是当前月，则不能再往下滑动了
+        if (year == this.nowYear && month == this.nowMonth) {
+          this.dayLeft = 0;
+          return;
+        }
+      }
     },
 
     // 日期模块松手
