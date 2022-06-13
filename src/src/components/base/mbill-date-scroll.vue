@@ -3,10 +3,11 @@
     <scroll-view
       scroll-x="true"
       scroll-with-animation
-      :scroll-left="tabsScrollLeft"
+      :scroll-left="dateScrollLeft"
       @scroll="scroll"
+      @scrolltolower="scrollToLower"
     >
-      <view :class="['date-item', fontsize]" id="tab-list">
+      <view :class="['date-item', fontsize]" id="date-list">
         <view
           v-for="(item, index) in list"
           :key="index"
@@ -25,7 +26,7 @@
             </view>
             <view class="date-item-block-month-year">{{ item.year }}</view>
           </view>
-          <view v-else-if="type === 'year'" class="date-item-block-month">
+          <!-- <view v-else-if="type === 'year'" class="date-item-block-month">
             <view>
               <text class=""> {{ item.year.slice(2) }}</text>
               <text class="date-item-block-month-char"> 年</text>
@@ -33,7 +34,7 @@
             <view class="date-item-block-month-year">{{
               item.year.slice(0, 2)
             }}</view>
-          </view>
+          </view> -->
         </view>
       </view>
       <view
@@ -51,6 +52,8 @@
 </template>
 
 <script>
+import datetime from "@/common/utils/datetime";
+
 export default {
   name: "mbill-date-scroll",
   props: {
@@ -80,22 +83,15 @@ export default {
       currentIndex: 0,
       lineStyle: {},
       scrollLeft: 0,
-      tabsScrollLeft: 0,
+      dateScrollLeft: 0,
       duration: 0.3,
-      list: [
-        { year: "2022", month: "01" },
-        { year: "2022", month: "02" },
-        { year: "2022", month: "03" },
-        { year: "2022", month: "04" },
-        { year: "2022", month: "05" },
-        { year: "2022", month: "06" },
-        { year: "2022", month: "07" },
-        { year: "2022", month: "08" },
-        { year: "2022", month: "09" },
-        { year: "2022", month: "10" },
-        { year: "2022", month: "11" },
-        { year: "2022", month: "12" },
-      ],
+      list: [],
+      page: {
+        size: 10,
+        year: datetime.getCurYear(),
+        month: datetime.getCurMonth(),
+      },
+      loading: false,
     };
   },
   watch: {
@@ -107,6 +103,10 @@ export default {
       this.setDateList();
     },
   },
+  created() {
+    this.getDates();
+    // this.value = this.list.length - 1;
+  },
   mounted() {
     this.currentIndex = this.value;
     this.setDateList();
@@ -115,32 +115,36 @@ export default {
     }
   },
   methods: {
+    // 加载日期数据
+    getDates() {
+      if (this.loading) return;
+      this.loading = true;
+      for (let i = 0; i < this.page.size; i++) {
+        this.list.push({
+          year: this.page.year,
+          month: this.page.month < 10 ? "0" + this.page.month : this.page.month,
+        });
+        if (this.page.month == 1) {
+          this.page.year -= 1;
+          this.page.month = 12;
+        } else {
+          this.page.month -= 1;
+        }
+      }
+      this.loading = false;
+    },
+
     selectDate(item, index) {
       this.$emit("input", index);
     },
+
     setDateList() {
       this.$nextTick(() => {
-        if (this.type === "month") {
-        } else {
-          this.list = [
-            { year: "2011", month: "01" },
-            { year: "2012", month: "02" },
-            { year: "2013", month: "03" },
-            { year: "2014", month: "04" },
-            { year: "2015", month: "05" },
-            { year: "2016", month: "06" },
-            { year: "2017", month: "07" },
-            { year: "2018", month: "08" },
-            { year: "2019", month: "09" },
-            { year: "2020", month: "10" },
-            { year: "2021", month: "11" },
-            { year: "2022", month: "12" },
-          ];
-        }
         this.setLine();
         this.scrollIntoView();
       });
     },
+
     setLine() {
       let lineWidth = 0,
         lineLeft = 0;
@@ -156,10 +160,11 @@ export default {
         };
       });
     },
+
     scrollIntoView() {
       // item滚动
       let lineLeft = 0;
-      this.getElementData("#tab-list", (data) => {
+      this.getElementData("#date-list", (data) => {
         let list = data[0];
         this.getElementData(`#date-item`, (data) => {
           let el = data[this.currentIndex];
@@ -170,10 +175,11 @@ export default {
             el.left -
             list.width / 2 -
             this.scrollLeft;
-          this.tabsScrollLeft = this.scrollLeft + lineLeft;
+          this.dateScrollLeft = this.scrollLeft + lineLeft;
         });
       });
     },
+
     getElementData(el, callback) {
       uni
         .createSelectorQuery()
@@ -184,8 +190,14 @@ export default {
           callback(data[0]);
         });
     },
+
     scroll(e) {
       this.scrollLeft = e.detail.scrollLeft;
+    },
+
+    scrollToLower(e) {
+      console.log("触底", e);
+      this.getDates();
     },
   },
 };
@@ -209,7 +221,7 @@ export default {
       color: $grey-text-color;
       &-active {
         border-radius: 25rpx;
-        background-color: $dark-color;
+        background-color: $light-color;
         font-weight: bold;
         color: $primary-color;
       }

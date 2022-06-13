@@ -1,8 +1,6 @@
 <template>
   <view class="mbill-bill-stat-year">
-    <view class="mbill-bill-stat-year-header">
-      <mb-ba-date-scroll type="year" v-model="active" />
-    </view>
+    <view class="mbill-bill-stat-year-header"> </view>
   </view>
 </template>
 

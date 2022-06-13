@@ -42,7 +42,7 @@ export default {
           title: "排行榜",
         },
       ],
-      contentH: 0,
+      contentH: 500,
     };
   },
   onLoad() {},
