@@ -15,8 +15,7 @@
             'date-item-block',
             { 'date-item-block-active': currentIndex === index },
           ]"
-          :style="{ color: currentIndex === index ? `${itemColor}` : '' }"
-          id="date-item"
+          :id="`date-item-${type}`"
           @click="selectDate(item, index)"
         >
           <view v-if="type === 'month'" class="date-item-block-month">
@@ -26,7 +25,7 @@
             </view>
             <view class="date-item-block-month-year">{{ item.year }}</view>
           </view>
-          <!-- <view v-else-if="type === 'year'" class="date-item-block-month">
+          <view v-if="type === 'year'" class="date-item-block-month">
             <view>
               <text class=""> {{ item.year.slice(2) }}</text>
               <text class="date-item-block-month-char"> 年</text>
@@ -34,7 +33,7 @@
             <view class="date-item-block-month-year">{{
               item.year.slice(0, 2)
             }}</view>
-          </view> -->
+          </view>
         </view>
       </view>
       <view
@@ -104,8 +103,11 @@ export default {
     },
   },
   created() {
-    this.getDates();
-    // this.value = this.list.length - 1;
+    if (this.type === "month") {
+      this.getDates();
+    } else if (this.type === "year") {
+      this.getYears();
+    }
   },
   mounted() {
     this.currentIndex = this.value;
@@ -134,6 +136,18 @@ export default {
       this.loading = false;
     },
 
+    getYears() {
+      if (this.loading) return;
+      this.loading = true;
+      for (let i = 0; i < this.page.size; i++) {
+        this.list.push({
+          year: this.page.year.toString(),
+        });
+        this.page.year -= 1;
+      }
+      this.loading = false;
+    },
+
     selectDate(item, index) {
       this.$emit("input", index);
     },
@@ -148,7 +162,7 @@ export default {
     setLine() {
       let lineWidth = 0,
         lineLeft = 0;
-      this.getElementData(`#date-item`, (data) => {
+      this.getElementData(`#date-item-${this.type}`, (data) => {
         let el = data[this.currentIndex];
         lineWidth = el.width / 2;
         // lineLeft = el.width * (this.currentIndex + 0.5)  // 此种只能针对每个item长度一致的
@@ -166,7 +180,7 @@ export default {
       let lineLeft = 0;
       this.getElementData("#date-list", (data) => {
         let list = data[0];
-        this.getElementData(`#date-item`, (data) => {
+        this.getElementData(`#date-item-${this.type}`, (data) => {
           let el = data[this.currentIndex];
           // lineLeft = el.width * (this.currentIndex + 0.5) - list.width / 2 - this.scrollLeft
           lineLeft =
@@ -197,7 +211,11 @@ export default {
 
     scrollToLower(e) {
       console.log("触底", e);
-      this.getDates();
+      if (this.type === "month") {
+        this.getDates();
+      } else if (this.type === "year") {
+        this.getYears();
+      }
     },
   },
 };
@@ -221,9 +239,9 @@ export default {
       color: $grey-text-color;
       &-active {
         border-radius: 25rpx;
-        background-color: $light-color;
+        background-color: $primary-color;
         font-weight: bold;
-        color: $primary-color;
+        color: white;
       }
       &-month {
         &-char {
@@ -250,7 +268,7 @@ export default {
     z-index: 1;
     border-radius: 3rpx;
     position: relative;
-    background: $primary-color;
+    background: white;
   }
 }
 </style>

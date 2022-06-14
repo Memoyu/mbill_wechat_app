@@ -14,9 +14,7 @@
       :style="{ height: contentH + 'px' }"
     >
       <swiper-item class="swiper_item">
-        <scroll-view scroll-y="true" style="height: 100%">
-          <mb-stat-month ref="statMonth" />
-        </scroll-view>
+        <mb-stat-month ref="statMonth" :height="contentH" />
       </swiper-item>
       <swiper-item class="swiper_item">
         <mb-stat-year ref="statYear" />
@@ -73,15 +71,11 @@ export default {
       uni.getSystemInfo({
         success(res) {
           let pH = res.windowHeight;
-          let tempH = 0;
           let query = uni.createSelectorQuery().in(that);
           query.select("#stat-header").fields({ size: true });
           query.exec((data) => {
-            // console.log(data);
-            data.map((i) => {
-              tempH += i.height;
-            });
-            that.contentH = pH - tempH;
+            let headerH = data[0].height;
+            that.contentH = pH - headerH;
             // console.log(pH, tempH, that.contentH);
           });
         },
@@ -104,10 +98,9 @@ export default {
 .stat-header {
   width: 100%;
   background-color: $light-color;
-  border-radius: 0 0 25rpx 25rpx;
   &-tab {
     width: 70%;
-    margin-bottom: 20rpx;
+    margin-bottom: 10rpx;
   }
 }
 .stat-content {

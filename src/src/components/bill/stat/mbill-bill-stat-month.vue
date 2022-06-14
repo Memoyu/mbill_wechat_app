@@ -1,23 +1,35 @@
 <template>
   <view class="mbill-bill-stat-month">
-    <view class="mbill-bill-stat-month-header">
+    <view
+      class="mbill-bill-stat-month-header"
+      id="mbill-bill-stat-month-header"
+    >
       <mb-ba-date-scroll type="month" v-model="active" />
     </view>
-    <view class="charts-box">
-      <qiun-data-charts
-        type="tarea"
-        :opts="opts"
-        :chartData="chartData"
-        inScrollView="true"
-      />
-    </view>
-    <view class="charts-box">
-      <qiun-data-charts
-        type="ring"
-        :opts="opts1"
-        :chartData="chartData1"
-        inScrollView="true"
-      />
+    <view :style="{ height: scrollH + 'px' }">
+      <scroll-view scroll-y="true" style="height: 100%">
+        <view class="charts-box">
+          <qiun-data-charts
+            type="tarea"
+            :chartData="chartData"
+            inScrollView="true"
+          />
+        </view>
+        <view class="charts-box">
+          <qiun-data-charts
+            type="ring"
+            :chartData="chartData1"
+            inScrollView="true"
+          />
+        </view>
+        <view class="charts-box">
+          <qiun-data-charts
+            type="ring"
+            :chartData="chartData1"
+            inScrollView="true"
+          />
+        </view>
+      </scroll-view>
     </view>
   </view>
 </template>
@@ -25,98 +37,25 @@
 <script>
 export default {
   name: "mbill-bill-stat-month",
-  props: {},
+  props: {
+    height: {
+      type: [Number, String],
+      default: 300,
+    },
+  },
   data() {
     return {
       init: false,
       active: 0,
+      scrollH: 0,
       chartData: {},
       chartData1: {},
-      //您可以通过修改 config-ucharts.js 文件中下标为 ['tarea'] 的节点来配置全局默认参数，如都是默认参数，此处可以不传 opts 。实际应用过程中 opts 只需传入与全局默认参数中不一致的【某一个属性】即可实现同类型的图表显示不同的样式，达到页面简洁的需求。
-      opts: {
-        color: [
-          "#1890FF",
-          "#91CB74",
-          "#FAC858",
-          "#EE6666",
-          "#73C0DE",
-          "#3CA272",
-          "#FC8452",
-          "#9A60B4",
-          "#ea7ccc",
-        ],
-        padding: [15, 10, 0, 15],
-        legend: {},
-        xAxis: {
-          disableGrid: true,
-          boundaryGap: "justify",
-          format: "xAxisDemo2",
-        },
-        yAxis: {
-          gridType: "dash",
-          dashLength: 2,
-          data: [
-            {
-              min: 0,
-              max: 80,
-            },
-          ],
-        },
-        extra: {
-          area: {
-            type: "curve",
-            opacity: 0.2,
-            addLine: true,
-            width: 2,
-            gradient: true,
-          },
-        },
-      },
-      opts1: {
-        rotate: false,
-        rotateLock: false,
-        color: [
-          "#1890FF",
-          "#91CB74",
-          "#FAC858",
-          "#EE6666",
-          "#73C0DE",
-          "#3CA272",
-          "#FC8452",
-          "#9A60B4",
-          "#ea7ccc",
-        ],
-        padding: [5, 5, 5, 5],
-        dataLabel: true,
-        legend: {
-          show: true,
-          position: "right",
-          lineHeight: 25,
-        },
-        title: {
-          name: "收益率",
-          fontSize: 15,
-          color: "#666666",
-        },
-        subtitle: {
-          name: "70%",
-          fontSize: 25,
-          color: "#7cb5ec",
-        },
-        extra: {
-          ring: {
-            ringWidth: 60,
-            activeOpacity: 0.5,
-            activeRadius: 10,
-            offsetAngle: 0,
-            labelWidth: 15,
-            border: true,
-            borderWidth: 3,
-            borderColor: "#FFFFFF",
-          },
-        },
-      },
     };
+  },
+  watch: {
+    height(val) {
+      this.calcuScrollHeight(val);
+    },
   },
   created() {
     this.getServerData();
@@ -179,13 +118,24 @@ export default {
                 { name: "二班", value: 30 },
                 { name: "三班", value: 20 },
                 { name: "四班", value: 18 },
-                { name: "五班", value: 8 },
+                { name: "五班", value: 18 },
               ],
             },
           ],
         };
         this.chartData1 = JSON.parse(JSON.stringify(res));
       }, 500);
+    },
+
+    // 计算scroll-view 最高度
+    calcuScrollHeight(height) {
+      let that = this;
+      let query = uni.createSelectorQuery().in(that);
+      query.select("#mbill-bill-stat-month-header").fields({ size: true });
+      query.exec((data) => {
+        console.log(height, data);
+        that.scrollH = height - data[0].height;
+      });
     },
   },
 };
@@ -195,11 +145,9 @@ export default {
 .mbill-bill-stat-month {
   &-header {
     padding: 15rpx;
-    margin: 20rpx;
-    border-radius: 25rpx;
-    background-color: white;
+    border-radius: 0 0 25rpx 25rpx;
+    background-color: $light-color;
   }
-
   .charts-box {
     width: 100%;
     height: 300px;

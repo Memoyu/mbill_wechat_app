@@ -1,5 +1,7 @@
 <template>
-  <view class="mbill-bill-stat-rate"> </view>
+  <view class="mbill-bill-stat-rate">
+    <view class="mbill-bill-stat-rate-header"> </view>
+  </view>
 </template>
 
 <script>
@@ -25,5 +27,10 @@ export default {
 
 <style lang="scss" scope>
 .mbill-bill-stat-rate {
+  &-header {
+    padding: 15rpx;
+    border-radius: 0 0 25rpx 25rpx;
+    background-color: $light-color;
+  }
 }
 </style>
