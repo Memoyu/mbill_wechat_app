@@ -14,7 +14,9 @@
       :style="{ height: contentH + 'px' }"
     >
       <swiper-item class="swiper_item">
-        <mb-stat-month ref="statMonth" />
+        <scroll-view scroll-y="true" style="height: 100%">
+          <mb-stat-month ref="statMonth" />
+        </scroll-view>
       </swiper-item>
       <swiper-item class="swiper_item">
         <mb-stat-year ref="statYear" />

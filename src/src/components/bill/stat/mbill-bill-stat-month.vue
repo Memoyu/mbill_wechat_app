@@ -4,10 +4,20 @@
       <mb-ba-date-scroll type="month" v-model="active" />
     </view>
     <view class="charts-box">
-      <qiun-data-charts type="tarea" :opts="opts" :chartData="chartData" />
+      <qiun-data-charts
+        type="tarea"
+        :opts="opts"
+        :chartData="chartData"
+        inScrollView="true"
+      />
     </view>
     <view class="charts-box">
-      <qiun-data-charts type="ring" :opts="opts1" :chartData="chartData1" />
+      <qiun-data-charts
+        type="ring"
+        :opts="opts1"
+        :chartData="chartData1"
+        inScrollView="true"
+      />
     </view>
   </view>
 </template>

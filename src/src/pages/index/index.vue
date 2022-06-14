@@ -66,7 +66,7 @@
       @scrolltolower="lowerBottom"
     >
       <mb-b-day-group :groups="indexBills" />
-      <mb-login-hint v-if="!isLogin" />
+      <mb-ba-login-hint v-if="!isLogin" />
       <mb-ba-empty v-if="indexBills.length <= 0 && isLogin" />
     </scroll-view>
     <mb-b-day-list-popup
