@@ -1,13 +1,26 @@
 <template>
   <view class="mbill-bill-stat-month">
-    <view
-      class="mbill-bill-stat-month-header"
-      id="mbill-bill-stat-month-header"
-    >
+    <view class="mb-stat-month-header" id="mb-stat-month-header">
       <mb-ba-date-scroll type="month" v-model="active" />
     </view>
-    <view :style="{ height: scrollH + 'px' }">
+    <view class="mb-stat-month-content" :style="{ height: scrollH + 'px' }">
       <scroll-view scroll-y="true" style="height: 100%">
+        <view class="content-total x-bc">
+          <view class="content-total-month y-bc">
+            <text class="content-total-month-num">{{ stat.total }}</text>
+            <text>当月支出/元</text>
+          </view>
+          <view>
+            <view class="content-total-month">
+              <text>当月收入/元：</text>
+              <text class="content-total-bold">{{ stat.income }}</text>
+            </view>
+            <view class="content-total-month content-total-expend">
+              <text>当月支出/元：</text>
+              <text class="content-total-bold">{{ stat.expend }}</text>
+            </view>
+          </view>
+        </view>
         <view class="charts-box">
           <qiun-data-charts
             type="tarea"
@@ -15,12 +28,23 @@
             inScrollView="true"
           />
         </view>
-        <view class="charts-box">
-          <qiun-data-charts
-            type="ring"
-            :chartData="chartData1"
-            inScrollView="true"
-          />
+        <view class="mb-stat-month-rang x-ac">
+          <view class="y-bc">
+            <text class="mb-stat-month-rang-num">{{ rang.incomeMax }}</text>
+            <text class="mb-stat-month-rang-text">最高收入/元</text>
+          </view>
+          <view class="y-bc">
+            <text class="mb-stat-month-rang-num">{{ rang.incomeMin }}</text>
+            <text class="mb-stat-month-rang-text">最低收入/元</text>
+          </view>
+          <view class="y-bc">
+            <text class="mb-stat-month-rang-num">{{ rang.expendMax }}</text>
+            <text class="mb-stat-month-rang-text">最高支出/元</text>
+          </view>
+          <view class="y-bc">
+            <text class="mb-stat-month-rang-num">{{ rang.expendMin }}</text>
+            <text class="mb-stat-month-rang-text">最低支出/元</text>
+          </view>
         </view>
         <view class="charts-box">
           <qiun-data-charts
@@ -29,6 +53,7 @@
             inScrollView="true"
           />
         </view>
+        <mb-stat-category-group />
       </scroll-view>
     </view>
   </view>
@@ -48,6 +73,13 @@ export default {
       init: false,
       active: 0,
       scrollH: 0,
+      stat: { total: 3354336360, income: 2305555, expend: 12055555 },
+      rang: {
+        incomeMax: 33543,
+        incomeMin: 23,
+        expendMax: 12055,
+        expendMin: 12555,
+      },
       chartData: {},
       chartData1: {},
     };
@@ -131,7 +163,7 @@ export default {
     calcuScrollHeight(height) {
       let that = this;
       let query = uni.createSelectorQuery().in(that);
-      query.select("#mbill-bill-stat-month-header").fields({ size: true });
+      query.select("#mb-stat-month-header").fields({ size: true });
       query.exec((data) => {
         console.log(height, data);
         that.scrollH = height - data[0].height;
@@ -143,14 +175,51 @@ export default {
 
 <style lang="scss" scope>
 .mbill-bill-stat-month {
-  &-header {
-    padding: 15rpx;
-    border-radius: 0 0 25rpx 25rpx;
-    background-color: $light-color;
+  background-color: white;
+  .mb-stat-month {
+    &-header {
+      padding: 15rpx;
+      border-radius: 0 0 25rpx 25rpx;
+      background-color: $light-color;
+    }
+    .charts-box {
+      width: 100%;
+      height: 300px;
+    }
   }
-  .charts-box {
-    width: 100%;
-    height: 300px;
+  .mb-stat-month-content {
+    color: #ffffff;
+    .content-total {
+      padding: 50rpx;
+      margin: 30rpx 20rpx;
+      background-color: $primary-color;
+      border-radius: 10rpx 35rpx 10rpx 35rpx;
+      &-month {
+        font-size: 25rpx;
+        &-num {
+          font-size: 50rpx;
+          font-weight: bold;
+        }
+      }
+      &-expend {
+        margin-top: 25rpx;
+      }
+      &-bold {
+        font-weight: bold;
+      }
+    }
+  }
+  .mb-stat-month-rang {
+    margin: 20rpx 30rpx 50rpx 30rpx;
+    font-size: 25rpx;
+    &-num {
+      color: $primary-color;
+      font-size: 40rpx;
+      font-weight: bold;
+    }
+    &-text {
+      color: $grey-color;
+    }
   }
 }
 </style>

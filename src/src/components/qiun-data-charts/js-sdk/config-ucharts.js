@@ -126,8 +126,8 @@ const cfu = {
 				"labelWidth": 15,
 				"border": true,
 				"borderWidth": 3,
-				"centerColor": "#F6F6F6",
-				"borderColor": "#F6F6F6"
+				"centerColor": "#FFFFFF",
+				"borderColor": "#FFFFFF"
 			},
 		},
 	},
@@ -271,22 +271,19 @@ const cfu = {
 	"tarea": {
 		"type": "area",
 		"color": color,
-		"padding": [15, 10, 0, 15],
+		"padding": [15, 20, 0, 20],
 		"xAxis": {
 			"disableGrid": true,
 			"boundaryGap": "justify",
 		},
 		"yAxis": {
+			"disabled": true,
+			"disableGrid": true,
 			"gridType": "dash",
 			"dashLength": 2,
-			"data": [
-				{
-					"min": 0,
-					"max": 80
-				}
-			]
 		},
 		"legend": {
+			"show": false,
 		},
 		"extra": {
 			"area": {
