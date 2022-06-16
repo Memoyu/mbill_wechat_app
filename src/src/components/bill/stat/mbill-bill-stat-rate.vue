@@ -1,6 +1,8 @@
 <template>
   <view class="mbill-bill-stat-rate">
-    <view class="mbill-bill-stat-rate-header"> </view>
+    <view class="mbill-bill-stat-rate-header">
+      <view class="mbill-bill-stat-rate-header-tab"> </view>
+    </view>
   </view>
 </template>
 
@@ -11,6 +13,15 @@ export default {
   data() {
     return {
       init: false,
+      active: 0,
+      list: [
+        {
+          title: "支出",
+        },
+        {
+          title: "收入",
+        },
+      ],
     };
   },
   created() {},
@@ -28,9 +39,15 @@ export default {
 <style lang="scss" scope>
 .mbill-bill-stat-rate {
   &-header {
-    padding: 15rpx;
+    height: 75px;
     border-radius: 0 0 25rpx 25rpx;
     background-color: $light-color;
+    display: flex;
+    justify-content: center;
+    &-tab {
+      width: auto;
+      margin-bottom: 10rpx;
+    }
   }
 }
 </style>

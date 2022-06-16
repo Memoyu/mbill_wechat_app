@@ -176,6 +176,10 @@ export default {
   .medium {
     font-size: 30rpx;
   }
+
+  .large {
+    font-size: 35rpx;
+  }
   .tab-line {
     display: block;
     height: 6rpx;

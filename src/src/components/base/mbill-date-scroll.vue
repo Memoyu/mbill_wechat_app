@@ -61,12 +61,6 @@ export default {
       type: String,
       default: "month",
     },
-
-    itemColor: {
-      type: String,
-      default: "#A6B1E1",
-    }, // tab主色调
-    lineColor: String, // 下划线主色调
     lineAnimated: {
       // 是否展示下划线动画
       type: Boolean,

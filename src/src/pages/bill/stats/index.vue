@@ -3,7 +3,7 @@
   <view class="b-container">
     <view class="stat-header" id="stat-header">
       <view class="stat-header-tab">
-        <mb-ba-tabs :type="tabList" v-model="active" />
+        <mb-ba-tabs :type="tabList" v-model="active" fontsize="large" />
       </view>
     </view>
     <!-- 内容 -->
@@ -98,8 +98,9 @@ export default {
 .stat-header {
   width: 100%;
   background-color: $light-color;
+  display: flex;
+  justify-content: center;
   &-tab {
-    width: 70%;
     margin-bottom: 10rpx;
   }
 }
