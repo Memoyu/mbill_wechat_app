@@ -17,7 +17,7 @@
         <mb-stat-month ref="statMonth" :height="contentH" />
       </swiper-item>
       <swiper-item class="swiper_item">
-        <mb-stat-year ref="statYear" />
+        <mb-stat-year ref="statYear" :height="contentH" />
       </swiper-item>
       <swiper-item class="swiper_item">
         <mb-stat-rate ref="statRate" />

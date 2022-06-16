@@ -139,15 +139,15 @@ export default {
   color: $primary-text-color;
   .category-group {
     &-title {
-      margin: 20rpx;
+      margin: 20rpx 30rpx;
       color: $dark-color;
-      font-size: 40rpx;
+      font-size: 35rpx;
       font-weight: bold;
     }
     &-item {
       display: flex;
       padding: 10rpx 0;
-      margin: 0 20rpx;
+      margin: 30rpx 30rpx;
       &-title {
         width: 100%;
         .title-info {

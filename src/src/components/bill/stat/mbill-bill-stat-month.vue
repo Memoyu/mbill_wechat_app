@@ -5,19 +5,35 @@
     </view>
     <view class="mb-stat-month-content" :style="{ height: scrollH + 'px' }">
       <scroll-view scroll-y="true" style="height: 100%">
+        <!-- 当月收支统计 -->
         <view class="content-total x-bc">
           <view class="content-total-month y-bc">
-            <text class="content-total-month-num">{{ stat.total }}</text>
-            <text>当月支出/元</text>
+            <text class="content-total-month-expend">{{ stat.expend }}</text>
+            <text class="content-total-title">当月支出</text>
           </view>
           <view>
             <view class="content-total-month">
-              <text>当月收入/元：</text>
+              <text class="content-total-title">当月收入：</text>
               <text class="content-total-bold">{{ stat.income }}</text>
             </view>
-            <view class="content-total-month content-total-expend">
-              <text>当月支出/元：</text>
-              <text class="content-total-bold">{{ stat.expend }}</text>
+            <view class="content-total-month content-total-mg-top">
+              <text class="content-total-title">平均支出：</text>
+              <text class="content-total-bold">{{ stat.average }}</text>
+            </view>
+          </view>
+        </view>
+
+        <!-- 当月收支趋势统计 -->
+        <view class="x-bc">
+          <view class="mb-stat-divide-title">收/支趋势</view>
+          <view class="mb-stat-tarea-hint x-f">
+            <view class="mb-stat-tarea-hint-item x-f">
+              <view class="point income-bg-color"></view>
+              <view class="">收入</view>
+            </view>
+            <view class="mb-stat-tarea-hint-item x-f">
+              <view class="point expend-bg-color"></view>
+              <view class="">支出</view>
             </view>
           </view>
         </view>
@@ -46,6 +62,9 @@
             <text class="mb-stat-month-rang-text">最低支出/元</text>
           </view>
         </view>
+
+        <!-- 当月分类数据统计 -->
+        <view class="mb-stat-divide-title">分类占比</view>
         <view class="charts-box">
           <qiun-data-charts
             type="ring"
@@ -53,7 +72,9 @@
             inScrollView="true"
           />
         </view>
-        <mb-stat-category-group />
+        <view class="mb-stat-month-category-list">
+          <mb-stat-category-group />
+        </view>
       </scroll-view>
     </view>
   </view>
@@ -73,7 +94,11 @@ export default {
       init: false,
       active: 0,
       scrollH: 0,
-      stat: { total: 3354336360, income: 2305555, expend: 12055555 },
+      stat: {
+        expend: "3,3543,363",
+        income: "2,305,555",
+        average: "12,055,555",
+      },
       rang: {
         incomeMax: 33543,
         incomeMin: 23,
@@ -165,7 +190,6 @@ export default {
       let query = uni.createSelectorQuery().in(that);
       query.select("#mb-stat-month-header").fields({ size: true });
       query.exec((data) => {
-        console.log(height, data);
         that.scrollH = height - data[0].height;
       });
     },
@@ -175,50 +199,100 @@ export default {
 
 <style lang="scss" scope>
 .mbill-bill-stat-month {
-  background-color: white;
+  // background-color: white;
   .mb-stat-month {
     &-header {
       padding: 15rpx;
       border-radius: 0 0 25rpx 25rpx;
       background-color: $light-color;
     }
+    &-content {
+      .content-total {
+        color: #ffffff;
+        padding: 40rpx 30rpx;
+        margin: 30rpx 20rpx;
+        background-color: $primary-color;
+        border-radius: 10rpx 35rpx 10rpx 35rpx;
+        &-month {
+          display: flex;
+          flex-wrap: nowrap;
+          font-size: 30rpx;
+          &-expend {
+            font-size: 50rpx;
+            font-weight: bold;
+          }
+        }
+        &-mg-top {
+          margin-top: 25rpx;
+        }
+        &-title {
+          color: $grey-bright-color;
+        }
+        &-bold {
+          font-weight: bold;
+        }
+      }
+    }
+
+    &-rang {
+      margin: 20rpx 30rpx 50rpx 30rpx;
+      font-size: 25rpx;
+      &-num {
+        color: $primary-color;
+        font-size: 40rpx;
+        font-weight: bold;
+      }
+      &-text {
+        color: $grey-text-color;
+      }
+    }
+
+    &-category-list {
+      background-color: #ffffff;
+      border-radius: 30rpx;
+      padding: 10rpx;
+      margin: 0 20rpx;
+    }
+
     .charts-box {
       width: 100%;
       height: 300px;
     }
   }
-  .mb-stat-month-content {
-    color: #ffffff;
-    .content-total {
-      padding: 50rpx;
-      margin: 30rpx 20rpx;
-      background-color: $primary-color;
-      border-radius: 10rpx 35rpx 10rpx 35rpx;
-      &-month {
-        font-size: 25rpx;
-        &-num {
-          font-size: 50rpx;
-          font-weight: bold;
-        }
-      }
-      &-expend {
-        margin-top: 25rpx;
-      }
-      &-bold {
-        font-weight: bold;
-      }
+  .mb-stat-divide-title {
+    position: sticky;
+    display: inline-block;
+    padding-bottom: 4px;
+    margin-bottom: 12px;
+    font-size: 40rpx;
+    color: #40485b;
+    font-weight: bolder;
+    margin-left: 14px;
+
+    &:before {
+      content: "";
+      position: absolute;
+      background: $primary-color;
+      width: calc(100% + 35rpx);
+      height: 24rpx;
+      bottom: 0;
+      left: 0;
+      border-radius: 24rpx;
+      z-index: -1;
     }
   }
-  .mb-stat-month-rang {
-    margin: 20rpx 30rpx 50rpx 30rpx;
-    font-size: 25rpx;
-    &-num {
-      color: $primary-color;
-      font-size: 40rpx;
-      font-weight: bold;
-    }
-    &-text {
-      color: $grey-color;
+
+  .mb-stat-tarea-hint {
+    margin-right: 30rpx;
+    &-item {
+      margin-left: 30rpx;
+      color: $grey-text-color;
+      .point {
+        margin-right: 20rpx;
+        width: 30rpx;
+        height: 30rpx;
+        border-radius: 50%;
+      }
     }
   }
 }
