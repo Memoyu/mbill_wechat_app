@@ -2,6 +2,7 @@
   <!-- 头部tabbar -->
   <view class="b-container">
     <view class="stat-header" id="stat-header">
+      <view class="stat-header-bg"></view>
       <view class="stat-header-tab">
         <mb-ba-tabs :type="tabList" v-model="active" fontsize="large" />
       </view>
@@ -97,9 +98,15 @@ export default {
 <style lang="scss" scope>
 .stat-header {
   width: 100%;
-  background-color: $light-color;
   display: flex;
   justify-content: center;
+  &-bg {
+    position: absolute;
+    width: 100%;
+    height: 400rpx;
+    background-color: $light-color;
+    border-radius: 0 0 25rpx 25rpx;
+  }
   &-tab {
     margin-bottom: 10rpx;
   }

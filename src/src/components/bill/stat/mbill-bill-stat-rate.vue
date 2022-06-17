@@ -14,12 +14,14 @@ export default {
     return {
       init: false,
       active: 0,
-      list: [
+      range: [
         {
-          title: "支出",
+          value: 0,
+          text: "支出",
         },
         {
-          title: "收入",
+          value: 1,
+          text: "收入",
         },
       ],
     };
@@ -39,9 +41,6 @@ export default {
 <style lang="scss" scope>
 .mbill-bill-stat-rate {
   &-header {
-    height: 75px;
-    border-radius: 0 0 25rpx 25rpx;
-    background-color: $light-color;
     display: flex;
     justify-content: center;
     &-tab {

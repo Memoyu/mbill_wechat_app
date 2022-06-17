@@ -39,7 +39,7 @@
         </view>
         <view class="charts-box">
           <qiun-data-charts
-            type="tarea"
+            type="bar"
             :chartData="chartData"
             inScrollView="true"
           />
@@ -129,36 +129,15 @@ export default {
       setTimeout(() => {
         //模拟服务器返回数据，如果数据格式和标准格式不同，需自行按下面的格式拼接
         let res = {
+          categories: ["周一", "周二", "周三", "周四"],
           series: [
             {
-              name: "时间轴1",
-              data: [
-                [10000, 55],
-                [30000, 25],
-                [50000, 55],
-                [70000, 25],
-                [90000, 55],
-              ],
+              name: "目标值",
+              data: [35, 36, 31, 33],
             },
             {
-              name: "时间轴2",
-              data: [
-                [0, 25],
-                [20000, 55],
-                [40000, 25],
-                [60000, 55],
-                [80000, 25],
-              ],
-            },
-            {
-              name: "时间轴3",
-              data: [
-                [0, 55],
-                [15000, 25],
-                [30000, 55],
-                [45000, 25],
-                [60000, 55],
-              ],
+              name: "完成量",
+              data: [248, 249, 250, 251],
             },
           ],
         };
@@ -202,9 +181,7 @@ export default {
   // background-color: white;
   .mb-stat-month {
     &-header {
-      padding: 15rpx;
-      border-radius: 0 0 25rpx 25rpx;
-      background-color: $light-color;
+      margin: 0 20rpx;
     }
     &-content {
       .content-total {

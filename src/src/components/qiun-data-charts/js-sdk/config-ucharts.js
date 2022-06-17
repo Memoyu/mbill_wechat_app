@@ -337,26 +337,32 @@ const cfu = {
 	},
 	"bar": {
 		"type": "bar",
-		"color": color,
+		"color": ["#47A271", "#C24F50"],
 		"padding": [15, 30, 0, 5],
 		"xAxis": {
 			"boundaryGap": "justify",
-			"disableGrid": false,
-			"min": 0,
-			"axisLine": false
+			"disableGrid": true,
+			"disabled": true,
+			"min": 10,
+			"axisLine": false,
+			"max": 10
 		},
 		"yAxis": {
+			"disableGrid": true,
 		},
 		"legend": {
+			"show": false,
 		},
 		"extra": {
 			"bar": {
 				"type": "group",
 				"width": 30,
 				"meterBorde": 1,
-				"meterFillColor": "#FFFFFF",
-				"activeBgColor": "#000000",
-				"activeBgOpacity": 0.08
+				"activeBgOpacity": 0.88,
+				"linearType": "custom",
+				"barBorderCircle": true,
+				"seriesGap": 2,
+				"categoryGap": 2
 			},
 		}
 	},

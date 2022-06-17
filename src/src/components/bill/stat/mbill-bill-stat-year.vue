@@ -82,9 +82,7 @@ export default {
 <style lang="scss" scope>
 .mb-stat-year {
   &-header {
-    padding: 15rpx;
-    border-radius: 0 0 25rpx 25rpx;
-    background-color: $light-color;
+    margin: 0 20rpx;
   }
   &-content {
     .content-total {
