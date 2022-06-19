@@ -1,7 +1,11 @@
 <template>
   <view class="mbill-bill-stat-month">
     <view class="mb-stat-month-header" id="mb-stat-month-header">
-      <mb-ba-date-scroll type="month" v-model="active" />
+      <mb-ba-date-scroll
+        type="month"
+        v-model="active"
+        @selected.stop="handleSelectedYear"
+      />
     </view>
     <view class="mb-stat-month-content" :style="{ height: scrollH + 'px' }">
       <scroll-view scroll-y="true" style="height: 100%">
@@ -37,42 +41,49 @@
             </view>
           </view>
         </view>
-        <view class="charts-box">
-          <qiun-data-charts
-            type="bar"
-            :chartData="chartData"
-            inScrollView="true"
-          />
-        </view>
-        <view class="mb-stat-month-rang x-ac">
-          <view class="y-bc">
-            <text class="mb-stat-month-rang-num">{{ rang.incomeMax }}</text>
-            <text class="mb-stat-month-rang-text">最高收入/元</text>
+        <view class="mb-stat-month-bg-br">
+          <view class="charts-box">
+            <qiun-data-charts
+              type="tarea"
+              :chartData="chartData"
+              :canvas2d="canvas2d"
+              :ontouch="true"
+              inScrollView="true"
+            />
           </view>
-          <view class="y-bc">
-            <text class="mb-stat-month-rang-num">{{ rang.incomeMin }}</text>
-            <text class="mb-stat-month-rang-text">最低收入/元</text>
-          </view>
-          <view class="y-bc">
-            <text class="mb-stat-month-rang-num">{{ rang.expendMax }}</text>
-            <text class="mb-stat-month-rang-text">最高支出/元</text>
-          </view>
-          <view class="y-bc">
-            <text class="mb-stat-month-rang-num">{{ rang.expendMin }}</text>
-            <text class="mb-stat-month-rang-text">最低支出/元</text>
+          <view class="mb-stat-month-rang x-ac">
+            <view class="y-bc">
+              <text class="mb-stat-month-rang-num">{{ rang.incomeMax }}</text>
+              <text class="mb-stat-month-rang-text">最高收入/元</text>
+            </view>
+            <view class="y-bc">
+              <text class="mb-stat-month-rang-num">{{ rang.incomeMin }}</text>
+              <text class="mb-stat-month-rang-text">最低收入/元</text>
+            </view>
+            <view class="y-bc">
+              <text class="mb-stat-month-rang-num">{{ rang.expendMax }}</text>
+              <text class="mb-stat-month-rang-text">最高支出/元</text>
+            </view>
+            <view class="y-bc">
+              <text class="mb-stat-month-rang-num">{{ rang.expendMin }}</text>
+              <text class="mb-stat-month-rang-text">最低支出/元</text>
+            </view>
           </view>
         </view>
 
         <!-- 当月分类数据统计 -->
         <view class="mb-stat-divide-title">分类占比</view>
-        <view class="charts-box">
-          <qiun-data-charts
-            type="ring"
-            :chartData="chartData1"
-            inScrollView="true"
-          />
+        <view class="mb-stat-month-bg-br">
+          <view class="charts-box">
+            <qiun-data-charts
+              type="ring"
+              :canvas2d="canvas2d"
+              :chartData="chartData1"
+              inScrollView="true"
+            />
+          </view>
         </view>
-        <view class="mb-stat-month-category-list">
+        <view class="mb-stat-month-bg-br">
           <mb-stat-category-group />
         </view>
       </scroll-view>
@@ -87,6 +98,10 @@ export default {
     height: {
       type: [Number, String],
       default: 300,
+    },
+    canvas2d: {
+      type: [Boolean, String],
+      default: false,
     },
   },
   data() {
@@ -129,15 +144,15 @@ export default {
       setTimeout(() => {
         //模拟服务器返回数据，如果数据格式和标准格式不同，需自行按下面的格式拼接
         let res = {
-          categories: ["周一", "周二", "周三", "周四"],
+          categories: ["2016", "2017", "2018", "2019", "2020", "2021"],
           series: [
             {
-              name: "目标值",
-              data: [35, 36, 31, 33],
+              name: "成交量A",
+              data: [35, 8, 25, 37, 4, 20],
             },
             {
-              name: "完成量",
-              data: [248, 249, 250, 251],
+              name: "成交量B",
+              data: [70, 40, 65, 100, 44, 68],
             },
           ],
         };
@@ -161,6 +176,11 @@ export default {
         };
         this.chartData1 = JSON.parse(JSON.stringify(res));
       }, 500);
+    },
+
+    // 切换月份
+    handleSelectedYear(item) {
+      console.log(item);
     },
 
     // 计算scroll-view 最高度
@@ -224,11 +244,11 @@ export default {
       }
     }
 
-    &-category-list {
+    &-bg-br {
       background-color: #ffffff;
       border-radius: 30rpx;
       padding: 10rpx;
-      margin: 0 20rpx;
+      margin: 0 20rpx 20rpx 20rpx;
     }
 
     .charts-box {
