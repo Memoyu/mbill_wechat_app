@@ -9,18 +9,28 @@
     </view>
     <!-- 内容 -->
     <swiper
+      :touchable="false"
       :current="active"
       @change="tabChange"
       class="stat-content"
       :style="{ height: contentH + 'px' }"
     >
-      <swiper-item class="swiper_item">
-        <mb-stat-month ref="statMonth" :height="contentH" />
+      <swiper-item class="swiper_item" @touchmove.stop="stopTochMove">
+        <mb-stat-month
+          ref="statMonth"
+          :height="contentH"
+          :canvas2d="canvas2d"
+        />
       </swiper-item>
-      <swiper-item class="swiper_item">
-        <mb-stat-year ref="statYear" :height="contentH" />
+      <swiper-item class="swiper_item" @touchmove.stop="stopTochMove">
+        <mb-stat-year
+          ref="statYear"
+          :height="contentH"
+          :canvas2d="canvas2d"
+          @monthclick="handleGotoMonthStat"
+        />
       </swiper-item>
-      <swiper-item class="swiper_item">
+      <swiper-item class="swiper_item" @touchmove.stop="stopTochMove">
         <mb-stat-rate ref="statRate" />
       </swiper-item>
     </swiper>
@@ -32,6 +42,7 @@ export default {
   data() {
     return {
       active: 0,
+      canvas2d: false,
       tabList: [
         {
           title: "月数据",
@@ -72,6 +83,7 @@ export default {
       uni.getSystemInfo({
         success(res) {
           let pH = res.windowHeight;
+          that.getIsCanvas2d(res.platform);
           let query = uni.createSelectorQuery().in(that);
           query.select("#stat-header").fields({ size: true });
           query.exec((data) => {
@@ -83,11 +95,33 @@ export default {
       });
     },
 
+    getIsCanvas2d(platform) {
+      switch (platform) {
+        case "android":
+        case "ios":
+          this.canvas2d = true;
+          break;
+        default:
+          this.canvas2d = false;
+          break;
+      }
+    },
+
     tabChange(e) {
       // console.log(e);
       let curr = e.detail.current;
       this.active = e.detail.current;
       this.initData(curr);
+    },
+
+    handleGotoMonthStat(item) {
+      console.log(item);
+      this.$refs.statMonth.specifyDate(item);
+      this.active = 0;
+    },
+
+    stopTochMove() {
+      return false;
     },
 
     //#endregion

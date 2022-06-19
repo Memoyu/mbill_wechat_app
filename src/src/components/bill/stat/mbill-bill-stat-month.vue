@@ -4,7 +4,8 @@
       <mb-ba-date-scroll
         type="month"
         v-model="active"
-        @selected.stop="handleSelectedYear"
+        :specify="specify"
+        @selected.stop="handleSelectedMonth"
       />
     </view>
     <view class="mb-stat-month-content" :style="{ height: scrollH + 'px' }">
@@ -92,6 +93,8 @@
 </template>
 
 <script>
+import datetime from "@/common/utils/datetime";
+
 export default {
   name: "mbill-bill-stat-month",
   props: {
@@ -109,6 +112,10 @@ export default {
       init: false,
       active: 0,
       scrollH: 0,
+      specify: {
+        year: datetime.getCurYear(),
+        month: datetime.getCurMonth(),
+      },
       stat: {
         expend: "3,3543,363",
         income: "2,305,555",
@@ -178,8 +185,13 @@ export default {
       }, 500);
     },
 
+    // 指定日期
+    specifyDate(date) {
+      this.specify = date;
+    },
+
     // 切换月份
-    handleSelectedYear(item) {
+    handleSelectedMonth(item) {
       console.log(item);
     },
 

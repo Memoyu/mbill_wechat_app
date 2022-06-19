@@ -4,6 +4,7 @@
       class="mb-stat-month-item"
       v-for="(item, index) in months"
       :key="index"
+      @click="handleClick(item)"
     >
       <view class="mb-stat-month-item-month">
         <view class="mb-stat-month-item-month-bl">
@@ -36,9 +37,16 @@
 </template>
 
 <script>
+import datetime from "@/common/utils/datetime";
+
 export default {
   name: "mbill-bill-stat-month-list",
-  props: {},
+  props: {
+    year: {
+      type: Number,
+      default: datetime.getCurYear(),
+    },
+  },
   data() {
     return {
       months: [
@@ -117,7 +125,14 @@ export default {
       ],
     };
   },
-  methods: {},
+  watch: {
+    year(val) {},
+  },
+  methods: {
+    handleClick(item) {
+      this.$emit("click", { year: this.year, month: item.month });
+    },
+  },
 };
 </script>
 

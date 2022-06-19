@@ -16,11 +16,11 @@
             { 'date-item-block-active': currentIndex === index },
           ]"
           :id="`date-item-${type}`"
-          @click="selectDate(item, index)"
+          @click="selectedDate(item, index)"
         >
           <view v-if="type === 'month'" class="date-item-block-month">
             <view>
-              <text class=""> {{ item.month }}</text>
+              <text class=""> {{ getMonthFormat(item) }}</text>
               <text class="date-item-block-month-char"> 月</text>
             </view>
             <view class="date-item-block-month-year">{{ item.year }}</view>
@@ -61,6 +61,14 @@ export default {
       type: String,
       default: "month",
     },
+    // 指定日期
+    specify: {
+      type: Object,
+      default: {
+        year: datetime.getCurYear(),
+        month: datetime.getCurMonth(),
+      },
+    },
     lineAnimated: {
       // 是否展示下划线动画
       type: Boolean,
@@ -95,13 +103,15 @@ export default {
       this.currentIndex = val;
       this.setDateList();
     },
+    specify(val) {
+      let index = this.loadSpecifyDate(val);
+      console.log("指定了日期", val, index);
+      if (index === this.currentIndex || index === -1) return;
+      this.$emit("input", index);
+    },
   },
   created() {
-    if (this.type === "month") {
-      this.getDates();
-    } else if (this.type === "year") {
-      this.getYears();
-    }
+    this.loadDates();
   },
   mounted() {
     this.currentIndex = this.value;
@@ -112,14 +122,60 @@ export default {
   },
   methods: {
     // 加载日期数据
-    getDates() {
+    loadDates() {
       if (this.loading) return;
       this.loading = true;
+
+      if (this.type === "month") {
+        this.getDates();
+      } else if (this.type === "year") {
+        this.getYears();
+      }
+      this.loading = false;
+    },
+
+    // 加载指定日期，并选中
+    loadSpecifyDate(date) {
+      let index = -1;
+
+      if (this.type === "month") {
+        index = this.list.findIndex(
+          (e) => date.year === e.year && date.month === e.month
+        );
+      } else if (this.type === "year") {
+        index = this.list.findIndex((e) => date.year === e.year);
+      }
+      if (index > -1) return index;
+      while (index === -1) {
+        if (this.type === "month") {
+          index = this.getDates(date);
+        } else if (this.type === "year") {
+          index = this.getYears(date);
+        }
+      }
+      return index;
+    },
+
+    /**
+     * 获取日期数据
+     * @param {Object} date 指定日期,指定时返回指定日期的index
+     */
+    getDates(date) {
+      let index = -1;
       for (let i = 0; i < this.page.size; i++) {
         this.list.push({
           year: this.page.year,
-          month: this.page.month < 10 ? "0" + this.page.month : this.page.month,
+          month: this.page.month,
         });
+        // 赋值指定日期下标
+        if (
+          date &&
+          date.year === this.page.year &&
+          date.month === this.page.month
+        ) {
+          index = this.list.length - 1;
+        }
+
         if (this.page.month == 1) {
           this.page.year -= 1;
           this.page.month = 12;
@@ -127,23 +183,33 @@ export default {
           this.page.month -= 1;
         }
       }
-      this.loading = false;
+      return index;
     },
 
-    getYears() {
-      if (this.loading) return;
-      this.loading = true;
+    /**
+     * 获取日期数据
+     * @param {String} year 指定年,指定时返回指定年的index
+     */
+    getYears(year) {
+      let index = -1;
       for (let i = 0; i < this.page.size; i++) {
         this.list.push({
           year: this.page.year.toString(),
         });
+        if (year && year === this.page.year) {
+          index = this.list.length - 1;
+        }
         this.page.year -= 1;
       }
-      this.loading = false;
-    },
 
-    selectDate(item, index) {
+      return index;
+    },
+    getMonthFormat(item) {
+      return item.month < 10 ? "0" + item.month : item.month;
+    },
+    selectedDate(item, index) {
       this.$emit("input", index);
+      this.$emit("selected", item);
     },
 
     setDateList() {
@@ -205,11 +271,7 @@ export default {
 
     scrollToLower(e) {
       console.log("触底", e);
-      if (this.type === "month") {
-        this.getDates();
-      } else if (this.type === "year") {
-        this.getYears();
-      }
+      this.loadDates();
     },
   },
 };

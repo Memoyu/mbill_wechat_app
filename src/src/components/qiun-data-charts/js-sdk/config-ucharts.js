@@ -126,8 +126,8 @@ const cfu = {
 				"labelWidth": 15,
 				"border": true,
 				"borderWidth": 3,
-				"centerColor": "#F6F6F6",
-				"borderColor": "#F6F6F6"
+				"centerColor": "#FFFFFF",
+				"borderColor": "#FFFFFF"
 			},
 		},
 	},
@@ -272,9 +272,11 @@ const cfu = {
 		"type": "area",
 		"color": ["#47A271", "#C24F50"],
 		"padding": [15, 20, 0, 20],
+		"enableScroll": true,
 		"xAxis": {
 			"disableGrid": true,
 			"boundaryGap": "justify",
+			"itemCount": 4
 		},
 		"yAxis": {
 			"disabled": true,
