@@ -8,7 +8,7 @@
           <mb-b-item
             v-for="(item, index) in m.items"
             :key="index"
-            :data="item"
+            :bill="item"
           />
         </view>
       </view>
@@ -23,7 +23,7 @@ export default {
     data: {
       type: Array,
       default: [
-        {
+        /*{
           year: "2020",
           items: [
             {
@@ -325,7 +325,7 @@ export default {
               ],
             },
           ],
-        },
+        },*/
       ],
     },
   },

@@ -211,13 +211,13 @@ export default {
 
     // 切换年份
     handleSelectedYear(item) {
-      console.log("年份选择", item);
+      // console.log("年份选择", item);
       this.year = item.year;
     },
 
     // 点击月份
     handleMonthClick(item) {
-      console.log("月份选择", item);
+      // console.log("月份选择", item);
       this.$emit("monthclick", item);
     },
   },

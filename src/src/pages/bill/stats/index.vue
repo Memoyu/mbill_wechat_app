@@ -31,7 +31,7 @@
         />
       </swiper-item>
       <swiper-item class="swiper_item" @touchmove.stop="stopTochMove">
-        <mb-stat-rate ref="statRate" />
+        <mb-stat-rate ref="statRate" :height="contentH" />
       </swiper-item>
     </swiper>
   </view>
@@ -115,7 +115,7 @@ export default {
     },
 
     handleGotoMonthStat(item) {
-      console.log(item);
+      // console.log(item);
       this.$refs.statMonth.specifyDate(item);
       this.active = 0;
     },
