@@ -72,7 +72,20 @@
         </view>
 
         <!-- 月份收支统计 -->
-        <view class="mb-stat-divide-title">占比统计</view>
+        <view class="x-bc">
+          <view class="mb-stat-divide-title">占比统计</view>
+          <picker
+            v-if="percActive === 0"
+            @change="handleTypePickerChange"
+            :value="type"
+            :range="types"
+          >
+            <view class="type-picker x-c">
+              <view>{{ types[type] }}</view>
+              <i class="iconfont icon-bottom icon-down" />
+            </view>
+          </picker>
+        </view>
         <view class="mb-stat-year-func-tab">
           <mb-ba-tabs :type="percList" v-model="percActive" />
         </view>
@@ -118,6 +131,8 @@ export default {
       percActive: 0,
       scrollH: 0,
       canvas2d: false,
+      type: 0,
+      types: ["支出", "收入"],
       percList: [
         {
           title: "分类占比",
@@ -197,6 +212,24 @@ export default {
       }, 500);
     },
 
+    // 切换年份
+    handleSelectedYear(item) {
+      // console.log("年份选择", item);
+      this.year = item.year;
+    },
+
+    // 点击月份
+    handleMonthClick(item) {
+      // console.log("月份选择", item);
+      this.$emit("monthclick", item);
+    },
+
+    // 切换账单类型
+    handleTypePickerChange({ detail }) {
+      console.log(detail);
+      this.type = detail.value;
+    },
+
     // 计算scroll-view 最高度
     calcuScrollHeight(height) {
       let that = this;
@@ -215,7 +248,7 @@ export default {
           platform = res.platform;
         },
       });
-      console.log("platform-", platform);
+      // console.log("platform-", platform);
       switch (platform) {
         case "android":
         case "ios":
@@ -225,18 +258,6 @@ export default {
           this.canvas2d = false;
           break;
       }
-    },
-
-    // 切换年份
-    handleSelectedYear(item) {
-      // console.log("年份选择", item);
-      this.year = item.year;
-    },
-
-    // 点击月份
-    handleMonthClick(item) {
-      // console.log("月份选择", item);
-      this.$emit("monthclick", item);
     },
   },
 };
@@ -271,6 +292,17 @@ export default {
       }
       &-bold {
         font-weight: bold;
+      }
+    }
+
+    .type-picker {
+      margin: 0 50rpx;
+      font-size: 15px;
+      font-weight: bold;
+      align-items: baseline;
+      .icon-down {
+        font-size: 10px;
+        margin-left: 5px;
       }
     }
   }

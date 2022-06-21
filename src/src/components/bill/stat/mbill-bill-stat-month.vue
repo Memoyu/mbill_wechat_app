@@ -73,7 +73,15 @@
         </view>
 
         <!-- 当月分类数据统计 -->
-        <view class="mb-stat-divide-title">分类占比</view>
+        <view class="x-bc">
+          <view class="mb-stat-divide-title">分类占比</view>
+          <picker @change="handleTypePickerChange" :value="type" :range="types">
+            <view class="type-picker x-c">
+              <view>{{ types[type] }}</view>
+              <i class="iconfont icon-bottom icon-down" />
+            </view>
+          </picker>
+        </view>
         <view class="mb-stat-month-bg-br">
           <view class="charts-box">
             <qiun-data-charts
@@ -109,6 +117,8 @@ export default {
       active: 0,
       scrollH: 0,
       canvas2d: false,
+      type: 0,
+      types: ["支出", "收入"],
       specify: {
         year: datetime.getCurYear(),
         month: datetime.getCurMonth(),
@@ -205,6 +215,12 @@ export default {
       console.log(item);
     },
 
+    // 切换账单类型
+    handleTypePickerChange({ detail }) {
+      console.log(detail);
+      this.type = detail.value;
+    },
+
     // 计算scroll-view 最高度
     calcuScrollHeight(height) {
       let that = this;
@@ -223,7 +239,7 @@ export default {
           platform = res.platform;
         },
       });
-      console.log("platform-", platform);
+      // console.log("platform-", platform);
       switch (platform) {
         case "android":
         case "ios":
@@ -269,6 +285,17 @@ export default {
         }
         &-bold {
           font-weight: bold;
+        }
+      }
+
+      .type-picker {
+        margin: 0 50rpx;
+        font-size: 15px;
+        font-weight: bold;
+        align-items: baseline;
+        .icon-down {
+          font-size: 10px;
+          margin-left: 5px;
         }
       }
     }

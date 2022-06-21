@@ -1,6 +1,7 @@
 <template>
   <view class="mb-stat-rate">
     <view class="mb-stat-rate-header" id="mb-stat-rate-header">
+      <!-- 排行过滤 -->
       <view class="mb-stat-rate-header-filter">
         <picker
           class="date-picker"
@@ -10,18 +11,20 @@
           :value="date"
         >
           <view class="picker-title x-c">
-            <text>{{ dateText.year }}年{{ dateText.month }}月</text>
+            <text class="text-break"
+              >{{ dateText.year }}年{{ dateText.month }}月</text
+            >
             <i class="iconfont icon-bottom icon-down" />
           </view>
         </picker>
         <picker
           class="type-picker"
-          @change="bindPickerChange"
+          @change="handleTypePickerChange"
           :value="type"
           :range="types"
         >
           <view class="picker-title x-c">
-            <view>{{ types[type] }}</view>
+            <view class="text-break">{{ types[type] }}</view>
             <i class="iconfont icon-bottom icon-down" />
           </view>
         </picker>
@@ -33,17 +36,20 @@
           :range="categories"
         >
           <view class="picker-title x-c">
-            <view>{{ categories[category] }}</view>
+            <view class="text-break">{{ categories[category] }}</view>
             <i class="iconfont icon-bottom icon-down" />
           </view>
         </picker>
         <i class="iconfont icon-stats clear-filter" />
       </view>
+
+      <!-- 排行日期类型 -->
       <view class="mb-stat-rate-header-date-type-tabs">
         <mb-ba-tabs :type="dateTypes" v-model="active" />
       </view>
     </view>
 
+    <!-- 排行列表 -->
     <view class="mb-stat-rate-content" :style="{ height: scrollH + 'px' }">
       <scroll-view scroll-y="true" style="height: 100%">
         <view class="mb-stat-rate-bg-br">
@@ -308,6 +314,12 @@ export default {
       console.log("初始化数据-排行榜");
     },
 
+    // 切换账单类型
+    handleTypePickerChange({ detail }) {
+      console.log(detail);
+      this.type = detail.value;
+    },
+
     // 计算scroll-view 最高度
     calcuScrollHeight(height) {
       let that = this;
@@ -342,7 +354,6 @@ export default {
         padding: 15rpx;
         font-size: 35rpx;
       }
-
       .picker-title {
         font-size: 15px;
         font-weight: bold;
@@ -351,6 +362,12 @@ export default {
           font-size: 10px;
           margin-left: 5px;
         }
+      }
+      .text-break {
+        display: -webkit-box; /*弹性伸缩盒子模型显示*/
+        -webkit-box-orient: vertical; /*排列方式*/
+        -webkit-line-clamp: 1; /*显示文本行数(这里控制多少行隐藏)*/
+        overflow: hidden; /*溢出隐藏*/
       }
     }
     &-date-type-tabs {
