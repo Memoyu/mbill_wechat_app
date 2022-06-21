@@ -276,7 +276,7 @@ const cfu = {
 		"xAxis": {
 			"disableGrid": true,
 			"boundaryGap": "justify",
-			"itemCount": 4
+			"itemCount": 8
 		},
 		"yAxis": {
 			"disabled": true,

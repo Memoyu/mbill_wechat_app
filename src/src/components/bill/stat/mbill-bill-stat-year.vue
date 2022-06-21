@@ -110,10 +110,6 @@ export default {
       type: [Number, String],
       default: 300,
     },
-    canvas2d: {
-      type: [Boolean, String],
-      default: false,
-    },
   },
   data() {
     return {
@@ -121,6 +117,7 @@ export default {
       dateActive: 0,
       percActive: 0,
       scrollH: 0,
+      canvas2d: false,
       percList: [
         {
           title: "分类占比",
@@ -151,6 +148,7 @@ export default {
     },
   },
   created() {
+    this.getIsCanvas2d();
     this.getServerData();
   },
   methods: {
@@ -207,6 +205,26 @@ export default {
       query.exec((data) => {
         that.scrollH = height - data[0].height;
       });
+    },
+
+    // 获取当前设备平台信息
+    getIsCanvas2d() {
+      let platform = "";
+      uni.getSystemInfo({
+        success(res) {
+          platform = res.platform;
+        },
+      });
+      console.log("platform-", platform);
+      switch (platform) {
+        case "android":
+        case "ios":
+          this.canvas2d = true;
+          break;
+        default:
+          this.canvas2d = false;
+          break;
+      }
     },
 
     // 切换年份

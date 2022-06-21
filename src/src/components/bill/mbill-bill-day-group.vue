@@ -2,8 +2,14 @@
   <view class="mbill-bill-date-group">
     <view v-for="(g, dind) in groups" :key="dind">
       <view class="group-date">{{ g.day }}日 {{ g.week }}</view>
-      <view class="group-item">
-        <mb-b-item v-for="(item, index) in g.items" :key="index" :bill="item" />
+      <view class="group-items">
+        <view class="group-items-item">
+          <mb-b-item
+            v-for="(item, index) in g.items"
+            :key="index"
+            :bill="item"
+          />
+        </view>
       </view>
     </view>
   </view>
@@ -125,10 +131,13 @@ export default {
     padding: 10px 20px;
     font-weight: bold;
   }
-  .group-item {
+  .group-items {
     padding: 5px 0;
     border-radius: 13px;
     background: white;
+    &-item {
+      padding: 0 30rpx;
+    }
   }
 }
 </style>

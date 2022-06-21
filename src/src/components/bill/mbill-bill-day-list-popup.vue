@@ -34,7 +34,9 @@
         class="bill-day-popup-items"
         :style="{ height: contentHeight - 34 + 'px' }"
       >
-        <mb-b-item v-for="(item, index) in items" :key="index" :bill="item" />
+        <view class="bill-day-popup-items-item">
+          <mb-b-item v-for="(item, index) in items" :key="index" :bill="item" />
+        </view>
       </scroll-view>
       <mb-ba-empty v-if="items.length <= 0" />
     </view>
@@ -60,7 +62,7 @@ export default {
   },
   data() {
     return {
-      stat: {},
+      stat: { income: 0, expend: 0 },
       title: "日",
       items: [],
       contentHeight: 200,
@@ -114,7 +116,8 @@ export default {
     border-radius: 20rpx 20rpx 0 0;
     .bill-day-popup-items {
       height: 100%;
-      .bill-day-popup-items-scroll {
+      &-item {
+        padding: 0 30rpx;
       }
     }
     .bill-day-popup-header {

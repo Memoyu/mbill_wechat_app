@@ -49,7 +49,9 @@
         <view class="mb-stat-rate-bg-br">
           <view v-for="(item, index) in items" :key="index">
             <view class="rate-item-content">
-              <view class="month">{{ item.ranking }}</view>
+              <view v-if="item.ranking !== 0" class="month">{{
+                item.ranking
+              }}</view>
               <mb-b-item class="rate-item" :bill="item" />
               <view class="right-icon-content">
                 <i class="iconfont icon-to right-icon" />
@@ -287,7 +289,7 @@ export default {
           id: 864,
           time: "16:54",
           type: 0,
-          ranking: "",
+          ranking: 0,
         },
       ],
     };
@@ -364,6 +366,7 @@ export default {
       align-items: center;
       margin: 0 20rpx;
       .month {
+        margin-right: 30rpx;
         font-weight: bold;
         font-size: 40rpx;
       }
@@ -374,6 +377,7 @@ export default {
         display: flex;
         justify-content: center;
         align-items: center;
+        margin-left: 30rpx;
         .right-icon {
           display: flex;
           border-radius: 50%;

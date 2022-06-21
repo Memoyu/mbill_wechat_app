@@ -3,8 +3,9 @@
     <view v-for="(d, dind) in data" :key="dind">
       <view class="group-year">{{ d.year }}</view>
       <view class="group-year-item">
-        <view class="group-month-item" v-for="(m, mind) in d.items" :key="mind">
-          <view class="month-item-date">{{ m.date }}</view>
+        <view class="group-month-items" v-for="(m, mind) in d.items" :key="mind">
+          <view class="group-month-items-date">{{ m.date }}</view>
+            <view class="group-month-items-item">
           <mb-b-item
             v-for="(item, index) in m.items"
             :key="index"
@@ -343,11 +344,14 @@ export default {
     padding: 5px 0;
     border-radius: 13px;
     background: white;
-    .group-month-item {
-      .month-item-date {
+    .group-month-items {
+      &-date {
         padding: 10px 20px;
         color: $grey-black-text-color;
         font-weight: 600;
+      }
+      &-item {
+        padding: 0 30rpx;
       }
     }
   }

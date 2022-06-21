@@ -50,7 +50,7 @@ export default {
   // background: beige;
   display: flex;
   border-radius: 10px;
-  padding: 10px 18px;
+  padding: 10px 0;
   align-items: center;
   .bill-icon {
     .image {

@@ -16,17 +16,12 @@
       :style="{ height: contentH + 'px' }"
     >
       <swiper-item class="swiper_item" @touchmove.stop="stopTochMove">
-        <mb-stat-month
-          ref="statMonth"
-          :height="contentH"
-          :canvas2d="canvas2d"
-        />
+        <mb-stat-month ref="statMonth" :height="contentH" />
       </swiper-item>
       <swiper-item class="swiper_item" @touchmove.stop="stopTochMove">
         <mb-stat-year
           ref="statYear"
           :height="contentH"
-          :canvas2d="canvas2d"
           @monthclick="handleGotoMonthStat"
         />
       </swiper-item>
@@ -42,7 +37,6 @@ export default {
   data() {
     return {
       active: 0,
-      canvas2d: false,
       tabList: [
         {
           title: "月数据",
@@ -57,13 +51,13 @@ export default {
       contentH: 500,
     };
   },
-  onLoad() {},
+  onLoad() {
+    this.dynamicHeight();
+  },
   onShow() {
     this.initData(0);
   },
-  onReady() {
-    this.dynamicHeight();
-  },
+  onReady() {},
   methods: {
     //#region 初始化
 
@@ -83,7 +77,6 @@ export default {
       uni.getSystemInfo({
         success(res) {
           let pH = res.windowHeight;
-          that.getIsCanvas2d(res.platform);
           let query = uni.createSelectorQuery().in(that);
           query.select("#stat-header").fields({ size: true });
           query.exec((data) => {
@@ -93,18 +86,6 @@ export default {
           });
         },
       });
-    },
-
-    getIsCanvas2d(platform) {
-      switch (platform) {
-        case "android":
-        case "ios":
-          this.canvas2d = true;
-          break;
-        default:
-          this.canvas2d = false;
-          break;
-      }
     },
 
     tabChange(e) {

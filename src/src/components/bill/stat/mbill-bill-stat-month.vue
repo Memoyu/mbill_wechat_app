@@ -102,16 +102,13 @@ export default {
       type: [Number, String],
       default: 300,
     },
-    canvas2d: {
-      type: [Boolean, String],
-      default: false,
-    },
   },
   data() {
     return {
       init: false,
       active: 0,
       scrollH: 0,
+      canvas2d: false,
       specify: {
         year: datetime.getCurYear(),
         month: datetime.getCurMonth(),
@@ -137,6 +134,8 @@ export default {
     },
   },
   created() {
+    this.getIsCanvas2d();
+    console.log("canvas2d-", this.canvas2d);
     this.getServerData();
   },
   methods: {
@@ -151,15 +150,26 @@ export default {
       setTimeout(() => {
         //模拟服务器返回数据，如果数据格式和标准格式不同，需自行按下面的格式拼接
         let res = {
-          categories: ["2016", "2017", "2018", "2019", "2020", "2021"],
+          categories: [
+            "2016",
+            "2017",
+            "2018",
+            "2019",
+            "2020",
+            "2021",
+            "2022",
+            "2023",
+            "2024",
+            "2025",
+          ],
           series: [
             {
               name: "成交量A",
-              data: [35, 8, 25, 37, 4, 20],
+              data: [35, 8, 25, 37, 4, 20, 5, 27, 6, 8],
             },
             {
               name: "成交量B",
-              data: [70, 40, 65, 100, 44, 68],
+              data: [70, 40, 65, 100, 44, 68, 76, 43, 9, 34],
             },
           ],
         };
@@ -203,6 +213,26 @@ export default {
       query.exec((data) => {
         that.scrollH = height - data[0].height;
       });
+    },
+
+    // 获取当前设备平台信息
+    getIsCanvas2d() {
+      let platform = "";
+      uni.getSystemInfo({
+        success(res) {
+          platform = res.platform;
+        },
+      });
+      console.log("platform-", platform);
+      switch (platform) {
+        case "android":
+        case "ios":
+          this.canvas2d = true;
+          break;
+        default:
+          this.canvas2d = false;
+          break;
+      }
     },
   },
 };
