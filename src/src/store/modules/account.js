@@ -71,7 +71,7 @@ const actions = {
     // 刷新token
     RefreshToken({ commit, state }) {
         return new Promise((resolve, reject) => {
-            api.refreshToken({ "refresh_token": state.refreshToken }).then(response => {
+            api.refreshToken({ "refresh-token": state.refreshToken }).then(response => {
                 // console.log("刷新token响应", response);
                 if (response.data.success) {
                     const token = response.data.result;
