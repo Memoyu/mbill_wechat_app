@@ -20,11 +20,11 @@
         <picker
           class="type-picker"
           @change="handleTypePickerChange"
-          :value="type"
-          :range="types"
+          :value="billType"
+          :range="billTypes"
         >
           <view class="picker-title x-c">
-            <view class="text-break">{{ types[type] }}</view>
+            <view class="text-break">{{ billTypes[billType] }}</view>
             <i class="iconfont icon-bottom icon-down" />
           </view>
         </picker>
@@ -33,10 +33,11 @@
           class="category-picker"
           @change="bindPickerChange"
           :value="category"
+          range-key="name"
           :range="categories"
         >
           <view class="picker-title x-c">
-            <view class="text-break">{{ categories[category] }}</view>
+            <view class="text-break">{{ categories[category].name }}</view>
             <i class="iconfont icon-bottom icon-down" />
           </view>
         </picker>
@@ -45,7 +46,7 @@
 
       <!-- 排行日期类型 -->
       <view class="mb-stat-rate-header-date-type-tabs">
-        <mb-ba-tabs :type="dateTypes" v-model="active" />
+        <mb-ba-tabs :type="dateTypes" v-model="dateActive" />
       </view>
     </view>
 
@@ -53,7 +54,7 @@
     <view class="mb-stat-rate-content" :style="{ height: scrollH + 'px' }">
       <scroll-view scroll-y="true" style="height: 100%">
         <view class="mb-stat-rate-bg-br">
-          <view v-for="(item, index) in items" :key="index">
+          <view v-for="(item, index) in rankings" :key="index">
             <view class="rate-item-content">
               <view v-if="item.ranking !== 0" class="month">{{
                 item.ranking
@@ -90,24 +91,11 @@ export default {
         year: datetime.getCurYear(),
         month: datetime.getCurMonth(),
       },
-      type: 0,
-      types: ["支出", "收入"],
+      billType: 0,
+      billTypes: ["支出", "收入"],
       category: 0,
-      categories: [
-        "选择分类",
-        "一日三餐",
-        "聚会",
-        "聚会",
-        "聚会",
-        "聚会",
-        "聚会",
-        "聚会",
-        "聚会",
-        "聚会",
-        "聚会",
-        "药品",
-      ],
-      active: 0,
+      categories: [{ id: 0, name: "选择分类" }],
+      dateActive: 0,
       dateTypes: [
         {
           title: "月排行",
@@ -116,7 +104,7 @@ export default {
           title: "年排行",
         },
       ],
-      items: [
+      rankings: [
         /*{
           amount: 25555,
           amountFormat: "25,555",
@@ -304,6 +292,7 @@ export default {
     height(val) {
       this.calcuScrollHeight(val);
     },
+    dateActive(val) {},
   },
   created() {},
   methods: {
@@ -312,6 +301,34 @@ export default {
       this.init = true;
       // 初始化数据
       console.log("初始化数据-排行榜");
+    },
+
+    // 加载数据
+    loadStatData() {
+      this.$tip.loading();
+      try {
+        this.loadRanking();
+      } finally {
+        this.$tip.loaded();
+      }
+    },
+
+    // 加载统计汇总数据
+    loadRanking() {
+      this.$api
+        .billRanking({
+          date: this.date,
+          dateType: this.dateActive,
+          billType: this.billType,
+          categoryId: category,
+        })
+        .then((res) => {
+          // console.log("列表", res);
+          if (res.data.code === 0) {
+            this.stat = res.data.result;
+            this.rankings = data;
+          }
+        });
     },
 
     // 切换账单类型
