@@ -102,9 +102,13 @@
         <view class="key-board-header-desc x-start">
           <view class="x-ac choose-asset" @tap="handleChooseAsset">
             <i class="iconfont icon-assets icon" />
-            <text :class="[model.assetId == 0 ? 'text' : 'text-choose']">{{
-              model.asset
-            }}</text>
+            <text
+              :class="[
+                'text-display',
+                model.assetId == 0 ? 'text' : 'text-choose',
+              ]"
+              >{{ model.asset }}</text
+            >
           </view>
           <view class="x-ac">
             <i class="iconfont icon-edit icon" />
@@ -621,12 +625,13 @@ export default {
     .text {
       color: $primary-color;
     }
-
-    .text-choose {
+    .text-display {
       display: -webkit-box; /*弹性伸缩盒子模型显示*/
       -webkit-box-orient: vertical; /*排列方式*/
       -webkit-line-clamp: 1; /*显示文本行数(这里控制多少行隐藏)*/
       overflow: hidden; /*溢出隐藏*/
+    }
+    .text-choose {
     }
   }
   .input-address-text {

@@ -117,6 +117,7 @@ const cfu = {
 		"padding": [5, 5, 5, 5],
 		"rotate": false,
 		"dataLabel": true,
+		"update": true,
 		"extra": {
 			"ring": {
 				"ringWidth": 30,
@@ -273,6 +274,7 @@ const cfu = {
 		"color": ["#47A271", "#C24F50"],
 		"padding": [15, 20, 0, 20],
 		"enableScroll": true,
+		"update": true,
 		"xAxis": {
 			"disableGrid": true,
 			"boundaryGap": "justify",

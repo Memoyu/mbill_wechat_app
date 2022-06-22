@@ -50,6 +50,40 @@ const bill = {
 
     //#endregion
 
+    //#region 账单统计
+
+    // 年收支结余统计
+    yearSurplus(params) {
+        return http.get('bill/stat/year-surplus', { params: params })
+    },
+
+    // 月收支趋势统计
+    monthTotalTrend(params) {
+        return http.get('bill/stat/trend/month-total', { params: params })
+    },
+
+    // 年收支趋势统计
+    yearTotalTrend(params) {
+        return http.get('bill/stat/trend/year-total', { params: params })
+    },
+
+    // 收支分类占比统计
+    categoryPercent(params) {
+        return http.get('bill/stat/percent/category', { params: params })
+    },
+
+    // 收支分类占比分组列表
+    categoryPercentGroup(params) {
+        return http.get('bill/stat/percent/category/group', { params: params })
+    },
+
+    // 指定条件账单排行列表
+    billRanking(params) {
+        return http.get('bill/stat/ranking', { params: params })
+    },
+
+    //#endregion
+
     //#region 账单分类
 
     // 获取分组后的账单分类

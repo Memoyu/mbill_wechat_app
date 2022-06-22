@@ -2,7 +2,7 @@
   <view class="mbill-bill-stat-category-group">
     <view
       class="category-group"
-      v-for="(category, index) in categoryStat"
+      v-for="(category, index) in groups"
       :key="index"
     >
       <view class="category-group-title">{{ category.group }}</view>
@@ -12,13 +12,13 @@
         :key="ind"
       >
         <view>
-          <image class="category-group-item-image" :src="item.icon" />
+          <image class="category-group-item-image" :src="item.categoryIcon" />
         </view>
 
         <view class="category-group-item-title y-start">
           <view class="title-info x-bc">
             <text class="category">{{ item.category }}</text>
-            <text class="total">{{ item.total }}</text>
+            <text class="total">{{ item.amount }}</text>
           </view>
           <view class="category-group-item-progress x-start">
             <view
@@ -45,11 +45,16 @@
 <script>
 export default {
   name: "mbill-bill-stat-category-group",
-  props: {},
+  props: {
+    groups: {
+      type: Array,
+      default: [],
+    },
+  },
   data() {
     return {
       categoryStat: [
-        {
+        /*{
           group: "餐饮伙食",
           items: [
             {
@@ -107,7 +112,7 @@ export default {
               percent: 20,
             },
           ],
-        },
+        },*/
       ],
       colors: [
         "#E9D5CA",

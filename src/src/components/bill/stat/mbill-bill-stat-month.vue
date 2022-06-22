@@ -11,7 +11,7 @@
     <view class="mb-stat-month-content" :style="{ height: scrollH + 'px' }">
       <scroll-view scroll-y="true" style="height: 100%">
         <!-- 当月收支统计 -->
-        <view class="content-total x-bc">
+        <view class="content-total x-ac">
           <view class="content-total-month y-bc">
             <text class="content-total-month-expend">{{ stat.expend }}</text>
             <text class="content-total-title">当月支出</text>
@@ -23,7 +23,7 @@
             </view>
             <view class="content-total-month content-total-mg-top">
               <text class="content-total-title">平均支出：</text>
-              <text class="content-total-bold">{{ stat.average }}</text>
+              <text class="content-total-bold">{{ stat.expendAvg }}</text>
             </view>
           </view>
         </view>
@@ -46,7 +46,7 @@
           <view class="charts-box">
             <qiun-data-charts
               type="tarea"
-              :chartData="chartData"
+              :chartData="monthTrend"
               :canvas2d="canvas2d"
               :ontouch="true"
               inScrollView="true"
@@ -54,19 +54,27 @@
           </view>
           <view class="mb-stat-month-rang x-ac">
             <view class="y-bc">
-              <text class="mb-stat-month-rang-num">{{ rang.incomeMax }}</text>
+              <text class="mb-stat-month-rang-num">{{
+                range.incomeHighest
+              }}</text>
               <text class="mb-stat-month-rang-text">最高收入/元</text>
             </view>
             <view class="y-bc">
-              <text class="mb-stat-month-rang-num">{{ rang.incomeMin }}</text>
+              <text class="mb-stat-month-rang-num">{{
+                range.incomeLowst
+              }}</text>
               <text class="mb-stat-month-rang-text">最低收入/元</text>
             </view>
             <view class="y-bc">
-              <text class="mb-stat-month-rang-num">{{ rang.expendMax }}</text>
+              <text class="mb-stat-month-rang-num">{{
+                range.expendHighest
+              }}</text>
               <text class="mb-stat-month-rang-text">最高支出/元</text>
             </view>
             <view class="y-bc">
-              <text class="mb-stat-month-rang-num">{{ rang.expendMin }}</text>
+              <text class="mb-stat-month-rang-num">{{
+                range.expendLowst
+              }}</text>
               <text class="mb-stat-month-rang-text">最低支出/元</text>
             </view>
           </view>
@@ -87,13 +95,13 @@
             <qiun-data-charts
               type="ring"
               :canvas2d="canvas2d"
-              :chartData="chartData1"
+              :chartData="monthCategoryPercent"
               inScrollView="true"
             />
           </view>
         </view>
         <view class="mb-stat-month-bg-br">
-          <mb-stat-category-group />
+          <mb-stat-category-group :groups="categoryGroups" />
         </view>
       </scroll-view>
     </view>
@@ -117,6 +125,7 @@ export default {
       active: 0,
       scrollH: 0,
       canvas2d: false,
+      selectMonth: `${datetime.getCurYear()}-${datetime.getCurMonth()}`,
       type: 0,
       types: ["支出", "收入"],
       specify: {
@@ -124,18 +133,19 @@ export default {
         month: datetime.getCurMonth(),
       },
       stat: {
-        expend: "3,3543,363",
-        income: "2,305,555",
-        average: "12,055,555",
+        expend: "0",
+        income: "0",
+        expendAvg: "0",
       },
-      rang: {
-        incomeMax: 33543,
-        incomeMin: 23,
-        expendMax: 12055,
-        expendMin: 12555,
+      range: {
+        expendHighest: "0",
+        expendLowst: "0",
+        incomeHighest: "0",
+        incomeLowst: "0",
       },
-      chartData: {},
-      chartData1: {},
+      monthTrend: {},
+      monthCategoryPercent: {},
+      categoryGroups: [],
     };
   },
   watch: {
@@ -145,65 +155,110 @@ export default {
   },
   created() {
     this.getIsCanvas2d();
-    console.log("canvas2d-", this.canvas2d);
-    this.getServerData();
+    // console.log("canvas2d-", this.canvas2d);
   },
   methods: {
+    //#region 加载数据
+
+    // 初始化数据
     initData() {
       if (this.init === true) return;
       this.init = true;
       // 初始化数据
-      console.log("初始化数据-月数据");
+      // console.log("初始化数据-月数据");
+      this.$tip.loading();
+      try {
+        this.loadSummaryStat();
+        this.loadMonthTrendData();
+        this.initCategoryPercent();
+      } finally {
+        this.$tip.loaded();
+      }
     },
-    getServerData() {
-      //模拟从服务器获取数据时的延时
-      setTimeout(() => {
-        //模拟服务器返回数据，如果数据格式和标准格式不同，需自行按下面的格式拼接
-        let res = {
-          categories: [
-            "2016",
-            "2017",
-            "2018",
-            "2019",
-            "2020",
-            "2021",
-            "2022",
-            "2023",
-            "2024",
-            "2025",
-          ],
-          series: [
-            {
-              name: "成交量A",
-              data: [35, 8, 25, 37, 4, 20, 5, 27, 6, 8],
-            },
-            {
-              name: "成交量B",
-              data: [70, 40, 65, 100, 44, 68, 76, 43, 9, 34],
-            },
-          ],
-        };
-        this.chartData = JSON.parse(JSON.stringify(res));
-      }, 500);
 
-      setTimeout(() => {
-        //模拟服务器返回数据，如果数据格式和标准格式不同，需自行按下面的格式拼接
-        let res = {
-          series: [
-            {
-              data: [
-                { name: "一班", value: 50 },
-                { name: "二班", value: 30 },
-                { name: "三班", value: 20 },
-                { name: "四班", value: 18 },
-                { name: "五班", value: 18 },
-              ],
-            },
-          ],
-        };
-        this.chartData1 = JSON.parse(JSON.stringify(res));
-      }, 500);
+    // 加载分类占比
+    initCategoryPercent() {
+      this.loadCategoryPercent();
+      this.loadCategoryPercentList();
     },
+
+    // 加载统计汇总数据
+    loadSummaryStat() {
+      this.$api
+        .monthTotalStat({
+          month: this.selectMonth,
+          opearte: 1,
+        })
+        .then((res) => {
+          console.log("列表", res);
+          if (res.data.code === 0) {
+            this.stat = res.data.result;
+          }
+        });
+    },
+    // 加载月收支趋势数据
+    loadMonthTrendData() {
+      this.$api
+        .monthTotalTrend({
+          month: this.selectMonth,
+        })
+        .then((res) => {
+          // console.log("列表", res);
+          if (res.data.code === 0) {
+            let data = res.data.result;
+            this.range = {
+              expendHighest: data.expendHighest,
+              expendLowst: data.expendLowst,
+              incomeHighest: data.incomeHighest,
+              incomeLowst: data.incomeLowst,
+            };
+            this.monthTrend = JSON.parse(
+              JSON.stringify({
+                categories: data.categories,
+                series: data.series,
+              })
+            );
+          }
+        });
+    },
+    // 加载分类占比数据
+    loadCategoryPercent() {
+      this.$api
+        .categoryPercent({
+          date: this.selectMonth,
+          type: 0, // 月统计
+          billType: this.type,
+        })
+        .then((res) => {
+          if (res.data.code === 0) {
+            let data = res.data.result;
+            // console.log("列表", data);
+            this.monthCategoryPercent = JSON.parse(
+              JSON.stringify({
+                series: [{ data: data.series }],
+              })
+            );
+          }
+        });
+    },
+    // 加载分类占比列表
+    loadCategoryPercentList() {
+      this.$api
+        .categoryPercentGroup({
+          date: this.selectMonth,
+          type: 0, // 月统计
+          billType: this.type,
+        })
+        .then((res) => {
+          if (res.data.code === 0) {
+            let data = res.data.result;
+            // console.log("列表", data);
+            this.categoryGroups = data;
+          }
+        });
+    },
+
+    //#endregion
 
     // 指定日期
     specifyDate(date) {
@@ -212,13 +267,16 @@ export default {
 
     // 切换月份
     handleSelectedMonth(item) {
-      console.log(item);
+      console.log("选中的日期", item);
+      this.selectMonth = `${item.year}-${item.month}`;
+      this.initData();
     },
 
     // 切换账单类型
     handleTypePickerChange({ detail }) {
       console.log(detail);
       this.type = detail.value;
+      this.initCategoryPercent();
     },
 
     // 计算scroll-view 最高度
