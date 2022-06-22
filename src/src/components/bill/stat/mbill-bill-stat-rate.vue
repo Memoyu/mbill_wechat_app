@@ -117,7 +117,7 @@ export default {
         },
       ],
       items: [
-        {
+        /*{
           amount: 25555,
           amountFormat: "25,555",
           category: "水果",
@@ -296,7 +296,7 @@ export default {
           time: "16:54",
           type: 0,
           ranking: 0,
-        },
+        },*/
       ],
     };
   },
@@ -307,7 +307,7 @@ export default {
   },
   created() {},
   methods: {
-    initData() {
+    loadData() {
       if (this.init === true) return;
       this.init = true;
       // 初始化数据

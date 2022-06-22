@@ -2,7 +2,7 @@
   <view class="mbill-bill-stat-month-list">
     <view
       class="mb-stat-month-item"
-      v-for="(item, index) in months"
+      v-for="(item, index) in surplus"
       :key="index"
       @click="handleClick(item)"
     >
@@ -37,19 +37,17 @@
 </template>
 
 <script>
-import datetime from "@/common/utils/datetime";
-
 export default {
   name: "mbill-bill-stat-month-list",
   props: {
-    year: {
-      type: Number,
-      default: datetime.getCurYear(),
+    surplus: {
+      type: Array,
+      default: [],
     },
   },
   data() {
     return {
-      months: [
+      /*surplus: [
         {
           month: 1,
           surplus: "3,460",
@@ -122,15 +120,12 @@ export default {
           expend: "1,000",
           income: "1,030",
         },
-      ],
+      ],*/
     };
-  },
-  watch: {
-    year(val) {},
   },
   methods: {
     handleClick(item) {
-      this.$emit("click", { year: this.year, month: item.month });
+      this.$emit("click", item.month);
     },
   },
 };

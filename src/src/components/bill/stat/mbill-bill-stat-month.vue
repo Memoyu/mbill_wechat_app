@@ -160,24 +160,29 @@ export default {
   methods: {
     //#region 加载数据
 
-    // 初始化数据
-    initData() {
+    // 加载数据（外部调用）
+    loadData() {
       if (this.init === true) return;
       this.init = true;
       // 初始化数据
       // console.log("初始化数据-月数据");
+      this.loadStatData();
+    },
+
+    // 加载数据
+    loadStatData() {
       this.$tip.loading();
       try {
         this.loadSummaryStat();
         this.loadMonthTrendData();
-        this.initCategoryPercent();
+        this.loadCategoryStat();
       } finally {
         this.$tip.loaded();
       }
     },
 
     // 加载分类占比
-    initCategoryPercent() {
+    loadCategoryStat() {
       this.loadCategoryPercent();
       this.loadCategoryPercentList();
     },
@@ -190,7 +195,7 @@ export default {
           opearte: 1,
         })
         .then((res) => {
-          console.log("列表", res);
+          // console.log("列表", res);
           if (res.data.code === 0) {
             this.stat = res.data.result;
           }
@@ -267,16 +272,16 @@ export default {
 
     // 切换月份
     handleSelectedMonth(item) {
-      console.log("选中的日期", item);
+      // console.log("选中的日期", item);
       this.selectMonth = `${item.year}-${item.month}`;
-      this.initData();
+      this.loadStatData();
     },
 
     // 切换账单类型
     handleTypePickerChange({ detail }) {
       console.log(detail);
       this.type = detail.value;
-      this.initCategoryPercent();
+      this.loadCategoryStat();
     },
 
     // 计算scroll-view 最高度

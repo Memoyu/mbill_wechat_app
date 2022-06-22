@@ -22,7 +22,7 @@
             </view>
             <view class="content-total-month content-total-mg-top">
               <text class="content-total-title">平均支出：</text>
-              <text class="content-total-bold">{{ stat.average }}</text>
+              <text class="content-total-bold">{{ stat.expendAvg }}</text>
             </view>
           </view>
         </view>
@@ -79,7 +79,7 @@
         <view class="x-bc">
           <view class="mb-stat-divide-title">占比统计</view>
           <picker
-            v-if="percActive === 0"
+            v-if="perActive === 0"
             @change="handleTypePickerChange"
             :value="type"
             :range="types"
@@ -91,9 +91,9 @@
           </picker>
         </view>
         <view class="mb-stat-year-func-tab">
-          <mb-ba-tabs :type="percList" v-model="percActive" />
+          <mb-ba-tabs :type="perList" v-model="perActive" />
         </view>
-        <view v-if="percActive === 0">
+        <view v-if="perActive === 0">
           <view class="mb-stat-year-bg-br">
             <view class="charts-box">
               <qiun-data-charts
@@ -109,8 +109,11 @@
           </view>
         </view>
 
-        <view v-if="percActive === 1" class="mb-stat-year-bg-br">
-          <mb-stat-month-list @click="handleMonthClick" :year="year" />
+        <view v-if="perActive === 1" class="mb-stat-year-bg-br">
+          <mb-stat-month-list
+            @click="handleMonthClick"
+            :surplus="monthSurplus"
+          />
         </view>
       </scroll-view>
     </view>
@@ -132,13 +135,13 @@ export default {
     return {
       init: false,
       dateActive: 0,
-      percActive: 0,
+      perActive: 0,
       scrollH: 0,
       canvas2d: false,
-      selectYear: `${datetime.getCurYear()}`,
+      year: datetime.getCurYear(),
       type: 0,
       types: ["支出", "收入"],
-      percList: [
+      perList: [
         {
           title: "分类占比",
         },
@@ -146,11 +149,10 @@ export default {
           title: "月份占比",
         },
       ],
-      year: datetime.getCurYear(),
       stat: {
-        expend: "3,3543,363",
-        income: "2,305,555",
-        average: "12,055,555",
+        expend: "0",
+        income: "0",
+        expendAvg: "0",
       },
       range: {
         expendHighest: "0",
@@ -161,34 +163,45 @@ export default {
       yearTrend: {},
       yearCategoryPercent: {},
       categoryGroups: [],
+      monthSurplus: [],
     };
   },
   watch: {
     height(val) {
       this.calcuScrollHeight(val);
     },
+    perActive(val) {
+      this.handleSelectedPerType(val);
+    },
   },
   created() {
     this.getIsCanvas2d();
   },
   methods: {
-    initData() {
+    // 加载数据（外部调用）
+    loadData() {
       if (this.init === true) return;
       this.init = true;
       // 初始化数据
       // console.log("初始化数据-年数据");
+      this.loadStatData();
+    },
+
+    // 加载数据
+    loadStatData() {
       this.$tip.loading();
       try {
         this.loadSummaryStat();
         this.loadYearTrendData();
-        this.initCategoryPercent();
+        if (this.perActive === 0) this.loadCategoryStat();
+        else if (this.perActive === 1) this.loadMonthSurplus();
       } finally {
         this.$tip.loaded();
       }
     },
 
     // 加载分类占比
-    initCategoryPercent() {
+    loadCategoryStat() {
       this.loadCategoryPercent();
       this.loadCategoryPercentList();
     },
@@ -197,11 +210,11 @@ export default {
     loadSummaryStat() {
       this.$api
         .yearTotalStat({
-          year: this.selectYear,
+          year: this.year,
           opearte: 1,
         })
         .then((res) => {
-          console.log("列表", res);
+          // console.log("列表", res);
           if (res.data.code === 0) {
             this.stat = res.data.result;
           }
@@ -211,7 +224,7 @@ export default {
     loadYearTrendData() {
       this.$api
         .yearTotalTrend({
-          year: this.selectYear,
+          year: this.year,
         })
         .then((res) => {
           // console.log("列表", res);
@@ -236,7 +249,7 @@ export default {
     loadCategoryPercent() {
       this.$api
         .categoryPercent({
-          date: `${this.selectYear}-1`,
+          date: `${this.year}-1`,
           type: 1, // 年统计
           billType: this.type,
         })
@@ -256,7 +269,7 @@ export default {
     loadCategoryPercentList() {
       this.$api
         .categoryPercentGroup({
-          date: `${this.selectYear}-1`,
+          date: `${this.year}-1`,
           type: 1, // 年统计
           billType: this.type,
         })
@@ -269,22 +282,45 @@ export default {
         });
     },
 
+    // 加载月份收支结余数据
+    loadMonthSurplus() {
+      this.$api
+        .yearSurplus({
+          year: this.year,
+        })
+        .then((res) => {
+          if (res.data.code === 0) {
+            let data = res.data.result;
+            this.monthSurplus = data;
+          }
+        });
+    },
+
     // 切换年份
     handleSelectedYear(item) {
-      // console.log("年份选择", item);
+      console.log("年份选择", item);
       this.year = item.year;
+      this.loadStatData();
     },
 
     // 点击月份
-    handleMonthClick(item) {
-      // console.log("月份选择", item);
-      this.$emit("monthclick", item);
+    handleMonthClick(month) {
+      // console.log("月份选择", month);
+      this.$emit("monthclick", { year: this.year, month });
+    },
+
+    // 切换占比类型
+    handleSelectedPerType(type) {
+      // console.log("占比类型");
+      if (type === 0) this.loadCategoryStat();
+      else if (type === 1) this.loadMonthSurplus();
     },
 
     // 切换账单类型
     handleTypePickerChange({ detail }) {
       console.log(detail);
       this.type = detail.value;
+      this.loadCategoryStat();
     },
 
     // 计算scroll-view 最高度

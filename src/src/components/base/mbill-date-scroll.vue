@@ -27,11 +27,11 @@
           </view>
           <view v-if="type === 'year'" class="date-item-block-month">
             <view>
-              <text class=""> {{ item.year.slice(2) }}</text>
+              <text class=""> {{ item.year.toString().slice(2) }}</text>
               <text class="date-item-block-month-char"> 年</text>
             </view>
             <view class="date-item-block-month-year">{{
-              item.year.slice(0, 2)
+              item.year.toString().slice(0, 2)
             }}</view>
           </view>
         </view>
@@ -108,6 +108,7 @@ export default {
       console.log("指定了日期", val, index);
       if (index === this.currentIndex || index === -1) return;
       this.$emit("input", index);
+      this.$emit("selected", val);
     },
   },
   created() {
@@ -194,7 +195,7 @@ export default {
       let index = -1;
       for (let i = 0; i < this.page.size; i++) {
         this.list.push({
-          year: this.page.year.toString(),
+          year: this.page.year,
         });
         if (year && year === this.page.year) {
           index = this.list.length - 1;

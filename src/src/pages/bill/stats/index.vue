@@ -55,16 +55,16 @@ export default {
     this.dynamicHeight();
   },
   onShow() {
-    this.initData(0);
+    this.loadData(0);
   },
   onReady() {},
   methods: {
     //#region 初始化
 
-    initData(curr) {
-      if (curr === 0) this.$refs.statMonth.initData();
-      if (curr === 1) this.$refs.statYear.initData();
-      if (curr === 2) this.$refs.statRate.initData();
+    loadData(curr) {
+      if (curr === 0) this.$refs.statMonth.loadData();
+      if (curr === 1) this.$refs.statYear.loadData();
+      if (curr === 2) this.$refs.statRate.loadData();
     },
 
     //#endregion
@@ -92,11 +92,11 @@ export default {
       // console.log(e);
       let curr = e.detail.current;
       this.active = e.detail.current;
-      this.initData(curr);
+      this.loadData(curr);
     },
 
     handleGotoMonthStat(item) {
-      // console.log(item);
+      console.log("指定月份", item);
       this.$refs.statMonth.specifyDate(item);
       this.active = 0;
     },
