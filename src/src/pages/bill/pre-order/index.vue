@@ -26,7 +26,7 @@
             </view>
             <view class="pre-order-stat-text">
               <text class="text">预购金额</text>
-              <text class="total">{{ stat.amount }}</text>
+              <text class="total">{{ stat.preAmount }}</text>
             </view>
           </view>
           <view class="bottom-line" />
@@ -226,7 +226,7 @@ export default {
           this.$refs.addGroupDialog.hide();
           this.$store.commit(GROUP_INDEX_DEL_GROUP, group);
           this.$store.commit(PROFILE_BILL_STAT_PRE_ORDER_AMOUNT, {
-            amount: group.amount,
+            preAmount: group.preAmount,
             op: 1,
           });
         } else {

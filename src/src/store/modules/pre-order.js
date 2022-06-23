@@ -16,7 +16,7 @@ import {
 const state = {
     IndexStat: {
         total: 0,
-        amount: 0,
+        preAmount: 0,
         done: 0,
         undone: 0,
     },
@@ -65,7 +65,7 @@ const mutations = {
                 if (group.id == state.IndexGroups[i].id) {
                     // 减少预购清单页面统计数据
                     state.IndexStat.total -= 1;
-                    state.IndexStat.amount -= group.amount;
+                    state.IndexStat.preAmount -= group.preAmount;
                     state.IndexStat.done -= group.done;
                     state.IndexStat.unDone -= group.unDone;
 
@@ -77,26 +77,26 @@ const mutations = {
         } catch (e) { }
     },
 
-    [GROUP_INDEX_MODIFY_PRE_ORDER_AMOUNT]: (state, { groupId, amount, op }) => {
-        console.log("amount, op", amount, op);
+    [GROUP_INDEX_MODIFY_PRE_ORDER_AMOUNT]: (state, { groupId, preAmount, op }) => {
+        console.log("preAmount, op", preAmount, op);
         try {
             for (let i = 0; i < state.IndexGroups.length; i++) {
                 if (groupId == state.IndexGroups[i].id) {
-                    let a = state.IndexGroups[i].amount;
+                    let a = state.IndexGroups[i].preAmount;
                     if (op === 0) {
-                        state.IndexGroups[i].amount = (a + amount).fixed(2);
+                        state.IndexGroups[i].preAmount = (a + preAmount).fixed(2);
                     } else if (op === 1) {
-                        state.IndexGroups[i].amount = (a - amount).fixed(2);
+                        state.IndexGroups[i].preAmount = (a - preAmount).fixed(2);
                     }
                     throw new Error("Ok"); // 跳出循环
                 }
             }
         } catch (e) { }
-        let s = state.IndexStat.amount;
+        let s = state.IndexStat.preAmount;
         if (op === 0) {
-            state.IndexStat.amount = (s + amount).fixed(2);
+            state.IndexStat.preAmount = (s + preAmount).fixed(2);
         } else if (op === 1) {
-            state.IndexStat.amount = (s - amount).fixed(2);
+            state.IndexStat.preAmount = (s - preAmount).fixed(2);
         }
     },
 

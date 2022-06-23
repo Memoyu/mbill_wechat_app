@@ -15,7 +15,7 @@
       </view>
       <view class="content-amount">
         <text :class="[order.status == 0 ? 'income-color' : 'expend-color']">
-          {{ order.amount }}
+          {{ order.preAmount }}
         </text>
       </view>
     </view>

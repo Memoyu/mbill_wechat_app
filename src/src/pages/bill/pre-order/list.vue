@@ -9,7 +9,7 @@
           <view class="pre-order-stat-content">
             <view class="pre-order-stat-text">
               <text class="text">预购金额</text>
-              <text class="total">{{ stat.amount }}</text>
+              <text class="total">{{ stat.preAmount }}</text>
             </view>
             <view class="pre-order-stat-text">
               <text class="text">已完成</text>
@@ -53,16 +53,26 @@
     <mb-ba-edit-dialog
       ref="editOrderDialog"
       class="edit-order-dialog"
-      height="200"
+      :height="order.status == 1 || isStatusToDone ? 250 : 200"
       @change="handleDialogChange"
       @ltap="handleReqEditOrder"
     >
       <view class="input-item x-bc">
-        <text class="title">金额</text>
+        <text class="title">预购金额</text>
         <input
           type="digit"
           class="input"
-          v-model="order.amount"
+          :disabled="isStatusToDone"
+          v-model="order.preAmount"
+          placeholder="0.0"
+        />
+      </view>
+      <view class="input-item x-bc" v-if="isNeedRealAmount()">
+        <text class="title">实购金额</text>
+        <input
+          type="digit"
+          class="input"
+          v-model="order.realAmount"
           placeholder="0.0"
         />
       </view>
@@ -71,6 +81,7 @@
         <picker
           class="date-picker"
           mode="date"
+          :disabled="isStatusToDone"
           @change="handlePickerChange"
           fields="day"
           :value="pickerDate"
@@ -89,6 +100,7 @@
         <input
           type="text"
           class="input"
+          :disabled="isStatusToDone"
           v-model="order.description"
           placeholder="描述一下咯"
         />
@@ -97,9 +109,10 @@
     <!-- 底部按钮 -->
     <view class="bottom-operate" id="bottom-operate">
       <mb-ba-bottom-btn
-        onlyone="true"
-        @ltap="handleAddOrder"
+        @ltap="handleGroupAddOrder"
+        @rtap="handleGroupToBill"
         ltext="新建预购"
+        :rtext="rtext"
       />
     </view>
   </view>
@@ -116,19 +129,21 @@ import {
 } from "@/store/type";
 import datetime from "@/common/utils/datetime";
 
+const addBtnTitle = "新建";
+const editBtnTitle = "编辑";
 export default {
   data() {
     return {
       groupId: 0,
       scrollHeight: 0,
       dialogOptions: {
-        ltext: "新建",
+        ltext: addBtnTitle,
         onlyone: true,
       },
       stat: {
         groupName: "分组",
         time: "周五-2022-06-03日",
-        amount: 0,
+        preAmount: 0,
         done: 0,
         unDone: 0,
       },
@@ -176,6 +191,8 @@ export default {
           },
         },
       ],
+      rtext: "分组入账",
+      isStatusToDone: false,
     };
   },
   onShow() {},
@@ -202,8 +219,6 @@ export default {
           this.orders[i].billId = billId;
         }
       });
-
-      this.editPreOrderStatus(order, 1);
     },
 
     //#region 接口调用
@@ -264,7 +279,11 @@ export default {
     // 编辑预购状态
     editPreOrderStatus(order, status) {
       this.$api
-        .editPreOrderStatus({ id: order.id, billId: order.billId, status })
+        .editPreOrderStatus({
+          id: order.id,
+          realAmount: order.realAmount,
+          status,
+        })
         .then((res) => {
           if (res.data.code === 0) {
             // console.log(res);
@@ -326,15 +345,15 @@ export default {
     addLocalItem(order) {
       this.orders.unshift(order);
       this.stat.unDone += 1;
-      let amount = order.amount;
-      this.stat.amount = (this.stat.amount + amount).fixed(2);
+      let preAmount = order.preAmount;
+      this.stat.preAmount = (this.stat.preAmount + preAmount).fixed(2);
       this.$store.commit(GROUP_INDEX_MODIFY_PRE_ORDER_AMOUNT, {
         groupId: order.groupId,
-        amount,
+        preAmount,
         op: 0,
       });
       this.$store.commit(PROFILE_BILL_STAT_PRE_ORDER_AMOUNT, {
-        amount,
+        preAmount,
         op: 0,
       });
       this.$store.commit(GROUP_INDEX_ADD_PRE_ORDER, order);
@@ -354,30 +373,30 @@ export default {
       } catch (e) {}
       if (oldOrder == null) return;
       let diff = Math.abs(
-        Number(oldOrder.amount) - Number(newOrder.amount)
+        Number(oldOrder.preAmount) - Number(newOrder.preAmount)
       ).fixed(2);
       // console.log("diff", oldOrder, newOrder, diff);
       let groupId = newOrder.groupId;
-      if (oldOrder.amount < newOrder.amount) {
-        this.stat.amount += diff;
+      if (oldOrder.preAmount < newOrder.preAmount) {
+        this.stat.preAmount += diff;
         this.$store.commit(GROUP_INDEX_MODIFY_PRE_ORDER_AMOUNT, {
           groupId,
-          amount: diff,
+          preAmount: diff,
           op: 0,
         });
         this.$store.commit(PROFILE_BILL_STAT_PRE_ORDER_AMOUNT, {
-          amount: diff,
+          preAmount: diff,
           op: 0,
         });
-      } else if (oldOrder.amount > newOrder.amount) {
-        this.stat.amount -= diff;
+      } else if (oldOrder.preAmount > newOrder.preAmount) {
+        this.stat.preAmount -= diff;
         this.$store.commit(GROUP_INDEX_MODIFY_PRE_ORDER_AMOUNT, {
           groupId,
-          amount: diff,
+          preAmount: diff,
           op: 1,
         });
         this.$store.commit(PROFILE_BILL_STAT_PRE_ORDER_AMOUNT, {
-          amount: diff,
+          preAmount: diff,
           op: 1,
         });
       }
@@ -397,14 +416,14 @@ export default {
       } catch (e) {}
 
       // 减少金额
-      this.stat.amount -= order.amount;
+      this.stat.preAmount -= order.preAmount;
       this.$store.commit(GROUP_INDEX_MODIFY_PRE_ORDER_AMOUNT, {
         groupId: order.groupId,
-        amount: order.amount,
+        preAmount: order.preAmount,
         op: 1,
       });
       this.$store.commit(PROFILE_BILL_STAT_PRE_ORDER_AMOUNT, {
-        amount: order.amount,
+        preAmount: order.preAmount,
         op: 1,
       });
       // 减少完成或未完成
@@ -440,47 +459,70 @@ export default {
       });
     },
 
+    // 是否需要键入或校验实购金额
+    isNeedRealAmount() {
+      return this.isStatusToDone || this.order.status == 1;
+    },
+
     // 新建预购
-    handleAddOrder() {
-      this.dialogOptions.ltext = "新建";
+    handleGroupAddOrder() {
+      this.dialogOptions.ltext = addBtnTitle;
       this.$refs.editOrderDialog.show(this.dialogOptions);
+    },
+
+    // 分组入账
+    handleGroupToBill() {
+      this.$Router.push({ name: "bill-edit", params: { order: o.id } });
     },
 
     // 选中预购项触发
     handleSelected(order) {
-      this.dialogOptions.ltext = "编辑";
+      this.dialogOptions.ltext = editBtnTitle;
       this.order = order;
       this.$refs.editOrderDialog.show(this.dialogOptions);
     },
 
     // 弹窗变更
     handleDialogChange({ show }) {
-      if (!show) this.order = {};
+      if (!show) {
+        this.order = {};
+        this.isStatusToDone = false;
+      }
     },
 
     // 编辑弹窗触发
     handleReqEditOrder() {
       var amtreg = /^\d+(\.\d{1,2})?$/;
-      if (!amtreg.test(this.order.amount)) {
-        this.$tip.toast("请输入正确的金额格式");
+      if (!amtreg.test(this.order.preAmount) || this.order.preAmount == 0) {
+        this.$tip.toast_quick("请输入正确的预购金额");
         return;
+      }
+      if (this.dialogOptions.ltext != addBtnTitle && this.isNeedRealAmount()) {
+        if (!amtreg.test(this.order.realAmount) || this.order.realAmount == 0) {
+          this.$tip.toast_quick("请输入正确的实购金额");
+          return;
+        }
       }
 
       if (!this.order.description || this.order.description == "") {
-        this.$tip.toast("请输入预购描述");
+        this.$tip.toast_quick("请输入预购描述");
         return;
       }
       if (this.order.description.length > 200) {
-        this.$tip.toast("预购描述不超过40个字符");
+        this.$tip.toast_quick("预购描述不超过40个字符");
         return;
       }
       // console.log(this.dialogOptions.ltext);
       this.order.time = this.pickerDate;
       this.order.groupId = this.groupId;
-      if (this.dialogOptions.ltext == "新建") {
+      if (this.dialogOptions.ltext == addBtnTitle) {
         this.addPreOrder(this.order);
       } else {
-        this.editPreOrder(this.order);
+        if (this.isStatusToDone) {
+          this.editPreOrderStatus(this.order, 1);
+        } else {
+          this.editPreOrder(this.order);
+        }
       }
     },
 
@@ -506,9 +548,11 @@ export default {
       // console.log(e);
       if (e.index == 0) {
         // 修改状态
-        if (e.content.text == this.doneSwipeOps[0].text)
-          this.$Router.push({ name: "bill-edit", params: { order: o.id } });
-        else if (e.content.text == this.unDoneSwipeOps[0].text) {
+        if (e.content.text == this.doneSwipeOps[0].text) {
+          this.isStatusToDone = true;
+          o.realAmount = null;
+          this.handleSelected(o);
+        } else if (e.content.text == this.unDoneSwipeOps[0].text) {
           this.$tip
             .choose("重置后对应账单将会被删除, 是否重置？", {}, "提示")
             .then(async () => {

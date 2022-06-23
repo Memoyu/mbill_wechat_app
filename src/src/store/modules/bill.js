@@ -243,8 +243,8 @@ const mutations = {
         state.profileStat = stat;
     },
 
-    [PROFILE_BILL_STAT_PRE_ORDER_AMOUNT]: (state, { amount, op }) => {
-        state.profileStat.preOrder = calcTotalStat(state.profileStat.preOrder, amount, op)
+    [PROFILE_BILL_STAT_PRE_ORDER_AMOUNT]: (state, { preAmount, op }) => {
+        state.profileStat.preOrder = calcTotalStat(state.profileStat.preOrder, preAmount, op)
     },
 }
 
