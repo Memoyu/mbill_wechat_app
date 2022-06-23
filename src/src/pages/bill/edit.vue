@@ -123,6 +123,7 @@
         <mb-ba-keyboard
           ref="keyboard"
           :pnum="initAmount"
+          :loading="loading"
           @confirm="handleConfirmNum"
           @input="handleInputNum"
         />
@@ -157,6 +158,7 @@ export default {
     return {
       isOrder: false, // 是否为预购转账单
       order: {}, // 预购信息
+      loading: false,
       bill: {
         id: 0,
         type: 0,
@@ -393,6 +395,7 @@ export default {
 
     // 键盘确认
     handleConfirmNum() {
+      if (this.loading) return;
       this.bill = {
         id: this.model.id,
         type: this.model.type,
@@ -419,33 +422,44 @@ export default {
         return false;
       }
 
-      if (this.bill.id <= 0) {
-        this.$api.addBill(this.bill).then((res) => {
-          if (res.data.code === 0) {
-            let bill = res.data.result;
-            // console.log("添加成功", { bill, date: this.bill.time });
-            this.$store.commit(ADD_INDEX_BILL, { bill, date: this.bill.time });
-            // 如果是预购转账单，此处需要处理
-            this.orderToBill(bill.id);
-            this.$Router.back();
-          } else {
-            this.$tip.error(res.data.message);
-          }
-        });
-      } else {
-        this.$api.editBill(this.bill).then((res) => {
-          if (res.data.code === 0) {
-            let bill = res.data.result;
-            // console.log("编辑成功", { bill, date: this.bill.time });
-            this.modifyIndexBill({
-              bill,
-              date: this.bill.time,
-            });
-            this.$Router.back();
-          } else {
-            this.$tip.error(res.data.message);
-          }
-        });
+      this.loading = true;
+      try {
+        if (this.bill.id <= 0) {
+          this.$api.addBill(this.bill).then((res) => {
+            if (res.data.code === 0) {
+              this.loading = false;
+              let bill = res.data.result;
+              // console.log("添加成功", { bill, date: this.bill.time });
+              this.$store.commit(ADD_INDEX_BILL, {
+                bill,
+                date: this.bill.time,
+              });
+              // 如果是预购转账单，此处需要处理
+              this.orderToBill(bill.id);
+              this.$Router.back();
+            } else {
+              this.$tip.error(res.data.message);
+            }
+          });
+        } else {
+          this.$api.editBill(this.bill).then((res) => {
+            if (res.data.code === 0) {
+              this.loading = false;
+              let bill = res.data.result;
+              // console.log("编辑成功", { bill, date: this.bill.time });
+              this.modifyIndexBill({
+                bill,
+                date: this.bill.time,
+              });
+              this.$Router.back();
+            } else {
+              this.$tip.error(res.data.message);
+            }
+          });
+        }
+      } catch {
+        console.log("yicahng");
+        this.loading = false;
       }
       // console.log("cof ", this.bill);
     },

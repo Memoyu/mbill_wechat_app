@@ -27,7 +27,17 @@
         hover-stay-time="50"
         @click="handleClickNum(op.value)"
       >
-        <i style="font-size: 20px" :class="['iconfont', 'icon-' + op.icon]" />
+        <view v-if="op.value === 'confirm'">
+          <i
+            v-if="!loading"
+            style="font-size: 20px"
+            :class="['iconfont', 'icon-' + op.icon]"
+          />
+          <view v-else class="confirm-loading"></view>
+        </view>
+        <view v-else>
+          <i style="font-size: 20px" :class="['iconfont', 'icon-' + op.icon]" />
+        </view>
       </view>
     </view>
   </view>
@@ -52,6 +62,12 @@ export default {
       // 保存几位小数
       type: [String, Number],
       default: 2,
+    },
+
+    // 确认按钮加载
+    loading: {
+      type: [String, Boolean],
+      default: false,
     },
   },
   data() {
@@ -103,6 +119,8 @@ export default {
   methods: {
     // 输入
     handleClickNum(e) {
+      // 加载中则不进行任何操作
+      if (this.loading) return;
       if ("confirm" == e) {
         this.handleConfirm();
         return;
@@ -365,6 +383,9 @@ export default {
       background: $light-color;
       border-radius: 16px;
       //border: 1rpx solid #6699ff;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
     }
   }
 
@@ -372,6 +393,57 @@ export default {
     border-radius: 16px;
     background: $primary-color !important;
     // transform: scale(1.1);
+  }
+
+  .confirm-loading {
+    position: relative;
+    width: 30upx;
+    height: 30upx;
+    border-radius: 50%;
+    background: $primary-color;
+    -webkit-animation: confirm-loading 1.5s infinite linear;
+    animation: confirm-loading 1.5s infinite linear;
+  }
+  .confirm-loading:after {
+    content: "";
+    position: absolute;
+    width: 50upx;
+    height: 50upx;
+    border-top: 10upx solid $bright-color;
+    border-bottom: 10upx solid $bright-color;
+    border-left: 10upx solid transparent;
+    border-right: 10upx solid transparent;
+    border-radius: 50%;
+    top: -20upx;
+    left: -20upx;
+  }
+  @-webkit-keyframes confirm-loading {
+    0% {
+      -webkit-transform: rotate(0);
+      transform: rotate(0);
+    }
+    50% {
+      -webkit-transform: rotate(180deg);
+      transform: rotate(180deg);
+    }
+    100% {
+      -webkit-transform: rotate(360deg);
+      transform: rotate(360deg);
+    }
+  }
+  @keyframes confirm-loading {
+    0% {
+      -webkit-transform: rotate(0);
+      transform: rotate(0);
+    }
+    50% {
+      -webkit-transform: rotate(180deg);
+      transform: rotate(180deg);
+    }
+    100% {
+      -webkit-transform: rotate(360deg);
+      transform: rotate(360deg);
+    }
   }
 }
 </style>
