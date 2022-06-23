@@ -42,21 +42,26 @@
 
 /*单行文本溢出省略号*/
 .one-t {
+	display: -webkit-box;
+	/*弹性伸缩盒子模型显示*/
+	-webkit-box-orient: vertical;
+	/*排列方式*/
+	-webkit-line-clamp: 1;
+	/*显示文本行数*/
 	overflow: hidden;
-	white-space: nowrap;
-	text-overflow: ellipsis;
-	transition: all linear 0.2s;
+	/*溢出隐藏*/
 }
 
 /*多行文本溢出省略号*/
 .more-t {
-	overflow: hidden;
-	text-overflow: ellipsis;
-	word-break: break-all;
 	display: -webkit-box;
-	-webkit-line-clamp: 2;
+	/*弹性伸缩盒子模型显示*/
 	-webkit-box-orient: vertical;
-	transition: all linear 0.2s;
+	/*排列方式*/
+	-webkit-line-clamp: 2;
+	/*显示文本行数*/
+	overflow: hidden;
+	/*溢出隐藏*/
 }
 
 .expend-color {

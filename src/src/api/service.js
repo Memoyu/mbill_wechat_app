@@ -59,9 +59,12 @@ http.interceptors.response.use(async (response) => { /* 请求之后拦截器。
         console.log(data);
         // const token = uni.getStorageSync(ACCESS_TOKEN)
         switch (data.code) {
+            case 10030:
+                tip.toast_quick(data.message.description);
+                break;
             case 10000:
             case 10040:
-                tip.alert('登录已过期'), 1000;
+                tip.alert('登录已过期');
                 store.dispatch('Logout');
                 break
             case 10001:

@@ -8,7 +8,7 @@
         <view class="title">{{ bill.category }}</view>
         <view class="info">
           <text class="time">{{ bill.time }}</text>
-          <text class="note">{{ bill.description }}</text>
+          <text class="note one-t">{{ bill.description }}</text>
         </view>
       </view>
       <view class="content-amount">
@@ -73,6 +73,7 @@ export default {
         font-weight: bold;
       }
       .info {
+        display: flex;
         color: $grey-text-color;
         font-size: 13px;
         .time {

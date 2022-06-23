@@ -6,12 +6,13 @@
         <picker
           class="date-picker"
           mode="date"
-          @change="handlePickerChange"
+          @change="handleDatePickerChange"
           fields="month"
           :value="date"
+          :end="dateEnd"
         >
           <view class="picker-title x-c">
-            <text class="text-break"
+            <text class="one-t"
               >{{ dateText.year }}年{{ dateText.month }}月</text
             >
             <i class="iconfont icon-bottom icon-down" />
@@ -24,24 +25,27 @@
           :range="billTypes"
         >
           <view class="picker-title x-c">
-            <view class="text-break">{{ billTypes[billType] }}</view>
+            <view class="one-t">{{ billTypes[billType] }}</view>
             <i class="iconfont icon-bottom icon-down" />
           </view>
         </picker>
 
         <picker
           class="category-picker"
-          @change="bindPickerChange"
+          @change="bindCategoryPickerChange"
           :value="category"
           range-key="name"
           :range="categories"
         >
           <view class="picker-title x-c">
-            <view class="text-break">{{ categories[category].name }}</view>
+            <view class="one-t">{{ categories[category].name }}</view>
             <i class="iconfont icon-bottom icon-down" />
           </view>
         </picker>
-        <i class="iconfont icon-stats clear-filter" />
+        <i
+          class="iconfont icon-stats clear-filter"
+          @click="handleResetFilter"
+        />
       </view>
 
       <!-- 排行日期类型 -->
@@ -52,7 +56,11 @@
 
     <!-- 排行列表 -->
     <view class="mb-stat-rate-content" :style="{ height: scrollH + 'px' }">
-      <scroll-view scroll-y="true" style="height: 100%">
+      <scroll-view
+        scroll-y="true"
+        style="height: 100%"
+        @scrolltolower="lowerBottom"
+      >
         <view class="mb-stat-rate-bg-br">
           <view v-for="(item, index) in rankings" :key="index">
             <view class="rate-item-content">
@@ -87,6 +95,7 @@ export default {
       init: false,
       scrollH: 0,
       date: datetime.getCurDate(),
+      dateEnd: datetime.getCurDate(),
       dateText: {
         year: datetime.getCurYear(),
         month: datetime.getCurMonth(),
@@ -286,13 +295,21 @@ export default {
           ranking: 0,
         },*/
       ],
+      loading: false,
+      rankingPage: {
+        page: 1,
+        size: 15,
+      },
+      rankingTotal: 0,
     };
   },
   watch: {
     height(val) {
       this.calcuScrollHeight(val);
     },
-    dateActive(val) {},
+    dateActive(val) {
+      this.loadStatData();
+    },
   },
   created() {},
   methods: {
@@ -300,41 +317,101 @@ export default {
       if (this.init === true) return;
       this.init = true;
       // 初始化数据
-      console.log("初始化数据-排行榜");
+      // console.log("初始化数据-排行榜");
+      this.loadStatData();
+      this.loadCategoriesData();
     },
 
     // 加载数据
     loadStatData() {
       this.$tip.loading();
+      this.rankingPage.page = 0;
       try {
-        this.loadRanking();
+        this.loadRanking(true);
       } finally {
         this.$tip.loaded();
       }
     },
 
     // 加载统计汇总数据
-    loadRanking() {
+    loadRanking(init = false) {
+      if (this.loading) return;
+      this.loading = true;
       this.$api
         .billRanking({
           date: this.date,
           dateType: this.dateActive,
           billType: this.billType,
-          categoryId: category,
+          categoryId: this.category,
+          ...this.rankingPage,
         })
         .then((res) => {
           // console.log("列表", res);
           if (res.data.code === 0) {
-            this.stat = res.data.result;
-            this.rankings = data;
+            let data = res.data.result;
+            this.rankingTotal = data.total;
+            if (init) this.rankings = [];
+            this.rankings = this.rankings.concat(data.items);
           }
+        })
+        .finally(() => {
+          this.loading = false;
         });
+    },
+
+    // 获取分类下拉列表数据
+    loadCategoriesData() {
+      this.$api.categoryList({ type: this.billType }).then((res) => {
+        // console.log("列表", res);
+        if (res.data.code === 0) {
+          let data = res.data.result;
+          this.categories = this.categories.concat(data);
+        }
+      });
+    },
+
+    // 切换日期
+    handleDatePickerChange({ detail }) {
+      let date = new Date(detail.value);
+      // console.log(date);
+      this.dateText = datetime.getCurDateObj(date);
+      this.date = datetime.getCurDate(date);
+      this.loadStatData();
     },
 
     // 切换账单类型
     handleTypePickerChange({ detail }) {
+      // console.log(detail);
+      this.billType = detail.value;
+      this.loadStatData();
+    },
+
+    // 账单分类选择
+    bindCategoryPickerChange({ detail }) {
       console.log(detail);
-      this.type = detail.value;
+      this.category = detail.value;
+      this.loadStatData();
+    },
+
+    // 重置过滤条件,并重新加载数据
+    handleResetFilter() {
+      this.date = datetime.getCurDate();
+      this.dateText = datetime.getCurDateObj();
+      this.dateActive = 0;
+      this.billType = 0;
+      this.category = 0;
+      this.rankingPage.page = 1;
+      this.loadStatData();
+    },
+
+    // scroll触底事件
+    lowerBottom() {
+      // console.log("触底加载");
+      if (this.rankingPage.page * this.rankingPage.size >= this.rankingTotal)
+        return;
+      // console.log("加载");
+      this.rankingPage.page += 1;
+      this.loadRanking();
     },
 
     // 计算scroll-view 最高度
@@ -379,12 +456,6 @@ export default {
           font-size: 10px;
           margin-left: 5px;
         }
-      }
-      .text-break {
-        display: -webkit-box; /*弹性伸缩盒子模型显示*/
-        -webkit-box-orient: vertical; /*排列方式*/
-        -webkit-line-clamp: 1; /*显示文本行数(这里控制多少行隐藏)*/
-        overflow: hidden; /*溢出隐藏*/
       }
     }
     &-date-type-tabs {

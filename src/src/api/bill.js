@@ -91,6 +91,11 @@ const bill = {
         return http.get('category/groups', { params: params })
     },
 
+    // 获取全部账单分类
+    categoryList(params) {
+        return http.get('category/list', { params: params })
+    },
+
     //#endregion
 
     //#region 账单账户
