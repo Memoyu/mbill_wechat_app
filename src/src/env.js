@@ -1,5 +1,5 @@
 const ENV_BASE_URL = {
-	development: 'http://localhost:10085',// 'http://192.168.3.86:10085', //'http://39.108.97.141:5901',//'http://http://39.108.97.141:5901', //开发环境
+	development: 'http://192.168.3.86:10085',// 'http://localhost:10085', //'http://39.108.97.141:5901',//'http://http://39.108.97.141:5901', //开发环境
 	production: 'https://mbill.memoyu.com', //生产环境
 }
 

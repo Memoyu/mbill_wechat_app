@@ -45,8 +45,8 @@
             </view>
           </uni-swipe-action-item>
         </uni-swipe-action>
+        <view v-if="orders.length > 0" style="height: 50px" />
         <mb-ba-empty v-if="orders.length <= 0" />
-        <view style="height: 50px" />
       </scroll-view>
     </view>
     <!-- 编辑弹窗 -->

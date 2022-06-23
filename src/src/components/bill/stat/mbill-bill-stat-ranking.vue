@@ -1,8 +1,8 @@
 <template>
-  <view class="mb-stat-rate">
-    <view class="mb-stat-rate-header" id="mb-stat-rate-header">
+  <view class="mb-stat-ranking">
+    <view class="mb-stat-ranking-header" id="mb-stat-ranking-header">
       <!-- 排行过滤 -->
-      <view class="mb-stat-rate-header-filter">
+      <view class="mb-stat-ranking-header-filter">
         <picker
           class="date-picker"
           mode="date"
@@ -43,31 +43,35 @@
           </view>
         </picker>
         <i
-          class="iconfont icon-stats clear-filter"
+          class="iconfont icon-delete clear-filter"
           @click="handleResetFilter"
         />
       </view>
 
       <!-- 排行日期类型 -->
-      <view class="mb-stat-rate-header-date-type-tabs">
+      <view class="mb-stat-ranking-header-date-type-tabs">
         <mb-ba-tabs :type="dateTypes" v-model="dateActive" />
       </view>
     </view>
 
     <!-- 排行列表 -->
-    <view class="mb-stat-rate-content" :style="{ height: scrollH + 'px' }">
+    <view
+      v-if="rankings.length > 0"
+      class="mb-stat-ranking-content"
+      :style="{ height: scrollH + 'px' }"
+    >
       <scroll-view
         scroll-y="true"
         style="height: 100%"
         @scrolltolower="lowerBottom"
       >
-        <view class="mb-stat-rate-bg-br">
+        <view class="mb-stat-ranking-bg-br">
           <view v-for="(item, index) in rankings" :key="index">
-            <view class="rate-item-content">
-              <view v-if="item.ranking !== 0" class="month">{{
-                item.ranking
+            <view class="ranking-item-content">
+              <view v-if="index < 20" class="ranking-num">{{
+                getRanking(index)
               }}</view>
-              <mb-b-item class="rate-item" :bill="item" />
+              <mb-b-item class="ranking-item" :bill="item" />
               <view class="right-icon-content">
                 <i class="iconfont icon-to right-icon" />
               </view>
@@ -83,7 +87,7 @@
 import datetime from "@/common/utils/datetime";
 
 export default {
-  name: "mbill-bill-stat-rate",
+  name: "mbill-bill-stat-ranking",
   props: {
     height: {
       type: [Number, String],
@@ -104,6 +108,7 @@ export default {
       billTypes: ["支出", "收入"],
       category: 0,
       categories: [{ id: 0, name: "选择分类" }],
+      categoryId: 0,
       dateActive: 0,
       dateTypes: [
         {
@@ -325,7 +330,7 @@ export default {
     // 加载数据
     loadStatData() {
       this.$tip.loading();
-      this.rankingPage.page = 0;
+      this.rankingPage.page = 1;
       try {
         this.loadRanking(true);
       } finally {
@@ -342,7 +347,7 @@ export default {
           date: this.date,
           dateType: this.dateActive,
           billType: this.billType,
-          categoryId: this.category,
+          categoryId: this.categoryId,
           ...this.rankingPage,
         })
         .then((res) => {
@@ -383,13 +388,18 @@ export default {
     handleTypePickerChange({ detail }) {
       // console.log(detail);
       this.billType = detail.value;
+      this.category = 0;
+      this.categoryId = 0;
       this.loadStatData();
+      this.loadCategoriesData();
     },
 
     // 账单分类选择
     bindCategoryPickerChange({ detail }) {
-      console.log(detail);
+      // console.log(detail);
       this.category = detail.value;
+      let ca = this.categories[this.category];
+      this.categoryId = ca.id;
       this.loadStatData();
     },
 
@@ -400,8 +410,12 @@ export default {
       this.dateActive = 0;
       this.billType = 0;
       this.category = 0;
+      this.categoryId = 0;
       this.rankingPage.page = 1;
       this.loadStatData();
+    },
+    getRanking(index) {
+      return index + 1;
     },
 
     // scroll触底事件
@@ -418,7 +432,7 @@ export default {
     calcuScrollHeight(height) {
       let that = this;
       let query = uni.createSelectorQuery().in(that);
-      query.select("#mb-stat-rate-header").fields({ size: true });
+      query.select("#mb-stat-ranking-header").fields({ size: true });
       query.exec((data) => {
         that.scrollH = height - data[0].height;
       });
@@ -428,7 +442,7 @@ export default {
 </script>
 
 <style lang="scss" scope>
-.mb-stat-rate {
+.mb-stat-ranking {
   &-header {
     &-filter {
       margin: 0 50rpx;
@@ -466,16 +480,17 @@ export default {
     }
   }
   &-content {
-    .rate-item-content {
+    .ranking-item-content {
       display: flex;
       align-items: center;
       margin: 0 20rpx;
-      .month {
+      .ranking-num {
         margin-right: 30rpx;
         font-weight: bold;
         font-size: 40rpx;
+        color: $primary-color;
       }
-      .rate-item {
+      .ranking-item {
         width: 100%;
       }
       .right-icon-content {

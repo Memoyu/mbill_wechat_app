@@ -1,7 +1,9 @@
 <template>
-  <view class="mbill-empty">
-    <view class="iconfont icon-empty empty-no-more"></view>
-    <view class="title">{{ title }}</view>
+  <view class="mbill-empty x-ac">
+    <view class="y-f">
+      <view class="iconfont icon-empty empty-no-more"></view>
+      <view class="title">{{ title }}</view>
+    </view>
   </view>
 </template>
 
@@ -19,11 +21,12 @@ export default {
 
 <style lang="scss" scope>
 .mbill-empty {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  text-align: center;
+  // position: absolute;
+  // top: 50%;
+  // left: 50%;
+  // text-align: center;
+  width: 100%;
+  height: 100%;
 
   .empty-no-more {
     font-size: 240rpx;

@@ -64,7 +64,7 @@
             </view>
           </uni-swipe-action-item>
         </uni-swipe-action>
-        <view style="height: 50px" />
+        <view v-if="groups.length > 0" style="height: 50px" />
         <mb-ba-empty v-if="groups.length <= 0" />
       </scroll-view>
     </view>

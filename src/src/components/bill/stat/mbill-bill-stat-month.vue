@@ -1,5 +1,5 @@
 <template>
-  <view class="mbill-bill-stat-month">
+  <view class="mb-stat-month">
     <view class="mb-stat-month-header" id="mb-stat-month-header">
       <mb-ba-date-scroll
         type="month"
@@ -92,7 +92,9 @@
         </view>
         <view class="mb-stat-month-bg-br">
           <view class="charts-box">
+            <mb-ba-empty v-if="isEmpty" />
             <qiun-data-charts
+              v-else
               type="ring"
               :canvas2d="canvas2d"
               :chartData="monthCategoryPercent"
@@ -100,8 +102,11 @@
             />
           </view>
         </view>
-        <view class="mb-stat-month-bg-br">
-          <mb-stat-category-group :groups="categoryGroups" />
+        <view v-if="categoryGroups.length > 0" class="mb-stat-month-bg-br">
+          <mb-stat-category-group
+            :groups="categoryGroups"
+            @select="handleCategoryClick"
+          />
         </view>
       </scroll-view>
     </view>
@@ -125,6 +130,7 @@ export default {
       active: 0,
       scrollH: 0,
       canvas2d: false,
+      isEmpty: false,
       selectMonth: `${datetime.getCurYear()}-${datetime.getCurMonth()}`,
       type: 0,
       types: ["支出", "收入"],
@@ -238,6 +244,7 @@ export default {
           if (res.data.code === 0) {
             let data = res.data.result;
             // console.log("列表", data);
+            this.isEmpty = data.series.length <= 0;
             this.monthCategoryPercent = JSON.parse(
               JSON.stringify({
                 series: [{ data: data.series }],
@@ -279,9 +286,20 @@ export default {
 
     // 切换账单类型
     handleTypePickerChange({ detail }) {
-      console.log(detail);
+      // console.log(detail);
       this.type = detail.value;
       this.loadCategoryStat();
+    },
+
+    // 点击对应分类占比
+    handleCategoryClick(item) {
+      // 向外传递参数
+      this.$emit("select-category", {
+        id: item.id,
+        category: item.category,
+        date: this.selectMonth,
+        type: 0,
+      });
     },
 
     // 计算scroll-view 最高度
@@ -318,110 +336,107 @@ export default {
 </script>
 
 <style lang="scss" scope>
-.mbill-bill-stat-month {
-  // background-color: white;
-  .mb-stat-month {
-    &-header {
-      margin: 0 20rpx;
-    }
-    &-content {
-      .content-total {
-        color: #ffffff;
-        padding: 40rpx 30rpx;
-        margin: 30rpx 20rpx;
-        background-color: $primary-color;
-        border-radius: 10rpx 35rpx 10rpx 35rpx;
-        &-month {
-          display: flex;
-          flex-wrap: nowrap;
-          font-size: 30rpx;
-          &-expend {
-            font-size: 50rpx;
-            font-weight: bold;
-          }
-        }
-        &-mg-top {
-          margin-top: 25rpx;
-        }
-        &-title {
-          color: $grey-bright-color;
-        }
-        &-bold {
+// background-color: white;
+.mb-stat-month {
+  &-header {
+    margin: 0 20rpx;
+  }
+  &-content {
+    .content-total {
+      color: #ffffff;
+      padding: 40rpx 30rpx;
+      margin: 30rpx 20rpx;
+      background-color: $primary-color;
+      border-radius: 10rpx 35rpx 10rpx 35rpx;
+      &-month {
+        display: flex;
+        flex-wrap: nowrap;
+        font-size: 30rpx;
+        &-expend {
+          font-size: 50rpx;
           font-weight: bold;
         }
       }
-
-      .type-picker {
-        margin: 0 50rpx;
-        font-size: 15px;
-        font-weight: bold;
-        align-items: baseline;
-        .icon-down {
-          font-size: 10px;
-          margin-left: 5px;
-        }
+      &-mg-top {
+        margin-top: 25rpx;
       }
-    }
-
-    &-rang {
-      margin: 20rpx 30rpx 50rpx 30rpx;
-      font-size: 25rpx;
-      &-num {
-        color: $primary-color;
-        font-size: 40rpx;
+      &-title {
+        color: $grey-bright-color;
+      }
+      &-bold {
         font-weight: bold;
       }
-      &-text {
-        color: $grey-text-color;
+    }
+
+    .type-picker {
+      margin: 0 50rpx;
+      font-size: 15px;
+      font-weight: bold;
+      align-items: baseline;
+      .icon-down {
+        font-size: 10px;
+        margin-left: 5px;
       }
-    }
-
-    &-bg-br {
-      background-color: #ffffff;
-      border-radius: 30rpx;
-      padding: 10rpx;
-      margin: 0 20rpx 20rpx 20rpx;
-    }
-
-    .charts-box {
-      width: 100%;
-      height: 300px;
-    }
-  }
-  .mb-stat-divide-title {
-    position: sticky;
-    display: inline-block;
-    padding-bottom: 4px;
-    margin-bottom: 12px;
-    font-size: 40rpx;
-    color: #40485b;
-    font-weight: bolder;
-    margin-left: 14px;
-
-    &:before {
-      content: "";
-      position: absolute;
-      background: $primary-color;
-      width: calc(100% + 35rpx);
-      height: 24rpx;
-      bottom: 0;
-      left: 0;
-      border-radius: 24rpx;
-      z-index: -1;
     }
   }
 
-  .mb-stat-tarea-hint {
-    margin-right: 30rpx;
-    &-item {
-      margin-left: 30rpx;
+  &-rang {
+    margin: 20rpx 30rpx 50rpx 30rpx;
+    font-size: 25rpx;
+    &-num {
+      color: $primary-color;
+      font-size: 40rpx;
+      font-weight: bold;
+    }
+    &-text {
       color: $grey-text-color;
-      .point {
-        margin-right: 20rpx;
-        width: 30rpx;
-        height: 30rpx;
-        border-radius: 50%;
-      }
+    }
+  }
+
+  &-bg-br {
+    background-color: #ffffff;
+    border-radius: 30rpx;
+    padding: 10rpx;
+    margin: 0 20rpx 20rpx 20rpx;
+  }
+  .charts-box {
+    width: 100%;
+    height: 300px;
+  }
+}
+.mb-stat-divide-title {
+  position: sticky;
+  display: inline-block;
+  padding-bottom: 4px;
+  margin-bottom: 12px;
+  font-size: 40rpx;
+  color: #40485b;
+  font-weight: bolder;
+  margin-left: 14px;
+
+  &:before {
+    content: "";
+    position: absolute;
+    background: $primary-color;
+    width: calc(100% + 35rpx);
+    height: 24rpx;
+    bottom: 0;
+    left: 0;
+    border-radius: 24rpx;
+    z-index: -1;
+  }
+}
+
+.mb-stat-tarea-hint {
+  margin-right: 30rpx;
+  &-item {
+    margin-left: 30rpx;
+    color: $grey-text-color;
+    .point {
+      margin-right: 20rpx;
+      width: 30rpx;
+      height: 30rpx;
+      border-radius: 50%;
     }
   }
 }

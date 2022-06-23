@@ -96,7 +96,9 @@
         <view v-if="perActive === 0">
           <view class="mb-stat-year-bg-br">
             <view class="charts-box">
+              <mb-ba-empty v-if="isEmpty" />
               <qiun-data-charts
+                v-else
                 type="ring"
                 :canvas2d="canvas2d"
                 :chartData="yearCategoryPercent"
@@ -104,8 +106,11 @@
               />
             </view>
           </view>
-          <view class="mb-stat-year-bg-br">
-            <mb-stat-category-group :groups="categoryGroups" />
+          <view v-if="categoryGroups.length > 0" class="mb-stat-year-bg-br">
+            <mb-stat-category-group
+              :groups="categoryGroups"
+              @select="handleCategoryClick"
+            />
           </view>
         </view>
 
@@ -138,6 +143,7 @@ export default {
       perActive: 0,
       scrollH: 0,
       canvas2d: false,
+      isEmpty: false,
       year: datetime.getCurYear(),
       type: 0,
       types: ["支出", "收入"],
@@ -176,8 +182,18 @@ export default {
   },
   created() {
     this.getIsCanvas2d();
+    this.initMonthSurplusData();
   },
   methods: {
+    // 初始化monthSurplus数据（解决切换tab后页面存在频闪问题）
+    initMonthSurplusData() {
+      let sur = { expend: "0", income: "0", month: 1, surplus: "0" };
+      for (let i = 1; i <= 12; i++) {
+        this.monthSurplus.push({ ...sur, month: i });
+      }
+      // console.log("init sur", this.monthSurplus);
+    },
+
     // 加载数据（外部调用）
     loadData() {
       if (this.init === true) return;
@@ -257,6 +273,7 @@ export default {
           if (res.data.code === 0) {
             let data = res.data.result;
             // console.log("列表", data);
+            this.isEmpty = data.series.length <= 0;
             this.yearCategoryPercent = JSON.parse(
               JSON.stringify({
                 series: [{ data: data.series }],
@@ -321,6 +338,16 @@ export default {
       console.log(detail);
       this.type = detail.value;
       this.loadCategoryStat();
+    },
+
+    // 点击对应分类占比
+    handleCategoryClick(item) {
+      this.$emit("select-category", {
+        id: item.id,
+        category: item.category,
+        date: `${this.year}-1`,
+        type: 1,
+      });
     },
 
     // 计算scroll-view 最高度

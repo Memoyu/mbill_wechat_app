@@ -10,29 +10,13 @@
       :style="{ height: contentHeight + 'px' }"
     >
       <view class="bill-day-popup-header" id="bill-day-popup-header">
-        <view class="bill-day-popup-header-title">{{ title }}</view>
-        <view class="bill-day-popup-header-amount">
-          <view class="bill-day-popup-header-amount-total">
-            <text class="bill-day-popup-header-amount-title"> 支出 </text>
-            <text class="expend-color">
-              {{ stat.expend }}
-            </text>
-          </view>
-          <view
-            class="bill-day-popup-header-amount-total"
-            style="margin-left: 30rpx"
-          >
-            <text class="bill-day-popup-header-amount-title"> 收入 </text>
-            <text class="income-color">
-              {{ stat.income }}
-            </text>
-          </view>
-        </view>
+        <view class="bill-day-popup-header-title">{{ data.category }}</view>
       </view>
       <scroll-view
         scroll-y="true"
         class="bill-day-popup-items"
         :style="{ height: contentHeight - 34 + 'px' }"
+        @scrolltolower="lowerBottom"
       >
         <view class="bill-day-popup-items-item">
           <mb-b-item v-for="(item, index) in items" :key="index" :bill="item" />
@@ -51,7 +35,7 @@ export default {
       type: Boolean,
       default: false,
     },
-    date: {
+    data: {
       type: Object,
       default: {},
     },
@@ -62,17 +46,24 @@ export default {
   },
   data() {
     return {
-      stat: { income: 0, expend: 0 },
-      title: "日",
+      title: "",
       items: [],
       contentHeight: 200,
+      loading: false,
+      billPage: {
+        page: 1,
+        size: 15,
+      },
+      billTotal: 0,
     };
   },
   watch: {
     show(val) {
       if (val) {
         this.$refs.BillDayListPopup.open();
-        this.getDayBills(this.date);
+        this.billPage.page = 1;
+        this.items = [];
+        this.getCategoryBills();
       }
     },
   },
@@ -88,20 +79,37 @@ export default {
     handlePopup(e) {
       this.$emit("change", e);
     },
-    getDayBills(date) {
+    getCategoryBills() {
+      // data : type 0 月份分类账单，1 年份分类帐单
+      if (this.loading) return;
+      this.loading = true;
       this.$api
-        .dayBills({
-          date: `${date.year}-${date.month}-${date.day}`,
+        .billPages({
+          date: this.data.date,
+          dateType: this.data.type,
+          categoryId: this.data.id,
+          ...this.billPage,
         })
         .then((res) => {
           // console.log("列表", res);
           if (res.data.code === 0) {
             let result = res.data.result;
-            this.stat = result;
-            this.title = `${result.day}日 ${result.week}`;
-            this.items = result.items;
+            this.billTotal = result.total;
+            this.items = this.items.concat(result.items);
           }
+        })
+        .finally(() => {
+          this.loading = false;
         });
+    },
+
+    // scroll触底事件
+    lowerBottom() {
+      // console.log("触底加载");
+      if (this.billPage.page * this.billPage.size >= this.billTotal) return;
+      // console.log("加载");
+      this.billPage.page += 1;
+      this.getCategoryBills();
     },
   },
 };
@@ -128,16 +136,6 @@ export default {
         text-align: center;
         font-size: 18px;
         font-weight: bold;
-      }
-      &-amount {
-        display: flex;
-        font-size: 40rpx;
-        font-weight: bold;
-        &-title {
-          font-size: 25rpx;
-        }
-        &-total {
-        }
       }
     }
   }

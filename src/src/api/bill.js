@@ -48,6 +48,11 @@ const bill = {
         return http.get('bill/day', { params: params })
     },
 
+    // 获取指定条件分页账单
+    billPages(params) {
+        return http.get('bill/pages', { params: params })
+    },
+
     //#endregion
 
     //#region 账单统计
