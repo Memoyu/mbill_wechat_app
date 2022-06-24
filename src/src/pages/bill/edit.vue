@@ -201,11 +201,11 @@ export default {
     // console.log(option);
     this.initData();
 
-    // 校验是否为预购过来的
-    if (option.order != undefined) {
-      console.log("预购Id", option.order);
+    // 校验是否为预购分组过来的
+    if (option.group != undefined) {
+      console.log("预购分组Id", option.group);
       this.isOrder = true;
-      this.getPreOrder(option.order);
+      this.getPreOrder(option.group);
     }
 
     // console.log(option.id);

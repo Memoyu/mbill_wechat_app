@@ -472,7 +472,7 @@ export default {
 
     // 分组入账
     handleGroupToBill() {
-      this.$Router.push({ name: "bill-edit", params: { order: o.id } });
+      this.$Router.push({ name: "bill-edit", params: { group: this.groupId } });
     },
 
     // 选中预购项触发
@@ -554,7 +554,7 @@ export default {
           this.handleSelected(o);
         } else if (e.content.text == this.unDoneSwipeOps[0].text) {
           this.$tip
-            .choose("重置后对应账单将会被删除, 是否重置？", {}, "提示")
+            .choose("重置后将会清零实购金额, 是否重置？", {}, "提示")
             .then(async () => {
               this.editPreOrderStatus(o, 0);
               // 删除首页指定的账单
