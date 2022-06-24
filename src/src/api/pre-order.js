@@ -19,6 +19,16 @@ const preOrder = {
         return http.delete('pre-order/group', params)
     },
 
+    // 预购分组转入账单
+    preOrderGroupToBill(params) {
+        return http.post('pre-order/group/to-bill', params)
+    },
+
+    // 获取预购分组 With 预购单总金额
+    getPreOrderGroupWithAmount(params) {
+        return http.get('pre-order/group/amount', { params: params })
+    },
+
     // 获取指定月份日分组分页账单
     monthPreOrderGroups(params) {
         return http.get('pre-order/group/month/pages', { params: params })

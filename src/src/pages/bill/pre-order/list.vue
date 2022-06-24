@@ -124,7 +124,7 @@ import {
   GROUP_INDEX_ADD_PRE_ORDER,
   GROUP_INDEX_DEL_PRE_ORDER,
   GROUP_INDEX_MODIFY_PRE_ORDER_STATUS,
-  GROUP_INDEX_MODIFY_PRE_ORDER_AMOUNT,
+  GROUP_INDEX_ADD_TO_BILL,
   PROFILE_BILL_STAT_PRE_ORDER_AMOUNT,
 } from "@/store/type";
 import datetime from "@/common/utils/datetime";
@@ -210,15 +210,20 @@ export default {
     },
 
     // 完成预购转账单后回调
-    completedToBillCallback(id, billId) {
-      console.log("转换完成回调");
-      let order = {};
-      this.orders.forEach((o, i) => {
-        if (o.id == id) {
-          order = o;
-          this.orders[i].billId = billId;
-        }
-      });
+    completedToBillCallback(groupId, billId) {
+      // console.log("转换完成回调");
+      this.$api
+        .preOrderGroupToBill({
+          id: groupId,
+          billId,
+        })
+        .then((res) => {
+          // console.log("列表", res);
+          if (res.data.code === 0) {
+            let result = res.data.result;
+            this.$store.commit(GROUP_INDEX_ADD_TO_BILL, { groupId, billId });
+          }
+        });
     },
 
     //#region 接口调用
@@ -233,6 +238,7 @@ export default {
           // console.log("列表", res);
           if (res.data.code === 0) {
             this.stat = res.data.result;
+            if (this.stat.billId != 0) this.rtext = "编辑入账";
           }
         });
     },
@@ -327,6 +333,7 @@ export default {
         for (let i = 0; i < this.orders.length; i++) {
           if (order.id == this.orders[i].id) {
             this.orders[i].status = status;
+            this.orders[i].realAmount = order.realAmount;
             throw new Error("Ok"); // 跳出循环
           }
         }
@@ -347,11 +354,11 @@ export default {
       this.stat.unDone += 1;
       let preAmount = order.preAmount;
       this.stat.preAmount = (this.stat.preAmount + preAmount).fixed(2);
-      this.$store.commit(GROUP_INDEX_MODIFY_PRE_ORDER_AMOUNT, {
+      /*this.$store.commit(GROUP_INDEX_MODIFY_PRE_ORDER_AMOUNT, {
         groupId: order.groupId,
         preAmount,
         op: 0,
-      });
+      });*/
       this.$store.commit(PROFILE_BILL_STAT_PRE_ORDER_AMOUNT, {
         preAmount,
         op: 0,
@@ -379,22 +386,22 @@ export default {
       let groupId = newOrder.groupId;
       if (oldOrder.preAmount < newOrder.preAmount) {
         this.stat.preAmount += diff;
-        this.$store.commit(GROUP_INDEX_MODIFY_PRE_ORDER_AMOUNT, {
+        /*this.$store.commit(GROUP_INDEX_MODIFY_PRE_ORDER_AMOUNT, {
           groupId,
           preAmount: diff,
           op: 0,
-        });
+        });*/
         this.$store.commit(PROFILE_BILL_STAT_PRE_ORDER_AMOUNT, {
           preAmount: diff,
           op: 0,
         });
       } else if (oldOrder.preAmount > newOrder.preAmount) {
         this.stat.preAmount -= diff;
-        this.$store.commit(GROUP_INDEX_MODIFY_PRE_ORDER_AMOUNT, {
+        /*this.$store.commit(GROUP_INDEX_MODIFY_PRE_ORDER_AMOUNT, {
           groupId,
           preAmount: diff,
           op: 1,
-        });
+        });*/
         this.$store.commit(PROFILE_BILL_STAT_PRE_ORDER_AMOUNT, {
           preAmount: diff,
           op: 1,
@@ -417,11 +424,11 @@ export default {
 
       // 减少金额
       this.stat.preAmount -= order.preAmount;
-      this.$store.commit(GROUP_INDEX_MODIFY_PRE_ORDER_AMOUNT, {
+      /*this.$store.commit(GROUP_INDEX_MODIFY_PRE_ORDER_AMOUNT, {
         groupId: order.groupId,
         preAmount: order.preAmount,
         op: 1,
-      });
+      });*/
       this.$store.commit(PROFILE_BILL_STAT_PRE_ORDER_AMOUNT, {
         preAmount: order.preAmount,
         op: 1,
@@ -471,8 +478,36 @@ export default {
     },
 
     // 分组入账
-    handleGroupToBill() {
-      this.$Router.push({ name: "bill-edit", params: { group: this.groupId } });
+    async handleGroupToBill() {
+      if (this.stat.billId != 0) {
+        this.$Router.push({
+          name: "bill-edit",
+          params: { id: this.stat.billId },
+        });
+      } else {
+        // 校验分组中是否存在预购单
+        if (this.orders.length <= 0) {
+          this.$tip.toast_quick("当前分组不存在预购单，无法入账！");
+          return;
+        }
+        // 校验分组中预购单是否都已完成
+        let index = this.orders.findIndex((o) => o.status == 0);
+        console.log(index);
+        if (index >= 0) {
+          let isConfirm = false;
+          await this.$tip
+            .choose("分组中存在未购的预购单，确定要入账？", {}, "提示")
+            .then(() => {
+              isConfirm = true;
+            });
+          if (!isConfirm) return;
+        }
+
+        this.$Router.push({
+          name: "bill-edit",
+          params: { group: this.groupId },
+        });
+      }
     },
 
     // 选中预购项触发

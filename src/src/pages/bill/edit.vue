@@ -157,7 +157,7 @@ export default {
   data() {
     return {
       isOrder: false, // 是否为预购转账单
-      order: {}, // 预购信息
+      group: {}, // 预购分组信息
       loading: false,
       bill: {
         id: 0,
@@ -205,7 +205,7 @@ export default {
     if (option.group != undefined) {
       console.log("预购分组Id", option.group);
       this.isOrder = true;
-      this.getPreOrder(option.group);
+      this.getPreOrderGroup(option.group);
     }
 
     // console.log(option.id);
@@ -259,19 +259,19 @@ export default {
     //#region 接口请求
 
     // 获取账单详情
-    getPreOrder(id) {
+    getPreOrderGroup(id) {
       this.$api
-        .getPreOrder({
+        .getPreOrderGroupWithAmount({
           id: id,
         })
         .then((res) => {
           if (res.data.code === 0) {
-            console.log("预购信息", res.data.result);
+            console.log("预购分组信息", res.data.result);
             let result = res.data.result;
             this.model.description = result.description;
-            this.model.amount = result.amount;
-            this.initAmount = result.amount;
-            this.order = result;
+            this.model.amount = result.realAmount;
+            this.initAmount = result.realAmount;
+            this.group = result;
             // let dateTime = new Date(result.time);
             // this.date = datetime.getCurDate(dateTime);
             // this.model.time = `${dateTime.getHours()}:${dateTime.getMinutes()}`;
@@ -471,8 +471,8 @@ export default {
       // 获取上一个页面（如果账单过来，必须是预购列表页面），并调用其方法
       let pages = getCurrentPages(); //获取页面栈
       let beforePage = pages[pages.length - 2]; //上一页
-      console.log(beforePage);
-      beforePage.$vm.completedToBillCallback(this.order.id, billId); //直接调用上一页的方法
+      // console.log(beforePage);
+      beforePage.$vm.completedToBillCallback(this.group.id, billId); //直接调用上一页的方法
     },
 
     // 选中账单分类

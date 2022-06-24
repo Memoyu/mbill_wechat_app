@@ -43,6 +43,9 @@ export const PROFILE_BILL_STAT_PRE_ORDER_AMOUNT = 'PROFILE_BILL_STAT_PRE_ORDER_A
 
 //#region 预购清单
 
+// 新增预购分组转入账单
+export const GROUP_INDEX_ADD_TO_BILL = 'GROUP_INDEX_ADD_TO_BILL'
+
 // 新增预购清单首页分组
 export const GROUP_INDEX_ADD_GROUP = 'GROUP_INDEX_ADD_GROUP'
 

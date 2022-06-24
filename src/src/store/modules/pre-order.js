@@ -8,6 +8,7 @@ import {
     GROUP_INDEX_DEL_GROUP,
     GROUP_INDEX_MODIFY_PRE_ORDER_AMOUNT,
     GROUP_INDEX_MODIFY_PRE_ORDER_STATUS,
+    GROUP_INDEX_ADD_TO_BILL,
     GROUP_INDEX_ADD_PRE_ORDER,
     GROUP_INDEX_DEL_PRE_ORDER,
     GROUP_INDEX_STAT
@@ -16,7 +17,7 @@ import {
 const state = {
     IndexStat: {
         total: 0,
-        preAmount: 0,
+        toBill: 0,
         done: 0,
         undone: 0,
     },
@@ -65,7 +66,8 @@ const mutations = {
                 if (group.id == state.IndexGroups[i].id) {
                     // 减少预购清单页面统计数据
                     state.IndexStat.total -= 1;
-                    state.IndexStat.preAmount -= group.preAmount;
+                    if (group.billId != 0)
+                        state.IndexStat.toBill -= 1;
                     state.IndexStat.done -= group.done;
                     state.IndexStat.unDone -= group.unDone;
 
@@ -77,7 +79,7 @@ const mutations = {
         } catch (e) { }
     },
 
-    [GROUP_INDEX_MODIFY_PRE_ORDER_AMOUNT]: (state, { groupId, preAmount, op }) => {
+    /*[GROUP_INDEX_MODIFY_PRE_ORDER_AMOUNT]: (state, { groupId, preAmount, op }) => {
         console.log("preAmount, op", preAmount, op);
         try {
             for (let i = 0; i < state.IndexGroups.length; i++) {
@@ -98,7 +100,7 @@ const mutations = {
         } else if (op === 1) {
             state.IndexStat.preAmount = (s - preAmount).fixed(2);
         }
-    },
+    },*/
 
     [GROUP_INDEX_MODIFY_PRE_ORDER_STATUS]: (state, order) => {// 仅限于修改完成状态使用
         try {
@@ -128,6 +130,19 @@ const mutations = {
             state.IndexStat.done += 1;
             state.IndexStat.unDone -= 1;
         }
+    },
+
+    [GROUP_INDEX_ADD_TO_BILL]: (state, { groupId, billId }) => {
+        try {
+            for (let i = 0; i < state.IndexGroups.length; i++) {
+                if (groupId == state.IndexGroups[i].id) {
+                    // 赋值账单Id
+                    state.IndexGroups[i].billId = billId;
+                    throw new Error("Ok"); // 跳出循环
+                }
+            }
+        } catch (e) { }
+        state.IndexStat.toBill += 1;
     },
 
     [GROUP_INDEX_ADD_PRE_ORDER]: (state, order) => {

@@ -1,6 +1,6 @@
 <template>
   <view
-    :class="['mbill-po-item', order.status == 0 ? '' : 'mbill-po-item-line']"
+    :class="['mbill-po-item', order.status == 0 ? '' : 'mbill-po-item-tag']"
     @tap="handleToDetail(order)"
   >
     <view :class="['order-icon', 'x-c']" :style="{ background: order.color }">
@@ -14,8 +14,12 @@
         <text class="time">{{ order.time }}</text>
       </view>
       <view class="content-amount">
-        <text :class="[order.status == 0 ? 'income-color' : 'expend-color']">
+        <text :class="['income-color']">
           {{ order.preAmount }}
+        </text>
+        <view class="line"></view>
+        <text :class="['expend-color']">
+          {{ order.realAmount }}
         </text>
       </view>
     </view>
@@ -46,12 +50,14 @@ export default {
 .mbill-po-item {
   // background: beige;
   display: flex;
-  border-radius: 10px;
-  padding: 10px 18px;
+  border-radius: 20rpx;
+  padding: 10rpx 34rpx;
+  align-items: center;
 
   .order-icon {
-    margin-right: 10px;
+    margin-right: 20rpx;
     border-radius: 50%;
+    height: 45px;
     .icon-text {
       color: #fff;
       text-align: center;
@@ -77,11 +83,18 @@ export default {
       }
     }
     .content-amount {
+      text-align: center;
       font-weight: bold;
+      min-width: 50rpx;
+      .line {
+        margin: 8rpx 0;
+        height: 2rpx;
+        background: $light-color;
+      }
     }
   }
 }
-.mbill-po-item-line {
+.mbill-po-item-tag {
   &:before {
     content: "";
     position: absolute;

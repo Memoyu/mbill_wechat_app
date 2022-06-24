@@ -25,8 +25,8 @@
               <text class="total">{{ stat.total }}</text>
             </view>
             <view class="pre-order-stat-text">
-              <text class="text">预购金额</text>
-              <text class="total">{{ stat.preAmount }}</text>
+              <text class="text">入账分组</text>
+              <text class="total">{{ stat.toBill }}</text>
             </view>
           </view>
           <view class="bottom-line" />

@@ -1,5 +1,10 @@
 <template>
-  <view class="mbill-po-group-item">
+  <view
+    :class="[
+      'mbill-po-group-item',
+      group.billId == 0 ? '' : ' mbill-po-group-item-tag',
+    ]"
+  >
     <view class="group-item-content" @click="handleToList(group)">
       <view class="group-item-title">
         <view class="title">{{ group.name }}</view>
@@ -9,10 +14,10 @@
         </view>
       </view>
       <view class="group-item-stat">
-        <view class="item-amount">
+        <!-- <view class="item-amount">
           <view class="char">￥</view>
           <view class="amount">{{ group.amount }}</view>
-        </view>
+        </view> -->
         <view class="item-status">
           <text class="expend-color done">
             {{ group.done }}
@@ -104,6 +109,18 @@ export default {
         }
       }
     }
+  }
+}
+.mbill-po-group-item-tag {
+  &:before {
+    content: "";
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    border: 17px solid $expend-color;
+    border-radius: 0 0 10px;
+    border-top-color: transparent;
+    border-left-color: transparent;
   }
 }
 </style>
