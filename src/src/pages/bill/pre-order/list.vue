@@ -134,6 +134,7 @@ import datetime from "@/common/utils/datetime";
 
 const addBtnTitle = "新建";
 const editBtnTitle = "编辑";
+const doneBtnTitle = "已购";
 export default {
   data() {
     return {
@@ -224,6 +225,8 @@ export default {
           // console.log("列表", res);
           if (res.data.code === 0) {
             let result = res.data.result;
+            this.stat.billId = billId;
+            this.rtext = "编辑入账";
             this.$store.commit(GROUP_INDEX_ADD_TO_BILL, { groupId, billId });
           }
         });
@@ -332,12 +335,12 @@ export default {
 
     // 调整本地数据(主要为状态变更)
     updateLocalStatus(order, status) {
-      let orRealAmount = 0;
+      let curOrder = {};
       try {
         for (let i = 0; i < this.orders.length; i++) {
           if (order.id == this.orders[i].id) {
             this.orders[i].status = status;
-            orRealAmount = this.orders[i].realAmount;
+            curOrder = this.orders[i];
             this.orders[i].realAmount = order.realAmount;
             console.log(this.orders[i]);
             throw new Error("Ok"); // 跳出循环
@@ -347,13 +350,13 @@ export default {
       if (status == 0) {
         this.stat.done -= 1;
         this.stat.unDone += 1;
-        this.stat.realAmount -= orRealAmount;
+        this.stat.realAmount -= curOrder.realAmount;
       } else if (status == 1) {
         this.stat.done += 1;
         this.stat.unDone -= 1;
         this.stat.realAmount += order.realAmount;
       }
-      this.$store.commit(GROUP_INDEX_MODIFY_PRE_ORDER_STATUS, order);
+      this.$store.commit(GROUP_INDEX_MODIFY_PRE_ORDER_STATUS, curOrder);
     },
 
     // 调整本地数据(主要为新增后各项数据的增加)
@@ -494,6 +497,10 @@ export default {
     // 选中预购项触发
     handleSelected(order) {
       this.dialogOptions.ltext = editBtnTitle;
+      this.toEditOrder(order);
+    },
+
+    toEditOrder(order) {
       this.order = order;
       this.$refs.editOrderDialog.show(this.dialogOptions);
     },
@@ -567,7 +574,8 @@ export default {
         // 修改状态
         if (e.content.text == this.doneSwipeOps[0].text) {
           this.isStatusToDone = true;
-          this.handleSelected({ ...o, realAmount: 0 });
+          this.dialogOptions.ltext = doneBtnTitle;
+          this.toEditOrder({ ...o, realAmount: 0 });
         } else if (e.content.text == this.unDoneSwipeOps[0].text) {
           this.$tip
             .choose("重置后将会清零实购金额, 是否重置？", {}, "提示")

@@ -220,9 +220,11 @@ export default {
     }
 
     .b-detail-copy {
+      font-weight: bold;
       margin-top: 40rpx;
       color: $primary-color;
-      text-decoration: underline;
+      border-bottom: 2rpx solid $primary-color;
+      padding-bottom: 3rpx;
     }
   }
   .bottom-operate {

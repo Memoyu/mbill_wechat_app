@@ -106,7 +106,7 @@ const mutations = {
         try {
             for (let i = 0; i < state.IndexGroups.length; i++) {
                 if (order.groupId == state.IndexGroups[i].id) { // 修改该分组完成状态数量
-                    // console.log("开始了", order);
+                    console.log("开始了", order);
                     if (order.status == 0) {
                         // 增加未完成
                         state.IndexGroups[i].unDone += 1;
