@@ -12,6 +12,10 @@
               <text class="total">{{ stat.preAmount }}</text>
             </view>
             <view class="pre-order-stat-text">
+              <text class="text">实购金额</text>
+              <text class="total">{{ stat.realAmount }}</text>
+            </view>
+            <view class="pre-order-stat-text">
               <text class="text">已完成</text>
               <text class="total">{{ stat.done }}</text>
             </view>
@@ -328,11 +332,14 @@ export default {
 
     // 调整本地数据(主要为状态变更)
     updateLocalStatus(order, status) {
+      let orRealAmount = 0;
       try {
         for (let i = 0; i < this.orders.length; i++) {
           if (order.id == this.orders[i].id) {
             this.orders[i].status = status;
+            orRealAmount = this.orders[i].realAmount;
             this.orders[i].realAmount = order.realAmount;
+            console.log(this.orders[i]);
             throw new Error("Ok"); // 跳出循环
           }
         }
@@ -340,9 +347,11 @@ export default {
       if (status == 0) {
         this.stat.done -= 1;
         this.stat.unDone += 1;
+        this.stat.realAmount -= orRealAmount;
       } else if (status == 1) {
         this.stat.done += 1;
         this.stat.unDone -= 1;
+        this.stat.realAmount += order.realAmount;
       }
       this.$store.commit(GROUP_INDEX_MODIFY_PRE_ORDER_STATUS, order);
     },
@@ -369,15 +378,24 @@ export default {
         }
       } catch (e) {}
       if (oldOrder == null) return;
-      let diff = Math.abs(
+      let diffPre = Math.abs(
         Number(oldOrder.preAmount) - Number(newOrder.preAmount)
       ).fixed(2);
-      // console.log("diff", oldOrder, newOrder, diff);
-      let groupId = newOrder.groupId;
+
+      let diffReal = Math.abs(
+        Number(oldOrder.realAmount) - Number(newOrder.realAmount)
+      ).fixed(2);
+      // console.log("diffPre", oldOrder, newOrder, diffPre);
       if (oldOrder.preAmount < newOrder.preAmount) {
-        this.stat.preAmount += diff;
+        this.stat.preAmount += diffPre;
       } else if (oldOrder.preAmount > newOrder.preAmount) {
-        this.stat.preAmount -= diff;
+        this.stat.preAmount -= diffPre;
+      }
+
+      if (oldOrder.realAmount < newOrder.realAmount) {
+        this.stat.realAmount += diffReal;
+      } else if (oldOrder.realAmount > newOrder.realAmount) {
+        this.stat.realAmount -= diffReal;
       }
     },
 
@@ -500,6 +518,7 @@ export default {
           this.$tip.toast_quick("请输入正确的实购金额");
           return;
         }
+        this.order.realAmount = Number(this.order.realAmount);
       }
 
       if (!this.order.description || this.order.description == "") {
@@ -548,13 +567,12 @@ export default {
         // 修改状态
         if (e.content.text == this.doneSwipeOps[0].text) {
           this.isStatusToDone = true;
-          o.realAmount = null;
-          this.handleSelected(o);
+          this.handleSelected({ ...o, realAmount: 0 });
         } else if (e.content.text == this.unDoneSwipeOps[0].text) {
           this.$tip
             .choose("重置后将会清零实购金额, 是否重置？", {}, "提示")
             .then(async () => {
-              this.editPreOrderStatus(o, 0);
+              this.editPreOrderStatus({ ...o, realAmount: 0 }, 0);
               // 删除首页指定的账单
               this.$store.commit(DEL_INDEX_BILL, o.billId);
             });

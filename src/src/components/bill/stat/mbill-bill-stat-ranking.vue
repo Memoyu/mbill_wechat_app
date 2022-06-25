@@ -379,7 +379,13 @@ export default {
     handleDatePickerChange({ detail }) {
       let date = new Date(detail.value);
       // console.log(date);
-      this.dateText = datetime.getCurDateObj(date);
+      let select = datetime.getCurDateObj(date);
+      if (
+        select.year == this.dateText.year &&
+        select.month == this.dateText.month
+      )
+        return;
+      this.dateText = select;
       this.date = datetime.getCurDate(date);
       this.loadStatData();
     },
@@ -387,6 +393,7 @@ export default {
     // 切换账单类型
     handleTypePickerChange({ detail }) {
       // console.log(detail);
+      if (this.billType == detail.value) return;
       this.billType = detail.value;
       this.category = 0;
       this.categoryId = 0;
@@ -397,6 +404,7 @@ export default {
     // 账单分类选择
     bindCategoryPickerChange({ detail }) {
       // console.log(detail);
+      if (this.category == detail.value) return;
       this.category = detail.value;
       let ca = this.categories[this.category];
       this.categoryId = ca.id;

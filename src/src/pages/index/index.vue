@@ -234,7 +234,13 @@ export default {
     handlePickerChange({ detail }) {
       // console.log(detail.value);
       let d = new Date(detail.value);
-      this.calendarDate = datetime.getCurDateObj(d);
+      let select = datetime.getCurDateObj(d);
+      if (
+        select.year == this.pickerDateText.year &&
+        select.month == this.pickerDateText.month
+      )
+        return;
+      this.calendarDate = select;
       // console.log("calendarDate", this.calendarDate);
       this.pickerDate = datetime.getCurDate(d);
       this.pickerDateText = this.calendarDate;

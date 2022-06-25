@@ -280,13 +280,16 @@ export default {
     // 切换月份
     handleSelectedMonth(item) {
       // console.log("选中的日期", item);
-      this.selectMonth = `${item.year}-${item.month}`;
+      let select = `${item.year}-${item.month}`;
+      if (select == this.selectMonth) return;
+      this.selectMonth = select;
       this.loadStatData();
     },
 
     // 切换账单类型
     handleTypePickerChange({ detail }) {
       // console.log(detail);
+      if (this.type == detail.value) return;
       this.type = detail.value;
       this.loadCategoryStat();
     },

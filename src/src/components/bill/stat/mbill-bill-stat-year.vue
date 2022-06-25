@@ -315,7 +315,8 @@ export default {
 
     // 切换年份
     handleSelectedYear(item) {
-      console.log("年份选择", item);
+      // console.log("年份选择", item);
+      if (item.year == this.year) return;
       this.year = item.year;
       this.loadStatData();
     },
@@ -335,7 +336,8 @@ export default {
 
     // 切换账单类型
     handleTypePickerChange({ detail }) {
-      console.log(detail);
+      // console.log(detail);
+      if (this.type == detail.value) return;
       this.type = detail.value;
       this.loadCategoryStat();
     },

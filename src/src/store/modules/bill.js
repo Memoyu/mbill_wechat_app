@@ -317,11 +317,17 @@ const actions = {
                     g.items.forEach((item, i) => {
                         // 找到元素
                         if (item.id === bill.id) {
+                            // g.items[i] = bill; // 覆盖源数据，此时item是不受影响的(此处直接覆盖会造成视图不刷新的情况，首页的数据界面不会更新，需要单个赋值)
+                            g.items[i].description = bill.description;
+                            g.items[i].category = bill.category;
+                            g.items[i].categoryIcon = bill.categoryIcon;
+                            g.items[i].amount = bill.amount;
+                            g.items[i].amountFormat = bill.amountFormat;
+                            g.items[i].type = bill.type;
 
-                            g.items[i] = bill; // 覆盖源数据，此时item是不受影响的
                             // 如果时间不一致，排一下序就行
                             if (g.items[i].time != item.time) {
-                                console.log("进行排序", g.items);
+                                // console.log("进行排序", g.items);
                                 g.items = g.items.sort((d1, d2) => {
                                     return new Date(`2000-09-25 ${d1.time}`) < new Date(`2000-09-25 ${d2.time}`) ? 1 : -1
                                 });
@@ -367,8 +373,6 @@ const actions = {
                                 commit(DEL_INDEX_BILL, bill.id);
                                 commit(ADD_INDEX_BILL, { bill, date });
                             }
-
-
                             throw new Error("Ok"); // 跳出循环
                         }
                     });

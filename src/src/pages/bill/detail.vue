@@ -1,16 +1,18 @@
 <template>
-  <view>
-    <view class="b-container">
-      <view class="bill-detail-bg">
-        <view class="circle left-circle" />
-        <view class="circle right-circle" />
-        <view class="order-line"> </view>
-        <view class="bill-detail-header">
+  <view class="bill-detail-container">
+    <view class="b-detail-container">
+      <view class="b-detail-container-content y-f">
+        <view class="b-detail-container-content-header">
           <image class="detail-image" :src="bill.categoryIcon" />
           <view class="detail-category">{{ bill.category }}</view>
           <view class="detail-desc">{{ bill.description }}</view>
         </view>
-        <view class="bill-detail-content">
+        <view class="b-detail-container-content-order-line x-f">
+          <view class="circle left-circle" />
+          <view class="order-line"> </view>
+          <view class="circle right-circle" />
+        </view>
+        <view class="b-detail-container-content-info">
           <view :class="['detail-amount', amountClass]">
             <view style="font-size: 40rpx">￥</view>
             <view> {{ bill.amountFormat }}</view>
@@ -19,8 +21,9 @@
           <view class="detail-date">{{ bill.timeFormat }}</view>
           <view class="detail-address">{{ bill.address }}</view>
         </view>
-        <mb-ba-end-split-line class="bottom-line" />
+        <mb-ba-end-split-line />
       </view>
+      <view class="b-detail-copy" @click="handleCopyAndToEdit">再记一笔</view>
       <view class="bottom-operate">
         <mb-ba-bottom-btn @ltap="handleEdit" @rtap="handleDel" />
       </view>
@@ -77,10 +80,14 @@ export default {
           this.$tip.error("请求错误！");
         });
     },
+
+    //编辑账单
     handleEdit() {
       // console.log("编辑");
       this.$Router.push({ name: "bill-edit", params: { id: this.bill.id } });
     },
+
+    // 删除账单
     handleDel() {
       // console.log("删除");
       let pages = getCurrentPages(); //当前页
@@ -100,110 +107,129 @@ export default {
         });
       });
     },
+
+    // 再来一笔账单
+    handleCopyAndToEdit() {
+      this.$Router.push({
+        name: "bill-edit",
+        params: { copyId: this.bill.id },
+      });
+    },
   },
 };
 </script>
 
 <style lang="scss" scope>
-.bill-detail-bg {
-  position: absolute;
-  border-radius: 28rpx;
-  top: 0;
-  left: 50%;
-  transform: translate(-50%, 10%);
-  width: 80%;
-  padding: 20rpx 0;
-  background-color: #ffffff;
-  border-radius: 50rpx 50rpx 0 0;
-  .circle {
-    width: 30rpx;
-    height: 30rpx;
-    border-radius: 50%;
-    background-color: $grey-bright-color;
-    position: absolute;
-    top: 340rpx;
-    transform: translate(0, -50%);
-  }
-  .left-circle {
-    left: -15rpx;
-  }
-
-  .right-circle {
-    right: -15rpx;
-  }
-  .order-line {
-    position: absolute;
-    top: 340rpx;
-    z-index: 99;
+.bill-detail-container {
+  display: flex;
+  align-items: center;
+  height: 90%;
+  .b-detail-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     width: 100%;
-    height: 4rpx;
-    background-image: linear-gradient(
-      to right,
-      $grey-bright-color 50%,
-      $grey-bright-color 50%,
-      transparent 0%
-    );
-    background-size: 28rpx 6rpx;
-    background-repeat: repeat-x;
-  }
-  .bottom-line {
-    width: 100%;
-    position: fixed;
-    left: 0;
-    bottom: 0;
-  }
-  .bill-detail-header {
-    text-align: center;
-    .detail-image {
-      border-radius: 50%;
-      height: 120rpx;
-      width: 120rpx;
-    }
-    .detail-category {
-      margin-top: 3%;
-      font-size: 50rpx;
-      font-weight: bold;
-    }
-    .detail-desc {
-      margin-top: 3%;
-      padding: 0 20rpx;
-      color: $grey-text-color;
-      font-size: 30rpx;
-    }
-  }
-  .bill-detail-content {
-    margin-top: 20%;
-    margin-bottom: 20%;
-    text-align: center;
-
-    .detail-amount {
-      display: flex;
+    .b-detail-container-content {
       justify-content: center;
-      align-items: baseline;
-      font-size: 60rpx;
-      font-weight: bold;
-      margin-bottom: 10rpx;
+      width: 80%;
+      background-color: #ffffff;
+      border-radius: 50rpx 50rpx 0 0;
+      &-header {
+        margin-top: 70rpx;
+        margin-bottom: 30rpx;
+        text-align: center;
+        .detail-image {
+          border-radius: 50%;
+          height: 120rpx;
+          width: 120rpx;
+        }
+        .detail-category {
+          margin-top: 3%;
+          font-size: 50rpx;
+          font-weight: bold;
+        }
+        .detail-desc {
+          margin-top: 3%;
+          padding: 0 20rpx;
+          color: $grey-text-color;
+          font-size: 30rpx;
+        }
+      }
+
+      &-order-line {
+        width: 100%;
+        .circle {
+          width: 30rpx;
+          height: 30rpx;
+          border-radius: 50%;
+          background-color: $grey-bright-color;
+        }
+        .left-circle {
+          margin-left: -15rpx;
+        }
+
+        .right-circle {
+          margin-right: -15rpx;
+        }
+        .order-line {
+          width: 100%;
+          z-index: 99;
+          height: 4rpx;
+          background-image: linear-gradient(
+            to right,
+            $grey-bright-color 50%,
+            $grey-bright-color 50%,
+            transparent 0%
+          );
+          background-size: 28rpx 6rpx;
+          background-repeat: repeat-x;
+        }
+      }
+      &-info {
+        margin-top: 30rpx;
+        margin-bottom: 150rpx;
+        text-align: center;
+
+        .detail-amount {
+          display: flex;
+          justify-content: center;
+          align-items: baseline;
+          font-size: 60rpx;
+          font-weight: bold;
+          margin-bottom: 10rpx;
+        }
+        .detail-asset {
+          color: $grey-text-color;
+          font-size: 30rpx;
+        }
+        .detail-date {
+          margin-top: 26rpx;
+          color: $grey-text-color;
+          font-size: 30rpx;
+        }
+        .detail-address {
+          margin-top: 26rpx;
+          color: $grey-text-color;
+          font-size: 30rpx;
+        }
+      }
+      &-bottom-line {
+        width: 100%;
+        margin-top: -15px;
+      }
     }
-    .detail-asset {
-      color: $grey-text-color;
-      font-size: 30rpx;
-    }
-    .detail-date {
-      margin-top: 26rpx;
-      color: $grey-text-color;
-      font-size: 30rpx;
-    }
-    .detail-address {
-      margin-top: 26rpx;
-      color: $grey-text-color;
-      font-size: 30rpx;
+
+    .b-detail-copy {
+      margin-top: 40rpx;
+      color: $primary-color;
+      text-decoration: underline;
     }
   }
-}
-.bottom-operate {
-  width: 100%;
-  position: absolute;
-  bottom: 0;
-  margin-bottom: 40rpx;
+  .bottom-operate {
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    margin-bottom: 40rpx;
+  }
 }
 </style>

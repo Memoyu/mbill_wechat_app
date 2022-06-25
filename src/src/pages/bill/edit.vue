@@ -201,19 +201,28 @@ export default {
     // console.log(option);
     this.initData();
 
-    // 校验是否为预购分组过来的
-    if (option.group != undefined) {
-      console.log("预购分组Id", option.group);
-      this.isOrder = true;
-      this.getPreOrderGroup(option.group);
+    // 编辑账单
+    // console.log(option.id);
+    if (option.id != undefined) {
+      this.getBillDetail(option.id);
+      return;
     }
 
-    // console.log(option.id);
-    if (option.id == undefined) {
-      if (this.locationStatus) this.getLocation();
-    } else {
-      this.getBillDetail(option.id);
+    // 校验是否为预购分组过来的
+    if (option.group != undefined) {
+      // console.log("预购分组Id", option.group);
+      this.isOrder = true;
+      this.getPreOrderGroup(option.group);
+      return;
     }
+
+    // 赋值账单，并编辑
+    if (option.copyId != undefined) {
+      this.getBillDetail(option.copyId, true);
+      return;
+    }
+
+    this.getLocation();
   },
   onShow() {},
   onReady() {
@@ -272,18 +281,16 @@ export default {
             this.model.amount = result.realAmount;
             this.initAmount = result.realAmount;
             this.group = result;
-            // let dateTime = new Date(result.time);
-            // this.date = datetime.getCurDate(dateTime);
-            // this.model.time = `${dateTime.getHours()}:${dateTime.getMinutes()}`;
+            this.getLocation(); // 更新地址信息
           } else {
-            this.$tip.error(res.data.message);
+            this.$tip.toast_quick(res.data.message);
             this.isOrder = false;
           }
         });
     },
 
     // 获取账单详情
-    getBillDetail(id) {
+    getBillDetail(id, isCopy = false) {
       this.$api
         .billDetail({
           id: id,
@@ -293,9 +300,15 @@ export default {
             let result = res.data.result;
             this.model = result;
             this.initAmount = result.amount;
-            let dateTime = new Date(result.time);
-            this.date = datetime.getCurDate(dateTime);
-            this.model.time = `${dateTime.getHours()}:${dateTime.getMinutes()}`;
+            // 如果是赋值，就清除id
+            if (isCopy) {
+              this.model.id = 0;
+              this.getLocation(); // 更新地址信息
+            } else {
+              let dateTime = new Date(result.time);
+              this.date = datetime.getCurDate(dateTime);
+              this.model.time = `${dateTime.getHours()}:${dateTime.getMinutes()}`;
+            }
           }
         });
     },
@@ -524,10 +537,11 @@ export default {
 
     // 获取定位地址
     getLocation() {
-      Location.getLocation().then((res) => {
-        console.log("位置信息", res);
-        this.model.address = res.address;
-      });
+      if (this.locationStatus)
+        Location.getLocation().then((res) => {
+          console.log("位置信息", res);
+          this.model.address = res.address;
+        });
     },
 
     //#endregion
