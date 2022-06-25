@@ -370,12 +370,12 @@ export default {
 
     .type-picker {
       margin: 0 50rpx;
-      font-size: 15px;
+      font-size: 30rpx;
       font-weight: bold;
       align-items: baseline;
       .icon-down {
-        font-size: 10px;
-        margin-left: 5px;
+        font-size: 20rpx;
+        margin-left: 10rpx;
       }
     }
   }
@@ -401,18 +401,18 @@ export default {
   }
   .charts-box {
     width: 100%;
-    height: 300px;
+    height: 600rpx;
   }
 }
 .mb-stat-divide-title {
   position: sticky;
   display: inline-block;
-  padding-bottom: 4px;
-  margin-bottom: 12px;
+  padding-bottom: 8rpx;
+  margin-bottom: 24rpx;
   font-size: 40rpx;
   color: #40485b;
   font-weight: bolder;
-  margin-left: 14px;
+  margin-left: 28rpx;
 
   &:before {
     content: "";

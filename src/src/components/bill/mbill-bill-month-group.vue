@@ -335,18 +335,18 @@ export default {
 
 <style lang="scss" scope>
 .mbill-bill-month-group {
-  margin: 0 10px;
+  margin: 0 20rpx;
   .group-year {
-    padding: 10px 20px;
+    padding: 20rpx 40rpx;
     font-weight: bold;
   }
   .group-year-item {
-    padding: 5px 0;
-    border-radius: 13px;
+    padding: 10rpx 0;
+    border-radius: 26rpx;
     background: white;
     .group-month-items {
       &-date {
-        padding: 10px 20px;
+        padding: 20rpx 40rpx;
         color: $grey-black-text-color;
         font-weight: 600;
       }

@@ -18,7 +18,7 @@ export default {
   props: {
     count: {
       type: Number,
-      default: 31,
+      default: 41,
     },
     deepColor: {
       type: String,
@@ -41,12 +41,12 @@ export default {
   width: 100%;
 }
 .item {
-  flex-basis: 8px;
+  flex-basis: 16rpx;
   flex-shrink: 0;
   flex-grow: 0;
-  height: 4px;
-  border-radius: 6px 6px 0 0;
-  margin: 0 2px;
+  height: 8rpx;
+  border-radius: 12rpx 12rpx 0 0;
+  margin: 0 4rpx;
   // background: radial-gradient(circle farthest-side at bottom, #ffffff, #ffffff);
 }
 </style>

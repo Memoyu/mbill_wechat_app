@@ -463,12 +463,12 @@ export default {
         font-size: 35rpx;
       }
       .picker-title {
-        font-size: 15px;
+        font-size: 30rpx;
         font-weight: bold;
         align-items: baseline;
         .icon-down {
-          font-size: 10px;
-          margin-left: 5px;
+          font-size: 20rpx;
+          margin-left: 10rpx;
         }
       }
     }

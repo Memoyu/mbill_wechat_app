@@ -49,16 +49,16 @@ export default {
 .mbill-bill-item {
   // background: beige;
   display: flex;
-  border-radius: 10px;
-  padding: 10px 0;
+  border-radius: 20rpx;
+  padding: 20rpx 0;
   align-items: center;
   .bill-icon {
     .image {
-      margin-right: 10px;
+      margin-right: 20rpx;
       border-radius: 50%;
       // background: yellow;
-      height: 35px;
-      width: 35px;
+      height: 70rpx;
+      width: 70rpx;
     }
   }
   .bill-content {
@@ -69,15 +69,15 @@ export default {
     justify-content: space-between;
     .content-title {
       .title {
-        margin-bottom: 5px;
+        margin-bottom: 10rpx;
         font-weight: bold;
       }
       .info {
         display: flex;
         color: $grey-text-color;
-        font-size: 13px;
+        font-size: 26rpx;
         .time {
-          margin-right: 5px;
+          margin-right: 10rpx;
         }
         .note {
         }

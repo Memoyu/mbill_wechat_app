@@ -29,7 +29,7 @@ export default {
   text-align: center;
 
   .need-to-login {
-    font-size: 50px;
+    font-size: 100rpx;
     color: $primary-color;
   }
   .hint-content {
@@ -38,7 +38,7 @@ export default {
       color: $grey-color;
     }
     .goto {
-      margin-left: 20px;
+      margin-left: 40rpx;
       color: $primary-color;
     }
   }

@@ -97,19 +97,19 @@ export default {
 .image {
   background: white;
   border-radius: 50%;
-  width: 80px;
-  height: 80px;
-  margin: 40px 0;
+  width: 160rpx;
+  height: 160rpx;
+  margin: 80rpx 0;
 }
 .user-cells {
   width: 100%;
   .cells {
-    margin: 0 25px;
+    margin: 0 30rpx;
     .cell-item {
       display: flex;
       align-items: flex-start;
-      font-size: 16px;
-      padding: 15px 0 0 0;
+      font-size: 32rpx;
+      padding: 30rpx 0 0 0;
 
       .cell-item-content {
         width: 100%;
@@ -118,12 +118,12 @@ export default {
             font-weight: bold;
           }
           width: 100%;
-          margin-bottom: 15px;
+          margin-bottom: 30rpx;
           .item-content-text {
             display: flex;
             align-items: center;
             .text {
-              margin-right: 10px;
+              margin-right: 20rpx;
             }
             .right-icon {
               color: $grey-color;
@@ -131,7 +131,7 @@ export default {
           }
         }
         .bottom-line {
-          height: 1px;
+          height: 2rpx;
           background: $grey-light-color;
           width: 100%;
         }
@@ -143,6 +143,6 @@ export default {
   width: 100%;
   position: absolute;
   bottom: 0;
-  margin-bottom: 20px;
+  margin-bottom: 40rpx;
 }
 </style>

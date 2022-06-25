@@ -125,8 +125,8 @@ export default {
     font-weight: bold;
     color: white;
     text-align: center;
-    border-radius: 20px;
-    padding: 10px 0;
+    border-radius: 40rpx;
+    padding: 20rpx 0;
     width: 70%;
     background: $expend-color;
   }

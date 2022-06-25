@@ -134,7 +134,7 @@ export default {
       justify-content: space-between;
       &-title {
         text-align: center;
-        font-size: 18px;
+        font-size: 36rpx;
         font-weight: bold;
       }
     }

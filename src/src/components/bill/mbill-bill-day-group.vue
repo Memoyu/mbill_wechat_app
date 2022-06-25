@@ -126,14 +126,14 @@ export default {
 
 <style lang="scss" scope>
 .mbill-bill-date-group {
-  margin: 0 10px;
+  margin: 0 20rpx;
   .group-date {
-    padding: 10px 20px;
+    padding: 20rpx 40rpx;
     font-weight: bold;
   }
   .group-items {
-    padding: 5px 0;
-    border-radius: 13px;
+    padding: 10rpx 0;
+    border-radius: 26rpx;
     background: white;
     &-item {
       padding: 0 30rpx;

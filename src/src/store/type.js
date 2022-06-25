@@ -36,9 +36,6 @@ export const DEL_INDEX_BILL = 'DEL_INDEX_BILL'
 // 个人页面统计
 export const PROFILE_BILL_STAT = 'PROFILE_BILL_STAT'
 
-// 个人页面统计 预购金额
-export const PROFILE_BILL_STAT_PRE_ORDER_AMOUNT = 'PROFILE_BILL_STAT_PRE_ORDER_AMOUNT'
-
 //#endregion
 
 //#region 预购清单

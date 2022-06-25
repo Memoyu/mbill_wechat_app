@@ -289,23 +289,23 @@ export default {
     background-color: $light-color;
     width: 100%;
     height: 30%;
-    border-radius: 0 0 15px 15px;
+    border-radius: 0 0 30rpx 30rpx;
   }
   .date-title {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    margin: 15px;
+    margin: 30rpx;
     align-items: center;
-    height: 32px;
+    height: 64rpx;
     .date-picker {
       .now-date {
-        font-size: 15px;
+        font-size: 30rpx;
         font-weight: bold;
         align-items: baseline;
         .icon-down {
-          font-size: 10px;
-          margin-left: 5px;
+          font-size: 20rpx;
+          margin-left: 10rpx;
         }
       }
     }
@@ -314,7 +314,7 @@ export default {
     }
 
     .statement-text {
-      margin-left: 20px;
+      margin-left: 40rpx;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -332,7 +332,7 @@ export default {
     }
   }
   .calendar {
-    margin: 0 10px;
+    margin: 0 20rpx;
   }
 }
 .calendar-expand {
@@ -342,12 +342,12 @@ export default {
 
 .statement-item {
   // background: white;
-  border-radius: 15px 15px 0 0;
+  border-radius: 30rpx 30rpx 0 0;
 }
 
 .popup-box {
   .asset {
-    height: 350px;
+    height: 700rpx;
   }
 }
 </style>

@@ -56,11 +56,11 @@ http.interceptors.response.use(async (response) => { /* 请求之后拦截器。
     // console.log(response)
     if (response && response.data) {
         let data = response.data
-        console.log(data);
+        console.log("响应Data", data);
         // const token = uni.getStorageSync(ACCESS_TOKEN)
         switch (data.code) {
             case 10030:
-                tip.toast_quick(data.message.description);
+                tip.toast_quick(data.message);
                 break;
             case 10000:
             case 10040:

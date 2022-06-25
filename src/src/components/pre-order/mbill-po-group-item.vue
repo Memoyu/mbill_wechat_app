@@ -56,8 +56,8 @@ export default {
 <style lang="scss" scope>
 .mbill-po-group-item {
   display: flex;
-  border-radius: 10px;
-  padding: 10px 18px;
+  border-radius: 20rpx;
+  padding: 20rpx 36rpx;
   align-items: center;
   .group-item-content {
     width: 100%;
@@ -67,14 +67,14 @@ export default {
     justify-content: space-between;
     .group-item-title {
       .title {
-        margin-bottom: 5px;
+        margin-bottom: 10rpx;
         font-weight: bold;
       }
       .info {
         color: $grey-text-color;
-        font-size: 13px;
+        font-size: 26rpx;
         .time {
-          margin-right: 5px;
+          margin-right: 10rpx;
         }
         .note {
         }
@@ -88,24 +88,24 @@ export default {
         display: flex;
         align-items: baseline;
         .char {
-          font-size: 13px;
+          font-size: 26rpx;
         }
         .amount {
-          font-size: 17px;
+          font-size: 34rpx;
           font-weight: bold;
           text-align: center;
         }
       }
       .item-status {
-        margin-top: 5px;
+        margin-top: 10rpx;
         font-weight: bold;
-        font-size: 16px;
+        font-size: 32rpx;
         .done {
-          padding-right: 9px;
+          padding-right: 18rpx;
         }
         .un-done {
-          padding-left: 9px;
-          border-left: solid $light-color 1px;
+          padding-left: 18rpx;
+          border-left: solid $light-color 2rpx;
         }
       }
     }
@@ -117,8 +117,8 @@ export default {
     position: absolute;
     right: 0;
     bottom: 0;
-    border: 17px solid $expend-color;
-    border-radius: 0 0 10px;
+    border: 34rpx solid $expend-color;
+    border-radius: 0 0 20rpx;
     border-top-color: transparent;
     border-left-color: transparent;
   }

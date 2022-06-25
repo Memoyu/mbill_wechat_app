@@ -114,7 +114,6 @@ import {
   GROUP_INDEX_ADD_GROUP,
   GROUP_INDEX_EDIT_GROUP,
   GROUP_INDEX_DEL_GROUP,
-  PROFILE_BILL_STAT_PRE_ORDER_AMOUNT,
 } from "@/store/type";
 import datetime from "@/common/utils/datetime";
 
@@ -225,10 +224,6 @@ export default {
           // console.log(res);
           this.$refs.addGroupDialog.hide();
           this.$store.commit(GROUP_INDEX_DEL_GROUP, group);
-          this.$store.commit(PROFILE_BILL_STAT_PRE_ORDER_AMOUNT, {
-            preAmount: group.preAmount,
-            op: 1,
-          });
         } else {
           this.$tip.alert(res.data.message);
         }
@@ -343,24 +338,24 @@ export default {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    padding: 10px;
+    padding: 20rpx;
     align-items: center;
-    border-radius: 0 0 15px 15px;
+    border-radius: 0 0 30rpx 30rpx;
 
     .date-picker {
       width: 30%;
       .now-date-year {
-        font-size: 15px;
+        font-size: 30rpx;
         font-weight: bold;
       }
       .now-date-month {
-        font-size: 25px;
+        font-size: 50rpx;
         font-weight: bold;
         align-items: baseline;
       }
       .icon-down {
-        font-size: 10px;
-        margin-left: 5px;
+        font-size: 20rpx;
+        margin-left: 10rpx;
       }
     }
 
@@ -373,13 +368,13 @@ export default {
         justify-content: space-around;
       }
       .top {
-        margin-bottom: 10px;
+        margin-bottom: 20rpx;
       }
       .bottom {
-        margin-top: 10px;
+        margin-top: 20rpx;
       }
       .bottom-line {
-        height: 1px;
+        height: 2rpx;
         background: $bright-color;
         width: 100%;
       }
@@ -389,13 +384,13 @@ export default {
       display: flex;
       flex-direction: column;
       align-items: center;
-      min-width: 80px;
+      min-width: 160rpx;
 
       .text {
-        font-size: 12px;
+        font-size: 24rpx;
       }
       .total {
-        font-size: 15px;
+        font-size: 30rpx;
         font-weight: bold;
       }
     }
@@ -404,38 +399,35 @@ export default {
 .group-content {
   width: 95%;
   .group-content-items {
-    margin-top: 10px;
-    padding: 3px 0;
-    border-radius: 13px;
+    margin-top: 20rpx;
+    padding: 6rpx 0;
+    border-radius: 26rpx;
     flex: 1;
-    // padding: 0 15px;
+    // padding: 0 30rpx;
     position: relative;
     background-color: #fff;
-    // border-bottom-color: #f5f5f5;
-    // border-bottom-width: 1px;
-    // border-bottom-style: solid;
   }
   .uni-swipe_button {
-    border-radius: 13px;
-    margin: 0 5px;
-    margin-top: 10px;
+    border-radius: 26rpx;
+    margin: 0 10rpx;
+    margin-top: 20rpx;
   }
 }
 
 .edit-group-input {
   .input-item {
-    margin-top: 10px;
+    margin-top: 20rpx;
     .title {
       color: $grey-text-color;
     }
     .input {
       text-align: right;
-      padding: 5px;
-      margin-bottom: 8px;
+      padding: 10rpx;
+      margin-bottom: 16rpx;
     }
   }
   .input-desc {
-    margin-top: 18px;
+    margin-top: 36rpx;
   }
 }
 

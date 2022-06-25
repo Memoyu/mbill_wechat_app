@@ -78,7 +78,7 @@ export default {
     flex-direction: row;
     justify-content: space-between;
     text-align: center;
-    padding: 0 10px;
+    padding: 0 20rpx;
     .bottom-left-btn {
       width: 60%;
     }
@@ -92,16 +92,16 @@ export default {
     justify-content: space-around;
     align-items: center;
     text-align: center;
-    padding: 0 10px;
+    padding: 0 20rpx;
     .bottom-left-btn {
       width: 90%;
     }
   }
 
   .btn {
-    border: 1px solid $bright-color;
-    border-radius: 12px;
-    padding: 10px 0;
+    border: 2rpx solid $bright-color;
+    border-radius: 24rpx;
+    padding: 20rpx 0;
     font-weight: bold;
   }
 }

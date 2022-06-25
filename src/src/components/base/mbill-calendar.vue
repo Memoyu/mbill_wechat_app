@@ -2,7 +2,7 @@
   <view
     class="mbill-calendar"
     :style="{
-      height: expand ? 'auto' : '0px',
+      height: expand ? 'auto' : '0rpx',
     }"
   >
     <view class="calendar-container">
@@ -397,12 +397,12 @@ export default {
 <style lang="scss" scope>
 .mbill-calendar {
   // padding: 5px 5px;
-  border-radius: 18px;
+  border-radius: 36rpx;
   background-color: white;
   overflow: hidden;
 
   .calendar-container {
-    margin: 5px 0;
+    margin: 10rpx 0;
 
     .threeMonth {
       display: flex;
@@ -419,10 +419,10 @@ export default {
 
     .week {
       display: flex;
-      padding: 0 10px;
+      padding: 0 20rpx;
       justify-content: space-around;
       .week-title {
-        margin: 10px 0;
+        margin: 20rpx 0;
       }
     }
 
@@ -430,7 +430,7 @@ export default {
       display: flex;
       position: relative;
       width: 100%;
-      padding: 0 10px;
+      padding: 0 20rpx;
       justify-content: space-around;
       flex-wrap: wrap;
       text-align: center;
@@ -458,8 +458,8 @@ export default {
             display: block;
             content: "";
             margin-top: 50%;
-            width: 5px;
-            height: 5px;
+            width: 10rpx;
+            height: 10rpx;
             border-radius: 50%;
             background: $dark-color;
           }

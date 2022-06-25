@@ -222,14 +222,14 @@ export default {
 
   watch: {
     "model.type"(val) {
-      console.log("账单类型变更", val);
+      // console.log("账单类型变更", val);
       let type = this.typeList[val];
       // this.model.type = type.id;
       this.typeColor = type.color;
       this.getCategoryGroups();
     },
     date(val) {
-      console.log("日期变更", val);
+      // console.log("日期变更", val);
       let date = new Date(val);
       let year = date.getFullYear();
       let month = date.getMonth() + 1;
@@ -266,7 +266,7 @@ export default {
         })
         .then((res) => {
           if (res.data.code === 0) {
-            console.log("预购分组信息", res.data.result);
+            // console.log("预购分组信息", res.data.result);
             let result = res.data.result;
             this.model.description = result.description;
             this.model.amount = result.realAmount;
@@ -423,11 +423,11 @@ export default {
       }
 
       this.loading = true;
-      try {
-        if (this.bill.id <= 0) {
-          this.$api.addBill(this.bill).then((res) => {
+      if (this.bill.id <= 0) {
+        this.$api
+          .addBill(this.bill)
+          .then((res) => {
             if (res.data.code === 0) {
-              this.loading = false;
               let bill = res.data.result;
               // console.log("添加成功", { bill, date: this.bill.time });
               this.$store.commit(ADD_INDEX_BILL, {
@@ -437,14 +437,17 @@ export default {
               // 如果是预购转账单，此处需要处理
               this.orderToBill(bill.id);
               this.$Router.back();
-            } else {
-              this.$tip.error(res.data.message);
             }
+            this.loading = false;
+          })
+          .catch((err) => {
+            this.loading = false;
           });
-        } else {
-          this.$api.editBill(this.bill).then((res) => {
+      } else {
+        this.$api
+          .editBill(this.bill)
+          .then((res) => {
             if (res.data.code === 0) {
-              this.loading = false;
               let bill = res.data.result;
               // console.log("编辑成功", { bill, date: this.bill.time });
               this.modifyIndexBill({
@@ -452,15 +455,14 @@ export default {
                 date: this.bill.time,
               });
               this.$Router.back();
-            } else {
-              this.$tip.error(res.data.message);
             }
+            this.loading = false;
+          })
+          .catch((err) => {
+            this.loading = false;
           });
-        }
-      } catch {
-        console.log("yicahng");
-        this.loading = false;
       }
+
       // console.log("cof ", this.bill);
     },
 
@@ -527,21 +529,21 @@ export default {
 
 <style lang="scss" scope>
 .header {
-  padding: 0 10px;
+  padding: 0 20rpx;
   background: $light-color;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
   .type-content {
-    font-size: 15px;
-    width: 140px;
+    font-size: 30rpx;
+    width: 280rpx;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     .item {
       color: $light-text-color;
-      padding: 5px 15px;
+      padding: 10rpx 30rpx;
       border: 1rpx solid $bright-color;
       border-radius: 30rpx;
     }
@@ -553,10 +555,10 @@ export default {
   .date-content {
     background: $bright-color;
     border-radius: 30rpx;
-    font-size: 15px;
+    font-size: 30rpx;
     .date-picker {
       .date {
-        padding: 3px 4px 3px 8px;
+        padding: 6rpx 8rpx 6rpx 16rpx;
       }
     }
 
@@ -564,19 +566,19 @@ export default {
       .time {
         border-left: solid $light-color 1px;
         align-items: baseline;
-        padding: 3px 8px 3px 3px;
+        padding: 6rpx 16rpx 6rpx 6rpx;
       }
       .icon-down {
-        font-size: 10px;
-        margin-left: 5px;
+        font-size: 20rpx;
+        margin-left: 10rpx;
       }
     }
   }
 }
 .amount {
   background: $light-color;
-  padding: 0 10px;
-  margin-bottom: 4px;
+  padding: 0 20rpx;
+  margin-bottom: 8rpx;
   background-image: radial-gradient();
   .amount-input {
     display: flex;
@@ -584,7 +586,7 @@ export default {
     align-items: baseline;
   }
   .char {
-    font-size: 20px;
+    font-size: 40rpx;
     font-weight: bold;
   }
   .total {
@@ -592,8 +594,8 @@ export default {
     overflow: hidden;
   }
   .large-font {
-    height: 40px;
-    font-size: 30px;
+    height: 80rpx;
+    font-size: 60rpx;
     font-weight: bold;
   }
 
@@ -602,8 +604,8 @@ export default {
     display: flex;
     overflow-x: auto;
     overflow-y: hidden;
-    height: 22px;
-    margin-bottom: 8px;
+    height: 44rpx;
+    margin-bottom: 16rpx;
     .input-amount-text {
       display: inline-block;
       flex-shrink: 0;
@@ -633,7 +635,7 @@ export default {
   .key-board-header-desc {
     background: #fff;
     .choose-asset {
-      margin-right: 20px;
+      margin-right: 40rpx;
     }
 
     .text {
@@ -659,21 +661,21 @@ export default {
   background-color: #fff;
   border-radius: 20rpx 20rpx 0 0;
   .asset-list {
-    padding: 10px 0;
-    height: 350px;
+    padding: 20rpx 0;
+    height: 700rpx;
   }
 }
 
 .icon {
   color: $primary-color;
-  padding: 5px 10px;
-  font-size: 20px;
+  padding: 10rpx 20rpx;
+  font-size: 40rpx;
 }
 
 .icon-padding {
   color: $primary-color;
-  padding: 10px 10px;
-  font-size: 20px;
+  padding: 20rpx;
+  font-size: 40rpx;
 }
 .icon-color {
   color: $bright-color;

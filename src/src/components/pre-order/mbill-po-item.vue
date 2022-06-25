@@ -57,13 +57,13 @@ export default {
   .order-icon {
     margin-right: 20rpx;
     border-radius: 50%;
-    height: 45px;
+    height: 90rpx;
     .icon-text {
       color: #fff;
       text-align: center;
-      font-size: 20px;
-      line-height: 45px;
-      width: 45px;
+      font-size: 40rpx;
+      line-height: 90rpx;
+      width: 90rpx;
     }
   }
   .order-content {
@@ -74,12 +74,12 @@ export default {
     justify-content: space-between;
     .content-title {
       color: $grey-text-color;
-      font-size: 13px;
+      font-size: 26rpx;
       .time {
-        margin-right: 5px;
+        margin-right: 10rpx;
       }
       .note {
-        font-size: 16px;
+        font-size: 32rpx;
       }
     }
     .content-amount {
@@ -100,8 +100,8 @@ export default {
     position: absolute;
     right: 0;
     bottom: 0;
-    border: 17px solid $expend-color;
-    border-radius: 0 0 10px;
+    border: 34rpx solid $expend-color;
+    border-radius: 0 0 20rpx;
     border-top-color: transparent;
     border-left-color: transparent;
   }

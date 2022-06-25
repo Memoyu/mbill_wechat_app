@@ -12,7 +12,7 @@
         </view>
         <view class="bill-detail-content">
           <view :class="['detail-amount', amountClass]">
-            <view style="font-size: 20px">￥</view>
+            <view style="font-size: 40rpx">￥</view>
             <view> {{ bill.amountFormat }}</view>
           </view>
           <view class="detail-asset">{{ bill.asset }}</view>
@@ -107,22 +107,21 @@ export default {
 <style lang="scss" scope>
 .bill-detail-bg {
   position: absolute;
-  border-radius: 14px;
+  border-radius: 28rpx;
   top: 0;
   left: 50%;
   transform: translate(-50%, 10%);
   width: 80%;
-  // height: 200px;
-  padding: 10px 0;
+  padding: 20rpx 0;
   background-color: #ffffff;
-  border-radius: 25px 25px 0 0;
+  border-radius: 50rpx 50rpx 0 0;
   .circle {
     width: 30rpx;
     height: 30rpx;
     border-radius: 50%;
     background-color: $grey-bright-color;
     position: absolute;
-    top: 170px;
+    top: 340rpx;
     transform: translate(0, -50%);
   }
   .left-circle {
@@ -134,17 +133,17 @@ export default {
   }
   .order-line {
     position: absolute;
-    top: 170px;
+    top: 340rpx;
     z-index: 99;
     width: 100%;
-    height: 2px;
+    height: 4rpx;
     background-image: linear-gradient(
       to right,
       $grey-bright-color 50%,
       $grey-bright-color 50%,
       transparent 0%
     );
-    background-size: 14px 3px;
+    background-size: 28rpx 6rpx;
     background-repeat: repeat-x;
   }
   .bottom-line {
@@ -157,18 +156,19 @@ export default {
     text-align: center;
     .detail-image {
       border-radius: 50%;
-      height: 60px;
-      width: 60px;
+      height: 120rpx;
+      width: 120rpx;
     }
     .detail-category {
       margin-top: 3%;
-      font-size: 25px;
+      font-size: 50rpx;
       font-weight: bold;
     }
     .detail-desc {
       margin-top: 3%;
+      padding: 0 20rpx;
       color: $grey-text-color;
-      font-size: 15px;
+      font-size: 30rpx;
     }
   }
   .bill-detail-content {
@@ -180,23 +180,23 @@ export default {
       display: flex;
       justify-content: center;
       align-items: baseline;
-      font-size: 30px;
+      font-size: 60rpx;
       font-weight: bold;
-      margin-bottom: 5px;
+      margin-bottom: 10rpx;
     }
     .detail-asset {
       color: $grey-text-color;
-      font-size: 15px;
+      font-size: 30rpx;
     }
     .detail-date {
-      margin-top: 13px;
+      margin-top: 26rpx;
       color: $grey-text-color;
-      font-size: 15px;
+      font-size: 30rpx;
     }
     .detail-address {
-      margin-top: 13px;
+      margin-top: 26rpx;
       color: $grey-text-color;
-      font-size: 15px;
+      font-size: 30rpx;
     }
   }
 }
@@ -204,6 +204,6 @@ export default {
   width: 100%;
   position: absolute;
   bottom: 0;
-  margin-bottom: 20px;
+  margin-bottom: 40rpx;
 }
 </style>

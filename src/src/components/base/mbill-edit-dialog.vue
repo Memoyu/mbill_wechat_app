@@ -101,23 +101,23 @@ export default {
     display: flex;
     flex-direction: column;
     background-color: #fff;
-    border-radius: 12px;
-    padding-bottom: 20px;
+    border-radius: 24rpx;
+    padding-bottom: 40rpx;
     .edit-dialog-input {
-      margin: 15px;
+      margin: 30rpx;
       .input-item {
-        margin-top: 10px;
+        margin-top: 20rpx;
         .title {
           color: $grey-text-color;
         }
         .input {
           text-align: right;
-          padding: 5px;
-          margin-bottom: 8px;
+          padding: 10rpx;
+          margin-bottom: 16rpx;
         }
       }
       .input-desc {
-        margin-top: 18px;
+        margin-top: 36rpx;
       }
     }
 
@@ -128,8 +128,8 @@ export default {
     }
     .bill-popup-title {
       text-align: center;
-      padding: 5px;
-      font-size: 18px;
+      padding: 10rpx;
+      font-size: 36rpx;
       font-weight: bold;
     }
   }
@@ -137,7 +137,7 @@ export default {
     width: 100%;
     position: absolute;
     bottom: 0;
-    margin-bottom: 10px;
+    margin-bottom: 20rpx;
   }
 }
 </style>

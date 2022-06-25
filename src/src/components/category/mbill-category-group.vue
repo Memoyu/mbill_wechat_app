@@ -62,29 +62,29 @@ export default {
 
 <style lang="scss" scope>
 .mbill-category-group {
-  margin: 0 10px;
+  margin: 0 20rpx;
   .category-group {
     font-weight: bold;
-    margin-top: 15px;
-    margin-bottom: 5px;
+    margin-top: 30rpx;
+    margin-bottom: 10rpx;
   }
   .category-item {
     display: grid;
-    grid-template-columns: repeat(auto-fill, 70px);
+    grid-template-columns: repeat(auto-fill, 140rpx);
     justify-content: center;
     .item-content {
       display: flex;
       flex-direction: column;
       align-items: center;
-      border-radius: 10px;
-      padding: 7px 0;
+      border-radius: 20rpx;
+      padding: 14rpx 0;
       .image {
-        height: 35px;
-        width: 35px;
+        height: 70rpx;
+        width: 70rpx;
       }
       .text {
         color: $grey-black-text-color;
-        font-size: 13px;
+        font-size: 26rpx;
       }
     }
   }
@@ -94,7 +94,7 @@ export default {
   .to-add-category {
     color: $dark-color;
     font-weight: bold;
-    margin-bottom: 15px;
+    margin-bottom: 30rpx;
     text-align: center;
   }
 }

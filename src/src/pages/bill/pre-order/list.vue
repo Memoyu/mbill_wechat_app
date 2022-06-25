@@ -125,7 +125,6 @@ import {
   GROUP_INDEX_DEL_PRE_ORDER,
   GROUP_INDEX_MODIFY_PRE_ORDER_STATUS,
   GROUP_INDEX_ADD_TO_BILL,
-  PROFILE_BILL_STAT_PRE_ORDER_AMOUNT,
 } from "@/store/type";
 import datetime from "@/common/utils/datetime";
 
@@ -354,15 +353,6 @@ export default {
       this.stat.unDone += 1;
       let preAmount = order.preAmount;
       this.stat.preAmount = (this.stat.preAmount + preAmount).fixed(2);
-      /*this.$store.commit(GROUP_INDEX_MODIFY_PRE_ORDER_AMOUNT, {
-        groupId: order.groupId,
-        preAmount,
-        op: 0,
-      });*/
-      this.$store.commit(PROFILE_BILL_STAT_PRE_ORDER_AMOUNT, {
-        preAmount,
-        op: 0,
-      });
       this.$store.commit(GROUP_INDEX_ADD_PRE_ORDER, order);
     },
 
@@ -386,26 +376,8 @@ export default {
       let groupId = newOrder.groupId;
       if (oldOrder.preAmount < newOrder.preAmount) {
         this.stat.preAmount += diff;
-        /*this.$store.commit(GROUP_INDEX_MODIFY_PRE_ORDER_AMOUNT, {
-          groupId,
-          preAmount: diff,
-          op: 0,
-        });*/
-        this.$store.commit(PROFILE_BILL_STAT_PRE_ORDER_AMOUNT, {
-          preAmount: diff,
-          op: 0,
-        });
       } else if (oldOrder.preAmount > newOrder.preAmount) {
         this.stat.preAmount -= diff;
-        /*this.$store.commit(GROUP_INDEX_MODIFY_PRE_ORDER_AMOUNT, {
-          groupId,
-          preAmount: diff,
-          op: 1,
-        });*/
-        this.$store.commit(PROFILE_BILL_STAT_PRE_ORDER_AMOUNT, {
-          preAmount: diff,
-          op: 1,
-        });
       }
     },
 
@@ -424,15 +396,6 @@ export default {
 
       // 减少金额
       this.stat.preAmount -= order.preAmount;
-      /*this.$store.commit(GROUP_INDEX_MODIFY_PRE_ORDER_AMOUNT, {
-        groupId: order.groupId,
-        preAmount: order.preAmount,
-        op: 1,
-      });*/
-      this.$store.commit(PROFILE_BILL_STAT_PRE_ORDER_AMOUNT, {
-        preAmount: order.preAmount,
-        op: 1,
-      });
       // 减少完成或未完成
       if (order.status == 0) {
         this.stat.unDone -= 1;
@@ -613,9 +576,9 @@ export default {
 .list-header {
   background-color: $light-color;
   width: 100%;
-  border-radius: 0 0 15px 15px;
+  border-radius: 0 0 30rpx 30rpx;
   .list-title {
-    font-size: 20px;
+    font-size: 40rpx;
     font-weight: bold;
     text-align: center;
   }
@@ -625,7 +588,7 @@ export default {
   }
   .list-stat {
     // background-color: $light-color;
-    padding: 10px;
+    padding: 20rpx;
     align-items: center;
     .pre-order-stat {
       display: flex;
@@ -640,13 +603,13 @@ export default {
       display: flex;
       flex-direction: column;
       align-items: center;
-      min-width: 80px;
+      min-width: 160rpx;
 
       .text {
-        font-size: 15px;
+        font-size: 30rpx;
       }
       .total {
-        font-size: 18px;
+        font-size: 36rpx;
         font-weight: bold;
       }
     }
@@ -655,33 +618,33 @@ export default {
 .list-content {
   width: 95%;
   .list-content-items {
-    margin-top: 10px;
-    padding: 5px 0;
-    border-radius: 13px;
+    margin-top: 20rpx;
+    padding: 10rpx 0;
+    border-radius: 26rpx;
     background: white;
   }
   .uni-swipe_button {
-    border-radius: 13px;
-    margin: 0 5px;
-    margin-top: 10px;
+    border-radius: 26rpx;
+    margin: 0 10rpx;
+    margin-top: 20rpx;
   }
 }
 
 .edit-order-dialog {
-  margin: 15px;
+  margin: 30rpx;
   .input-item {
-    margin-top: 10px;
+    margin-top: 20rpx;
     .title {
       color: $grey-text-color;
     }
     .input {
       text-align: right;
-      padding: 5px;
-      margin-bottom: 8px;
+      padding: 10rpx;
+      margin-bottom: 16rpx;
     }
   }
   .input-desc {
-    margin-top: 18px;
+    margin-top: 36rpx;
   }
 }
 

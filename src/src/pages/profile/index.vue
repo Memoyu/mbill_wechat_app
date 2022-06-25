@@ -103,12 +103,12 @@ export default {
           title: "收入金额/元",
         },
         {
-          index: "preOrder",
-          title: "预购金额/元",
-        },
-        {
           index: "expend",
           title: "支出金额/元",
+        },
+        {
+          index: "surplus",
+          title: "结余金额/元",
         },
       ],
       grids: [
@@ -197,30 +197,30 @@ export default {
     background-color: $light-color;
     width: 100%;
     height: 30%;
-    border-radius: 0 0 15px 15px;
+    border-radius: 0 0 30rpx 30rpx;
   }
   .profile-header {
     display: flex;
     flex-direction: row;
     justify-content: flex-end;
     .header-item {
-      margin: 0 15px;
-      font-size: 25px;
+      margin: 0 30rpx;
+      font-size: 50rpx;
     }
   }
   .profile-info {
-    margin: 0 20px;
+    margin: 0 40rpx;
     display: flex;
     align-items: center;
     // justify-content: space-between;
 
     .avatar-image {
-      margin-right: 20px;
+      margin-right: 40rpx;
       .image {
         background: white;
         border-radius: 50%;
-        width: 80px;
-        height: 80px;
+        width: 160rpx;
+        height: 160rpx;
       }
     }
     .user-info {
@@ -228,60 +228,60 @@ export default {
       display: flex;
       flex-direction: column;
       .user-name {
-        font-size: 23px;
+        font-size: 46rpx;
         font-weight: 900;
         color: $grey-black-text-color;
       }
       .user-days {
-        font-size: 14px;
+        font-size: 28rpx;
         color: $bright-color;
       }
     }
   }
   .profile-asset {
     position: relative;
-    margin-top: 30px;
+    margin-top: 60rpx;
     width: 100%;
     .le {
       position: absolute;
-      border-radius: 14px;
-      height: 140px;
+      border-radius: 28rpx;
+      height: 280rpx;
       left: 50%;
       transform: translate(-50%, 0);
     }
     .le-shadow {
-      box-shadow: 0 0 15px #888888b6;
+      box-shadow: 0 0 30rpx #888888b6;
     }
     .le-1 {
-      top: 30px;
+      top: 60rpx;
       width: 90%;
       background: $dark-color;
       .preview-stats {
-        margin: 35px 20px;
+        margin: 70rpx 40rpx;
         .stats-item {
           text-align: center;
           .stats-amount {
             color: white;
-            font-size: 18px;
+            font-size: 35rpx;
             font-weight: bold;
           }
           .stats-title {
             color: $grey-text-color;
-            font-size: 12px;
+            font-size: 24rpx;
           }
         }
       }
     }
     .le-2 {
-      top: 15px;
+      top: 30rpx;
       width: 85%;
       background: $primary-color;
       .preview-stats-refresh {
-        margin-top: -6px;
+        margin-top: -12rpx;
         color: white;
         .icon {
-          font-size: 20px;
-          width: 30px;
+          font-size: 40rpx;
+          width: 60rpx;
           text-align: center;
         }
       }
@@ -293,13 +293,13 @@ export default {
 
     .profile-setting {
       position: absolute;
-      top: 140px;
+      top: 280rpx;
       width: 95%;
       .func {
-        padding: 7px 0;
-        border-radius: 14px;
+        padding: 14rpx 0;
+        border-radius: 28rpx;
         background: white;
-        margin-bottom: 15px;
+        margin-bottom: 30rpx;
       }
       .grid-func {
         .grids {
@@ -307,43 +307,43 @@ export default {
           align-items: center;
           flex-direction: row;
           justify-content: space-around;
-          margin: 10px;
+          margin: 20rpx;
           .grid-item {
-            height: 60px;
-            width: 60px;
+            height: 120rpx;
+            width: 120rpx;
             // border-radius: 50%;
             align-items: center;
             // background: $grey-bright-color;
             text-align: center;
-            font-size: 14px;
+            font-size: 28rpx;
             .func-icon {
               color: $primary-color;
-              font-size: 25px;
+              font-size: 50rpx;
             }
           }
         }
       }
       .cells-func {
         .cells {
-          margin: 0 15px;
+          margin: 0 30rpx;
           .cell-item {
             display: flex;
             align-items: flex-start;
-            font-size: 16px;
-            padding: 15px 0 0 0;
+            font-size: 32rpx;
+            padding: 30rpx 0 0 0;
 
             .cell-item-icon {
-              margin-right: 15px;
-              font-size: 25px;
+              margin-right: 30rpx;
+              font-size: 50rpx;
             }
             .cell-item-content {
               width: 100%;
               .item-title {
                 width: 100%;
-                margin-bottom: 15px;
+                margin-bottom: 30rpx;
               }
               .bottom-line {
-                height: 1px;
+                height: 2rpx;
                 background: $bright-color;
                 width: 100%;
               }
@@ -354,7 +354,7 @@ export default {
     }
   }
   .to-detail-icon {
-    font-size: 12px;
+    font-size: 24rpx;
     color: $bright-color;
   }
 }

@@ -183,8 +183,8 @@ export default {
       &-image {
         margin-right: 20rpx;
         border-radius: 50%;
-        height: 35px;
-        width: 35px;
+        height: 70rpx;
+        width: 70rpx;
       }
       .icon-container {
         display: flex;

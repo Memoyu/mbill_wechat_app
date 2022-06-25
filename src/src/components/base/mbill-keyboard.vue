@@ -13,7 +13,7 @@
         <text v-if="!numKey.icon">{{ numKey.value }}</text>
         <i
           v-else
-          style="font-size: 25px"
+          style="font-size: 50rpx"
           :class="['iconfont', 'icon-' + numKey.icon]"
         />
       </view>
@@ -30,13 +30,16 @@
         <view v-if="op.value === 'confirm'">
           <i
             v-if="!loading"
-            style="font-size: 20px"
+            style="font-size: 40rpx"
             :class="['iconfont', 'icon-' + op.icon]"
           />
           <view v-else class="confirm-loading"></view>
         </view>
         <view v-else>
-          <i style="font-size: 20px" :class="['iconfont', 'icon-' + op.icon]" />
+          <i
+            style="font-size: 40rpx"
+            :class="['iconfont', 'icon-' + op.icon]"
+          />
         </view>
       </view>
     </view>
@@ -343,7 +346,7 @@ export default {
 <style lang="scss" scope>
 .board {
   background-color: #ffffff;
-  padding: 0 10px 10px 10px;
+  padding: 0 20rpx 20rpx 20rpx;
   .key-num {
     width: 534rpx;
     display: flex;
@@ -352,7 +355,7 @@ export default {
 
     .key {
       color: $primary-text-color;
-      font-size: 19px;
+      font-size: 38rpx;
       font-weight: bold;
       text-align: center;
       line-height: 110rpx;
@@ -366,7 +369,7 @@ export default {
     width: 190rpx;
 
     .operator {
-      font-size: 19px;
+      font-size: 38rpx;
       font-weight: bolder;
       text-align: center;
       line-height: 110rpx;
@@ -375,13 +378,13 @@ export default {
     }
 
     .confirm {
-      font-size: 19px;
+      font-size: 38rpx;
       font-weight: bolder;
       text-align: center;
       line-height: 220rpx;
       height: 220rpx;
       background: $light-color;
-      border-radius: 16px;
+      border-radius: 32rpx;
       //border: 1rpx solid #6699ff;
       display: flex;
       justify-content: space-around;
@@ -390,15 +393,15 @@ export default {
   }
 
   .key-click {
-    border-radius: 16px;
+    border-radius: 32rpx;
     background: $primary-color !important;
     // transform: scale(1.1);
   }
 
   .confirm-loading {
     position: relative;
-    width: 30upx;
-    height: 30upx;
+    width: 30rpx;
+    height: 30rpx;
     border-radius: 50%;
     background: $primary-color;
     -webkit-animation: confirm-loading 1.5s infinite linear;
@@ -407,15 +410,15 @@ export default {
   .confirm-loading:after {
     content: "";
     position: absolute;
-    width: 50upx;
-    height: 50upx;
-    border-top: 10upx solid $bright-color;
-    border-bottom: 10upx solid $bright-color;
-    border-left: 10upx solid transparent;
-    border-right: 10upx solid transparent;
+    width: 50rpx;
+    height: 50rpx;
+    border-top: 10rpx solid $bright-color;
+    border-bottom: 10rpx solid $bright-color;
+    border-left: 10rpx solid transparent;
+    border-right: 10rpx solid transparent;
     border-radius: 50%;
-    top: -20upx;
-    left: -20upx;
+    top: -20rpx;
+    left: -20rpx;
   }
   @-webkit-keyframes confirm-loading {
     0% {

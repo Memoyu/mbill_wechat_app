@@ -5,7 +5,6 @@ import {
     INIT_BILL,
     INDEX_BILL_STAT,
     PROFILE_BILL_STAT,
-    PROFILE_BILL_STAT_PRE_ORDER_AMOUNT,
     INDEX_BILL_TAGS,
     INDEX_CUR_MONTH,
     ADD_INDEX_BILL,
@@ -27,11 +26,8 @@ const state = {
 
     profileStat: {
         expend: 0,
-        expendFormat: "0",
         income: 0,
-        incomeFormat: "0",
-        preOrder: 0,
-        preOrderFormat: "0",
+        surplus: 0,
     },
 }
 
@@ -54,11 +50,8 @@ const mutations = {
         };
         state.profileStat = {
             expend: 0,
-            expendFormat: "0",
             income: 0,
-            incomeFormat: "0",
-            preOrder: 0,
-            preOrderFormat: "0",
+            surplus: 0,
         };
     },
     [INDEX_BILL_STAT]: (state, stat) => {
@@ -92,6 +85,7 @@ const mutations = {
                 state.indexStat.income = calcTotalStat(state.indexStat.income, bill.amount, 0)
                 state.profileStat.income = calcTotalStat(state.profileStat.income, bill.amount, 0)
             }
+            state.profileStat.surplus = calcTotalStat(state.profileStat.income, state.profileStat.expend, 1);
             // 顺便加个格式化的金额
             bill.amountFormat = calcTotalStat("0", bill.amount, 0);
 
@@ -211,6 +205,7 @@ const mutations = {
                         state.indexStat.income = calcTotalStat(state.indexStat.income, bill.amount, 1)
                         state.profileStat.income = calcTotalStat(state.profileStat.income, bill.amount, 1)
                     }
+                    state.profileStat.surplus = calcTotalStat(state.profileStat.income, state.profileStat.expend, 1);
 
                     //  3、处理标识
                     let year = state.indexCurMonth.year;
@@ -241,10 +236,6 @@ const mutations = {
 
     [PROFILE_BILL_STAT]: (state, stat) => {
         state.profileStat = stat;
-    },
-
-    [PROFILE_BILL_STAT_PRE_ORDER_AMOUNT]: (state, { preAmount, op }) => {
-        state.profileStat.preOrder = calcTotalStat(state.profileStat.preOrder, preAmount, op)
     },
 }
 
@@ -367,6 +358,7 @@ const actions = {
 
                                     }
                                 }
+                                state.profileStat.surplus = calcTotalStat(state.profileStat.income, state.profileStat.expend, 1);
                             }
 
 
@@ -418,7 +410,7 @@ const calcTotalStat = (src, incr, op) => {
     // console.log("src", src, incr, op);
     let sum = 0;
     let f = Number(src.toString().replace(/,/g, ''));
-    let l = Number(incr)
+    let l = Number(incr.toString().replace(/,/g, ''))
     if (op === 0) {
         let t = f + l;
         sum = t.fixed(2);
