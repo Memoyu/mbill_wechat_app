@@ -408,17 +408,25 @@ export default {
       };
 
       if (this.bill.amount === 0 || isNaN(this.bill.amount)) {
-        this.$tip.toast("金额不能为零");
+        this.$tip.toast_quick("金额不能为零");
         return false;
       }
 
       if (this.bill.categoryId <= 0) {
-        this.$tip.toast("请选择分类");
+        this.$tip.toast_quick("请选择分类");
         return false;
       }
 
       if (this.bill.assetId <= 0) {
-        this.$tip.toast("请选择账户");
+        this.$tip.toast_quick("请选择账户");
+        return false;
+      }
+
+      if (
+        this.bill.description.length > 0 &&
+        this.bill.description.length > 40
+      ) {
+        this.$tip.toast_quick("备注不能超过40个字哦");
         return false;
       }
 
