@@ -26,7 +26,7 @@
 
 ## 相关项目
 
-✨[采用.NET5实现的后端服务 - Memoyu/mbill_service](https://github.com/Memoyu/mbill_service)
+✨[采用.NET6实现的后端服务 - Memoyu/mbill_service](https://github.com/Memoyu/mbill_service)
 
 ✨[采用Blazor+Ant Blazor实现后端管理 - Memoyu/mbill_blazor_admin](https://github.com/Memoyu/mbill_blazor_admin)
 
