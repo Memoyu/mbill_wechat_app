@@ -7,9 +7,9 @@
       <view class="content-title">
         <view class="content-title-text">
           <view class="title">{{ bill.category }}</view>
-          <text class="time"
-            >{{ showdate ? bill.date : "" }} {{ bill.time }}</text
-          >
+          <text class="time">{{
+            (showdate ? (bill.date ? bill.date : "") : "") + bill.time
+          }}</text>
         </view>
         <view class="info">
           <text class="note one-t">{{ bill.description }}</text>

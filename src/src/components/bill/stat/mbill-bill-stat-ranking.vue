@@ -74,9 +74,9 @@
                 getRanking(index)
               }}</view>
               <mb-b-item class="ranking-item" :bill="item" :showdate="true" />
-              <view class="right-icon-content">
+              <!-- <view class="right-icon-content">
                 <i class="iconfont icon-to right-icon" />
-              </view>
+              </view> -->
             </view>
           </view>
         </view>
