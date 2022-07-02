@@ -141,7 +141,9 @@ export default {
         //点击 哪一天
         let day = this.monthList[1][index].day;
         if (this.monthList[1][index].fromMonth == "nextMonth") {
-          if (this.isCurrentDate()) return;
+          let canTo = this.isCanToNextMonth(this.monthList[1][index]);
+          // console.log("select", this.monthList[1][index], canTo);
+          if (!canTo) return;
           // 如果 点击下一月的日期 跳转下一月
           this.xyy();
         } else if (this.monthList[1][index].fromMonth == "lastMonth") {
@@ -371,13 +373,22 @@ export default {
       this.$emit("changemonth", { year, month });
     },
 
-    // 是否未当前日期
+    // 是否为当前日期
     isCurrentDate() {
       let year = now.getFullYear();
       let month = now.getMonth() + 1;
-      // console.log(this.nowYear, this.nowMonth);
+      // console.log("this", this.nowYear, this.nowMonth);
       // 是当前月，则不能再往下滑动了
       return year == this.nowYear && month == this.nowMonth;
+    },
+
+    // 是否能跳转到下个月
+    isCanToNextMonth(date) {
+      let year = now.getFullYear();
+      let month = now.getMonth() + 1;
+      // console.log("date", date.year, date.month, year, month);
+      // 是当前月，则不能再往下滑动了
+      return year >= date.year && month >= date.month;
     },
 
     // 获取当前日期选项高度，用于计算当前组件日期高度

@@ -10,6 +10,7 @@
           @change="handlePickerChange"
           fields="month"
           :value="pickerDate"
+          :end="pickerEnd"
         >
           <view class="now-date x-c">
             <text>{{ pickerDateText.year }}年{{ pickerDateText.month }}月</text>
@@ -103,6 +104,7 @@ export default {
         year: now.getFullYear(),
         month: now.getMonth() + 1,
       },
+      pickerEnd: datetime.getCurDate(),
       indexPage: {
         page: 1,
         size: 15,
