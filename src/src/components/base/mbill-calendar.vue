@@ -56,7 +56,7 @@
 </template>
 
 <script>
-const currentDate = new Date();
+const now = new Date();
 export default {
   name: "mbill-calendar",
   props: {
@@ -75,12 +75,12 @@ export default {
   },
   data() {
     return {
-      nowYear: currentDate.getFullYear(), //获取年份
-      nowMonth: currentDate.getMonth() + 1, //获取月份
+      nowYear: now.getFullYear(), //获取年份
+      nowMonth: now.getMonth() + 1, //获取月份
       selectedDate: {
-        year: currentDate.getFullYear(),
-        month: currentDate.getMonth() + 1,
-        day: currentDate.getDate(),
+        year: now.getFullYear(),
+        month: now.getMonth() + 1,
+        day: now.getDate(),
       },
       monthList: [],
       dayLeft: 0,
@@ -107,7 +107,7 @@ export default {
 
   watch: {
     date(newValue, oldValue) {
-      console.log(newValue);
+      // console.log(newValue);
       this.dateChange(newValue);
     },
 
@@ -373,8 +373,8 @@ export default {
 
     // 是否未当前日期
     isCurrentDate() {
-      let year = currentDate.getFullYear();
-      let month = currentDate.getMonth() + 1;
+      let year = now.getFullYear();
+      let month = now.getMonth() + 1;
       // console.log(this.nowYear, this.nowMonth);
       // 是当前月，则不能再往下滑动了
       return year == this.nowYear && month == this.nowMonth;

@@ -5,9 +5,13 @@
     </view>
     <view class="bill-content">
       <view class="content-title">
-        <view class="title">{{ bill.category }}</view>
+        <view class="content-title-text">
+          <view class="title">{{ bill.category }}</view>
+          <text class="time"
+            >{{ showdate ? bill.date : "" }} {{ bill.time }}</text
+          >
+        </view>
         <view class="info">
-          <text class="time">{{ bill.time }}</text>
           <text class="note one-t">{{ bill.description }}</text>
         </view>
       </view>
@@ -27,6 +31,10 @@ export default {
     bill: {
       type: Object,
       default: {},
+    },
+    showdate: {
+      type: Boolean,
+      default: false,
     },
   },
   methods: {
@@ -68,17 +76,23 @@ export default {
     flex-direction: row;
     justify-content: space-between;
     .content-title {
-      .title {
-        margin-bottom: 10rpx;
-        font-weight: bold;
-      }
-      .info {
+      &-text {
         display: flex;
-        color: $grey-text-color;
-        font-size: 26rpx;
+        align-items: center;
+        .title {
+          margin: 0 10rpx 10rpx 0;
+          font-weight: bold;
+        }
         .time {
+          color: $grey-text-color;
+          font-size: 25rpx;
           margin-right: 10rpx;
         }
+      }
+      .info {
+        height: 30rpx;
+        color: $grey-text-color;
+        font-size: 26rpx;
         .note {
         }
       }

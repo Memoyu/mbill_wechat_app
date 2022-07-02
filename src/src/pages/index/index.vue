@@ -63,7 +63,13 @@
         height: scrollHeight + 'px',
       }"
       scroll-y="true"
-      @scrolltolower="lowerBottom"
+      :refresher-enabled="true"
+      :refresher-triggered="triggered"
+      @scrolltolower="onLowerBottom"
+      @refresherpulling="onPulling"
+      @refresherrefresh="onRefresh"
+      @refresherrestore="onRestore"
+      @refresherabort="onAbort"
     >
       <mb-b-day-group :groups="indexBills" />
       <mb-ba-login-hint v-if="!isLogin" />
@@ -113,6 +119,8 @@ export default {
       scrollHeight: 0,
       scrollMaxHeight: 0,
       state: 1,
+      triggered: false,
+      freshing: false,
     };
   },
   computed: {
@@ -125,7 +133,8 @@ export default {
   },
   onLoad() {
     this.getFixedHeight();
-    this.initData();
+    this.triggered = true;
+    this.onRefresh();
   },
   onShow() {
     this.setTabBarIndex(0);
@@ -135,10 +144,14 @@ export default {
     ...mapActions(["getIndexTotalStat", "getIndexBillTags", "getIndexBills"]),
     // 初始化数据
     initData() {
-      this.getIndexTotalStat(this.pickerDate);
-      this.getIndexBillTags(this.pickerDate);
-      this.indexPage.page = 1;
-      this.getMonthBills(true);
+      return new Promise((resolve, reject) => {
+        this.getIndexTotalStat(this.pickerDate);
+        this.getIndexBillTags(this.pickerDate);
+        this.indexPage.page = 1;
+        this.getMonthBills(true)
+          .then((res) => resolve(res))
+          .catch((err) => reject(err));
+      });
     },
 
     //#region 接口请求
@@ -147,7 +160,7 @@ export default {
     getMonthBills(init = false) {
       if (this.loading) return;
       this.loading = true;
-      this.getIndexBills({
+      return this.getIndexBills({
         date: this.pickerDate,
         page: this.indexPage,
         isInit: init,
@@ -273,8 +286,31 @@ export default {
       }
     },
 
+    // 自定义下拉刷新控件被下拉
+    onPulling(e) {
+      // console.log("onpulling", e);
+      if (e.detail.deltaY < 0) return; // 防止上滑页面也触发下拉
+      this.triggered = true;
+    },
+
+    // 自定义下拉刷新被触发
+    async onRefresh() {
+      if (this.freshing) return;
+      this.freshing = true;
+      this.initData().finally((res) => {
+        this.triggered = false;
+        this.freshing = false;
+      });
+    },
+    // 自定义下拉刷新被复位
+    onRestore() {
+      this.triggered = "restore"; // 需要重置
+    },
+    // 自定义下拉刷新被中止
+    onAbort() {},
+
     // scroll触底事件
-    lowerBottom() {
+    onLowerBottom() {
       // console.log("触底加载");
       if (this.indexPage.page * this.indexPage.size >= this.indexTotal) return;
       // console.log("加载");

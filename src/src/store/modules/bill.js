@@ -245,32 +245,38 @@ const actions = {
 
     // 获取首页指定月份账单总金额
     getIndexTotalStat({ commit }, params) {
-        // console.log("Total", params);
-        api.monthTotalStat({
-            month: datetime.getCurDate(new Date(params)),
-        }).then((res) => {
-            // console.log("stat", res);
-            if (res.data.code === 0) {
-                commit(INDEX_BILL_STAT, res.data.result)
-            }
+        return new Promise((resolve, reject) => {
+            // console.log("Total", params);
+            api.monthTotalStat({
+                month: datetime.getCurDate(new Date(params)),
+            }).then((res) => {
+                // console.log("stat", res);
+                if (res.data.code === 0) {
+                    commit(INDEX_BILL_STAT, res.data.result)
+                }
+                resolve();
+            }).catch((err) => { reject(err) });
         });
     },
 
     // 获取首页指定月份范围内的账单日期
     getIndexBillTags({ commit }, params) {
-        // 会涉及跨年，需要处理
-        let date = new Date(params);
-        let prev = datetime.getPrevMonth(date);
-        let next = datetime.getNextMonth(date);
-        // console.log(prev, next);
-        api.hasBillDays({
-            beginDate: `${prev.year}-${prev.month}`,
-            endDate: `${next.year}-${next.month}`,
-        }).then((res) => {
-            // console.log("tags", res);
-            if (res.data.code === 0) {
-                commit(INDEX_BILL_TAGS, res.data.result)
-            }
+        return new Promise((resolve, reject) => {
+            // 会涉及跨年，需要处理
+            let date = new Date(params);
+            let prev = datetime.getPrevMonth(date);
+            let next = datetime.getNextMonth(date);
+            // console.log(prev, next);
+            api.hasBillDays({
+                beginDate: `${prev.year}-${prev.month}`,
+                endDate: `${next.year}-${next.month}`,
+            }).then((res) => {
+                // console.log("tags", res);
+                if (res.data.code === 0) {
+                    commit(INDEX_BILL_TAGS, res.data.result)
+                }
+                resolve();
+            }).catch((err) => { reject(err) });
         });
     },
 
@@ -278,7 +284,7 @@ const actions = {
     getIndexBills({ commit }, { date, page, isInit }) {
         return new Promise((resolve, reject) => {
             // console.log("init", isInit);
-            if (isInit) commit(ADD_INDEX_BILLS, { bills: [], isCover: true })
+
             let month = datetime.getCurDate(new Date(date));
             commit(INDEX_CUR_MONTH, month)
             api.monthBills({
@@ -287,6 +293,7 @@ const actions = {
             }).then((res) => {
                 // console.log("list", res);
                 if (res.data.code === 0) {
+                    if (isInit) commit(ADD_INDEX_BILLS, { bills: [], isCover: true })
                     let total = res.data.result.total;
                     let items = res.data.result.items;
                     if (state.indexBills.length > 0) {
@@ -299,7 +306,7 @@ const actions = {
 
                     resolve(total);
                 }
-            });
+            }).catch((err) => { reject(err) });
         });
     },
 

@@ -55,23 +55,25 @@
     </view>
 
     <!-- 排行列表 -->
-    <view
-      v-if="rankings.length > 0"
-      class="mb-stat-ranking-content"
-      :style="{ height: scrollH + 'px' }"
-    >
+    <view class="mb-stat-ranking-content" :style="{ height: scrollH + 'px' }">
       <scroll-view
         scroll-y="true"
         style="height: 100%"
-        @scrolltolower="lowerBottom"
+        :refresher-enabled="true"
+        :refresher-triggered="triggered"
+        @scrolltolower="onLowerBottom"
+        @refresherpulling="onPulling"
+        @refresherrefresh="onRefresh"
+        @refresherrestore="onRestore"
+        @refresherabort="onAbort"
       >
-        <view class="mb-stat-ranking-bg-br">
+        <view class="mb-stat-ranking-bg-br" v-if="rankings.length > 0">
           <view v-for="(item, index) in rankings" :key="index">
             <view class="ranking-item-content">
               <view v-if="index < 20" class="ranking-num">{{
                 getRanking(index)
               }}</view>
-              <mb-b-item class="ranking-item" :bill="item" />
+              <mb-b-item class="ranking-item" :bill="item" :showdate="true" />
               <view class="right-icon-content">
                 <i class="iconfont icon-to right-icon" />
               </view>
@@ -107,7 +109,7 @@ export default {
       billType: 0,
       billTypes: ["支出", "收入"],
       category: 0,
-      categories: [{ id: 0, name: "选择分类" }],
+      categories: [],
       categoryId: 0,
       dateActive: 0,
       dateTypes: [
@@ -306,6 +308,8 @@ export default {
         size: 15,
       },
       rankingTotal: 0,
+      triggered: false,
+      freshing: false,
     };
   },
   watch: {
@@ -323,26 +327,23 @@ export default {
       this.init = true;
       // 初始化数据
       // console.log("初始化数据-排行榜");
-      this.loadStatData();
       this.loadCategoriesData();
+      this.triggered = true;
+      this.onRefresh();
     },
 
     // 加载数据
     loadStatData() {
-      this.$tip.loading();
       this.rankingPage.page = 1;
-      try {
-        this.loadRanking(true);
-      } finally {
-        this.$tip.loaded();
-      }
+      var p1 = this.loadRanking(true);
+      return Promise.all([p1]);
     },
 
     // 加载统计汇总数据
     loadRanking(init = false) {
       if (this.loading) return;
       this.loading = true;
-      this.$api
+      return this.$api
         .billRanking({
           date: this.date,
           dateType: this.dateActive,
@@ -370,7 +371,8 @@ export default {
         // console.log("列表", res);
         if (res.data.code === 0) {
           let data = res.data.result;
-          this.categories = this.categories.concat(data);
+          this.categories = data;
+          this.categories.unshift({ id: 0, name: "选择分类" });
         }
       });
     },
@@ -397,8 +399,8 @@ export default {
       this.billType = detail.value;
       this.category = 0;
       this.categoryId = 0;
-      this.loadStatData();
       this.loadCategoriesData();
+      this.loadStatData();
     },
 
     // 账单分类选择
@@ -426,8 +428,31 @@ export default {
       return index + 1;
     },
 
+    // 自定义下拉刷新控件被下拉
+    onPulling(e) {
+      // console.log("onpulling", e);
+      if (e.detail.deltaY < 0) return; // 防止上滑页面也触发下拉
+      this.triggered = true;
+    },
+
+    // 自定义下拉刷新被触发
+    async onRefresh() {
+      if (this.freshing) return;
+      this.freshing = true;
+      this.loadStatData().finally((res) => {
+        this.triggered = false;
+        this.freshing = false;
+      });
+    },
+    // 自定义下拉刷新被复位
+    onRestore() {
+      this.triggered = "restore"; // 需要重置
+    },
+    // 自定义下拉刷新被中止
+    onAbort() {},
+
     // scroll触底事件
-    lowerBottom() {
+    onLowerBottom() {
       // console.log("触底加载");
       if (this.rankingPage.page * this.rankingPage.size >= this.rankingTotal)
         return;

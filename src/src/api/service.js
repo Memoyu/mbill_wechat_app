@@ -17,6 +17,7 @@ const getTokenStorage = () => {
 const http = new Request()
 http.setConfig((config) => {
     config.baseURL = API_URL
+    config.timeout = 10000 // 十秒请求超时
     config.header = {
         ...config.header,
         'content-type': 'application/json',
@@ -108,7 +109,8 @@ http.interceptors.response.use(async (response) => { /* 请求之后拦截器。
                 break
         }
     }
-    // console.log("从这走");
+    // console.log("从这走", response);
+    tip.toast_quick("网络错误，请稍后再试");
     return Promise.reject(response);
 })
 

@@ -8,108 +8,114 @@
         @selected.stop="handleSelectedMonth"
       />
     </view>
-    <view class="mb-stat-month-content" :style="{ height: scrollH + 'px' }">
-      <scroll-view scroll-y="true" style="height: 100%">
-        <!-- 当月收支统计 -->
-        <view class="content-total x-ac">
-          <view class="content-total-month y-bc">
-            <text class="content-total-month-expend">{{ stat.expend }}</text>
-            <text class="content-total-title">当月支出</text>
+    <!-- <view> -->
+    <scroll-view
+      class="mb-stat-month-content"
+      :style="{ height: scrollH + 'px' }"
+      scroll-y="true"
+      :refresher-enabled="true"
+      :refresher-triggered="triggered"
+      @refresherpulling="onPulling"
+      @refresherrefresh="onRefresh"
+      @refresherrestore="onRestore"
+      @refresherabort="onAbort"
+    >
+      <!-- 当月收支统计 -->
+      <view class="content-total x-ac">
+        <view class="content-total-month y-bc">
+          <text class="content-total-month-expend">{{ stat.expend }}</text>
+          <text class="content-total-title">当月支出</text>
+        </view>
+        <view>
+          <view class="content-total-month">
+            <text class="content-total-title">当月收入：</text>
+            <text class="content-total-bold">{{ stat.income }}</text>
           </view>
-          <view>
-            <view class="content-total-month">
-              <text class="content-total-title">当月收入：</text>
-              <text class="content-total-bold">{{ stat.income }}</text>
-            </view>
-            <view class="content-total-month content-total-mg-top">
-              <text class="content-total-title">平均支出：</text>
-              <text class="content-total-bold">{{ stat.expendAvg }}</text>
-            </view>
+          <view class="content-total-month content-total-mg-top">
+            <text class="content-total-title">平均支出：</text>
+            <text class="content-total-bold">{{ stat.expendAvg }}</text>
           </view>
         </view>
+      </view>
 
-        <!-- 当月收支趋势统计 -->
-        <view class="x-bc">
-          <view class="mb-stat-divide-title">收/支趋势</view>
-          <view class="mb-stat-tarea-hint x-f">
-            <view class="mb-stat-tarea-hint-item x-f">
-              <view class="point income-bg-color"></view>
-              <view class="">收入</view>
-            </view>
-            <view class="mb-stat-tarea-hint-item x-f">
-              <view class="point expend-bg-color"></view>
-              <view class="">支出</view>
-            </view>
+      <!-- 当月收支趋势统计 -->
+      <view class="x-bc">
+        <view class="mb-stat-divide-title">收/支趋势</view>
+        <view class="mb-stat-tarea-hint x-f">
+          <view class="mb-stat-tarea-hint-item x-f">
+            <view class="point income-bg-color"></view>
+            <view class="">收入</view>
+          </view>
+          <view class="mb-stat-tarea-hint-item x-f">
+            <view class="point expend-bg-color"></view>
+            <view class="">支出</view>
           </view>
         </view>
-        <view class="mb-stat-month-bg-br">
-          <view class="charts-box">
-            <qiun-data-charts
-              type="tarea"
-              :chartData="monthTrend"
-              :canvas2d="canvas2d"
-              :ontouch="true"
-              inScrollView="true"
-            />
-          </view>
-          <view class="mb-stat-month-rang x-ac">
-            <view class="y-bc">
-              <text class="mb-stat-month-rang-num">{{
-                range.incomeHighest
-              }}</text>
-              <text class="mb-stat-month-rang-text">最高收入/元</text>
-            </view>
-            <view class="y-bc">
-              <text class="mb-stat-month-rang-num">{{
-                range.incomeLowst
-              }}</text>
-              <text class="mb-stat-month-rang-text">最低收入/元</text>
-            </view>
-            <view class="y-bc">
-              <text class="mb-stat-month-rang-num">{{
-                range.expendHighest
-              }}</text>
-              <text class="mb-stat-month-rang-text">最高支出/元</text>
-            </view>
-            <view class="y-bc">
-              <text class="mb-stat-month-rang-num">{{
-                range.expendLowst
-              }}</text>
-              <text class="mb-stat-month-rang-text">最低支出/元</text>
-            </view>
-          </view>
-        </view>
-
-        <!-- 当月分类数据统计 -->
-        <view class="x-bc">
-          <view class="mb-stat-divide-title">分类占比</view>
-          <picker @change="handleTypePickerChange" :value="type" :range="types">
-            <view class="type-picker x-c">
-              <view>{{ types[type] }}</view>
-              <i class="iconfont icon-bottom icon-down" />
-            </view>
-          </picker>
-        </view>
-        <view class="mb-stat-month-bg-br">
-          <view class="charts-box">
-            <mb-ba-empty v-if="isEmpty" />
-            <qiun-data-charts
-              v-else
-              type="ring"
-              :canvas2d="canvas2d"
-              :chartData="monthCategoryPercent"
-              inScrollView="true"
-            />
-          </view>
-        </view>
-        <view v-if="categoryGroups.length > 0" class="mb-stat-month-bg-br">
-          <mb-stat-category-group
-            :groups="categoryGroups"
-            @select="handleCategoryClick"
+      </view>
+      <view class="mb-stat-month-bg-br">
+        <view class="charts-box">
+          <qiun-data-charts
+            type="tarea"
+            :chartData="monthTrend"
+            :canvas2d="canvas2d"
+            :ontouch="true"
+            inScrollView="true"
           />
         </view>
-      </scroll-view>
-    </view>
+        <view class="mb-stat-month-rang x-ac">
+          <view class="y-bc">
+            <text class="mb-stat-month-rang-num">{{
+              range.incomeHighest
+            }}</text>
+            <text class="mb-stat-month-rang-text">最高收入/元</text>
+          </view>
+          <view class="y-bc">
+            <text class="mb-stat-month-rang-num">{{ range.incomeLowst }}</text>
+            <text class="mb-stat-month-rang-text">最低收入/元</text>
+          </view>
+          <view class="y-bc">
+            <text class="mb-stat-month-rang-num">{{
+              range.expendHighest
+            }}</text>
+            <text class="mb-stat-month-rang-text">最高支出/元</text>
+          </view>
+          <view class="y-bc">
+            <text class="mb-stat-month-rang-num">{{ range.expendLowst }}</text>
+            <text class="mb-stat-month-rang-text">最低支出/元</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 当月分类数据统计 -->
+      <view class="x-bc">
+        <view class="mb-stat-divide-title">分类占比</view>
+        <picker @change="handleTypePickerChange" :value="type" :range="types">
+          <view class="type-picker x-c">
+            <view>{{ types[type] }}</view>
+            <i class="iconfont icon-bottom icon-down" />
+          </view>
+        </picker>
+      </view>
+      <view class="mb-stat-month-bg-br">
+        <view class="charts-box">
+          <mb-ba-empty v-if="isEmpty" />
+          <qiun-data-charts
+            v-else
+            type="ring"
+            :canvas2d="canvas2d"
+            :chartData="monthCategoryPercent"
+            inScrollView="true"
+          />
+        </view>
+      </view>
+      <view v-if="categoryGroups.length > 0" class="mb-stat-month-bg-br">
+        <mb-stat-category-group
+          :groups="categoryGroups"
+          @select="handleCategoryClick"
+        />
+      </view>
+    </scroll-view>
+    <!-- </view> -->
   </view>
 </template>
 
@@ -152,6 +158,8 @@ export default {
       monthTrend: {},
       monthCategoryPercent: {},
       categoryGroups: [],
+      triggered: false,
+      freshing: false,
     };
   },
   watch: {
@@ -172,19 +180,17 @@ export default {
       this.init = true;
       // 初始化数据
       // console.log("初始化数据-月数据");
-      this.loadStatData();
+      this.triggered = true;
+      this.onRefresh();
     },
 
     // 加载数据
     loadStatData() {
-      this.$tip.loading();
-      try {
-        this.loadSummaryStat();
-        this.loadMonthTrendData();
-        this.loadCategoryStat();
-      } finally {
-        this.$tip.loaded();
-      }
+      var p1 = this.loadSummaryStat();
+      var p2 = this.loadMonthTrendData();
+      var p3 = this.loadCategoryPercent();
+      var p4 = this.loadCategoryPercentList();
+      return Promise.all([p1, p2, p3, p4]);
     },
 
     // 加载分类占比
@@ -195,7 +201,7 @@ export default {
 
     // 加载统计汇总数据
     loadSummaryStat() {
-      this.$api
+      return this.$api
         .monthTotalStat({
           month: this.selectMonth,
           opearte: 1,
@@ -209,7 +215,7 @@ export default {
     },
     // 加载月收支趋势数据
     loadMonthTrendData() {
-      this.$api
+      return this.$api
         .monthTotalTrend({
           month: this.selectMonth,
         })
@@ -234,7 +240,7 @@ export default {
     },
     // 加载分类占比数据
     loadCategoryPercent() {
-      this.$api
+      return this.$api
         .categoryPercent({
           date: this.selectMonth,
           type: 0, // 月统计
@@ -255,7 +261,7 @@ export default {
     },
     // 加载分类占比列表
     loadCategoryPercentList() {
-      this.$api
+      return this.$api
         .categoryPercentGroup({
           date: this.selectMonth,
           type: 0, // 月统计
@@ -334,6 +340,29 @@ export default {
           break;
       }
     },
+
+    // 自定义下拉刷新控件被下拉
+    onPulling(e) {
+      // console.log("onpulling", e);
+      if (e.detail.deltaY < 0) return; // 防止上滑页面也触发下拉
+      this.triggered = true;
+    },
+
+    // 自定义下拉刷新被触发
+    async onRefresh() {
+      if (this.freshing) return;
+      this.freshing = true;
+      this.loadStatData().finally((res) => {
+        this.triggered = false;
+        this.freshing = false;
+      });
+    },
+    // 自定义下拉刷新被复位
+    onRestore() {
+      this.triggered = "restore"; // 需要重置
+    },
+    // 自定义下拉刷新被中止
+    onAbort() {},
   },
 };
 </script>

@@ -19,7 +19,12 @@
         @scrolltolower="lowerBottom"
       >
         <view class="bill-day-popup-items-item">
-          <mb-b-item v-for="(item, index) in items" :key="index" :bill="item" />
+          <mb-b-item
+            v-for="(item, index) in items"
+            :key="index"
+            :bill="item"
+            :showdate="true"
+          />
         </view>
         <mb-ba-empty v-if="items.length <= 0" />
       </scroll-view>
