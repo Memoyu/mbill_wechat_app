@@ -301,14 +301,15 @@ export default {
             this.model = result;
             this.initAmount = result.amount;
             // 如果是赋值，就清除id
+            let dateTime = new Date();
             if (isCopy) {
               this.model.id = 0;
               this.getLocation(); // 更新地址信息
             } else {
-              let dateTime = new Date(result.time);
-              this.date = datetime.getCurDate(dateTime);
-              this.model.time = `${dateTime.getHours()}:${dateTime.getMinutes()}`;
+              dateTime = new Date(result.time);
             }
+            this.date = datetime.getCurDate(dateTime);
+            this.model.time = `${dateTime.getHours()}:${dateTime.getMinutes()}`;
           }
         });
     },

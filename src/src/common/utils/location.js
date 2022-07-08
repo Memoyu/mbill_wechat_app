@@ -20,7 +20,7 @@ export default {
                 let timeDiff = curTime - time
                 let leavel = timeDiff % (3600 * 1000); // 计算剩余小时后剩余的毫秒数
                 let sec = Math.floor(leavel / 1000); // 计算剩余的分钟数
-                console.log(curTime, time, leavel, sec);
+                // console.log(curTime, time, leavel, sec);
                 if (sec < 60) {
                     this.formatLocation().then((res) => {
                         resolve(res);
@@ -71,7 +71,7 @@ export default {
                             if (res.confirm) {
                                 wx.openSetting({
                                     success: async res => {
-                                        console.log(res);
+                                        // console.log(res);
                                         if (res.authSetting[
                                             'scope.userLocation']) {
                                             tip.toast('授权成功，请继续')
