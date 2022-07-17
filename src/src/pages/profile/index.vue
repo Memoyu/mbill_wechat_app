@@ -179,7 +179,7 @@ export default {
       // console.log("yonghu ", this.user);
       // console.log(path);
       if (item.needLogin && !this.isLogin) {
-        this.$tip.toast_quick("暂未登录，请先登录！");
+        this.$tip.toast("暂未登录，请先登录！");
         return;
       }
       uni.navigateTo({ url: item.path });

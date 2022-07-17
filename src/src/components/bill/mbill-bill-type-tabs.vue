@@ -37,7 +37,7 @@ export default {
       type: Array,
       default: [],
     },
-    type: {
+    value: {
       type: Number,
       default: 0,
     },
@@ -61,34 +61,37 @@ export default {
       tabsSize: [],
       zoomOutInter: 0,
       zoomInInter: 0,
+      loadingSize: false,
     };
   },
 
   watch: {
-    type(value) {
-      let ind = 0;
-      let type = this.items.find((type, index) => {
-        if (type.id == value) {
-          ind = index;
-          return type;
-        }
+    value(value) {
+      // console.log("type", value);
+      if (this.selected.id == value) return;
+      this.getTabsSize((list) => {
+        let ind = 0;
+        let type = this.items.find((type, index) => {
+          if (type.id == value) {
+            ind = index;
+            return type;
+          }
+        });
+        this.initSelected(type, ind, list);
       });
-      console.log(type, ind, "val");
-      this.getTabsSize();
-      this.handleSelected(type, ind);
     },
   },
 
   created() {
     this.selected = this.items[0];
     this.bgcolor = this.selected.color ? this.selected.color : this.color;
-    console.log(this.bgcolor);
     this.getTabsSize();
   },
 
   methods: {
     // 选中tab触发
     handleSelected(item, index) {
+      // console.log("进来了");
       this.bgheight = this.tabsSize[index].height * 0.2;
       this.bgwidth = this.tabsSize[index].width * 0.2;
 
@@ -101,30 +104,50 @@ export default {
         }
         left += this.tabsSize[index].width / 2;
         this.bgleft = left;
-      }, 200);
+      }, 300);
 
       // 移动动画结束后
       clearInterval(this.zoomInInter);
       this.zoomInInter = setInterval(() => {
         this.bgheight = this.tabsSize[index].height;
         this.bgwidth = this.tabsSize[index].width;
-      }, 400);
+      }, 500);
 
       this.selected = item;
       this.$emit("selected", item);
     },
 
     // 获取tabs的宽度和高度信息
-    getTabsSize() {
-      if (this.tabsSize.length > 0) return;
+    getTabsSize(action) {
+      // console.log(action, "a");
+      // if (this.tabsSize.length > 0 || this.loadingSize) return;
+      this.loadingSize = true;
       let query = uni.createSelectorQuery().in(this);
       query.selectAll(".tab").fields({ size: true });
       query.exec((data) => {
-        this.tabsSize = data[0];
+        let list = data[0];
+        this.tabsSize = list;
         this.bgleft = this.tabsSize[0].width / 2;
         this.bgwidth = this.tabsSize[0].width;
         this.bgheight = this.tabsSize[0].height;
+        this.loadingSize = false;
+        if (action) action(list);
+        console.log("加载size完成");
       });
+    },
+
+    // 初始化tab选中
+    initSelected(item, index, list) {
+      let left = 0;
+      for (let i = 0; i < index; i++) {
+        left += list[i].width;
+      }
+      left += list[index].width / 2;
+      this.bgheight = list[index].height;
+      this.bgwidth = list[index].width;
+      this.bgleft = left;
+      this.selected = item;
+      this.$emit("selected", item);
     },
   },
 };

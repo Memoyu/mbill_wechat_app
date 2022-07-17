@@ -6,7 +6,7 @@
         <view class="type-content">
           <mb-b-type-tabs
             :items="types"
-            :type="model.type"
+            v-model="model.type"
             @selected="handleTypeSelected"
           />
         </view>
@@ -216,6 +216,7 @@ export default {
     if (option.group != undefined) {
       // console.log("预购分组Id", option.group);
       this.isOrder = true;
+      this.types = this.types.slice(0, 1);
       this.getPreOrderGroup(option.group);
       return;
     }
@@ -235,10 +236,10 @@ export default {
 
   watch: {
     // "model.type"(val) {
-    //   // console.log("账单类型变更", val);
+    //   console.log("账单类型变更", val);
     //   let type = this.types[val];
     //   // this.model.type = type.id;
-
+    //   this.getCategoryGroups();
     // },
     date(val) {
       // console.log("日期变更", val);
@@ -285,7 +286,7 @@ export default {
             this.group = result;
             this.getLocation(); // 更新地址信息
           } else {
-            this.$tip.toast_quick(res.data.message);
+            this.$tip.toast(res.data.message);
             this.isOrder = false;
           }
         });
@@ -374,13 +375,8 @@ export default {
 
     // 账单类型选择
     handleTypeSelected(type) {
-      console.log(type);
-      if (this.isOrder && type.id == 1) {
-        this.$tip.toast("预购无法转成收入类型");
-        return;
-      }
+      console.log(type, "触发了呀");
       this.model.type = type.id;
-      this.model.categoryId = 0;
       this.getCategoryGroups();
     },
 
@@ -426,17 +422,23 @@ export default {
       };
 
       if (this.bill.amount === 0 || isNaN(this.bill.amount)) {
-        this.$tip.toast_quick("金额不能为零");
+        this.$tip.toast("金额不能为零");
         return false;
       }
 
       if (this.bill.categoryId <= 0) {
-        this.$tip.toast_quick("请选择分类");
+        this.$tip.toast("请选择分类");
+        return false;
+      }
+
+      let ca = this.getCategory(this.bill.categoryId);
+      if (ca == null || ca.type != this.model.type) {
+        this.$tip.toast("选择的分类无法在当前账单类型下使用");
         return false;
       }
 
       if (this.bill.assetId <= 0) {
-        this.$tip.toast_quick("请选择账户");
+        this.$tip.toast("请选择账户");
         return false;
       }
 
@@ -444,7 +446,7 @@ export default {
         this.bill.description.length > 0 &&
         this.bill.description.length > 40
       ) {
-        this.$tip.toast_quick("备注不能超过40个字哦");
+        this.$tip.toast("备注不能超过40个字哦");
         return false;
       }
 
@@ -505,6 +507,7 @@ export default {
 
     // 选中账单分类
     handleSelectedCategory(item) {
+      console.log(item);
       this.model.categoryId = item.id;
     },
 
@@ -546,9 +549,25 @@ export default {
     getLocation() {
       if (this.locationStatus)
         Location.getLocation().then((res) => {
-          console.log("位置信息", res);
+          // console.log("位置信息", res);
           this.model.address = res.address;
         });
+    },
+
+    getCategory(id) {
+      if (id <= 0) return null;
+      if (this.categoryGroups.length <= 0) return null;
+      let category = null;
+      console.log(this.categoryGroups);
+      this.categoryGroups.forEach((ca) => {
+        ca.childs.forEach((c) => {
+          if (c.id === id) {
+            category = c;
+          }
+        });
+      });
+
+      return category;
     },
 
     //#endregion

@@ -471,7 +471,7 @@ export default {
       } else {
         // 校验分组中是否存在预购单
         if (this.orders.length <= 0) {
-          this.$tip.toast_quick("当前分组不存在预购单，无法入账！");
+          this.$tip.toast("当前分组不存在预购单，无法入账！");
           return;
         }
         // 校验分组中预购单是否都已完成
@@ -517,23 +517,23 @@ export default {
     handleReqEditOrder() {
       var amtreg = /^\d+(\.\d{1,2})?$/;
       if (!amtreg.test(this.order.preAmount) || this.order.preAmount == 0) {
-        this.$tip.toast_quick("请输入正确的预购金额");
+        this.$tip.toast("请输入正确的预购金额");
         return;
       }
       if (this.dialogOptions.ltext != addBtnTitle && this.isNeedRealAmount()) {
         if (!amtreg.test(this.order.realAmount) || this.order.realAmount == 0) {
-          this.$tip.toast_quick("请输入正确的实购金额");
+          this.$tip.toast("请输入正确的实购金额");
           return;
         }
         this.order.realAmount = Number(this.order.realAmount);
       }
 
       if (!this.order.description || this.order.description == "") {
-        this.$tip.toast_quick("请输入预购描述");
+        this.$tip.toast("请输入预购描述");
         return;
       }
       if (this.order.description.length > 200) {
-        this.$tip.toast_quick("预购描述不超过40个字符");
+        this.$tip.toast("预购描述不超过40个字符");
         return;
       }
       // console.log(this.dialogOptions.ltext);

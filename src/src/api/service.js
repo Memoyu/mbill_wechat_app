@@ -61,7 +61,7 @@ http.interceptors.response.use(async (response) => { /* 请求之后拦截器。
         // const token = uni.getStorageSync(ACCESS_TOKEN)
         switch (data.code) {
             case 10030:
-                tip.toast_quick(data.message);
+                tip.toast(data.message);
                 break;
             case 10000:
             case 10040:
@@ -110,7 +110,7 @@ http.interceptors.response.use(async (response) => { /* 请求之后拦截器。
         }
     }
     // console.log("从这走", response);
-    // tip.toast_quick("网络错误，请稍后再试"); // 暂时关闭
+    // tip.toast("网络错误，请稍后再试"); // 暂时关闭
     return Promise.reject(response);
 })
 

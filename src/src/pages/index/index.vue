@@ -237,7 +237,7 @@ export default {
       // console.log(this.isLogin);
       // console.log(this.token);
       if (!this.isLogin) {
-        this.$tip.toast_quick("暂未登录，请先登录！");
+        this.$tip.toast("暂未登录，请先登录！");
         return;
       }
       // console.log("选中日期：", e);

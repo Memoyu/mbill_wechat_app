@@ -72,7 +72,7 @@ export default class Tips {
     });
   }
 
-  static toast_quick(title) {
+  static toast(title) {
     setTimeout(() => {
       uni.showToast({
         title: title,
@@ -83,7 +83,7 @@ export default class Tips {
     }, 300);
   }
 
-  static toast(title, onHide, icon = "none", mask = true) {
+  static toast_func(title, onHide, icon = "none", mask = true) {
     setTimeout(() => {
       uni.showToast({
         title: title,

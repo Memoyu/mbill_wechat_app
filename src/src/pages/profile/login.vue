@@ -84,7 +84,7 @@ export default {
         })
         .catch((err) => {
           // console.log(err);
-          this.$tip.toast_quick(err);
+          this.$tip.toast(err);
           this.loading = false;
         });
     },
