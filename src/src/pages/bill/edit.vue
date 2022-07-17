@@ -101,7 +101,10 @@
         </view>
         <view class="key-board-header-desc x-start">
           <view class="x-ac choose-asset" @tap="handleChooseAsset">
-            <i class="iconfont icon-assets icon" />
+            <i v-if="model.assetId == 0" class="iconfont icon-assets icon" />
+            <view v-else class="asset-icon">
+              <image class="image" :src="model.assetIcon" />
+            </view>
             <text
               :class="[
                 'text-display',
@@ -174,6 +177,7 @@ export default {
         type: 0,
         categoryId: 0,
         assetId: 0,
+        assetIcon: "",
         asset: "选择账户",
         description: "",
         address: "",
@@ -506,8 +510,10 @@ export default {
 
     // 选中账单账户
     handleSelectedAsset(item) {
+      console.log(item);
       this.model.assetId = item.id;
       this.model.asset = item.name;
+      this.model.assetIcon = item.iconUrl;
       this.$refs.assetPopup.close();
     },
 
@@ -659,6 +665,17 @@ export default {
     background: #fff;
     .choose-asset {
       margin-right: 40rpx;
+      .asset-icon {
+        display: flex;
+        align-items: center;
+        padding: 0 20rpx;
+        .image {
+          border-radius: 50%;
+          // background: yellow;
+          height: 45rpx;
+          width: 45rpx;
+        }
+      }
     }
 
     .text {

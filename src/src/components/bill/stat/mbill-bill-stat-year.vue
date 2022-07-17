@@ -84,17 +84,9 @@
       <!-- 月份收支统计 -->
       <view class="x-bc">
         <view class="mb-stat-divide-title">占比统计</view>
-        <picker
-          v-if="perActive === 0"
-          @change="handleTypePickerChange"
-          :value="type"
-          :range="types"
-        >
-          <view class="type-picker x-c">
-            <view>{{ types[type] }}</view>
-            <i class="iconfont icon-bottom icon-down" />
-          </view>
-        </picker>
+        <view class="type-tabs">
+          <mb-ba-type-tab :items="types" @selected="handleTypeSwitch" />
+        </view>
       </view>
       <view class="mb-stat-year-func-tab">
         <mb-ba-tabs :type="perList" v-model="perActive" />
@@ -148,7 +140,10 @@ export default {
       isEmpty: false,
       year: datetime.getCurYear(),
       type: 0,
-      types: ["支出", "收入"],
+      types: [
+        { key: 0, text: "支出" },
+        { key: 1, text: "收入" },
+      ],
       perList: [
         {
           title: "分类占比",
@@ -344,10 +339,9 @@ export default {
     },
 
     // 切换账单类型
-    handleTypePickerChange({ detail }) {
-      // console.log(detail);
-      if (this.type == detail.value) return;
-      this.type = detail.value;
+    handleTypeSwitch(key) {
+      // console.log(key);
+      this.type = key;
       this.loadCategoryStat();
     },
 
@@ -449,15 +443,8 @@ export default {
       }
     }
 
-    .type-picker {
-      margin: 0 50rpx;
-      font-size: 30rpx;
-      font-weight: bold;
-      align-items: baseline;
-      .icon-down {
-        font-size: 20rpx;
-        margin-left: 10rpx;
-      }
+    .type-tabs {
+      margin: 0 20rpx;
     }
   }
   &-rang {

@@ -50,7 +50,11 @@
 
       <!-- 排行日期类型 -->
       <view class="mb-stat-ranking-header-date-type-tabs">
-        <mb-ba-tabs :type="dateTypes" v-model="dateActive" />
+        <mb-ba-type-tab
+          :items="dateTypes"
+          @selected="handleTypeSwitch"
+          color="#808080"
+        />
       </view>
     </view>
 
@@ -114,10 +118,12 @@ export default {
       dateActive: 0,
       dateTypes: [
         {
-          title: "月排行",
+          key: 0,
+          text: "月排行",
         },
         {
-          title: "年排行",
+          key: 1,
+          text: "年排行",
         },
       ],
       rankings: [
@@ -413,6 +419,10 @@ export default {
       this.loadStatData();
     },
 
+    handleTypeSwitch(key) {
+      this.dateActive = key;
+    },
+
     // 重置过滤条件,并重新加载数据
     handleResetFilter() {
       this.date = datetime.getCurDate();
@@ -506,7 +516,8 @@ export default {
       }
     }
     &-date-type-tabs {
-      margin-top: 20rpx;
+      font-size: 30rpx;
+      margin: 30rpx 0;
       display: flex;
       justify-content: center;
       align-items: center;
