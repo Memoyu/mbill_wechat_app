@@ -4,16 +4,11 @@
       <!-- 账单类型、时间 -->
       <view class="header" id="edit-header">
         <view class="type-content">
-          <view
-            v-for="(type, index) in typeList"
-            :key="index"
-            :class="[
-              'item',
-              model.type == type.id ? `item-select ${type.color}` : '',
-            ]"
-            @tap="handleTypeSelected(type)"
-            >{{ type.title }}</view
-          >
+          <mb-b-type-tabs
+            :items="types"
+            :type="model.type"
+            @selected="handleTypeSelected"
+          />
         </view>
         <view class="date-content x-start">
           <picker
@@ -45,9 +40,15 @@
       <!-- 输入金额 -->
       <view class="amount" id="edit-amount">
         <view class="amount-input">
-          <text :class="['char', typeColor]">￥</text>
+          <text :class="['char']" :style="{ color: types[model.type].selcolor }"
+            >￥</text
+          >
           <view class="total y-start">
-            <view :class="['large-font', typeColor]">{{ model.amount }}</view>
+            <view
+              :class="['large-font']"
+              :style="{ color: types[model.type].selcolor }"
+              >{{ model.amount }}</view
+            >
             <scroll-view
               class="input"
               scroll-x="true"
@@ -186,10 +187,9 @@ export default {
       },
       date: datetime.getCurDate(),
       initAmount: "0",
-      typeColor: "",
-      typeList: [
-        { id: 0, title: "支出", color: "expend-color" },
-        { id: 1, title: "收入", color: "income-color" },
+      types: [
+        { id: 0, text: "支出", selcolor: "#47A271" },
+        { id: 1, text: "收入", selcolor: "#C24F50" },
       ],
       pickerEnd: datetime.getCurDate(),
       selectedDateText: "今日",
@@ -234,13 +234,12 @@ export default {
   },
 
   watch: {
-    "model.type"(val) {
-      // console.log("账单类型变更", val);
-      let type = this.typeList[val];
-      // this.model.type = type.id;
-      this.typeColor = type.color;
-      this.getCategoryGroups();
-    },
+    // "model.type"(val) {
+    //   // console.log("账单类型变更", val);
+    //   let type = this.types[val];
+    //   // this.model.type = type.id;
+
+    // },
     date(val) {
       // console.log("日期变更", val);
       let date = new Date(val);
@@ -265,13 +264,12 @@ export default {
     ...mapActions(["modifyIndexBill"]),
     // 初始化数据
     initData() {
-      this.typeColor = this.typeList[0].color;
       this.getCategoryGroups();
     },
 
     //#region 接口请求
 
-    // 获取账单详情
+    // 获取预购分组详情
     getPreOrderGroup(id) {
       this.$api
         .getPreOrderGroupWithAmount({
@@ -376,12 +374,14 @@ export default {
 
     // 账单类型选择
     handleTypeSelected(type) {
+      console.log(type);
       if (this.isOrder && type.id == 1) {
         this.$tip.toast("预购无法转成收入类型");
         return;
       }
       this.model.type = type.id;
       this.model.categoryId = 0;
+      this.getCategoryGroups();
     },
 
     // 日期选择
@@ -510,7 +510,7 @@ export default {
 
     // 选中账单账户
     handleSelectedAsset(item) {
-      console.log(item);
+      // console.log(item);
       this.model.assetId = item.id;
       this.model.asset = item.name;
       this.model.assetIcon = item.iconUrl;
@@ -565,21 +565,6 @@ export default {
   justify-content: space-between;
   align-items: center;
   .type-content {
-    font-size: 30rpx;
-    width: 280rpx;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    .item {
-      color: $light-text-color;
-      padding: 10rpx 30rpx;
-      border: 1rpx solid $bright-color;
-      border-radius: 30rpx;
-    }
-    .item-select {
-      font-weight: bold;
-      background: $bright-color;
-    }
   }
   .date-content {
     background: $bright-color;

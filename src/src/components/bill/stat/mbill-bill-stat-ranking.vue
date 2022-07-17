@@ -50,7 +50,7 @@
 
       <!-- 排行日期类型 -->
       <view class="mb-stat-ranking-header-date-type-tabs">
-        <mb-ba-type-tab
+        <mb-ba-focus-tabs
           :items="dateTypes"
           @selected="handleTypeSwitch"
           color="#808080"

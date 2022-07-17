@@ -90,7 +90,7 @@
       <view class="x-bc">
         <view class="mb-stat-divide-title">分类占比</view>
         <view class="type-tabs">
-          <mb-ba-type-tab :items="types" @selected="handleTypeSwitch" />
+          <mb-ba-focus-tabs :items="types" @selected="handleTypeSwitch" />
         </view>
       </view>
       <view class="mb-stat-month-bg-br">

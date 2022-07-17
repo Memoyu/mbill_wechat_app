@@ -1,5 +1,5 @@
 <template>
-  <view class="mb-type-tab">
+  <view class="mb-focus-tabs">
     <view
       class="bg"
       :style="{ left: `${bgleft}px`, width: `${bgwidth}px` }"
@@ -16,9 +16,9 @@
 </template>
 
 <script>
-const bgwidthpercent = 0.4;
+const bgwidthpercent = 0.5;
 export default {
-  name: "mbill-type-tab",
+  name: "mbill-focus-tabs",
   props: {
     items: {
       type: Array,
@@ -71,17 +71,18 @@ export default {
 </script>
 
 <style lang="scss" scope>
-.mb-type-tab {
+.mb-focus-tabs {
   position: relative;
   display: flex;
   align-items: center;
   border-radius: 30rpx;
+  z-index: 1;
   .tab {
     padding: 0 10rpx;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 30rpx;
+    // font-size: 30rpx;
     font-weight: bold;
     &-active {
     }
