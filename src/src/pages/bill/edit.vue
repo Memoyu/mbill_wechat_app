@@ -171,7 +171,7 @@ export default {
       },
       model: {
         id: 0,
-        type: 0,
+        type: -1,
         categoryId: 0,
         assetId: 0,
         assetIcon: "",
@@ -219,15 +219,11 @@ export default {
       this.getBillDetail(option.copyId, true);
       return;
     }
-
+    this.model.type = 0;
     this.getLocation();
   },
   onShow() {},
   onReady() {
-    // 如果此时type还是0,则进行数据初始化
-    if (this.model.type == 0) {
-      this.getCategoryGroups();
-    }
     this.dynamicHeight();
   },
 
@@ -273,6 +269,7 @@ export default {
           if (res.data.code === 0) {
             // console.log("预购分组信息", res.data.result);
             let result = res.data.result;
+            this.model.type = 0;
             this.model.description = result.description;
             this.model.amount = result.realAmount;
             this.initAmount = result.realAmount;
