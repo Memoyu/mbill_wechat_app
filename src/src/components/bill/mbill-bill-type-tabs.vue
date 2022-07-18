@@ -67,7 +67,7 @@ export default {
 
   watch: {
     value(value) {
-      console.log("type", value);
+      // console.log("type", value);
       if (this.selected.id == value) return;
       this.getTabsSize((list) => {
         let ind = 0;

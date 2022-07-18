@@ -1,7 +1,11 @@
 <template>
   <view class="bill-category-manage">
     <view class="type-tabs">
-      <mb-ba-focus-tabs :items="types" @selected="handleTypeSwitch" />
+      <mb-ba-focus-tabs
+        v-model="type"
+        :items="types"
+        @selected="handleTypeSwitch"
+      />
     </view>
     <view class="category-collapse-content">
       <uni-collapse>
@@ -51,8 +55,11 @@ export default {
       groups: [],
     };
   },
-  onLoad() {
-    this.getCategoryGroups();
+  onLoad(option) {
+    if (option.type != undefined) {
+      this.type = option.type;
+    }
+    this.getCategoryGroups(this.type);
   },
   onShow() {},
   methods: {
@@ -71,16 +78,18 @@ export default {
     },
 
     // 切换分类类型
-    handleTypeSwitch(key) {
-      this.type = key;
-      this.getCategoryGroups();
+    handleTypeSwitch(type) {
+      // this.type = key;
+      this.getCategoryGroups(type);
     },
 
     // 获取账单分类
-    getCategoryGroups() {
-      this.$api.categoryGroups({ type: this.type }).then((res) => {
+    getCategoryGroups(type) {
+      this.$api.categoryGroups({ type: type }).then((res) => {
         if (res.data.code === 0) {
+          // this.groups = [];
           this.groups = res.data.result;
+          this.$forceUpdate();
         }
       });
     },

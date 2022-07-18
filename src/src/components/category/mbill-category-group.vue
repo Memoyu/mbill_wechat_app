@@ -30,6 +30,10 @@ export default {
       type: Array,
       default: [],
     },
+    type: {
+      type: Number,
+      default: 0,
+    },
     select: {
       type: Number,
       default: 0,
@@ -54,7 +58,10 @@ export default {
 
     // 跳转新增分类页面
     handleAddCategory() {
-      this.$Router.push({ name: "category-manage" });
+      this.$Router.push({
+        name: "category-manage",
+        params: { type: this.type },
+      });
     },
   },
 };

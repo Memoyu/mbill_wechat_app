@@ -20,6 +20,10 @@ const bgwidthpercent = 0.5;
 export default {
   name: "mbill-focus-tabs",
   props: {
+    value: {
+      type: Number,
+      default: 0,
+    },
     items: {
       type: Array,
       default: [],
@@ -43,14 +47,24 @@ export default {
     };
   },
 
+  watch: {
+    value(value) {
+      // console.log("type", value);
+      if (this.active == value) return;
+      this.getTabsSize((list) => {
+        let ind = 0;
+        let type = this.items.find((type, index) => {
+          if (type.key == value) {
+            ind = index;
+            return type;
+          }
+        });
+        this.initSelected(type, ind, list);
+      });
+    },
+  },
   created() {
-    let query = uni.createSelectorQuery().in(this);
-    query.selectAll(".tab").fields({ size: true });
-    query.exec((data) => {
-      this.tabsSize = data[0];
-      this.bgleft = this.tabsSize[0].width / 2;
-      this.bgwidth = this.tabsSize[0].width * bgwidthpercent;
-    });
+    this.getTabsSize();
   },
 
   methods: {
@@ -65,6 +79,31 @@ export default {
       let key = item.key;
       this.active = key;
       this.$emit("selected", key);
+    },
+
+    // 初始化tab选中
+    initSelected(item, index, list) {
+      let left = 0;
+      for (let i = 0; i < index; i++) {
+        left += list[i].width;
+      }
+      left += list[index].width / 2;
+      this.bgwidth = list[index].width * bgwidthpercent;
+      this.bgleft = left;
+      let key = item.key;
+      this.active = key;
+    },
+
+    getTabsSize(action) {
+      let query = uni.createSelectorQuery().in(this);
+      query.selectAll(".tab").fields({ size: true });
+      query.exec((data) => {
+        let list = data[0];
+        this.tabsSize = list;
+        this.bgleft = this.tabsSize[0].width / 2;
+        this.bgwidth = this.tabsSize[0].width * bgwidthpercent;
+        if (action) action(list);
+      });
     },
   },
 };

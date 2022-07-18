@@ -69,6 +69,7 @@
           scroll-y="true"
         >
           <mb-ca-group
+            :type="model.type"
             :select="model.categoryId"
             :groups="categoryGroups"
             @selected="handleSelectedCategory"
@@ -229,7 +230,7 @@ export default {
 
   watch: {
     "model.type"(val) {
-      console.log("账单类型变更", val);
+      // console.log("账单类型变更", val);
       // let type = this.types[val];
       // this.model.type = type.id;
       this.getCategoryGroups();
@@ -365,7 +366,7 @@ export default {
 
     // 账单类型选择
     handleTypeSelected(type) {
-      console.log(type, "触发了呀");
+      // console.log(type, "触发了呀");
 
       this.model.type = type.id;
       // this.getCategoryGroups();
@@ -498,7 +499,7 @@ export default {
 
     // 选中账单分类
     handleSelectedCategory(item) {
-      console.log(item);
+      // console.log(item);
       this.model.categoryId = item.id;
     },
 
@@ -549,7 +550,7 @@ export default {
       if (id <= 0) return null;
       if (this.categoryGroups.length <= 0) return null;
       let category = null;
-      console.log(this.categoryGroups);
+      // console.log(this.categoryGroups);
       this.categoryGroups.forEach((ca) => {
         ca.childs.forEach((c) => {
           if (c.id === id) {
