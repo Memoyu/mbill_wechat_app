@@ -1,14 +1,10 @@
 <template>
   <view>
     <view class="container">
-      <!-- 账单类型、时间 -->
+      <!-- 账单类型、时间  @selected="handleTypeSelected"-->
       <view class="header" id="edit-header">
         <view class="type-content">
-          <mb-b-type-tabs
-            :items="types"
-            v-model="model.type"
-            @selected="handleTypeSelected"
-          />
+          <mb-b-type-tabs :items="types" v-model="model.type" />
         </view>
         <view class="date-content x-start">
           <picker
@@ -202,9 +198,6 @@ export default {
     };
   },
   onLoad(option) {
-    // console.log(option);
-    this.initData();
-
     // 编辑账单
     // console.log(option.id);
     if (option.id != undefined) {
@@ -231,16 +224,20 @@ export default {
   },
   onShow() {},
   onReady() {
+    // 如果此时type还是0,则进行数据初始化
+    if (this.model.type == 0) {
+      this.getCategoryGroups();
+    }
     this.dynamicHeight();
   },
 
   watch: {
-    // "model.type"(val) {
-    //   console.log("账单类型变更", val);
-    //   let type = this.types[val];
-    //   // this.model.type = type.id;
-    //   this.getCategoryGroups();
-    // },
+    "model.type"(val) {
+      console.log("账单类型变更", val);
+      // let type = this.types[val];
+      // this.model.type = type.id;
+      this.getCategoryGroups();
+    },
     date(val) {
       // console.log("日期变更", val);
       let date = new Date(val);
@@ -263,10 +260,6 @@ export default {
 
   methods: {
     ...mapActions(["modifyIndexBill"]),
-    // 初始化数据
-    initData() {
-      this.getCategoryGroups();
-    },
 
     //#region 接口请求
 
@@ -376,8 +369,9 @@ export default {
     // 账单类型选择
     handleTypeSelected(type) {
       console.log(type, "触发了呀");
+
       this.model.type = type.id;
-      this.getCategoryGroups();
+      // this.getCategoryGroups();
     },
 
     // 日期选择

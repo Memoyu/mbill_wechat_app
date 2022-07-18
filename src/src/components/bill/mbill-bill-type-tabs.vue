@@ -114,7 +114,7 @@ export default {
       }, 500);
 
       this.selected = item;
-      this.$emit("selected", item);
+      this.$emit("input", item.id);
     },
 
     // 获取tabs的宽度和高度信息
@@ -132,7 +132,7 @@ export default {
         this.bgheight = this.tabsSize[0].height;
         this.loadingSize = false;
         if (action) action(list);
-        console.log("加载size完成");
+        // console.log("加载size完成");
       });
     },
 
@@ -147,7 +147,7 @@ export default {
       this.bgwidth = list[index].width;
       this.bgleft = left;
       this.selected = item;
-      this.$emit("selected", item);
+      // this.$emit("selected", item);
     },
   },
 };
