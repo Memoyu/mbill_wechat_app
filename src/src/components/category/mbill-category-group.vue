@@ -18,7 +18,7 @@
       </view>
     </view>
     <!-- TODO:完成分类的添加 -->
-    <view class="to-add-category" @tap="handleAddCategory">添加分类</view>
+    <view class="to-add-category" @tap="handleAddCategory">管理分类</view>
   </view>
 </template>
 
@@ -54,7 +54,7 @@ export default {
 
     // 跳转新增分类页面
     handleAddCategory() {
-      this.$Router.push({ name: "category-edit" });
+      this.$Router.push({ name: "category-manage" });
     },
   },
 };
@@ -83,6 +83,7 @@ export default {
         width: 70rpx;
       }
       .text {
+        margin-top: 10rpx;
         color: $grey-black-text-color;
         font-size: 26rpx;
       }

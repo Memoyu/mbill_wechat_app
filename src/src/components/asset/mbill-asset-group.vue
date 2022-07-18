@@ -18,7 +18,7 @@
       </view>
     </view>
     <!-- TODO:完成账户的添加 -->
-    <view class="to-add-asset" @tap="handleAddAsset">添加账户</view>
+    <view class="to-add-asset" @tap="handleAddAsset">管理账户</view>
   </view>
 </template>
 
@@ -52,7 +52,7 @@ export default {
       this.$emit("selected", item);
     },
     handleAddAsset() {
-      this.$Router.push({ name: "asset-edit" });
+      this.$Router.push({ name: "asset-manage" });
     },
   },
 };
@@ -81,6 +81,7 @@ export default {
         width: 70rpx;
       }
       .text {
+        margin-top: 10rpx;
         color: $grey-black-text-color;
         font-size: 26rpx;
       }

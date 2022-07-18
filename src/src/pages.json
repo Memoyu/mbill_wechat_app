@@ -78,6 +78,7 @@
 		},
 		{
 			"path": "pages/bill/asset/manage",
+			"name": "asset-manage",
 			"style": {
 				"navigationBarTitleText": "账户管理"
 			}
@@ -91,6 +92,7 @@
 		},
 		{
 			"path": "pages/bill/category/manage",
+			"name": "category-manage",
 			"style": {
 				"navigationBarTitleText": "分类管理"
 			}
