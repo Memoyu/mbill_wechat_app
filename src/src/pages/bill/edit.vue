@@ -1,148 +1,146 @@
 <template>
-  <view>
-    <view class="container">
-      <!-- 账单类型、时间  @selected="handleTypeSelected"-->
-      <view class="header" id="edit-header">
-        <view class="type-content">
-          <mb-b-type-tabs :items="types" v-model="model.type" />
-        </view>
-        <view class="date-content x-start">
-          <picker
-            class="date-picker"
-            mode="date"
-            @change="handleDatePicker"
-            fields="day"
-            :value="date"
-            :end="pickerEnd"
-          >
-            <view class="x-ac date">
-              <text> {{ selectedDateText }}</text>
-            </view>
-          </picker>
-          <picker
-            class="time-picker"
-            mode="time"
-            @change="handleTimePicker"
-            :value="model.time"
-          >
-            <view class="x-ac time">
-              <text> {{ model.time }}</text>
-              <i class="iconfont icon-bottom icon-down" />
-            </view>
-          </picker>
-        </view>
+  <view class="container">
+    <!-- 账单类型、时间  @selected="handleTypeSelected"-->
+    <view class="header" id="edit-header">
+      <view class="type-content">
+        <mb-b-type-tabs :items="types" v-model="model.type" />
       </view>
-
-      <!-- 输入金额 -->
-      <view class="amount" id="edit-amount">
-        <view class="amount-input">
-          <text :class="['char']" :style="{ color: types[model.type].selcolor }"
-            >￥</text
-          >
-          <view class="total y-start">
-            <view
-              :class="['large-font']"
-              :style="{ color: types[model.type].selcolor }"
-              >{{ model.amount }}</view
-            >
-            <scroll-view
-              class="input"
-              scroll-x="true"
-              :scroll-left="inputTextLeng"
-            >
-              <text class="input-amount-text" id="input-amount-text"
-                >{{ input }}
-              </text>
-            </scroll-view>
-          </view>
-        </view>
-        <mb-ba-end-split-line />
-      </view>
-
-      <!-- 账单分类选择 -->
-      <view>
-        <scroll-view
-          class="category-groups"
-          :style="{
-            height: scrollHeight + 'px',
-          }"
-          scroll-y="true"
+      <view class="date-content x-start">
+        <picker
+          class="date-picker"
+          mode="date"
+          @change="handleDatePicker"
+          fields="day"
+          :value="date"
+          :end="pickerEnd"
         >
-          <mb-ca-group
-            :type="model.type"
-            :select="model.categoryId"
-            :groups="categoryGroups"
-            @selected="handleSelectedCategory"
+          <view class="x-ac date">
+            <text> {{ selectedDateText }}</text>
+          </view>
+        </picker>
+        <picker
+          class="time-picker"
+          mode="time"
+          @change="handleTimePicker"
+          :value="model.time"
+        >
+          <view class="x-ac time">
+            <text> {{ model.time }}</text>
+            <i class="iconfont icon-bottom icon-down" />
+          </view>
+        </picker>
+      </view>
+    </view>
+
+    <!-- 输入金额 -->
+    <view class="amount" id="edit-amount">
+      <view class="amount-input">
+        <text :class="['char']" :style="{ color: types[model.type].selcolor }"
+          >￥</text
+        >
+        <view class="total y-start">
+          <view
+            :class="['large-font']"
+            :style="{ color: types[model.type].selcolor }"
+            >{{ model.amount }}</view
+          >
+          <scroll-view
+            class="input"
+            scroll-x="true"
+            :scroll-left="inputTextLeng"
+          >
+            <text class="input-amount-text" id="input-amount-text"
+              >{{ input }}
+            </text>
+          </scroll-view>
+        </view>
+      </view>
+      <mb-ba-end-split-line />
+    </view>
+
+    <!-- 账单分类选择 -->
+    <view>
+      <scroll-view
+        class="category-groups"
+        :style="{
+          height: scrollHeight + 'px',
+        }"
+        scroll-y="true"
+      >
+        <mb-ca-group
+          :type="model.type"
+          :select="model.categoryId"
+          :groups="categoryGroups"
+          @selected="handleSelectedCategory"
+        />
+      </scroll-view>
+    </view>
+
+    <!-- 数字键盘 -->
+    <view class="key-board-container" id="edit-key-board-container">
+      <view class="key-board-header-location x-ac">
+        <i
+          :class="[
+            'iconfont',
+            'icon-location',
+            'icon-padding ',
+            !locationStatus ? 'icon-color' : '',
+          ]"
+          @click="handleSwitchChange"
+          @longtap="handleSwitchLongtap"
+        />
+        <input
+          type="text"
+          class="input-address-text"
+          v-model="model.address"
+          placeholder="地址"
+        />
+      </view>
+      <view class="key-board-header-desc x-start">
+        <view class="x-ac choose-asset" @tap="handleChooseAsset">
+          <i v-if="model.assetId == 0" class="iconfont icon-assets icon" />
+          <view v-else class="asset-icon">
+            <image class="image" :src="model.assetIcon" />
+          </view>
+          <text
+            :class="[
+              'text-display',
+              model.assetId == 0 ? 'text' : 'text-choose',
+            ]"
+            >{{ model.asset }}</text
+          >
+        </view>
+        <view class="x-ac">
+          <i class="iconfont icon-edit icon" />
+          <input
+            type="text"
+            class="input-desc-text"
+            v-model="model.description"
+            placeholder="备注"
+          />
+        </view>
+      </view>
+      <mb-ba-keyboard
+        ref="keyboard"
+        :pnum="initAmount"
+        :loading="loading"
+        @confirm="handleConfirmNum"
+        @input="handleInputNum"
+      />
+    </view>
+
+    <!-- 账单账户弹窗 -->
+    <uni-popup ref="assetPopup" type="bottom">
+      <view class="asset-popup">
+        <scroll-view class="asset-list" scroll-y="true">
+          <mb-as-group
+            :select="model.assetId"
+            :groups="assetGroups"
+            @selected="handleSelectedAsset"
           />
         </scroll-view>
       </view>
-
-      <!-- 数字键盘 -->
-      <view class="key-board-container" id="edit-key-board-container">
-        <view class="key-board-header-location x-ac">
-          <i
-            :class="[
-              'iconfont',
-              'icon-location',
-              'icon-padding ',
-              !locationStatus ? 'icon-color' : '',
-            ]"
-            @click="handleSwitchChange"
-            @longtap="handleSwitchLongtap"
-          />
-          <input
-            type="text"
-            class="input-address-text"
-            v-model="model.address"
-            placeholder="地址"
-          />
-        </view>
-        <view class="key-board-header-desc x-start">
-          <view class="x-ac choose-asset" @tap="handleChooseAsset">
-            <i v-if="model.assetId == 0" class="iconfont icon-assets icon" />
-            <view v-else class="asset-icon">
-              <image class="image" :src="model.assetIcon" />
-            </view>
-            <text
-              :class="[
-                'text-display',
-                model.assetId == 0 ? 'text' : 'text-choose',
-              ]"
-              >{{ model.asset }}</text
-            >
-          </view>
-          <view class="x-ac">
-            <i class="iconfont icon-edit icon" />
-            <input
-              type="text"
-              class="input-desc-text"
-              v-model="model.description"
-              placeholder="备注"
-            />
-          </view>
-        </view>
-        <mb-ba-keyboard
-          ref="keyboard"
-          :pnum="initAmount"
-          :loading="loading"
-          @confirm="handleConfirmNum"
-          @input="handleInputNum"
-        />
-      </view>
-
-      <!-- 账单账户弹窗 -->
-      <uni-popup ref="assetPopup" type="bottom">
-        <view class="asset-popup">
-          <scroll-view class="asset-list" scroll-y="true">
-            <mb-as-group
-              :select="model.assetId"
-              :groups="assetGroups"
-              @selected="handleSelectedAsset"
-            />
-          </scroll-view>
-        </view>
-      </uni-popup>
-    </view>
+    </uni-popup>
   </view>
 </template>
 
