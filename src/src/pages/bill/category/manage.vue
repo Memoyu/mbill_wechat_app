@@ -13,10 +13,10 @@
       :style="{ height: contentH + 'px' }"
     >
       <swiper-item class="swiper_item">
-        <mb-ca-collapse :height="contentH" :groups="groups" />
+        <mb-ca-collapse :height="contentH" :groups="expendGroups" />
       </swiper-item>
       <swiper-item class="swiper_item">
-        <mb-ca-collapse :height="contentH" :groups="groups1" />
+        <mb-ca-collapse :height="contentH" :groups="incomeGroups" />
       </swiper-item>
     </swiper>
 
@@ -27,20 +27,21 @@
     <!-- 添加分组弹窗 -->
     <mb-ba-edit-dialog
       ref="addGroupDialog"
-      height="170"
+      height="150"
       class="edit-group-input"
-      @change="handleDialogChange"
       @ltap="handleReqEditGroup"
     >
-      <view class="input-item x-bc">
-        <text class="title">分组名称</text>
-        <input
-          type="text"
-          class="input"
-          v-model="group.name"
-          alwaysEmbed="true"
-          placeholder="名称"
-        />
+      <view class="input-item x-c">
+        <view class="x-bc">
+          <text class="title">分组名称</text>
+          <input
+            type="text"
+            class="input"
+            v-model="newGroupName"
+            alwaysEmbed="true"
+            placeholder="名称"
+          />
+        </view>
       </view>
     </mb-ba-edit-dialog>
   </view>
@@ -55,9 +56,15 @@ export default {
         { key: 0, text: "支出" },
         { key: 1, text: "收入" },
       ],
-      groups: [],
-      groups1: [],
+      expendGroups: [],
+      incomeGroups: [],
       contentH: 0,
+      dialodOptions: {
+        onlyone: true,
+        ltext: "新建",
+        rtext: "取消",
+      },
+      newGroupName: "",
     };
   },
   watch: {
@@ -91,7 +98,8 @@ export default {
 
     // 添加分组
     handleAddGroup() {
-      this.$tip.toast("开发中，敬请期待");
+      this.newGroupName = "";
+      this.$refs.addGroupDialog.show(this.dialodOptions);
     },
 
     // 切换分类类型
@@ -100,15 +108,37 @@ export default {
       // this.getCategoryGroups(type);
     },
 
+    handleReqEditGroup() {
+      if (this.newGroupName == undefined || this.newGroupName.length <= 0) {
+        this.$tip.toast("请输入分组名称");
+        return;
+      }
+      if (this.newGroupName.length > 6) {
+        this.$tip.toast("分组名称超长");
+        return;
+      }
+      this.$api
+        .createCategoryGroups({
+          name: this.newGroupName,
+          type: this.type,
+        })
+        .then((res) => {
+          if (res.data.code === 0) {
+            console.log(res.data.result);
+            this.$refs.addGroupDialog.hide();
+          }
+        });
+    },
+
     // 获取账单分类
     getCategoryGroups(type) {
       this.$api.categoryGroups({ type: type }).then((res) => {
         if (res.data.code === 0) {
           // this.groups = [];
           if (type == 0) {
-            this.groups = res.data.result;
+            this.expendGroups = res.data.result;
           } else {
-            this.groups1 = res.data.result;
+            this.incomeGroups = res.data.result;
           }
         }
       });
@@ -151,6 +181,23 @@ export default {
     font-weight: bold;
     margin: 40rpx 0;
     text-align: center;
+  }
+
+  .edit-group-input {
+    .input-item {
+      height: 170rpx;
+      .title {
+        color: $grey-text-color;
+      }
+      .input {
+        text-align: right;
+        padding: 10rpx;
+        margin-bottom: 16rpx;
+      }
+    }
+    .input-desc {
+      margin-top: 36rpx;
+    }
   }
 }
 </style>

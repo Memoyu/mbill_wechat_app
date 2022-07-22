@@ -98,8 +98,14 @@ const bill = {
 
     // 获取全部账单分类
     categoryList(params) {
-        return http.get('category/list', { params: params })
+        return http.get('category', { params: params })
     },
+
+    // 创建账单分类
+    createCategoryGroups(params) {
+        return http.post('category', params)
+    },
+
 
     //#endregion
 

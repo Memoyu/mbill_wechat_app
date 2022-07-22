@@ -88,6 +88,7 @@ export default {
     },
 
     handleRight() {
+      // console.log("右边按下", this.autoclose);
       this.$emit("rtap");
       if (this.autoclose) this.$refs.editDialogPopup.close();
     },
