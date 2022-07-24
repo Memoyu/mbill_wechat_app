@@ -5,34 +5,61 @@
       class="mbill-category-collapse-scroll-view"
       :style="{ height: height - 15 + 'px' }"
     >
-      <uni-collapse>
+      <uni-collapse ref="collapse" :accordion="true" @change="collapseChange">
         <uni-collapse-item
+          title-border="none"
           v-for="(g, index) in groups"
           :key="index"
           :border="false"
-          title-border="none"
-          :open="index === 0"
+          :open="index === open"
         >
           <template v-slot:title>
-            <view class="category-group">{{ g.name }}</view>
+            <view class="collapse-title">
+              <view class="category-group">{{ g.name }}</view>
+              <view class="category-group-sort">
+                <i
+                  class="iconfont icon-up-arrow-outline"
+                  @click.stop="handleGroupUpSort(index)"
+                />
+                <i
+                  class="iconfont icon-down-arrow-outline"
+                  @click.stop="handleGroupDownSort(index)"
+                />
+
+                <i
+                  class="iconfont icon-list-3"
+                  @click.stop="handleEditGroup(index, g)"
+                />
+              </view>
+            </view>
           </template>
-          <view class="category-item">
-            <view
-              :class="['item-content']"
-              v-for="(item, index) in g.childs"
-              :key="index"
-              @click="handleSelectedItem(item)"
-            >
+          <view
+            class="item-content"
+            v-for="(item, ind) in g.childs"
+            :key="ind"
+            @click="handleSelectedItem(item)"
+          >
+            <view class="category-item-content">
               <image class="image" :src="item.iconUrl" />
               <text class="text">{{ item.name }}</text>
             </view>
-            <view
-              class="item-content item-add-content"
-              @click="handleAddCategory(g.id)"
-            >
-              <image class="image" src="/static/assets/add.png" />
+            <view class="category-item-sort">
+              <i
+                class="iconfont icon-up-arrow-outline"
+                @click.stop="handleItemUpSort(index, ind)"
+              />
+              <i
+                class="iconfont icon-down-arrow-outline"
+                @click.stop="handleItemDownSort(index, ind)"
+              />
+
+              <i
+                class="iconfont icon-close"
+                @click.stop="handleDelItem(index, ind, item)"
+              />
             </view>
           </view>
+          <view class="add-category-item" @tap="handleAddItem">添加</view>
         </uni-collapse-item>
       </uni-collapse>
     </scroll-view>
@@ -47,12 +74,100 @@ export default {
       type: [Number, String],
       default: 300,
     },
-    groups: {
+    data: {
       type: Array,
       default: () => [],
     },
   },
-  methods: {},
+  data() {
+    return {
+      open: 0,
+      groups: [],
+    };
+  },
+  watch: {
+    data(val) {
+      this.groups = val;
+    },
+  },
+  methods: {
+    // 编辑分组
+    handleEditGroup(index, group) {
+      // console.log("del group", group);
+      // this.groups.splice(index, 1);
+    },
+
+    // 分组排序向上
+    handleGroupUpSort(index) {
+      // console.log("open", this.open, index);
+      this.sort(this.groups, index, 1);
+    },
+
+    // 分组排序向下
+    handleGroupDownSort(index) {
+      // console.log("open", this.open);
+      this.sort(this.groups, index, 0);
+    },
+
+    // 删除子项
+    handleDelItem(gIndex, index, item) {
+      // console.log("del group", item);
+      this.groups[gIndex].childs.splice(index, 1);
+      this.$nextTick(() => {
+        this.$refs.collapse.resize();
+      });
+    },
+
+    // 子项排序向上
+    handleItemUpSort(gIndex, index) {
+      // console.log("handleItemUpSort", gIndex, index);
+      this.sort(this.groups[gIndex].childs, index, 1);
+    },
+
+    // 子项排序向下
+    handleItemDownSort(gIndex, index) {
+      // console.log("open", this.open);
+      this.sort(this.groups[gIndex].childs, index, 0);
+    },
+
+    /**
+     * @description: 排序整合
+     * @param {int} index 当前索引
+     * @param {*} direction 方向 0：向下 1：向上
+     * @param {*} this
+     * @return {*}
+     */
+    sort(list, index, direction) {
+      if (
+        (direction === 0 && index == list.length - 1) ||
+        (direction === 1 && index == 0)
+      ) {
+        return;
+      }
+      let newIndex = direction === 0 ? index + 1 : index - 1;
+      list[index] = list.splice(newIndex, 1, list[index])[0];
+      if (this.open === index) {
+        this.open = newIndex;
+      }
+
+      // 获取排序后数据
+      let sorts = list.map((item, index) => {
+        return {
+          id: item.id,
+          sort: list.length - index,
+        };
+      });
+
+      this.$emit("sort", sorts);
+    },
+
+    collapseChange(e) {
+      // console.log("change", e);
+      // 赋值-1是为了重置open的值
+      if (e.length === 0) e = "-1";
+      this.open = Number(e);
+    },
+  },
 };
 </script>
 
@@ -67,36 +182,97 @@ export default {
     ::-webkit-scrollbar {
       display: none;
     }
-    .category-group {
-      font-weight: bold;
-      padding: 20rpx 30rpx;
-    }
-    .category-item {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, 140rpx);
-      justify-content: center;
-      .item-content {
+    .collapse-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      .category-group {
+        font-weight: bold;
+        padding: 20rpx 30rpx;
+      }
+      .category-group-sort {
+        width: 240rpx;
         display: flex;
-        flex-direction: column;
+        align-items: flex-start;
+        margin-right: 30rpx;
+      }
+      i {
+        position: relative;
+        z-index: 99;
+        display: flex;
+        font-size: 40rpx;
+        color: $dark-color;
+        padding: 10rpx;
+        margin: 5rpx 15rpx;
+        &::after {
+          content: ""; // ::before and ::after both require content
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          border-radius: 50%;
+          background-color: $grey-light-color;
+          z-index: -1;
+        }
+      }
+    }
+    .item-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-radius: 20rpx;
+      margin: 0 50rpx;
+      padding: 20rpx 0;
+      .category-item-content {
+        display: flex;
         align-items: center;
-        border-radius: 20rpx;
-        padding: 14rpx 0;
+        width: 100%;
         .image {
-          height: 70rpx;
-          width: 70rpx;
+          height: 60rpx;
+          width: 60rpx;
+          margin-right: 30rpx;
         }
         .text {
-          margin-top: 10rpx;
+          font-weight: bold;
           color: $grey-black-text-color;
-          font-size: 28rpx;
+          font-size: 30rpx;
         }
       }
-      .item-add-content {
+      .category-item-sort {
         display: flex;
-        justify-content: center;
-        flex-direction: unset;
-        align-items: center;
+        align-items: flex-start;
+        font-size: 40rpx;
       }
+
+      i {
+        position: relative;
+        z-index: 99;
+        display: flex;
+        font-size: 30rpx;
+        color: $dark-color;
+        padding: 10rpx;
+        margin: 5rpx 15rpx;
+        &::after {
+          content: ""; // ::before and ::after both require content
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          border-radius: 50%;
+          background-color: $grey-light-color;
+          z-index: -1;
+        }
+      }
+    }
+    .add-category-item {
+      font-size: 30rpx;
+      color: $dark-color;
+      font-weight: bold;
+      padding: 20rpx 0;
+      text-align: center;
     }
     .category-item-selected {
       background-color: $light-color;

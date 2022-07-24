@@ -13,10 +13,18 @@
       :style="{ height: contentH + 'px' }"
     >
       <swiper-item class="swiper_item">
-        <mb-ca-collapse :height="contentH" :groups="expendGroups" />
+        <mb-ca-collapse
+          :height="contentH"
+          :data="expendGroups"
+          @sort="handelSort"
+        />
       </swiper-item>
       <swiper-item class="swiper_item">
-        <mb-ca-collapse :height="contentH" :groups="incomeGroups" />
+        <mb-ca-collapse
+          :height="contentH"
+          :data="incomeGroups"
+          @sort="handelSort"
+        />
       </swiper-item>
     </swiper>
 
@@ -82,6 +90,22 @@ export default {
   },
   onShow() {},
   methods: {
+    // 获取账单分类
+    getCategoryGroups(type) {
+      this.$api.categoryGroups({ type: type }).then((res) => {
+        if (res.data.code === 0) {
+          // this.groups = [];
+          if (type == 0) {
+            this.expendGroups = res.data.result;
+          } else {
+            this.incomeGroups = res.data.result;
+          }
+        }
+      });
+    },
+
+    //#region 事件处理
+
     tabChange({ detail }) {
       let curr = detail.current;
       this.type = curr;
@@ -105,7 +129,6 @@ export default {
     // 切换分类类型
     handleTypeSwitch(type) {
       this.type = type;
-      // this.getCategoryGroups(type);
     },
 
     handleReqEditGroup() {
@@ -121,28 +144,38 @@ export default {
         .createCategoryGroups({
           name: this.newGroupName,
           type: this.type,
+          sort:
+            this.type == 0
+              ? this.expendGroups.length + 1
+              : this.incomeGroups.length + 1,
         })
         .then((res) => {
           if (res.data.code === 0) {
-            console.log(res.data.result);
+            // console.log(res.data.result);
             this.$refs.addGroupDialog.hide();
+            this.getCategoryGroups(this.type);
+          }
+        });
+    },
+    /**
+     * @description: 触发请求排序
+     * @param {*} sorts 排序信息
+     * @return {*}
+     */
+    handelSort(sorts) {
+      // console.log(sorts, "排序信息");
+      this.$api
+        .sortCategoryGroups({
+          sorts: sorts,
+        })
+        .then((res) => {
+          if (res.data.code === 0) {
+            console.log(res.message);
           }
         });
     },
 
-    // 获取账单分类
-    getCategoryGroups(type) {
-      this.$api.categoryGroups({ type: type }).then((res) => {
-        if (res.data.code === 0) {
-          // this.groups = [];
-          if (type == 0) {
-            this.expendGroups = res.data.result;
-          } else {
-            this.incomeGroups = res.data.result;
-          }
-        }
-      });
-    },
+    //#endregion
 
     // 计算高度，动态调整swiper 高度
     dynamicHeight() {
@@ -156,8 +189,7 @@ export default {
           query.exec((data) => {
             let headerH = data[0].height;
             headerH += data[1].height;
-            that.contentH = pH - headerH - 40; // 40 为margin
-            // console.log(pH, headerH, that.contentH);
+            that.contentH = pH - headerH - 20; // 20 为margin
           });
         },
       });
@@ -179,7 +211,7 @@ export default {
   .add-category-group {
     color: $dark-color;
     font-weight: bold;
-    margin: 40rpx 0;
+    margin: 20rpx 0;
     text-align: center;
   }
 
@@ -192,7 +224,6 @@ export default {
       .input {
         text-align: right;
         padding: 10rpx;
-        margin-bottom: 16rpx;
       }
     }
     .input-desc {

@@ -1,5 +1,5 @@
 <template>
-  <view class="b-container">
+  <view class="b-container x-f">
     <image class="image" mode="widthFix" :src="user.avatarUrl" />
     <view class="user-cells">
       <view class="cells">

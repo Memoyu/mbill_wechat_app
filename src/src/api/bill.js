@@ -101,6 +101,11 @@ const bill = {
         return http.get('category', { params: params })
     },
 
+    // 排序账单分类
+    sortCategoryGroups(params) {
+        return http.post('category/sort', params)
+    },
+
     // 创建账单分类
     createCategoryGroups(params) {
         return http.post('category', params)

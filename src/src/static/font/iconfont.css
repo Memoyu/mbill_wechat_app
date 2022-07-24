@@ -1,17 +1,33 @@
 @font-face {
-  font-family: 'iconfont';
+  font-family: "iconfont";
   /* Project id 2203375 */
-  src: url('//at.alicdn.com/t/font_2203375_gpnax6y5j4.woff2?t=1654535223441') format('woff2'),
-    url('//at.alicdn.com/t/font_2203375_gpnax6y5j4.woff?t=1654535223441') format('woff'),
-    url('//at.alicdn.com/t/font_2203375_gpnax6y5j4.ttf?t=1654535223441') format('truetype');
+  src: url('./static/font/iconfont.woff2?t=1658542745576') format('woff2'),
+    url('./static/font/iconfont.woff?t=1658542745576') format('woff'),
+    url('./static/font/iconfont.ttf?t=1658542745576') format('truetype');
 }
 
 .iconfont {
   font-family: "iconfont" !important;
-  font-size: 32rpx;
+  font-size: 16px;
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-list-3:before {
+  content: "\e650";
+}
+
+.icon-close:before {
+  content: "\e61c";
+}
+
+.icon-up-arrow-outline:before {
+  content: "\e844";
+}
+
+.icon-down-arrow-outline:before {
+  content: "\ed2c";
 }
 
 .icon-bill:before {

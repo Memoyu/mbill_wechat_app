@@ -1,5 +1,5 @@
 <template>
-  <view class="b-container">
+  <view class="b-container x-c">
     <view class="login" @tap="handleLogin"
       ><text space="emsp">{{ loading ? "登录中..." : " 登录 " }}</text></view
     >
@@ -120,7 +120,6 @@ export default {
 
 <style lang="scss" scope>
 .b-container {
-  justify-content: center;
   .login {
     font-weight: bold;
     color: white;
