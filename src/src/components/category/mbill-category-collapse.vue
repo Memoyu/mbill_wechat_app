@@ -37,7 +37,7 @@
             class="item-content"
             v-for="(item, ind) in g.childs"
             :key="ind"
-            @click="handleSelectedItem(item)"
+            @click="handleEditItem(index, ind, item)"
           >
             <view class="category-item-content">
               <image class="image" :src="item.iconUrl" />
@@ -59,7 +59,9 @@
               />
             </view>
           </view>
-          <view class="add-category-item" @tap="handleAddItem">添加</view>
+          <view class="add-category-item" @tap="handleAddItem(index)"
+            >添加</view
+          >
         </uni-collapse-item>
       </uni-collapse>
     </scroll-view>
@@ -67,6 +69,7 @@
 </template>
 
 <script>
+// 操作类型：0 选中；1 删除；2 新增
 export default {
   name: "mbill-category-collapse",
   props: {
@@ -83,18 +86,66 @@ export default {
     return {
       open: 0,
       groups: [],
+
+      selItem: {
+        type: -1,
+        index: 0,
+        id: 0,
+      },
+      selGroup: {
+        type: -1,
+        index: 0,
+        id: 0,
+      },
     };
   },
   watch: {
     data(val) {
       this.groups = val;
+      console.log("data 变化了", this.open, this.groups);
+      // 当前展开项是否已被删除
+      if (
+        this.selGroup.type == 0 &&
+        this.open == this.selGroup.index && // 当前选中项为展开状态
+        this.groups[this.selGroup.index].id != this.selGroup.id // 并且回调时不存在该分组
+      ) {
+        console.log(
+          "关闭分组",
+          this.groups[this.selGroup.index].id,
+          this.selGroup.id
+        );
+        this.open = -1;
+      }
+
+      if (
+        this.selItem.type == 1 &&
+        this.groups[this.open].childs[this.selItem.index].id != this.selItem.id // 并且回调时不存在该分类
+      ) {
+        this.$nextTick(() => {
+          this.$refs.collapse.resize();
+        });
+      }
     },
   },
+  created() {},
   methods: {
     // 编辑分组
     handleEditGroup(index, group) {
-      // console.log("del group", group);
-      // this.groups.splice(index, 1);
+      this.handleGroupEvent(0, index, group);
+    },
+
+    // 触发分组事件
+    handleGroupEvent(type, index, group) {
+      // console.log("edit group", group);
+      this.selGroup = {
+        type,
+        index,
+        id: group.id,
+      };
+      this.$emit("selected-group", {
+        type,
+        group: { index, ...group },
+      });
     },
 
     // 分组排序向上
@@ -109,13 +160,29 @@ export default {
       this.sort(this.groups, index, 0);
     },
 
-    // 删除子项
+    handleEditItem(gIndex, index, item) {
+      this.handleItemEvent(0, gIndex, index, item);
+    },
+
     handleDelItem(gIndex, index, item) {
+      this.handleItemEvent(1, gIndex, index, item);
+    },
+
+    // 新增子项
+    handleAddItem(gIndex, index, item) {
       // console.log("del group", item);
-      this.groups[gIndex].childs.splice(index, 1);
-      this.$nextTick(() => {
-        this.$refs.collapse.resize();
-      });
+      this.handleItemEvent(2, gIndex, index, item);
+    },
+
+    // 触发子项事件
+    handleItemEvent(type, gIndex, index, item) {
+      // console.log("del group", item);
+      this.selItem = {
+        type,
+        index,
+        id: item.id,
+      };
+      this.$emit("selected-item", { type, item: { gIndex, index, ...item } });
     },
 
     // 子项排序向上

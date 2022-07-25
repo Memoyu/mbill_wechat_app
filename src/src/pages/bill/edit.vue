@@ -308,7 +308,7 @@ export default {
 
     // 获取账单分类
     getCategoryGroups() {
-      this.$api.categoryGroups({ type: this.model.type }).then((res) => {
+      this.$api.getCategoryGroups({ type: this.model.type }).then((res) => {
         if (res.data.code === 0) {
           this.categoryGroups = res.data.result;
         }

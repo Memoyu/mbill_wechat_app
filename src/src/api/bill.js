@@ -92,7 +92,7 @@ const bill = {
     //#region 账单分类
 
     // 获取分组后的账单分类
-    categoryGroups(params) {
+    getCategoryGroups(params) {
         return http.get('category/groups', { params: params })
     },
 
@@ -106,10 +106,36 @@ const bill = {
         return http.post('category/sort', params)
     },
 
-    // 创建账单分类
-    createCategoryGroups(params) {
+    // 创建账单分类分组
+    createCategoryGroup(params) {
         return http.post('category', params)
     },
+
+    // 编辑账单分类分组
+    editCategoryGroup(params) {
+        return http.put('category', params)
+    },
+
+    // 删除账单分类分组
+    delCategoryGroup(params) {
+        return http.delete('category', params)
+    },
+
+    // 创建账单分类
+    createCategory(params) {
+        return http.post('category', params)
+    },
+
+    // 编辑账单分类
+    editCategory(params) {
+        return http.put('category', params)
+    },
+
+    // 删除账单分类
+    delCategory(params) {
+        return http.delete('category', params)
+    },
+
 
 
     //#endregion
