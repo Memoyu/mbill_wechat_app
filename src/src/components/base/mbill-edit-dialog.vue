@@ -15,8 +15,7 @@
       <!-- 底部按钮 -->
       <view class="bottom-operate" id="bottom-operate">
         <mb-ba-bottom-btn
-          @ltap="handleLeft"
-          @rtap="handleRight"
+          @click="handleBtnClick"
           :onlyone="onlyone"
           :ltext="ltext"
           :rtext="rtext"
@@ -81,15 +80,9 @@ export default {
       this.$emit("change", e);
     },
 
-    handleLeft() {
+    handleBtnClick(e) {
       // console.log("左边按下");
-      this.$emit("ltap");
-      if (this.autoclose) this.$refs.editDialogPopup.close();
-    },
-
-    handleRight() {
-      // console.log("右边按下", this.autoclose);
-      this.$emit("rtap");
+      this.$emit("click", e);
       if (this.autoclose) this.$refs.editDialogPopup.close();
     },
   },

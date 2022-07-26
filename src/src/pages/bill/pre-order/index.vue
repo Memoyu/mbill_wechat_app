@@ -72,7 +72,7 @@
     <view class="bottom-operate" id="bottom-operate">
       <mb-ba-bottom-btn
         onlyone="true"
-        @ltap="handleAddGroup"
+        @click="handleBotBtnClick"
         ltext="新建分组"
       />
     </view>
@@ -82,7 +82,7 @@
       height="170"
       class="edit-group-input"
       @change="handleDialogChange"
-      @ltap="handleReqEditGroup"
+      @click="handleDialogBtnClick"
     >
       <view class="input-item x-bc">
         <text class="title">分组名称</text>
@@ -263,7 +263,7 @@ export default {
       this.initData();
     },
 
-    handleAddGroup() {
+    handleBotBtnClick(e) {
       this.dialodOptions.ltext = "新建";
       this.$refs.addGroupDialog.show(this.dialodOptions);
     },
@@ -273,7 +273,7 @@ export default {
       if (!show) this.group = {};
     },
 
-    handleReqEditGroup() {
+    handleDialogBtnClick(e) {
       console.log(this.group);
       if (!this.group.name || this.group.name == "") {
         this.$tip.toast("请输入分组名称");

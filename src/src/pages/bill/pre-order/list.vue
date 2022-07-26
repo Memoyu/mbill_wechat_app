@@ -59,7 +59,7 @@
       class="edit-order-dialog"
       :height="order.status == 1 || isStatusToDone ? 250 : 200"
       @change="handleDialogChange"
-      @ltap="handleReqEditOrder"
+      @click="handleBtnClick"
     >
       <view class="input-item x-bc">
         <text class="title">预购金额</text>
@@ -113,7 +113,7 @@
     <!-- 底部按钮 -->
     <view class="bottom-operate" id="bottom-operate">
       <mb-ba-bottom-btn
-        @ltap="handleGroupAddOrder"
+        @click="handleBtnClick"
         @rtap="handleGroupToBill"
         ltext="新建预购"
         :rtext="rtext"
@@ -456,41 +456,40 @@ export default {
     },
 
     // 新建预购
-    handleGroupAddOrder() {
-      this.dialogOptions.ltext = addBtnTitle;
-      this.$refs.editOrderDialog.show(this.dialogOptions);
-    },
-
-    // 分组入账
-    async handleGroupToBill() {
-      if (this.stat.billId != 0) {
-        this.$Router.push({
-          name: "bill-edit",
-          params: { id: this.stat.billId },
-        });
+    async handleBtnClick(e) {
+      if (e.isLeft) {
+        this.dialogOptions.ltext = addBtnTitle;
+        this.$refs.editOrderDialog.show(this.dialogOptions);
       } else {
-        // 校验分组中是否存在预购单
-        if (this.orders.length <= 0) {
-          this.$tip.toast("当前分组不存在预购单，无法入账！");
-          return;
-        }
-        // 校验分组中预购单是否都已完成
-        let index = this.orders.findIndex((o) => o.status == 0);
-        console.log(index);
-        if (index >= 0) {
-          let isConfirm = false;
-          await this.$tip
-            .choose("分组中存在未购的预购单，确定要入账？", {}, "提示")
-            .then(() => {
-              isConfirm = true;
-            });
-          if (!isConfirm) return;
-        }
+        if (this.stat.billId != 0) {
+          this.$Router.push({
+            name: "bill-edit",
+            params: { id: this.stat.billId },
+          });
+        } else {
+          // 校验分组中是否存在预购单
+          if (this.orders.length <= 0) {
+            this.$tip.toast("当前分组不存在预购单，无法入账！");
+            return;
+          }
+          // 校验分组中预购单是否都已完成
+          let index = this.orders.findIndex((o) => o.status == 0);
+          console.log(index);
+          if (index >= 0) {
+            let isConfirm = false;
+            await this.$tip
+              .choose("分组中存在未购的预购单，确定要入账？", {}, "提示")
+              .then(() => {
+                isConfirm = true;
+              });
+            if (!isConfirm) return;
+          }
 
-        this.$Router.push({
-          name: "bill-edit",
-          params: { group: this.groupId },
-        });
+          this.$Router.push({
+            name: "bill-edit",
+            params: { group: this.groupId },
+          });
+        }
       }
     },
 
@@ -514,7 +513,7 @@ export default {
     },
 
     // 编辑弹窗触发
-    handleReqEditOrder() {
+    handleBtnClick(e) {
       var amtreg = /^\d+(\.\d{1,2})?$/;
       if (!amtreg.test(this.order.preAmount) || this.order.preAmount == 0) {
         this.$tip.toast("请输入正确的预购金额");

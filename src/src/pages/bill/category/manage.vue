@@ -1,5 +1,5 @@
 <template>
-  <view class="bill-category-manage">
+  <view class="b-container">
     <view class="type-tabs" id="header-type-tabs">
       <mb-ba-focus-tabs
         v-model="type"
@@ -30,23 +30,28 @@
       </swiper-item>
     </swiper>
 
-    <view class="add-category-group" id="bottom-add-group" @tap="handleAddGroup"
-      >添加分组</view
-    >
+    <!-- 添加分组按钮 -->
+    <mb-ba-bottom-btn
+      class="bottom-add-btn"
+      :onlyone="true"
+      ltext="添加分组"
+      id="add-btn"
+      @click="handleBotBtnClick"
+    />
 
     <!-- 添加分组弹窗 -->
     <mb-ba-edit-dialog
       ref="addGroupDialog"
       height="150"
       class="edit-group-input"
-      @ltap="handleEditGroup"
-      @rtap="handleDelGroup"
+      @click="handleDialogBtnClick"
     >
       <view class="input-item x-bc">
         <text class="title">分组名称</text>
         <input
           type="text"
           class="input"
+          maxlength="5"
           v-model="group.name"
           alwaysEmbed="true"
           placeholder="名称"
@@ -126,19 +131,13 @@ export default {
       this.type = curr;
     },
 
-    // 添加分类
-    handleAddCategory(groupId) {
-      console.log(groupId, "分组Id");
-      this.$tip.toast("开发中，敬请期待");
-    },
-
     // 切换分类类型
     handleTypeSwitch(type) {
       this.type = type;
     },
 
     // 添加分组
-    handleAddGroup() {
+    handleBotBtnClick(e) {
       this.group = {};
       this.dialodOptions.onlyone = true;
       this.dialodOptions.ltext = addBtnTitle;
@@ -167,9 +166,9 @@ export default {
      */
     handleSelectedItem(e) {
       this.item = e.item;
+      let group = this.expendGroups[e.item.gIndex];
       if (e.type == 0) {
         // 为编辑
-        let group = this.expendGroups[e.item.gIndex];
         this.$Router.push({
           name: "category-edit",
           params: { id: e.item.id, groupId: group.id, groupName: group.name },
@@ -178,67 +177,70 @@ export default {
         // 为删除
         console.log(e.item, "删除分类");
         this.expendGroups[this.item.gIndex].childs.splice(this.item.index, 1);
-      }
-    },
-
-    /**
-     * @description: 请求添加分组
-     * @return {*}
-     */
-    handleEditGroup() {
-      if (this.group.name == undefined || this.group.name.length <= 0) {
-        this.$tip.toast("请输入分组名称");
-        return;
-      }
-      if (this.group.name.length > 6) {
-        this.$tip.toast("分组名称超长");
-        return;
-      }
-
-      // 没有id 或 id = 0 则为添加分组
-      if (this.group.id != undefined && this.group != 0) {
-        this.$api
-          .editCategoryGroup({
-            name: this.group.name,
-          })
-          .then((res) => {
-            if (res.data.code === 0) {
-              // console.log(res.data.result);
-              this.$refs.addGroupDialog.hide();
-              this.getCategoryGroups(this.type);
-            }
-          });
-      } else {
-        this.$api
-          .createCategoryGroup({
-            name: this.group.name,
-            type: this.type,
-            sort:
-              this.type == 0
-                ? this.expendGroups.length + 1
-                : this.incomeGroups.length + 1,
-          })
-          .then((res) => {
-            if (res.data.code === 0) {
-              // console.log(res.data.result);
-              this.$refs.addGroupDialog.hide();
-              this.getCategoryGroups(this.type);
-            }
-          });
-      }
-    },
-    handleDelGroup() {
-      console.log("删除group", this.group);
-      this.$tip
-        .choose("同时删除子项，是否删除？", {}, "删除分组")
-        .then(async () => {
-          // that.$api.delCategoryGroup(this.group.id).then((res) => {
-          //   if (res.data.code === 0) {
-          //   }
-          // });
-          this.expendGroups.splice(this.group.index, 1);
-          this.$refs.addGroupDialog.hide();
+      } else if (e.type == 2) {
+        // 为新增
+        this.$Router.push({
+          name: "category-edit",
+          params: { groupId: group.id, groupName: group.name },
         });
+      }
+    },
+
+    handleDialogBtnClick(e) {
+      if (e.isLeft) {
+        if (this.group.name == undefined || this.group.name.length <= 0) {
+          this.$tip.toast("请输入分组名称");
+          return;
+        }
+        if (this.group.name.length > 6) {
+          this.$tip.toast("分组名称超长");
+          return;
+        }
+
+        // 没有id 或 id = 0 则为添加分组
+        if (this.group.id != undefined && this.group != 0) {
+          this.$api
+            .editCategoryGroup({
+              name: this.group.name,
+            })
+            .then((res) => {
+              if (res.data.code === 0) {
+                // console.log(res.data.result);
+                this.$refs.addGroupDialog.hide();
+                this.getCategoryGroups(this.type);
+              }
+            });
+        } else {
+          this.$api
+            .createCategoryGroup({
+              name: this.group.name,
+              type: this.type,
+              sort:
+                this.type == 0
+                  ? this.expendGroups.length + 1
+                  : this.incomeGroups.length + 1,
+            })
+            .then((res) => {
+              if (res.data.code === 0) {
+                // console.log(res.data.result);
+                this.$refs.addGroupDialog.hide();
+                this.getCategoryGroups(this.type);
+              }
+            });
+        }
+      } else {
+        console.log("删除group", this.group);
+        this.$tip
+          .choose("同时删除子项，是否删除？", {}, "删除分组")
+          .then(async () => {
+            // that.$api.delCategoryGroup(this.group.id).then((res) => {
+            //   if (res.data.code === 0) {
+            //   }
+            // });
+            this.expendGroups.splice(this.group.index, 1);
+            this.$refs.addGroupDialog.hide();
+          });
+      }
     },
 
     /**
@@ -269,11 +271,11 @@ export default {
           let pH = res.windowHeight;
           let query = uni.createSelectorQuery().in(that);
           query.select("#header-type-tabs").fields({ size: true });
-          query.select("#bottom-add-group").fields({ size: true });
+          query.select("#add-btn").fields({ size: true });
           query.exec((data) => {
             let headerH = data[0].height;
             headerH += data[1].height;
-            that.contentH = pH - headerH - 20; // 20 为margin
+            that.contentH = pH - headerH;
           });
         },
       });
@@ -283,7 +285,7 @@ export default {
 </script>
 
 <style lang="scss" scope>
-.bill-category-manage {
+.b-container {
   .type-tabs {
     font-size: 35rpx;
     padding: 30rpx 0;
@@ -292,11 +294,8 @@ export default {
     align-items: center;
   }
 
-  .add-category-group {
-    color: $dark-color;
-    font-weight: bold;
-    margin: 20rpx 0;
-    text-align: center;
+  .bottom-add-btn {
+    padding: 20rpx;
   }
 
   .edit-group-input {

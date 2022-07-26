@@ -25,7 +25,7 @@
       </view>
       <view class="b-detail-copy" @click="handleCopyAndToEdit">再记一笔</view>
       <view class="bottom-operate">
-        <mb-ba-bottom-btn @ltap="handleEdit" @rtap="handleDel" />
+        <mb-ba-bottom-btn @click="handleBtnClick" @rtap="handleDel" />
       </view>
     </view>
   </view>
@@ -82,30 +82,29 @@ export default {
     },
 
     //编辑账单
-    handleEdit() {
+    handleBtnClick(e) {
       // console.log("编辑");
-      this.$Router.push({ name: "bill-edit", params: { id: this.bill.id } });
-    },
-
-    // 删除账单
-    handleDel() {
-      // console.log("删除");
-      let pages = getCurrentPages(); //当前页
-      let beforePage = pages[pages.length - 2];
-      // console.log(beforePage);
-      let that = this;
-      this.$tip.choose("是否删除该条账单？", {}, "提示").then(async () => {
-        that.$api.delBill(this.id).then((res) => {
-          if (res.data.code === 0) {
-            // 如果是首页，进行数据处理
-            if (beforePage.route === "pages/index/index") {
-              // console.log("处理数据");
-              this.$store.commit(DEL_INDEX_BILL, this.id);
+      if (e.isLeft) {
+        this.$Router.push({ name: "bill-edit", params: { id: this.bill.id } });
+      } else {
+        // console.log("删除");
+        let pages = getCurrentPages(); //当前页
+        let beforePage = pages[pages.length - 2];
+        // console.log(beforePage);
+        let that = this;
+        this.$tip.choose("是否删除该条账单？", {}, "提示").then(async () => {
+          that.$api.delBill(this.id).then((res) => {
+            if (res.data.code === 0) {
+              // 如果是首页，进行数据处理
+              if (beforePage.route === "pages/index/index") {
+                // console.log("处理数据");
+                this.$store.commit(DEL_INDEX_BILL, this.id);
+              }
+              this.$Router.back();
             }
-            this.$Router.back();
-          }
+          });
         });
-      });
+      }
     },
 
     // 再来一笔账单

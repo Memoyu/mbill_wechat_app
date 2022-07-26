@@ -60,10 +60,10 @@ export default {
   },
   methods: {
     handleLBtnTap() {
-      this.$emit("ltap");
+      this.$emit("click", { isLeft: true });
     },
     handleRBtnTap() {
-      this.$emit("rtap");
+      this.$emit("click", { isLeft: false });
     },
   },
 };

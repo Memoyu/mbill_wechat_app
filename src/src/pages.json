@@ -87,7 +87,7 @@
 			"path": "pages/bill/category/edit",
 			"name": "category-edit",
 			"style": {
-				"navigationBarTitleText": "编辑分类"
+				"navigationBarTitleText": ""
 			}
 		},
 		{
