@@ -171,11 +171,15 @@ export default {
       } else if (e.type == 1) {
         // 为删除
         console.log(item, "删除分类");
-        if (this.type == 0) {
-          this.expendGroups[item.gIndex].childs.splice(item.index, 1);
-        } else {
-          this.incomeGroups[item.gIndex].childs.splice(item.index, 1);
-        }
+        this.$api.delCategory(item.id).then((res) => {
+          if (res.data.code === 0) {
+            if (this.type == 0) {
+              this.expendGroups[item.gIndex].childs.splice(item.index, 1);
+            } else {
+              this.incomeGroups[item.gIndex].childs.splice(item.index, 1);
+            }
+          }
+        });
       } else if (e.type == 2) {
         // 为新增
         this.$Router.push({
@@ -199,7 +203,8 @@ export default {
         // 没有id 或 id = 0 则为添加分组
         if (this.group.id != undefined && this.group != 0) {
           this.$api
-            .editCategoryGroup({
+            .editCategory({
+              id: this.group.id,
               name: this.group.name,
             })
             .then((res) => {
@@ -211,7 +216,7 @@ export default {
             });
         } else {
           this.$api
-            .createCategoryGroup({
+            .createCategory({
               name: this.group.name,
               type: this.type,
               sort:
@@ -228,18 +233,17 @@ export default {
             });
         }
       } else {
-        console.log("删除group", this.group);
-
+        // console.log("删除group", this.group);
         this.$tip
           .choose("同时删除子项，是否删除？", {}, "删除分组")
           .then(async () => {
             if (this.type == 0) {
-              // that.$api.delCategoryGroup(this.group.id).then((res) => {
-              //   if (res.data.code === 0) {
-              //   }
-              // });
-              this.expendGroups.splice(this.group.index, 1);
-              this.$refs.addGroupDialog.hide();
+              this.$api.delCategory(this.group.id).then((res) => {
+                if (res.data.code === 0) {
+                  this.expendGroups.splice(this.group.index, 1);
+                  this.$refs.addGroupDialog.hide();
+                }
+              });
             } else {
               this.incomeGroups.splice(this.group.index, 1);
               this.$refs.addGroupDialog.hide();

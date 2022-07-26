@@ -106,37 +106,20 @@ const bill = {
         return http.post('category/sort', params)
     },
 
-    // 创建账单分类分组
-    createCategoryGroup(params) {
-        return http.post('category', params)
-    },
-
-    // 编辑账单分类分组
-    editCategoryGroup(params) {
-        return http.put('category', params)
-    },
-
-    // 删除账单分类分组
-    delCategoryGroup(params) {
-        return http.delete('category', params)
-    },
-
-    // 创建账单分类
+    // 创建账单分组/分类
     createCategory(params) {
         return http.post('category', params)
     },
 
-    // 编辑账单分类
+    // 编辑账单分组/分类
     editCategory(params) {
         return http.put('category', params)
     },
 
-    // 删除账单分类
+    // 删除账单分组/分类
     delCategory(params) {
         return http.delete('category', params)
     },
-
-
 
     //#endregion
 
