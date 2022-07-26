@@ -13,7 +13,7 @@
       :style="{ height: contentH + 'px' }"
     >
       <swiper-item class="swiper_item">
-        <mb-ca-collapse
+        <mb-ba-group-collapse
           :height="contentH"
           :data="expendGroups"
           @sort="handelSort"
@@ -22,10 +22,12 @@
         />
       </swiper-item>
       <swiper-item class="swiper_item">
-        <mb-ca-collapse
+        <mb-ba-group-collapse
           :height="contentH"
           :data="incomeGroups"
           @sort="handelSort"
+          @selected-group="onSelectedGroup"
+          @selected-item="onSelectedItem"
         />
       </swiper-item>
     </swiper>
@@ -85,13 +87,6 @@ export default {
         id: 0,
         name: "",
         index: 0,
-      },
-      item: {
-        id: 0,
-        name: "",
-        icon: "",
-        index: 0,
-        gIndex: 0,
       },
     };
   },
@@ -165,18 +160,22 @@ export default {
      * @return {*}
      */
     onSelectedItem(e) {
-      this.item = e.item;
-      let group = this.expendGroups[e.item.gIndex];
+      let item = e.item;
+      let group = this.expendGroups[item.gIndex];
       if (e.type == 0) {
         // 为编辑
         this.$Router.push({
           name: "category-edit",
-          params: { id: e.item.id, groupId: group.id, groupName: group.name },
+          params: { id: item.id, groupId: group.id, groupName: group.name },
         });
       } else if (e.type == 1) {
         // 为删除
-        console.log(e.item, "删除分类");
-        this.expendGroups[this.item.gIndex].childs.splice(this.item.index, 1);
+        console.log(item, "删除分类");
+        if (this.type == 0) {
+          this.expendGroups[item.gIndex].childs.splice(item.index, 1);
+        } else {
+          this.incomeGroups[item.gIndex].childs.splice(item.index, 1);
+        }
       } else if (e.type == 2) {
         // 为新增
         this.$Router.push({
@@ -230,15 +229,21 @@ export default {
         }
       } else {
         console.log("删除group", this.group);
+
         this.$tip
           .choose("同时删除子项，是否删除？", {}, "删除分组")
           .then(async () => {
-            // that.$api.delCategoryGroup(this.group.id).then((res) => {
-            //   if (res.data.code === 0) {
-            //   }
-            // });
-            this.expendGroups.splice(this.group.index, 1);
-            this.$refs.addGroupDialog.hide();
+            if (this.type == 0) {
+              // that.$api.delCategoryGroup(this.group.id).then((res) => {
+              //   if (res.data.code === 0) {
+              //   }
+              // });
+              this.expendGroups.splice(this.group.index, 1);
+              this.$refs.addGroupDialog.hide();
+            } else {
+              this.incomeGroups.splice(this.group.index, 1);
+              this.$refs.addGroupDialog.hide();
+            }
           });
       }
     },

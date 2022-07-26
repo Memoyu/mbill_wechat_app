@@ -73,7 +73,7 @@
 			"path": "pages/bill/asset/edit",
 			"name": "asset-edit",
 			"style": {
-				"navigationBarTitleText": "编辑账户"
+				"navigationBarTitleText": ""
 			}
 		},
 		{
