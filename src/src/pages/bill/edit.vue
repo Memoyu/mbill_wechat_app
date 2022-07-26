@@ -1,6 +1,6 @@
 <template>
   <view class="container">
-    <!-- 账单类型、时间  @selected="handleTypeSelected"-->
+    <!-- 账单类型、时间  @selected="onTypeSelected"-->
     <view class="header" id="edit-header">
       <view class="type-content">
         <mb-b-type-tabs :items="types" v-model="model.type" />
@@ -9,7 +9,7 @@
         <picker
           class="date-picker"
           mode="date"
-          @change="handleDatePicker"
+          @change="onDatePicker"
           fields="day"
           :value="date"
           :end="pickerEnd"
@@ -21,7 +21,7 @@
         <picker
           class="time-picker"
           mode="time"
-          @change="handleTimePicker"
+          @change="onTimePicker"
           :value="model.time"
         >
           <view class="x-ac time">
@@ -71,7 +71,7 @@
           :type="model.type"
           :select="model.categoryId"
           :groups="categoryGroups"
-          @selected="handleSelectedCategory"
+          @selected="onSelectedCategory"
         />
       </scroll-view>
     </view>
@@ -86,8 +86,8 @@
             'icon-padding ',
             !locationStatus ? 'icon-color' : '',
           ]"
-          @click="handleSwitchChange"
-          @longtap="handleSwitchLongtap"
+          @click="onSwitchChange"
+          @longtap="onSwitchLongtap"
         />
         <input
           type="text"
@@ -97,7 +97,7 @@
         />
       </view>
       <view class="key-board-header-desc x-start">
-        <view class="x-ac choose-asset" @tap="handleChooseAsset">
+        <view class="x-ac choose-asset" @click="onChooseAsset">
           <i v-if="model.assetId == 0" class="iconfont icon-assets icon" />
           <view v-else class="asset-icon">
             <image class="image" :src="model.assetIcon" />
@@ -124,8 +124,8 @@
         ref="keyboard"
         :pnum="initAmount"
         :loading="loading"
-        @confirm="handleConfirmNum"
-        @input="handleInputNum"
+        @confirm="onConfirmNum"
+        @input="onInputNum"
       />
     </view>
 
@@ -136,7 +136,7 @@
           <mb-as-group
             :select="model.assetId"
             :groups="assetGroups"
-            @selected="handleSelectedAsset"
+            @selected="onSelectedAsset"
           />
         </scroll-view>
       </view>
@@ -363,7 +363,7 @@ export default {
     },
 
     // 账单类型选择
-    handleTypeSelected(type) {
+    onTypeSelected(type) {
       // console.log(type, "触发了呀");
 
       this.model.type = type.id;
@@ -371,25 +371,25 @@ export default {
     },
 
     // 日期选择
-    handleDatePicker({ detail }) {
+    onDatePicker({ detail }) {
       // console.log(this.model.date);
       this.date = detail.value;
       this.model.date = detail.value;
     },
 
     // 时间选择
-    handleTimePicker({ detail }) {
+    onTimePicker({ detail }) {
       this.model.time = detail.value;
     },
 
     // 弹出账户选择
-    handleChooseAsset() {
+    onChooseAsset() {
       this.getAssetGroups();
       this.$refs.assetPopup.open();
     },
 
     // 键盘输入
-    handleInputNum(e) {
+    onInputNum(e) {
       // console.log(e);
       this.input = e.input;
       this.model.amount = e.result;
@@ -398,7 +398,7 @@ export default {
     },
 
     // 键盘确认
-    handleConfirmNum() {
+    onConfirmNum() {
       if (this.loading) return;
       this.bill = {
         id: this.model.id,
@@ -496,13 +496,13 @@ export default {
     },
 
     // 选中账单分类
-    handleSelectedCategory(item) {
+    onSelectedCategory(item) {
       // console.log(item);
       this.model.categoryId = item.id;
     },
 
     // 选中账单账户
-    handleSelectedAsset(item) {
+    onSelectedAsset(item) {
       // console.log(item);
       this.model.assetId = item.id;
       this.model.asset = item.name;
@@ -511,7 +511,7 @@ export default {
     },
 
     // 位置信息获取开关切换(点击获取)
-    handleSwitchChange() {
+    onSwitchChange() {
       // console.log("获取位置", this.locationStatus);
       if (this.locationStatus) {
         this.getLocation();
@@ -521,7 +521,7 @@ export default {
     },
 
     // 位置信息获取开关切换(长按开关)
-    handleSwitchLongtap() {
+    onSwitchLongtap() {
       // console.log("长按");
       this.locationStatus = !this.locationStatus;
       uni.setStorageSync(LOCATION_STATUS, this.locationStatus);

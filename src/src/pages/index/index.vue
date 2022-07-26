@@ -7,7 +7,7 @@
         <picker
           class="date-picker"
           mode="date"
-          @change="handlePickerChange"
+          @change="onPickerChange"
           fields="month"
           :value="pickerDate"
           :end="pickerEnd"
@@ -40,9 +40,9 @@
           :expand="expand"
           :tags="indexTags"
           :date="calendarDate"
-          @change="handleDayChange"
-          @changemonth="handleMonthChange"
-          @sizechange="handleSizeChange"
+          @change="onDayChange"
+          @changemonth="onMonthChange"
+          @sizechange="onSizeChange"
         />
       </view>
     </view>
@@ -50,7 +50,7 @@
     <view
       :style="{ height: expandHeight + 'px' }"
       class="calendar-expand"
-      @tap="handleExpandView"
+      @click="onExpandView"
     >
       <i
         style="font-size: 20px"
@@ -80,7 +80,7 @@
       height="70"
       :show="popShow"
       :date="popDate"
-      @change="handleBillsOnDayPopup"
+      @change="onBillsOnDayPopup"
     />
   </view>
 </template>
@@ -223,7 +223,7 @@ export default {
     },
 
     // 日历月份变更
-    handleMonthChange(date) {
+    onMonthChange(date) {
       // console.log("date", date);
       this.pickerDateText = date;
       this.pickerDate = `${date.year}-${date.month}`;
@@ -232,7 +232,7 @@ export default {
     },
 
     // 选中具体日期时弹窗展示账单
-    handleDayChange(e) {
+    onDayChange(e) {
       // console.log(this.isLogin);
       // console.log(this.token);
       if (!this.isLogin) {
@@ -245,7 +245,7 @@ export default {
     },
 
     // 选择日期
-    handlePickerChange({ detail }) {
+    onPickerChange({ detail }) {
       // console.log(detail.value);
       let d = new Date(detail.value);
       let select = datetime.getCurDateObj(d);
@@ -262,19 +262,19 @@ export default {
     },
 
     // 弹窗状态改变触发
-    handleBillsOnDayPopup(e) {
+    onBillsOnDayPopup(e) {
       this.setTabBarShow(!e.show);
       this.popShow = e.show;
     },
 
     // 日历size发生变更
-    handleSizeChange(h) {
+    onSizeChange(h) {
       // console.log("日历尺寸", h);
       this.getDynamicHeight(h);
     },
 
     // 展开、收缩scroll-view
-    handleExpandView() {
+    onExpandView() {
       let minHeight = this.dateTitleHeight;
       // console.log(minHeight);
       if (this.expand) {

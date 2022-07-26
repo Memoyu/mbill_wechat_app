@@ -23,9 +23,9 @@
         </view>
         <mb-ba-end-split-line />
       </view>
-      <view class="b-detail-copy" @click="handleCopyAndToEdit">再记一笔</view>
+      <view class="b-detail-copy" @click="onCopyAndToEdit">再记一笔</view>
       <view class="bottom-operate">
-        <mb-ba-bottom-btn @click="handleBtnClick" @rtap="handleDel" />
+        <mb-ba-bottom-btn @click="onBtnClick" @rtap="onDel" />
       </view>
     </view>
   </view>
@@ -82,7 +82,7 @@ export default {
     },
 
     //编辑账单
-    handleBtnClick(e) {
+    onBtnClick(e) {
       // console.log("编辑");
       if (e.isLeft) {
         this.$Router.push({ name: "bill-edit", params: { id: this.bill.id } });
@@ -108,7 +108,7 @@ export default {
     },
 
     // 再来一笔账单
-    handleCopyAndToEdit() {
+    onCopyAndToEdit() {
       this.$Router.push({
         name: "bill-edit",
         params: { copyId: this.bill.id },

@@ -10,7 +10,7 @@
           ]"
           v-for="(item, index) in d.childs"
           :key="index"
-          @click="handleSelectedItem(item)"
+          @click="onSelectedItem(item)"
         >
           <image class="image" :src="item.iconUrl" />
           <text class="text">{{ item.name }}</text>
@@ -18,7 +18,7 @@
       </view>
     </view>
     <!-- TODO:完成账户的添加 -->
-    <view class="to-add-asset" @tap="handleAddAsset">管理账户</view>
+    <view class="to-add-asset" @click="onAddAsset">管理账户</view>
   </view>
 </template>
 
@@ -47,11 +47,11 @@ export default {
     },
   },
   methods: {
-    handleSelectedItem(item) {
+    onSelectedItem(item) {
       this.selectedId = item.id;
       this.$emit("selected", item);
     },
-    handleAddAsset() {
+    onAddAsset() {
       this.$Router.push({ name: "asset-manage" });
     },
   },

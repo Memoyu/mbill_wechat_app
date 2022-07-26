@@ -4,7 +4,7 @@
       <mb-ba-date-scroll
         type="year"
         v-model="dateActive"
-        @selected.stop="handleSelectedYear"
+        @selected.stop="onSelectedYear"
       />
     </view>
 
@@ -85,7 +85,7 @@
       <view class="x-bc">
         <view class="mb-stat-divide-title">占比统计</view>
         <view class="type-tabs">
-          <mb-ba-focus-tabs :items="types" @selected="handleTypeSwitch" />
+          <mb-ba-focus-tabs :items="types" @selected="onTypeSwitch" />
         </view>
       </view>
       <view class="mb-stat-year-func-tab">
@@ -107,13 +107,13 @@
         <view v-if="categoryGroups.length > 0" class="mb-stat-year-bg-br">
           <mb-stat-category-group
             :groups="categoryGroups"
-            @select="handleCategoryClick"
+            @select="onCategoryClick"
           />
         </view>
       </view>
 
       <view v-if="perActive === 1" class="mb-stat-year-bg-br">
-        <mb-stat-month-list @click="handleMonthClick" :surplus="monthSurplus" />
+        <mb-stat-month-list @click="onMonthClick" :surplus="monthSurplus" />
       </view>
     </scroll-view>
   </view>
@@ -176,7 +176,7 @@ export default {
       this.calcuScrollHeight(val);
     },
     perActive(val) {
-      this.handleSelectedPerType(val);
+      this.onSelectedPerType(val);
     },
   },
   created() {
@@ -318,7 +318,7 @@ export default {
     },
 
     // 切换年份
-    handleSelectedYear(item) {
+    onSelectedYear(item) {
       // console.log("年份选择", item);
       if (item.year == this.year) return;
       this.year = item.year;
@@ -326,27 +326,27 @@ export default {
     },
 
     // 点击月份
-    handleMonthClick(month) {
+    onMonthClick(month) {
       // console.log("月份选择", month);
       this.$emit("monthclick", { year: this.year, month });
     },
 
     // 切换占比类型
-    handleSelectedPerType(type) {
+    onSelectedPerType(type) {
       // console.log("占比类型");
       if (type === 0) this.loadCategoryStat();
       else if (type === 1) this.loadMonthSurplus();
     },
 
     // 切换账单类型
-    handleTypeSwitch(key) {
+    onTypeSwitch(key) {
       // console.log(key);
       this.type = key;
       this.loadCategoryStat();
     },
 
     // 点击对应分类占比
-    handleCategoryClick(item) {
+    onCategoryClick(item) {
       this.$emit("select-category", {
         id: item.id,
         category: item.category,

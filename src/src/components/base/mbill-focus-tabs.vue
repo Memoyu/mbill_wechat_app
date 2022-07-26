@@ -9,7 +9,7 @@
       :style="{ color: item.key == active ? selcolor : color }"
       v-for="(item, index) in items"
       :key="index"
-      @click="handleSelected(item, index)"
+      @click="onSelected(item, index)"
       >{{ item.text }}</view
     >
   </view>
@@ -68,7 +68,7 @@ export default {
   },
 
   methods: {
-    handleSelected(item, index) {
+    onSelected(item, index) {
       let left = 0;
       for (let i = 0; i < index; i++) {
         left += this.tabsSize[i].width;

@@ -3,7 +3,7 @@
     ref="BillDayListPopup"
     class="mbill-bill-day-list-popup"
     type="bottom"
-    @change="handlePopup"
+    @change="onPopup"
   >
     <view
       class="bill-day-popup-content"
@@ -81,7 +81,7 @@ export default {
     });
   },
   methods: {
-    handlePopup(e) {
+    onPopup(e) {
       this.$emit("change", e);
     },
     getCategoryBills() {

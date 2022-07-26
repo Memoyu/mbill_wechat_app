@@ -3,7 +3,7 @@
     <view class="iconfont icon-bill need-to-login"></view>
     <view class="hint-content">
       <view class="title">暂未登录</view>
-      <view class="goto" @click="handleGotoLogin">登录 ></view>
+      <view class="goto" @click="onGotoLogin">登录 ></view>
     </view>
   </view>
 </template>
@@ -13,7 +13,7 @@ export default {
   name: "mbill-login-hint",
   props: {},
   methods: {
-    handleGotoLogin() {
+    onGotoLogin() {
       this.$Router.push({ name: "login" });
     },
   },

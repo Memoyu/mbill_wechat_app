@@ -7,8 +7,8 @@
         class="key"
         hover-class="key-click"
         hover-stay-time="50"
-        @longtap="handleLongTap(numKey.value)"
-        @tap="handleClickNum(numKey.value)"
+        @longtap="onLongTap(numKey.value)"
+        @click="onClickNum(numKey.value)"
       >
         <text v-if="!numKey.icon">{{ numKey.value }}</text>
         <i
@@ -25,7 +25,7 @@
         :class="op.className"
         hover-class="key-click"
         hover-stay-time="50"
-        @click="handleClickNum(op.value)"
+        @click="onClickNum(op.value)"
       >
         <view v-if="op.value === 'confirm'">
           <i
@@ -121,11 +121,11 @@ export default {
   },
   methods: {
     // 输入
-    handleClickNum(e) {
+    onClickNum(e) {
       // 加载中则不进行任何操作
       if (this.loading) return;
       if ("confirm" == e) {
-        this.handleConfirm();
+        this.onConfirm();
         return;
       }
       // 数字：0-9
@@ -160,7 +160,7 @@ export default {
       }
     },
     // 长按
-    handleLongTap(e) {
+    onLongTap(e) {
       if ("del" != e) return;
       this.infix = [];
       this.suffix = [];
@@ -168,7 +168,7 @@ export default {
     },
 
     // 确定
-    handleConfirm() {
+    onConfirm() {
       this.$emit("confirm");
     },
 

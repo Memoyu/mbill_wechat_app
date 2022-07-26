@@ -6,7 +6,7 @@
         <picker
           class="date-picker"
           mode="date"
-          @change="handleDatePickerChange"
+          @change="onDatePickerChange"
           fields="month"
           :value="date"
           :end="dateEnd"
@@ -20,7 +20,7 @@
         </picker>
         <picker
           class="type-picker"
-          @change="handleTypePickerChange"
+          @change="onTypePickerChange"
           :value="billType"
           :range="billTypes"
         >
@@ -42,17 +42,14 @@
             <i class="iconfont icon-bottom icon-down" />
           </view>
         </picker>
-        <i
-          class="iconfont icon-delete clear-filter"
-          @click="handleResetFilter"
-        />
+        <i class="iconfont icon-delete clear-filter" @click="onResetFilter" />
       </view>
 
       <!-- 排行日期类型 -->
       <view class="mb-stat-ranking-header-date-type-tabs">
         <mb-ba-focus-tabs
           :items="dateTypes"
-          @selected="handleTypeSwitch"
+          @selected="onTypeSwitch"
           color="#808080"
         />
       </view>
@@ -203,7 +200,7 @@ export default {
     },
 
     // 切换日期
-    handleDatePickerChange({ detail }) {
+    onDatePickerChange({ detail }) {
       let date = new Date(detail.value);
       // console.log(date);
       let select = datetime.getCurDateObj(date);
@@ -218,7 +215,7 @@ export default {
     },
 
     // 切换账单类型
-    handleTypePickerChange({ detail }) {
+    onTypePickerChange({ detail }) {
       // console.log(detail);
       if (this.billType == detail.value) return;
       this.billType = detail.value;
@@ -238,12 +235,12 @@ export default {
       this.loadStatData();
     },
 
-    handleTypeSwitch(key) {
+    onTypeSwitch(key) {
       this.dateActive = key;
     },
 
     // 重置过滤条件,并重新加载数据
-    handleResetFilter() {
+    onResetFilter() {
       this.date = datetime.getCurDate();
       this.dateText = datetime.getCurDateObj();
       this.dateActive = 0;

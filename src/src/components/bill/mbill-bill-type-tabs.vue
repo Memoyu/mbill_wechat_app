@@ -23,7 +23,7 @@
       }"
       v-for="(item, index) in items"
       :key="index"
-      @click="handleSelected(item, index)"
+      @click="onSelected(item, index)"
       >{{ item.text }}</view
     >
   </view>
@@ -90,7 +90,7 @@ export default {
 
   methods: {
     // 选中tab触发
-    handleSelected(item, index) {
+    onSelected(item, index) {
       // console.log("进来了");
       this.bgheight = this.tabsSize[index].height * 0.2;
       this.bgwidth = this.tabsSize[index].width * 0.2;

@@ -6,7 +6,7 @@
         <picker
           class="date-picker"
           mode="date"
-          @change="handlePickerChange"
+          @change="onPickerChange"
           fields="month"
           :value="pickerDate"
         >
@@ -57,7 +57,7 @@
             v-for="g in groups"
             :key="g.id"
             :right-options="swipeOptions"
-            @click="handleSwipeClick($event, g)"
+            @click="onSwipeClick($event, g)"
           >
             <view class="group-content-items">
               <mb-po-group-item :group="g" />
@@ -72,7 +72,7 @@
     <view class="bottom-operate" id="bottom-operate">
       <mb-ba-bottom-btn
         onlyone="true"
-        @click="handleBotBtnClick"
+        @click="onBotBtnClick"
         ltext="新建分组"
       />
     </view>
@@ -81,8 +81,8 @@
       ref="addGroupDialog"
       height="170"
       class="edit-group-input"
-      @change="handleDialogChange"
-      @click="handleDialogBtnClick"
+      @change="onDialogChange"
+      @click="onDialogBtnClick"
     >
       <view class="input-item x-bc">
         <text class="title">分组名称</text>
@@ -255,7 +255,7 @@ export default {
     },
 
     // 选择日期
-    handlePickerChange({ detail }) {
+    onPickerChange({ detail }) {
       // console.log(detail.value);
       let d = new Date(detail.value);
       this.pickerDate = datetime.getCurDate(d);
@@ -263,17 +263,17 @@ export default {
       this.initData();
     },
 
-    handleBotBtnClick(e) {
+    onBotBtnClick(e) {
       this.dialodOptions.ltext = "新建";
       this.$refs.addGroupDialog.show(this.dialodOptions);
     },
 
     // 弹窗变更
-    handleDialogChange({ show }) {
+    onDialogChange({ show }) {
       if (!show) this.group = {};
     },
 
-    handleDialogBtnClick(e) {
+    onDialogBtnClick(e) {
       console.log(this.group);
       if (!this.group.name || this.group.name == "") {
         this.$tip.toast("请输入分组名称");
@@ -304,7 +304,7 @@ export default {
       this.getGroups();
     },
 
-    handleSwipeClick(e, g) {
+    onSwipeClick(e, g) {
       // console.log("swipeClick", e, group);
       if (e.index == 0) {
         this.dialogTitle = "编辑预购组";

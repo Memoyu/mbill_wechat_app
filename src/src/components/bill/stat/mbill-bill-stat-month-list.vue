@@ -4,7 +4,7 @@
       class="mb-stat-month-item"
       v-for="(item, index) in surplus"
       :key="index"
-      @click="handleClick(item)"
+      @click="onClick(item)"
     >
       <view class="mb-stat-month-item-month">
         <view class="mb-stat-month-item-month-bl">
@@ -46,85 +46,10 @@ export default {
     },
   },
   data() {
-    return {
-      /*surplus: [
-        {
-          month: 1,
-          surplus: "3,460",
-          expend: "1,000",
-          income: "1,030",
-        },
-        {
-          month: 2,
-          surplus: "3,460",
-          expend: "1,000",
-          income: "1,030",
-        },
-        {
-          month: 3,
-          surplus: "3,460",
-          expend: "1,000",
-          income: "1,030",
-        },
-        {
-          month: 4,
-          surplus: "3,460",
-          expend: "1,000",
-          income: "1,030",
-        },
-        {
-          month: 5,
-          surplus: "3,460",
-          expend: "1,000",
-          income: "1,030",
-        },
-        {
-          month: 6,
-          surplus: "3,460",
-          expend: "1,000",
-          income: "1,030",
-        },
-        {
-          month: 7,
-          surplus: "3,460",
-          expend: "1,000",
-          income: "1,030",
-        },
-        {
-          month: 8,
-          surplus: "3,460",
-          expend: "1,000",
-          income: "1,030",
-        },
-        {
-          month: 9,
-          surplus: "3,460",
-          expend: "1,000",
-          income: "1,030",
-        },
-        {
-          month: 10,
-          surplus: "3,460",
-          expend: "1,000",
-          income: "1,030",
-        },
-        {
-          month: 11,
-          surplus: "3,460",
-          expend: "1,000",
-          income: "1,030",
-        },
-        {
-          month: 12,
-          surplus: "3,460",
-          expend: "1,000",
-          income: "1,030",
-        },
-      ],*/
-    };
+    return {};
   },
   methods: {
-    handleClick(item) {
+    onClick(item) {
       this.$emit("click", item.month);
     },
   },

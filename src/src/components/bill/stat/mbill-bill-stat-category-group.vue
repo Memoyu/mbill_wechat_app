@@ -10,7 +10,7 @@
         class="category-group-item"
         v-for="(item, ind) in category.items"
         :key="ind"
-        @click="handleCategoryClick(item)"
+        @click="onCategoryClick(item)"
       >
         <view>
           <image class="category-group-item-image" :src="item.categoryIcon" />
@@ -137,7 +137,7 @@ export default {
     };
   },
   methods: {
-    handleCategoryClick(item) {
+    onCategoryClick(item) {
       this.$emit("select", item);
     },
   },

@@ -32,7 +32,7 @@
             class="category-icon-list-content"
             v-for="(icon, index) in icons"
             :key="index"
-            @click="handleSelectedIcon(icon)"
+            @click="onSelectedIcon(icon)"
           >
             <image class="category-icon-list-content-image" :src="icon.url" />
           </view>
@@ -46,7 +46,7 @@
       :onlyone="true"
       ltext="保存"
       id="save-btn"
-      @click="handleBtnClick"
+      @click="onBtnClick"
     />
   </view>
 </template>
@@ -255,11 +255,11 @@ export default {
 
     //#region 事件触发
 
-    handleSelectedIcon(icon) {
+    onSelectedIcon(icon) {
       this.category.icon = icon.url;
     },
 
-    handleBtnClick(e) {},
+    onBtnClick(e) {},
 
     onLowerBottom() {
       if (this.iconPage.page * this.iconPage.size >= this.iconTotal) return;

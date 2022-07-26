@@ -8,7 +8,7 @@
     <view
       class="profile-info"
       @click="
-        handleNavigateTo({
+        onNavigateTo({
           path: isLogin ? '/pages/profile/user-detail' : '/pages/profile/login',
           needLogin: false,
         })
@@ -46,7 +46,7 @@
         <view class="grids">
           <view
             class="grid-item x-c"
-            @tap="handleNavigateTo(item)"
+            @click="onNavigateTo(item)"
             v-for="(item, index) in grids"
             :key="index"
           >
@@ -63,7 +63,7 @@
           <!-- 设置共功能 -->
           <view
             class="cell-item"
-            @tap="handleNavigateTo(item)"
+            @click="onNavigateTo(item)"
             v-for="(item, index) in cells"
             :key="index"
           >
@@ -193,7 +193,7 @@ export default {
   },
   methods: {
     ...mapActions(["getProfileTotalStat"]),
-    handleNavigateTo(item) {
+    onNavigateTo(item) {
       // console.log("yonghu ", this.user);
       // console.log(path);
       if (item.needLogin && !this.isLogin) {

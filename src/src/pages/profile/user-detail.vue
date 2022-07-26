@@ -18,11 +18,7 @@
       </view>
     </view>
     <view class="bottom-operate" id="bottom-operate">
-      <mb-ba-bottom-btn
-        onlyone="true"
-        @click="handleBtnClick"
-        ltext="退出登录"
-      />
+      <mb-ba-bottom-btn onlyone="true" @click="onBtnClick" ltext="退出登录" />
     </view>
   </view>
 </template>
@@ -89,7 +85,7 @@ export default {
     },
 
     // 退出登录
-    handleBtnClick(e) {
+    onBtnClick(e) {
       console.log(this.user);
       this.Logout();
     },

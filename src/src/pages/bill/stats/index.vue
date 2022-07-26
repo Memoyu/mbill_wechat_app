@@ -19,15 +19,15 @@
         <mb-stat-month
           ref="statMonth"
           :height="contentH"
-          @select-category="handleCategorySelected"
+          @select-category="onCategorySelected"
         />
       </swiper-item>
       <swiper-item class="swiper_item" @touchmove.stop="stopTochMove">
         <mb-stat-year
           ref="statYear"
           :height="contentH"
-          @monthclick="handleGotoMonthStat"
-          @select-category="handleCategorySelected"
+          @monthclick="onGotoMonthStat"
+          @select-category="onCategorySelected"
         />
       </swiper-item>
       <swiper-item class="swiper_item" @touchmove.stop="stopTochMove">
@@ -38,7 +38,7 @@
       height="70"
       :show="popShow"
       :data="popData"
-      @change="handleCategoryPopup"
+      @change="onCategoryPopup"
     />
   </view>
 </template>
@@ -108,19 +108,19 @@ export default {
       this.loadData(curr);
     },
 
-    handleGotoMonthStat(item) {
+    onGotoMonthStat(item) {
       console.log("指定月份", item);
       this.$refs.statMonth.specifyDate(item);
       this.active = 0;
     },
 
     // 弹窗状态改变触发
-    handleCategoryPopup(e) {
+    onCategoryPopup(e) {
       this.popShow = e.show;
     },
 
     // 选中分类占比的分类
-    handleCategorySelected(e) {
+    onCategorySelected(e) {
       console.log(e);
       this.popData = e;
       this.popShow = true;

@@ -19,16 +19,16 @@
               <view class="category-group-sort">
                 <i
                   class="iconfont icon-up-arrow-outline"
-                  @click.stop="handleGroupUpSort(index)"
+                  @click.stop="onGroupUpSort(index)"
                 />
                 <i
                   class="iconfont icon-down-arrow-outline"
-                  @click.stop="handleGroupDownSort(index)"
+                  @click.stop="onGroupDownSort(index)"
                 />
 
                 <i
                   class="iconfont icon-list-3"
-                  @click.stop="handleEditGroup(index, g)"
+                  @click.stop="onEditGroup(index, g)"
                 />
               </view>
             </view>
@@ -37,7 +37,7 @@
             class="item-content"
             v-for="(item, ind) in g.childs"
             :key="ind"
-            @click="handleEditItem(index, ind, item)"
+            @click="onEditItem(index, ind, item)"
           >
             <view class="category-item-content">
               <image class="image" :src="item.iconUrl" />
@@ -46,22 +46,20 @@
             <view class="category-item-sort">
               <i
                 class="iconfont icon-up-arrow-outline"
-                @click.stop="handleItemUpSort(index, ind)"
+                @click.stop="onItemUpSort(index, ind)"
               />
               <i
                 class="iconfont icon-down-arrow-outline"
-                @click.stop="handleItemDownSort(index, ind)"
+                @click.stop="onItemDownSort(index, ind)"
               />
 
               <i
                 class="iconfont icon-close"
-                @click.stop="handleDelItem(index, ind, item)"
+                @click.stop="onDelItem(index, ind, item)"
               />
             </view>
           </view>
-          <view class="add-category-item" @tap="handleAddItem(index)"
-            >添加</view
-          >
+          <view class="add-category-item" @click="onAddItem(index)">添加</view>
         </uni-collapse-item>
       </uni-collapse>
     </scroll-view>
@@ -114,12 +112,12 @@ export default {
   created() {},
   methods: {
     // 编辑分组
-    handleEditGroup(index, group) {
-      this.handleGroupEvent(0, index, group);
+    onEditGroup(index, group) {
+      this.onGroupEvent(0, index, group);
     },
 
     // 触发分组事件
-    handleGroupEvent(type, index, group) {
+    onGroupEvent(type, index, group) {
       // console.log("edit group", group);
       this.$emit("selected-group", {
         type,
@@ -128,45 +126,45 @@ export default {
     },
 
     // 分组排序向上
-    handleGroupUpSort(index) {
+    onGroupUpSort(index) {
       // console.log("open", this.open, index);
       this.sort(this.groups, index, 1);
     },
 
     // 分组排序向下
-    handleGroupDownSort(index) {
+    onGroupDownSort(index) {
       // console.log("open", this.open);
       this.sort(this.groups, index, 0);
     },
 
-    handleEditItem(gIndex, index, item) {
-      this.handleItemEvent(0, gIndex, index, item);
+    onEditItem(gIndex, index, item) {
+      this.onItemEvent(0, gIndex, index, item);
     },
 
-    handleDelItem(gIndex, index, item) {
-      this.handleItemEvent(1, gIndex, index, item);
+    onDelItem(gIndex, index, item) {
+      this.onItemEvent(1, gIndex, index, item);
     },
 
     // 新增子项
-    handleAddItem(gIndex, index, item) {
+    onAddItem(gIndex, index, item) {
       // console.log("del group", item);
-      this.handleItemEvent(2, gIndex, index, item);
+      this.onItemEvent(2, gIndex, index, item);
     },
 
     // 触发子项事件
-    handleItemEvent(type, gIndex, index, item) {
+    onItemEvent(type, gIndex, index, item) {
       // console.log("del group", item);
       this.$emit("selected-item", { type, item: { gIndex, index, ...item } });
     },
 
     // 子项排序向上
-    handleItemUpSort(gIndex, index) {
-      // console.log("handleItemUpSort", gIndex, index);
+    onItemUpSort(gIndex, index) {
+      // console.log("onItemUpSort", gIndex, index);
       this.sort(this.groups[gIndex].childs, index, 1);
     },
 
     // 子项排序向下
-    handleItemDownSort(gIndex, index) {
+    onItemDownSort(gIndex, index) {
       // console.log("open", this.open);
       this.sort(this.groups[gIndex].childs, index, 0);
     },

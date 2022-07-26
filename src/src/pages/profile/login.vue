@@ -1,6 +1,6 @@
 <template>
   <view class="b-container x-c">
-    <view class="login" @tap="handleLogin"
+    <view class="login" @click="onLogin"
       ><text space="emsp">{{ loading ? "登录中..." : " 登录 " }}</text></view
     >
   </view>
@@ -21,7 +21,7 @@ export default {
   onLoad() {},
   methods: {
     ...mapActions(["Login"]),
-    handleLogin() {
+    onLogin() {
       if (this.loading) return;
       this.loading = true;
       // uni.login({
@@ -76,7 +76,7 @@ export default {
       Promise.all([p1, p2])
         .then((results) => {
           // results是一个长度为2的数组，放置着p1、p2的resolve
-          this.handleToLogin({
+          this.onToLogin({
             // 这里也可以选择性返回需要的字段
             ...results[0],
             ...results[1],
@@ -88,7 +88,7 @@ export default {
           this.loading = false;
         });
     },
-    handleToLogin(data) {
+    onToLogin(data) {
       // console.log("userinfo", data);
       this.Login({
         code: data.code,

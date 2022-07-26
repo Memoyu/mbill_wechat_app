@@ -42,10 +42,10 @@
             v-for="(o, ind) in orders"
             :key="ind"
             :right-options="o.status == 0 ? doneSwipeOps : unDoneSwipeOps"
-            @click="handleSwipeClick($event, o)"
+            @click="onSwipeClick($event, o)"
           >
             <view class="list-content-items">
-              <mb-po-item :order="o" @select="handleSelected" />
+              <mb-po-item :order="o" @select="onSelected" />
             </view>
           </uni-swipe-action-item>
         </uni-swipe-action>
@@ -58,8 +58,8 @@
       ref="editOrderDialog"
       class="edit-order-dialog"
       :height="order.status == 1 || isStatusToDone ? 250 : 200"
-      @change="handleDialogChange"
-      @click="handleBtnClick"
+      @change="onDialogChange"
+      @click="onBtnClick"
     >
       <view class="input-item x-bc">
         <text class="title">预购金额</text>
@@ -86,7 +86,7 @@
           class="date-picker"
           mode="date"
           :disabled="isStatusToDone"
-          @change="handlePickerChange"
+          @change="onPickerChange"
           fields="day"
           :value="pickerDate"
         >
@@ -113,8 +113,8 @@
     <!-- 底部按钮 -->
     <view class="bottom-operate" id="bottom-operate">
       <mb-ba-bottom-btn
-        @click="handleBtnClick"
-        @rtap="handleGroupToBill"
+        @click="onBtnClick"
+        @rtap="onGroupToBill"
         ltext="新建预购"
         :rtext="rtext"
       />
@@ -456,7 +456,7 @@ export default {
     },
 
     // 新建预购
-    async handleBtnClick(e) {
+    async onBtnClick(e) {
       if (e.isLeft) {
         this.dialogOptions.ltext = addBtnTitle;
         this.$refs.editOrderDialog.show(this.dialogOptions);
@@ -494,7 +494,7 @@ export default {
     },
 
     // 选中预购项触发
-    handleSelected(order) {
+    onSelected(order) {
       this.dialogOptions.ltext = editBtnTitle;
       this.toEditOrder(order);
     },
@@ -505,7 +505,7 @@ export default {
     },
 
     // 弹窗变更
-    handleDialogChange({ show }) {
+    onDialogChange({ show }) {
       if (!show) {
         this.order = {};
         this.isStatusToDone = false;
@@ -513,7 +513,7 @@ export default {
     },
 
     // 编辑弹窗触发
-    handleBtnClick(e) {
+    onBtnClick(e) {
       var amtreg = /^\d+(\.\d{1,2})?$/;
       if (!amtreg.test(this.order.preAmount) || this.order.preAmount == 0) {
         this.$tip.toast("请输入正确的预购金额");
@@ -550,7 +550,7 @@ export default {
     },
 
     // 选择日期
-    handlePickerChange({ detail }) {
+    onPickerChange({ detail }) {
       // console.log(detail.value);
       let d = new Date(detail.value);
       this.pickerDate = datetime.getCurDate(d);
@@ -567,7 +567,7 @@ export default {
     },
 
     // 滑动操作触发
-    handleSwipeClick(e, o) {
+    onSwipeClick(e, o) {
       // console.log(e);
       if (e.index == 0) {
         // 修改状态

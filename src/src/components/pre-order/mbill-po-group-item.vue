@@ -5,7 +5,7 @@
       group.billId == 0 ? '' : ' mbill-po-group-item-tag',
     ]"
   >
-    <view class="group-item-content" @click="handleToList(group)">
+    <view class="group-item-content" @click="onToList(group)">
       <view class="group-item-title">
         <view class="title">{{ group.name }}</view>
         <view class="info">
@@ -41,12 +41,12 @@ export default {
     },
   },
   methods: {
-    handleToList(group) {
+    onToList(group) {
       uni.navigateTo({
         url: `/pages/bill/pre-order/list?id=${group.id}`,
       });
     },
-    handleEdit(group) {
+    onEdit(group) {
       this.$emit("edit", group);
     },
   },

@@ -5,7 +5,7 @@
         type="month"
         v-model="active"
         :specify="specify"
-        @selected.stop="handleSelectedMonth"
+        @selected.stop="onSelectedMonth"
       />
     </view>
     <!-- <view> -->
@@ -90,7 +90,7 @@
       <view class="x-bc">
         <view class="mb-stat-divide-title">分类占比</view>
         <view class="type-tabs">
-          <mb-ba-focus-tabs :items="types" @selected="handleTypeSwitch" />
+          <mb-ba-focus-tabs :items="types" @selected="onTypeSwitch" />
         </view>
       </view>
       <view class="mb-stat-month-bg-br">
@@ -108,7 +108,7 @@
       <view v-if="categoryGroups.length > 0" class="mb-stat-month-bg-br">
         <mb-stat-category-group
           :groups="categoryGroups"
-          @select="handleCategoryClick"
+          @select="onCategoryClick"
         />
       </view>
     </scroll-view>
@@ -284,7 +284,7 @@ export default {
     },
 
     // 切换月份
-    handleSelectedMonth(item) {
+    onSelectedMonth(item) {
       // console.log("选中的日期", item);
       let select = `${item.year}-${item.month}`;
       if (select == this.selectMonth) return;
@@ -293,14 +293,14 @@ export default {
     },
 
     // 切换账单类型
-    handleTypeSwitch(key) {
+    onTypeSwitch(key) {
       // console.log(key);
       this.type = key;
       this.loadCategoryStat();
     },
 
     // 点击对应分类占比
-    handleCategoryClick(item) {
+    onCategoryClick(item) {
       // 向外传递参数
       this.$emit("select-category", {
         id: item.id,

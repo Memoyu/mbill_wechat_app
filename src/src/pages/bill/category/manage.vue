@@ -4,7 +4,7 @@
       <mb-ba-focus-tabs
         v-model="type"
         :items="types"
-        @selected="handleTypeSwitch"
+        @selected="onTypeSwitch"
       />
     </view>
     <swiper
@@ -17,8 +17,8 @@
           :height="contentH"
           :data="expendGroups"
           @sort="handelSort"
-          @selected-group="handleSelectedGroup"
-          @selected-item="handleSelectedItem"
+          @selected-group="onSelectedGroup"
+          @selected-item="onSelectedItem"
         />
       </swiper-item>
       <swiper-item class="swiper_item">
@@ -36,7 +36,7 @@
       :onlyone="true"
       ltext="添加分组"
       id="add-btn"
-      @click="handleBotBtnClick"
+      @click="onBotBtnClick"
     />
 
     <!-- 添加分组弹窗 -->
@@ -44,7 +44,7 @@
       ref="addGroupDialog"
       height="150"
       class="edit-group-input"
-      @click="handleDialogBtnClick"
+      @click="onDialogBtnClick"
     >
       <view class="input-item x-bc">
         <text class="title">分组名称</text>
@@ -132,12 +132,12 @@ export default {
     },
 
     // 切换分类类型
-    handleTypeSwitch(type) {
+    onTypeSwitch(type) {
       this.type = type;
     },
 
     // 添加分组
-    handleBotBtnClick(e) {
+    onBotBtnClick(e) {
       this.group = {};
       this.dialodOptions.onlyone = true;
       this.dialodOptions.ltext = addBtnTitle;
@@ -149,7 +149,7 @@ export default {
      * @param {*} group 分组信息
      * @return {*}
      */
-    handleSelectedGroup(e) {
+    onSelectedGroup(e) {
       this.group = e.group;
       if (e.type == 0) {
         // 为编辑
@@ -164,7 +164,7 @@ export default {
      * @param {*} e 选中分类数据
      * @return {*}
      */
-    handleSelectedItem(e) {
+    onSelectedItem(e) {
       this.item = e.item;
       let group = this.expendGroups[e.item.gIndex];
       if (e.type == 0) {
@@ -186,7 +186,7 @@ export default {
       }
     },
 
-    handleDialogBtnClick(e) {
+    onDialogBtnClick(e) {
       if (e.isLeft) {
         if (this.group.name == undefined || this.group.name.length <= 0) {
           this.$tip.toast("请输入分组名称");

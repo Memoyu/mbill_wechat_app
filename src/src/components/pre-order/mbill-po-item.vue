@@ -1,7 +1,7 @@
 <template>
   <view
     :class="['mbill-po-item', order.status == 0 ? '' : 'mbill-po-item-tag']"
-    @tap="handleToDetail(order)"
+    @click="onToDetail(order)"
   >
     <view :class="['order-icon', 'x-c']" :style="{ background: order.color }">
       <view class="icon-text"
@@ -39,7 +39,7 @@ export default {
     return {};
   },
   methods: {
-    handleToDetail() {
+    onToDetail() {
       this.$emit("select", this.order);
     },
   },

@@ -10,7 +10,7 @@
           ]"
           v-for="(item, index) in d.childs"
           :key="index"
-          @click="handleSelectedItem(item)"
+          @click="onSelectedItem(item)"
         >
           <image class="image" :src="item.iconUrl" />
           <text class="text">{{ item.name }}</text>
@@ -18,7 +18,7 @@
       </view>
     </view>
     <!-- TODO:完成分类的添加 -->
-    <view class="to-add-category" @tap="handleAddCategory">管理分类</view>
+    <view class="to-add-category" @click="onAddCategory">管理分类</view>
   </view>
 </template>
 
@@ -51,13 +51,13 @@ export default {
     },
   },
   methods: {
-    handleSelectedItem(item) {
+    onSelectedItem(item) {
       this.selectedId = item.id;
       this.$emit("selected", item);
     },
 
     // 跳转新增分类页面
-    handleAddCategory() {
+    onAddCategory() {
       this.$Router.push({
         name: "category-manage",
         params: { type: this.type },

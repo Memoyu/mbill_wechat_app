@@ -17,14 +17,14 @@
               :class="['item-content']"
               v-for="(item, index) in g.childs"
               :key="index"
-              @click="handleSelectedItem(item)"
+              @click="onSelectedItem(item)"
             >
               <image class="image" :src="item.iconUrl" />
               <text class="text">{{ item.name }}</text>
             </view>
             <view
               class="item-content item-add-content"
-              @click="handleAddAsset(g.id)"
+              @click="onAddAsset(g.id)"
             >
               <image class="image" src="/static/assets/add.png" />
             </view>
@@ -32,7 +32,7 @@
         </uni-collapse-item>
       </uni-collapse>
     </view>
-    <view class="add-asset-group" @tap="handleAddGroup">添加分组</view>
+    <view class="add-asset-group" @click="onAddGroup">添加分组</view>
   </view>
 </template>
 
@@ -49,16 +49,16 @@ export default {
   onShow() {},
   methods: {
     // 选中账户
-    handleSelectedItem(asset) {},
+    onSelectedItem(asset) {},
 
     // 添加分类
-    handleAddAsset(groupId) {
+    onAddAsset(groupId) {
       console.log(groupId, "分组Id");
       this.$tip.toast("开发中，敬请期待");
     },
 
     // 添加分组
-    handleAddGroup() {
+    onAddGroup() {
       this.$tip.toast("开发中，敬请期待");
     },
 
