@@ -86,45 +86,29 @@ export default {
     return {
       open: 0,
       groups: [],
-
-      selItem: {
-        type: -1,
-        index: 0,
-        id: 0,
-      },
-      selGroup: {
-        type: -1,
-        index: 0,
-        id: 0,
-      },
     };
   },
   watch: {
-    data(val) {
-      this.groups = val;
-      console.log("data 变化了", this.open, this.groups);
+    data(newVal, oldVal) {
+      let dels = [];
+      oldVal.forEach((og, index) => {
+        if (newVal.findIndex((ng) => ng.id === og.id) === -1) {
+          dels.push(index);
+        }
+      });
+
+      this.groups = newVal;
+      console.log("data 变化了", this.open, this.groups, dels);
+
       // 当前展开项是否已被删除
-      if (
-        this.selGroup.type == 0 &&
-        this.open == this.selGroup.index && // 当前选中项为展开状态
-        this.groups[this.selGroup.index].id != this.selGroup.id // 并且回调时不存在该分组
-      ) {
-        console.log(
-          "关闭分组",
-          this.groups[this.selGroup.index].id,
-          this.selGroup.id
-        );
+      if (dels.includes(this.open)) {
         this.open = -1;
       }
 
-      if (
-        this.selItem.type == 1 &&
-        this.groups[this.open].childs[this.selItem.index].id != this.selItem.id // 并且回调时不存在该分类
-      ) {
-        this.$nextTick(() => {
-          this.$refs.collapse.resize();
-        });
-      }
+      // 重置size
+      this.$nextTick(() => {
+        this.$refs.collapse.resize();
+      });
     },
   },
   created() {},
@@ -137,11 +121,6 @@ export default {
     // 触发分组事件
     handleGroupEvent(type, index, group) {
       // console.log("edit group", group);
-      this.selGroup = {
-        type,
-        index,
-        id: group.id,
-      };
       this.$emit("selected-group", {
         type,
         group: { index, ...group },
@@ -177,11 +156,6 @@ export default {
     // 触发子项事件
     handleItemEvent(type, gIndex, index, item) {
       // console.log("del group", item);
-      this.selItem = {
-        type,
-        index,
-        id: item.id,
-      };
       this.$emit("selected-item", { type, item: { gIndex, index, ...item } });
     },
 
