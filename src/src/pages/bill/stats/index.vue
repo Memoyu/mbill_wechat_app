@@ -102,7 +102,7 @@ export default {
     },
 
     tabChange(e) {
-      // console.log(e);
+      console.log("tab", e);
       let curr = e.detail.current;
       this.active = e.detail.current;
       this.loadData(curr);

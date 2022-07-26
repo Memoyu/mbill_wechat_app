@@ -136,7 +136,6 @@ export default {
   onLoad() {
     this.getFixedHeight();
     this.triggered = true;
-    this.onRefresh();
   },
   onShow() {
     this.setTabBarIndex(0);
@@ -299,6 +298,7 @@ export default {
     async onRefresh() {
       if (this.freshing) return;
       this.freshing = true;
+      // console.log("刷新数据");
       this.initData().finally((res) => {
         this.triggered = false;
         this.freshing = false;

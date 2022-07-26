@@ -169,6 +169,11 @@ export default {
       this.item = e.item;
       if (e.type == 0) {
         // 为编辑
+        let group = this.expendGroups[e.item.gIndex];
+        this.$Router.push({
+          name: "category-edit",
+          params: { id: e.item.id, groupId: group.id, groupName: group.name },
+        });
       } else if (e.type == 1) {
         // 为删除
         console.log(e.item, "删除分类");

@@ -98,7 +98,7 @@ const bill = {
 
     // 获取全部账单分类
     categoryList(params) {
-        return http.get('category', { params: params })
+        return http.get('category/list', { params: params })
     },
 
     // 排序账单分类

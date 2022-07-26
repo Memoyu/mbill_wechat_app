@@ -200,7 +200,7 @@ export default {
       // 初始化数据
       // console.log("初始化数据-年数据");
       this.triggered = true;
-      this.onRefresh();
+      // this.onRefresh();
     },
 
     // 加载数据

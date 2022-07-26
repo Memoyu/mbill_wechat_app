@@ -1,9 +1,7 @@
 <template>
-  <view>
-    <view class="container">
-      <view>
-        <view class="title">编辑分类</view>
-      </view>
+  <view class="b-container">
+    <view class="edit-header">
+      <view class="list-title">{{ groupName }}</view>
     </view>
   </view>
 </template>
@@ -11,24 +9,23 @@
 <script>
 export default {
   data() {
-    return {};
+    return {
+      groupId: 0,
+      groupName: "",
+    };
+  },
+  onLoad(options) {
+    this.groupId = options.groupId;
+    this.groupName = options.groupName
+      ? decodeURIComponent(options.groupName)
+      : "";
   },
   onShow() {},
-  onLoad() {},
   methods: {},
 };
 </script>
 
 <style>
-.container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-.title {
-  font-size: 36rpx;
-  color: #8f8f94;
+.b-container {
 }
 </style>
