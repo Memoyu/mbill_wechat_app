@@ -75,7 +75,7 @@ export default {
       type: [Number, String],
       default: 300,
     },
-    data: {
+    items: {
       type: Array,
       default: () => [],
     },
@@ -87,7 +87,7 @@ export default {
     };
   },
   watch: {
-    data(newVal, oldVal) {
+    items(newVal, oldVal) {
       let dels = [];
       oldVal.forEach((og, index) => {
         if (newVal.findIndex((ng) => ng.id === og.id) === -1) {
@@ -95,13 +95,13 @@ export default {
         }
       });
 
-      this.groups = newVal;
-      console.log("data 变化了", this.open, this.groups, dels);
-
       // 当前展开项是否已被删除
       if (dels.includes(this.open)) {
-        this.open = -1;
+        this.open = 0;
       }
+
+      this.groups = newVal;
+      console.log("data 变化了", this.open, this.groups, dels);
 
       // 重置size
       this.$nextTick(() => {

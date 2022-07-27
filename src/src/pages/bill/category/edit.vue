@@ -7,7 +7,7 @@
     <!-- 输入 -->
     <view class="edit-input" id="edit-input">
       <view class="edit-input-content">
-        <image class="edit-input-content-image" :src="category.icon" />
+        <image class="edit-input-content-image" :src="category.iconUrl" />
         <input
           type="text"
           class="edit-input-content-input"
@@ -56,210 +56,121 @@ export default {
   data() {
     return {
       scrollHeight: 0,
-      id: 0,
+      type: 0,
       groupId: 0,
       groupName: "分组名",
-      icons: [
-        {
-          path: "eee",
-          url: "https://oss.memoyu.com/category_icons/icon_certificate_96.png",
-        },
-        {
-          path: "eee",
-          url: "https://oss.memoyu.com/category_icons/icon_read_64.png",
-        },
-        {
-          path: "eee",
-          url: "https://oss.memoyu.com/category_icons/icon_browser_64.png",
-        },
-        {
-          path: "eee",
-          url: "https://oss.memoyu.com/category_icons/icon_certificate_96.png",
-        },
-        {
-          url: "https://oss.memoyu.com/category_icons/icon_physical_80.png",
-          path: "eee",
-        },
-        {
-          url: "https://oss.memoyu.com/category_icons/icon_insurance_64.png",
-          path: "eee",
-        },
-        {
-          path: "eee",
-          url: "https://oss.memoyu.com/category_icons/icon_certificate_96.png",
-        },
-        {
-          path: "eee",
-          url: "https://oss.memoyu.com/category_icons/icon_read_64.png",
-        },
-        {
-          path: "eee",
-          url: "https://oss.memoyu.com/category_icons/icon_browser_64.png",
-        },
-        {
-          path: "eee",
-          url: "https://oss.memoyu.com/category_icons/icon_certificate_96.png",
-        },
-        {
-          url: "https://oss.memoyu.com/category_icons/icon_physical_80.png",
-          path: "eee",
-        },
-        {
-          url: "https://oss.memoyu.com/category_icons/icon_insurance_64.png",
-          path: "eee",
-        },
-        {
-          path: "eee",
-          url: "https://oss.memoyu.com/category_icons/icon_certificate_96.png",
-        },
-        {
-          path: "eee",
-          url: "https://oss.memoyu.com/category_icons/icon_read_64.png",
-        },
-        {
-          path: "eee",
-          url: "https://oss.memoyu.com/category_icons/icon_browser_64.png",
-        },
-        {
-          path: "eee",
-          url: "https://oss.memoyu.com/category_icons/icon_certificate_96.png",
-        },
-        {
-          url: "https://oss.memoyu.com/category_icons/icon_physical_80.png",
-          path: "eee",
-        },
-        {
-          url: "https://oss.memoyu.com/category_icons/icon_insurance_64.png",
-          path: "eee",
-        },
-        {
-          path: "eee",
-          url: "https://oss.memoyu.com/category_icons/icon_certificate_96.png",
-        },
-        {
-          path: "eee",
-          url: "https://oss.memoyu.com/category_icons/icon_read_64.png",
-        },
-        {
-          path: "eee",
-          url: "https://oss.memoyu.com/category_icons/icon_browser_64.png",
-        },
-        {
-          path: "eee",
-          url: "https://oss.memoyu.com/category_icons/icon_certificate_96.png",
-        },
-        {
-          url: "https://oss.memoyu.com/category_icons/icon_physical_80.png",
-          path: "eee",
-        },
-        {
-          url: "https://oss.memoyu.com/category_icons/icon_insurance_64.png",
-          path: "eee",
-        },
-        {
-          path: "eee",
-          url: "https://oss.memoyu.com/category_icons/icon_certificate_96.png",
-        },
-        {
-          path: "eee",
-          url: "https://oss.memoyu.com/category_icons/icon_read_64.png",
-        },
-        {
-          path: "eee",
-          url: "https://oss.memoyu.com/category_icons/icon_browser_64.png",
-        },
-        {
-          path: "eee",
-          url: "https://oss.memoyu.com/category_icons/icon_certificate_96.png",
-        },
-        {
-          url: "https://oss.memoyu.com/category_icons/icon_physical_80.png",
-          path: "eee",
-        },
-        {
-          url: "https://oss.memoyu.com/category_icons/icon_insurance_64.png",
-          path: "eee",
-        },
-        {
-          path: "eee",
-          url: "https://oss.memoyu.com/category_icons/icon_certificate_96.png",
-        },
-        {
-          path: "eee",
-          url: "https://oss.memoyu.com/category_icons/icon_read_64.png",
-        },
-        {
-          path: "eee",
-          url: "https://oss.memoyu.com/category_icons/icon_browser_64.png",
-        },
-        {
-          path: "eee",
-          url: "https://oss.memoyu.com/category_icons/icon_certificate_96.png",
-        },
-        {
-          url: "https://oss.memoyu.com/category_icons/icon_physical_80.png",
-          path: "eee",
-        },
-        {
-          url: "https://oss.memoyu.com/category_icons/icon_insurance_64.png",
-          path: "eee",
-        },
-        {
-          path: "eee",
-          url: "https://oss.memoyu.com/category_icons/icon_certificate_96.png",
-        },
-        {
-          path: "eee",
-          url: "https://oss.memoyu.com/category_icons/icon_read_64.png",
-        },
-        {
-          path: "eee",
-          url: "https://oss.memoyu.com/category_icons/icon_browser_64.png",
-        },
-        {
-          path: "eee",
-          url: "https://oss.memoyu.com/category_icons/icon_certificate_96.png",
-        },
-        {
-          url: "https://oss.memoyu.com/category_icons/icon_physical_80.png",
-          path: "eee",
-        },
-        {
-          url: "https://oss.memoyu.com/category_icons/icon_insurance_64.png",
-          path: "eee",
-        },
-      ],
+      loading: false,
+      icons: [],
       category: {
-        icon: "https://oss.memoyu.com/category_icons/icon_book_64.png",
-        path: "",
+        id: 0,
+        iconUrl: "",
+        icon: "",
         name: "",
       },
       iconPage: {
+        type: 0,
         page: 1,
-        size: 15,
+        size: 50,
       },
       iconTotal: 0,
     };
   },
   onLoad(options) {
-    this.id = options.id ?? 0;
+    // console.log(options);
+    let opId = options.id;
+    if (opId != undefined && opId != null) {
+      this.category.id = options.id;
+      this.getCategory();
+    }
+    this.type = options.type;
     this.groupId = options.groupId;
     this.groupName = options.groupName
       ? decodeURIComponent(options.groupName)
       : "";
     this.dynamicHeight();
+    this.getIcons().then(() => {
+      if (this.category.id == 0) {
+        this.category.iconUrl = this.icons[0].url;
+        this.category.icon = this.icons[0].path;
+      }
+    });
   },
   onShow() {},
   methods: {
-    getIcons() {},
+    // 获取分类信息
+    getCategory() {
+      this.$api.getCategory({ id: this.category.id }).then((res) => {
+        let result = res.data.result;
+        console.log(result);
+        this.category.iconUrl = result.iconUrl;
+        this.category.name = result.name;
+      });
+    },
+
+    // 获取图标列表
+    getIcons() {
+      return new Promise((resolve) => {
+        if (this.loading) return;
+        this.loading = true;
+        this.$api
+          .getIconPage(this.iconPage)
+          .then((res) => {
+            let result = res.data.result;
+            this.iconTotal = result.total;
+            this.icons = this.icons.concat(result.items);
+            resolve();
+          })
+          .finally(() => {
+            this.loading = false;
+          });
+      });
+    },
 
     //#region 事件触发
 
     onSelectedIcon(icon) {
-      this.category.icon = icon.url;
+      this.category.iconUrl = icon.url;
+      this.category.icon = icon.path;
     },
 
-    onBtnClick(e) {},
+    onBtnClick(e) {
+      if (this.category.name == undefined || this.category.name.length <= 0) {
+        this.$tip.toast("请输入分组名称");
+        return;
+      }
+      console.log(this.category);
+      if (this.category.id != undefined && this.category.id != 0) {
+        this.$api
+          .editCategory({
+            id: this.category.id,
+            name: this.category.name,
+            icon: this.category.icon,
+          })
+          .then((res) => {
+            if (res.data.code === 0) {
+              this.completedEdit(true, res.data.result);
+            } else {
+              this.$tip.toast(res.data.message);
+            }
+          });
+      } else {
+        this.$api
+          .createCategory({
+            parentId: this.groupId,
+            name: this.category.name,
+            icon: this.category.icon,
+            type: this.type,
+            sort: 0, // 默认放最后
+          })
+          .then((res) => {
+            if (res.data.code === 0) {
+              this.completedEdit(false, res.data.result);
+            } else {
+              this.$tip.toast(res.data.message);
+            }
+          });
+      }
+    },
 
     onLowerBottom() {
       if (this.iconPage.page * this.iconPage.size >= this.iconTotal) return;
@@ -269,6 +180,13 @@ export default {
     },
 
     //#endregion
+
+    completedEdit(isEdit, data) {
+      let pages = getCurrentPages(); //获取页面栈
+      let beforePage = pages[pages.length - 2]; //上一页
+      beforePage.$vm.completedEditCallback(isEdit, data); //直接调用上一页的方法
+      this.$Router.back();
+    },
 
     // 动态计算scrollview 高度
     dynamicHeight() {
@@ -281,7 +199,7 @@ export default {
           query.select("#edit-input").fields({ size: true });
           query.select("#save-btn").fields({ size: true });
           query.exec((data) => {
-            console.log(data);
+            // console.log(data);
             data.map((i) => {
               that.scrollHeight += i.height;
             });

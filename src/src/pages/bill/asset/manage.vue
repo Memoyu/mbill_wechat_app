@@ -4,7 +4,7 @@
     <view class="group-list-container" :style="{ height: contentH + 'px' }">
       <mb-ba-group-collapse
         :height="contentH"
-        :data="assetGroups"
+        :items="assetGroups"
         @sort="handelSort"
         @selected-group="onSelectedGroup"
         @selected-item="onSelectedItem"
@@ -217,6 +217,19 @@ export default {
           });
         },
       });
+    },
+
+    // 编辑页面回调
+    completedEditCallback(isEdit, item) {
+      if (isEdit) {
+        let ca = this.groups[this.item.gIndex].childs[this.item.index];
+        if (ca != undefined && ca != null) {
+          ca.iconUrl = item.iconUrl;
+          ca.name = item.name;
+        }
+      } else {
+        this.groups[this.item.gIndex].childs.push(item);
+      }
     },
   },
 };

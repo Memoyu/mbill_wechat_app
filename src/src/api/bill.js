@@ -106,6 +106,11 @@ const bill = {
         return http.post('category/sort', params)
     },
 
+    // 获取账单分组/分类
+    getCategory(params) {
+        return http.get('category', { params: params })
+    },
+
     // 创建账单分组/分类
     createCategory(params) {
         return http.post('category', params)
@@ -128,6 +133,26 @@ const bill = {
     // 获取分组后的账单账户
     assetGroups(params) {
         return http.get('asset/groups', { params: params })
+    },
+
+    // 排序账户分组/分类
+    sortAssetGroups(params) {
+        return http.post('asset/sort', params)
+    },
+
+    // 获取账户分组/分类
+    getAsset(params) {
+        return http.get('asset', { params: params })
+    },
+
+    // 创建账户分组/分类
+    createAsset(params) {
+        return http.post('asset', params)
+    },
+
+    // 编辑账户分组/分类
+    editAsset(params) {
+        return http.put('asset', params)
     },
 
     //#endregion
