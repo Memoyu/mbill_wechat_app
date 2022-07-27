@@ -194,6 +194,8 @@ export default {
       categoryGroups: [],
       assetGroups: [],
       locationStatus: uni.getStorageSync(LOCATION_STATUS) || false,
+      refreshCategory: "",
+      refreshAsset: "",
     };
   },
   onLoad(option) {
@@ -225,7 +227,6 @@ export default {
   onReady() {
     this.dynamicHeight();
   },
-
   watch: {
     "model.type"(val) {
       // console.log("账单类型变更", val);
@@ -250,6 +251,12 @@ export default {
       } else {
         this.selectedDateText = year + "年" + month + "月" + day + "日";
       }
+    },
+    refreshCategory() {
+      this.getCategoryGroups();
+    },
+    refreshAsset() {
+      this.getAssetGroups();
     },
   },
 
@@ -317,7 +324,7 @@ export default {
 
     // 获取账单账户
     getAssetGroups() {
-      this.$api.assetGroups().then((res) => {
+      this.$api.getAssetGroups().then((res) => {
         if (res.data.code === 0) {
           this.assetGroups = res.data.result;
         }

@@ -54,6 +54,7 @@ const delBtnTitle = "删除";
 export default {
   data() {
     return {
+      chan: "",
       type: 0,
       types: [
         { key: 0, text: "支出" },
@@ -75,18 +76,31 @@ export default {
   },
   watch: {
     type(val) {
-      console.log("账单类型", val);
+      // console.log("账单类型", val);
       this.getCategoryGroups(val);
     },
   },
   onLoad(option) {
     this.dynamicHeight();
-    if (option.type != undefined) {
+    if (option.type != undefined && option.type != null) {
       this.type = option.type;
     }
+    if (option.chan != undefined && option.chan != null) {
+      this.chan = option.chan;
+    }
+
     this.getCategoryGroups(this.type);
   },
   onShow() {},
+  onUnload() {
+    // console.log("页面卸载");
+    // 如果上层页面需要更新
+    if (this.chan == "refresh") {
+      let pages = getCurrentPages(); //获取页面栈
+      let beforePage = pages[pages.length - 2]; //上一页
+      beforePage.$vm.refreshCategory = Math.random(); //直接调用上一页的方法
+    }
+  },
   methods: {
     // 获取账单分类
     getCategoryGroups(type) {
@@ -149,7 +163,7 @@ export default {
         });
       } else if (e.type == 1) {
         // 为删除
-        console.log(item, "删除分类");
+        // console.log(item, "删除分类");
         this.$tip.choose("是否删除分类？", {}, "删除分类").then(async () => {
           this.$api.delCategory(item.id).then((res) => {
             if (res.data.code === 0) {
@@ -214,7 +228,7 @@ export default {
             });
         }
       } else {
-        console.log("删除group", this.group);
+        // console.log("删除group", this.group);
         this.$tip
           .choose("同时删除子项，是否删除？", {}, "删除分组")
           .then(async () => {
@@ -243,7 +257,9 @@ export default {
         })
         .then((res) => {
           if (res.data.code === 0) {
-            console.log(res.message);
+            // console.log(res.message);
+          } else {
+            this.$tip.toast(res.data.message);
           }
         });
     },

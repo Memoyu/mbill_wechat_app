@@ -76,6 +76,7 @@ export default {
     };
   },
   onLoad(options) {
+    console.log("op", options);
     let opId = options.id;
     if (opId != undefined && opId != null) {
       this.asset.id = options.id;
@@ -87,7 +88,7 @@ export default {
       : "";
     this.dynamicHeight();
     this.getIcons().then(() => {
-      if (this.category.id == 0) {
+      if (this.asset.id == 0) {
         this.asset.iconUrl = this.icons[0].url;
         this.asset.icon = this.icons[0].path;
       }
@@ -100,8 +101,7 @@ export default {
       this.$api.getAsset({ id: this.asset.id }).then((res) => {
         let result = res.data.result;
         console.log(result);
-        this.asset.iconUrl = result.iconUrl;
-        this.asset.name = result.name;
+        this.asset = result;
       });
     },
 
@@ -127,10 +127,48 @@ export default {
     //#region 事件触发
 
     onSelectedIcon(icon) {
-      this.asset.icon = icon.url;
+      this.asset.iconUrl = icon.url;
+      this.asset.icon = icon.path;
     },
 
-    onBtnClick(e) {},
+    onBtnClick(e) {
+      if (this.asset.name == undefined || this.asset.name.length <= 0) {
+        this.$tip.toast("请输入账户名称");
+        return;
+      }
+      console.log(this.asset);
+      if (this.asset.id != undefined && this.asset.id != 0) {
+        this.$api
+          .editAsset({
+            id: this.asset.id,
+            name: this.asset.name,
+            icon: this.asset.icon,
+          })
+          .then((res) => {
+            if (res.data.code === 0) {
+              this.completedEdit(true, res.data.result);
+            } else {
+              this.$tip.toast(res.data.message);
+            }
+          });
+      } else {
+        this.$api
+          .createAsset({
+            parentId: this.groupId,
+            name: this.asset.name,
+            icon: this.asset.icon,
+            type: 0, // 暂时默认给0吧
+            sort: 0, // 默认放最后
+          })
+          .then((res) => {
+            if (res.data.code === 0) {
+              this.completedEdit(false, res.data.result);
+            } else {
+              this.$tip.toast(res.data.message);
+            }
+          });
+      }
+    },
 
     onLowerBottom() {
       if (this.iconPage.page * this.iconPage.size >= this.iconTotal) return;
@@ -140,6 +178,19 @@ export default {
     },
 
     //#endregion
+
+    /**
+     * @description: 编辑完成后回调，并返回上一页面
+     * @param {*} isEdit 是否为编辑
+     * @param {*} data 编辑后的数据
+     * @return {*}
+     */
+    completedEdit(isEdit, data) {
+      let pages = getCurrentPages(); //获取页面栈
+      let beforePage = pages[pages.length - 2]; //上一页
+      beforePage.$vm.completedEditCallback(isEdit, data); //直接调用上一页的方法
+      this.$Router.back();
+    },
 
     // 动态计算scrollview 高度
     dynamicHeight() {

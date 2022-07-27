@@ -131,7 +131,7 @@ const bill = {
     //#region 账单账户
 
     // 获取分组后的账单账户
-    assetGroups(params) {
+    getAssetGroups(params) {
         return http.get('asset/groups', { params: params })
     },
 
@@ -154,6 +154,12 @@ const bill = {
     editAsset(params) {
         return http.put('asset', params)
     },
+
+    // 删除账单分组/分类
+    delAsset(params) {
+        return http.delete('asset', params)
+    },
+
 
     //#endregion
 }

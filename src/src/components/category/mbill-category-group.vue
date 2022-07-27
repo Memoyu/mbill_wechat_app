@@ -17,7 +17,6 @@
         </view>
       </view>
     </view>
-    <!-- TODO:完成分类的添加 -->
     <view class="to-add-category" @click="onAddCategory">管理分类</view>
   </view>
 </template>
@@ -60,7 +59,7 @@ export default {
     onAddCategory() {
       this.$Router.push({
         name: "category-manage",
-        params: { type: this.type },
+        params: { type: this.type, chan: "refresh" },
       });
     },
   },

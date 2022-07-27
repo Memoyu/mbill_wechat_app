@@ -102,8 +102,7 @@ export default {
       this.$api.getCategory({ id: this.category.id }).then((res) => {
         let result = res.data.result;
         console.log(result);
-        this.category.iconUrl = result.iconUrl;
-        this.category.name = result.name;
+        this.category = result;
       });
     },
 
@@ -135,7 +134,7 @@ export default {
 
     onBtnClick(e) {
       if (this.category.name == undefined || this.category.name.length <= 0) {
-        this.$tip.toast("请输入分组名称");
+        this.$tip.toast("请输入分类名称");
         return;
       }
       console.log(this.category);
@@ -181,6 +180,12 @@ export default {
 
     //#endregion
 
+    /**
+     * @description: 编辑完成后回调，并返回上一页面
+     * @param {*} isEdit 是否为编辑
+     * @param {*} data 编辑后的数据
+     * @return {*}
+     */
     completedEdit(isEdit, data) {
       let pages = getCurrentPages(); //获取页面栈
       let beforePage = pages[pages.length - 2]; //上一页

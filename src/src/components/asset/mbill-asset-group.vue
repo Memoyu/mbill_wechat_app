@@ -17,7 +17,6 @@
         </view>
       </view>
     </view>
-    <!-- TODO:完成账户的添加 -->
     <view class="to-add-asset" @click="onAddAsset">管理账户</view>
   </view>
 </template>
@@ -52,7 +51,7 @@ export default {
       this.$emit("selected", item);
     },
     onAddAsset() {
-      this.$Router.push({ name: "asset-manage" });
+      this.$Router.push({ name: "asset-manage", params: { chan: "refresh" } });
     },
   },
 };

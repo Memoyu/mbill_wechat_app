@@ -4,7 +4,7 @@
     <view class="group-list-container" :style="{ height: contentH + 'px' }">
       <mb-ba-group-collapse
         :height="contentH"
-        :items="assetGroups"
+        :items="groups"
         @sort="handelSort"
         @selected-group="onSelectedGroup"
         @selected-item="onSelectedItem"
@@ -49,12 +49,14 @@ const delBtnTitle = "删除";
 export default {
   data() {
     return {
+      chan: "",
       contentH: 0,
-      assetGroups: [],
+      groups: [],
       dialodOptions: {
         ltext: addBtnTitle,
         rtext: delBtnTitle,
       },
+      item: {},
       group: {
         id: 0,
         name: "",
@@ -62,17 +64,29 @@ export default {
       },
     };
   },
-  onLoad() {
+  onLoad(option) {
+    if (option.chan != undefined && option.chan != null) {
+      this.chan = option.chan;
+    }
     this.dynamicHeight();
     this.getAssetGroups();
   },
   onShow() {},
+  onUnload() {
+    // console.log("页面卸载");
+    // 如果上层页面需要更新
+    if (this.chan == "refresh") {
+      let pages = getCurrentPages(); //获取页面栈
+      let beforePage = pages[pages.length - 2]; //上一页
+      beforePage.$vm.refreshAsset = Math.random(); //直接调用上一页的方法
+    }
+  },
   methods: {
     // 获取账单账户
     getAssetGroups() {
-      this.$api.assetGroups().then((res) => {
+      this.$api.getAssetGroups().then((res) => {
         if (res.data.code === 0) {
-          this.assetGroups = res.data.result;
+          this.groups = res.data.result;
         }
       });
     },
@@ -109,8 +123,9 @@ export default {
      */
     onSelectedItem(e) {
       let item = e.item;
-      console.log("item", item);
-      let group = this.assetGroups[item.gIndex];
+      this.item = item;
+      // console.log("item", item);
+      let group = this.groups[item.gIndex];
       if (e.type == 0) {
         // 为编辑
         this.$Router.push({
@@ -119,8 +134,8 @@ export default {
         });
       } else if (e.type == 1) {
         // 为删除
-        console.log(item, "删除分类");
-        this.assetGroups[item.gIndex].childs.splice(item.index, 1);
+        // console.log(item, "删除分类");
+        this.groups[item.gIndex].childs.splice(item.index, 1);
       } else if (e.type == 2) {
         // 为新增
         this.$Router.push({
@@ -144,41 +159,52 @@ export default {
         // 没有id 或 id = 0 则为添加分组
         if (this.group.id != undefined && this.group != 0) {
           this.$api
-            .editAssetGroup({
+            .editAsset({
+              id: this.group.id,
               name: this.group.name,
             })
             .then((res) => {
               if (res.data.code === 0) {
                 // console.log(res.data.result);
+                let result = res.data.result;
+                let group = this.groups[this.group.index];
+                group.name = result.name;
                 this.$refs.addGroupDialog.hide();
-                this.getAssetGroups();
+              } else {
+                this.$tip.toast(res.data.message);
               }
             });
         } else {
           this.$api
-            .createAssetGroup({
+            .createAsset({
+              type: 0, // type 暂时默认0
               name: this.group.name,
-              sort: this.assetGroups.length + 1,
+              sort: this.groups.length + 1,
             })
             .then((res) => {
               if (res.data.code === 0) {
                 // console.log(res.data.result);
+                let ca = res.data.result;
+                this.groups.unshift({ id: ca.id, name: ca.name, childs: [] });
                 this.$refs.addGroupDialog.hide();
-                this.getAssetGroups(this.type);
+              } else {
+                this.$tip.toast(res.data.message);
               }
             });
         }
       } else {
-        console.log("删除group", this.group);
+        // console.log("删除group", this.group);
         this.$tip
           .choose("同时删除子项，是否删除？", {}, "删除分组")
           .then(async () => {
-            // that.$api.delAssetGroup(this.group.id).then((res) => {
-            //   if (res.data.code === 0) {
-            //   }
-            // });
-            this.assetGroups.splice(this.group.index, 1);
-            this.$refs.addGroupDialog.hide();
+            this.$api.delAsset(this.group.id).then((res) => {
+              if (res.data.code === 0) {
+                this.groups.splice(this.group.index, 1);
+                this.$refs.addGroupDialog.hide();
+              } else {
+                this.$tip.toast(res.data.message);
+              }
+            });
           });
       }
     },
@@ -196,7 +222,9 @@ export default {
         })
         .then((res) => {
           if (res.data.code === 0) {
-            console.log(res.message);
+            // console.log(res.message);
+          } else {
+            this.$tip.toast(res.data.message);
           }
         });
     },
@@ -222,10 +250,10 @@ export default {
     // 编辑页面回调
     completedEditCallback(isEdit, item) {
       if (isEdit) {
-        let ca = this.groups[this.item.gIndex].childs[this.item.index];
-        if (ca != undefined && ca != null) {
-          ca.iconUrl = item.iconUrl;
-          ca.name = item.name;
+        let as = this.groups[this.item.gIndex].childs[this.item.index];
+        if (as != undefined && as != null) {
+          as.iconUrl = item.iconUrl;
+          as.name = item.name;
         }
       } else {
         this.groups[this.item.gIndex].childs.push(item);

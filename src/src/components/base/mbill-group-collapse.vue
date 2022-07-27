@@ -101,7 +101,7 @@ export default {
       }
 
       this.groups = newVal;
-      console.log("data 变化了", this.open, this.groups, dels);
+      // console.log("data 变化了", this.open, this.groups, dels);
 
       // 重置size
       this.$nextTick(() => {
@@ -253,6 +253,7 @@ export default {
           height: 100%;
           border-radius: 50%;
           background-color: $grey-light-color;
+          opacity: 0.3;
           z-index: -1;
         }
       }
@@ -302,6 +303,7 @@ export default {
           height: 100%;
           border-radius: 50%;
           background-color: $grey-light-color;
+          opacity: 0.3;
           z-index: -1;
         }
       }
