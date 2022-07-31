@@ -59,7 +59,7 @@
       class="edit-order-dialog"
       :height="order.status == 1 || isStatusToDone ? 250 : 200"
       @change="onDialogChange"
-      @click="onBtnClick"
+      @click="onDialogBtnClick"
     >
       <view class="input-item x-bc">
         <text class="title">预购金额</text>
@@ -113,7 +113,7 @@
     <!-- 底部按钮 -->
     <view class="bottom-operate" id="bottom-operate">
       <mb-ba-bottom-btn
-        @click="onBtnClick"
+        @click="onBotBtnClick"
         @rtap="onGroupToBill"
         ltext="新建预购"
         :rtext="rtext"
@@ -456,7 +456,7 @@ export default {
     },
 
     // 新建预购
-    async onBtnClick(e) {
+    async onBotBtnClick(e) {
       if (e.isLeft) {
         this.dialogOptions.ltext = addBtnTitle;
         this.$refs.editOrderDialog.show(this.dialogOptions);
@@ -513,7 +513,7 @@ export default {
     },
 
     // 编辑弹窗触发
-    onBtnClick(e) {
+    onDialogBtnClick(e) {
       var amtreg = /^\d+(\.\d{1,2})?$/;
       if (!amtreg.test(this.order.preAmount) || this.order.preAmount == 0) {
         this.$tip.toast("请输入正确的预购金额");
