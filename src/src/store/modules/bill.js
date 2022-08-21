@@ -324,6 +324,7 @@ const actions = {
                     g.items.forEach((item, i) => {
                         // 找到元素
                         if (item.id === bill.id) {
+                            let source = JSON.parse(JSON.stringify(item));
                             // g.items[i] = bill; // 覆盖源数据，此时item是不受影响的(此处直接覆盖会造成视图不刷新的情况，首页的数据界面不会更新，需要单个赋值)
                             g.items[i].description = bill.description;
                             g.items[i].category = bill.category;
@@ -331,9 +332,10 @@ const actions = {
                             g.items[i].amount = bill.amount;
                             g.items[i].amountFormat = bill.amountFormat;
                             g.items[i].type = bill.type;
-
+                            g.items[i].time = bill.time;
+                            // console.log("source", source, g.items[i], item);
                             // 如果时间不一致，排一下序就行
-                            if (g.items[i].time != item.time) {
+                            if (g.items[i].time != source.time) {
                                 // console.log("进行排序", g.items);
                                 g.items = g.items.sort((d1, d2) => {
                                     return new Date(`2000-09-25 ${d1.time}`) < new Date(`2000-09-25 ${d2.time}`) ? 1 : -1
@@ -341,11 +343,11 @@ const actions = {
                             }
 
                             // 如果金额、账单类型不相等，进行统计调整
-                            if (g.items[i].amount != item.amount || g.items[i].type != item.type) {
-                                let op = item.amount < g.items[i].amount ? 0 : 1; // 源数据 小于 改后数据，则统计需要增加，否则减少
-                                let diff = Math.abs(item.amount - g.items[i].amount);
+                            if (g.items[i].amount != source.amount || g.items[i].type != source.type) {
+                                let op = source.amount < g.items[i].amount ? 0 : 1; // 源数据 小于 改后数据，则统计需要增加，否则减少
+                                let diff = Math.abs(source.amount - g.items[i].amount);
                                 // 确定当前账单类型，没改变类型则只需要更改对应类型的统计
-                                if (g.items[i].type == item.type) {
+                                if (g.items[i].type == source.type) {
                                     if (g.items[i].type == 0) { // 支出
                                         state.indexStat.expend = calcTotalStat(state.indexStat.expend, diff, op)
                                         state.profileStat.expend = calcTotalStat(state.profileStat.expend, diff, op)
@@ -359,12 +361,12 @@ const actions = {
                                         state.indexStat.expend = calcTotalStat(state.indexStat.expend, g.items[i].amount, 0)
                                         state.profileStat.expend = calcTotalStat(state.profileStat.expend, g.items[i].amount, 0)
                                         // 收入直接减去原本的金额
-                                        state.indexStat.income = calcTotalStat(state.indexStat.income, item.amount, 1)
-                                        state.profileStat.income = calcTotalStat(state.profileStat.income, item.amount, 1)
+                                        state.indexStat.income = calcTotalStat(state.indexStat.income, source.amount, 1)
+                                        state.profileStat.income = calcTotalStat(state.profileStat.income, source.amount, 1)
                                     } else if (g.items[i].type == 1) { // 支出 -> 收入
                                         // 支出直接减去原本的金额
-                                        state.indexStat.expend = calcTotalStat(state.indexStat.expend, item.amount, 1)
-                                        state.profileStat.expend = calcTotalStat(state.profileStat.expend, item.amount, 1)
+                                        state.indexStat.expend = calcTotalStat(state.indexStat.expend, source.amount, 1)
+                                        state.profileStat.expend = calcTotalStat(state.profileStat.expend, source.amount, 1)
                                         // 收入直接加上改后的金额
                                         state.indexStat.income = calcTotalStat(state.indexStat.income, g.items[i].amount, 0)
                                         state.profileStat.income = calcTotalStat(state.profileStat.income, g.items[i], 0)

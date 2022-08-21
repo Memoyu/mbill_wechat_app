@@ -117,6 +117,7 @@
             class="input-desc-text"
             v-model="model.description"
             placeholder="备注"
+            maxlength="20"
           />
         </view>
       </view>
@@ -441,9 +442,9 @@ export default {
 
       if (
         this.bill.description.length > 0 &&
-        this.bill.description.length > 40
+        this.bill.description.length > 20
       ) {
-        this.$tip.toast("备注不能超过40个字哦");
+        this.$tip.toast("备注不能超过20个字哦");
         return false;
       }
 
