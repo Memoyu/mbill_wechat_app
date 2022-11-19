@@ -98,6 +98,7 @@
             <qiun-data-charts
               v-else
               type="ring"
+              :opts="opts"
               :canvas2d="canvas2d"
               :chartData="yearCategoryPercent"
               inScrollView="true"
@@ -137,6 +138,13 @@ export default {
       perActive: 0,
       scrollH: 0,
       canvas2d: false,
+      opts: {
+        title: {
+          name: "分类占比",
+          fontSize: 20,
+          color: "#666666",
+        },
+      },
       isEmpty: false,
       year: datetime.getCurYear(),
       type: 0,

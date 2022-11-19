@@ -5,7 +5,11 @@
       v-for="(category, index) in groups"
       :key="index"
     >
-      <view class="category-group-title">{{ category.group }}</view>
+      <view class="category-group-title">
+        <view class="category-group-title-name">{{ category.group }}</view>
+        <view class="category-group-title-amount">{{ category.amount }}</view>
+      </view>
+
       <view
         class="category-group-item"
         v-for="(item, ind) in category.items"
@@ -149,11 +153,19 @@ export default {
   color: $primary-text-color;
   .category-group {
     &-title {
-      margin: 20rpx 30rpx;
+      display: flex;
+      justify-content: space-between;
       color: $dark-color;
       font-size: 35rpx;
       font-weight: bold;
+      margin: 20rpx 30rpx;
+      &-name {
+      }
+      &-amount {
+        font-size: 30rpx;
+      }
     }
+
     &-item {
       display: flex;
       padding: 10rpx 0;

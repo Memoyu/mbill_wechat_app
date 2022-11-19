@@ -2,8 +2,9 @@
   <view class="profile-container">
     <view class="bg" />
     <!-- <view class="profile-header">
-        <i class="iconfont .icon-weather-thunderstorm-sun header-item" />
-      </view> -->
+      <i class="iconfont .icon-weather-thunderstorm-sun header-item" />
+      <text>广东-广州</text>
+    </view> -->
     <!-- 用户信息 -->
     <view
       class="profile-info"
@@ -229,9 +230,10 @@ export default {
   flex-direction: row;
   justify-content: flex-end;
   .header-item {
-    margin: 0 30rpx;
+    margin-right: 20rpx;
     font-size: 50rpx;
   }
+  margin: 0 30rpx;
 }
 .profile-info {
   margin: 0 40rpx;

@@ -14,8 +14,13 @@
         </view>
         <view class="b-detail-container-content-info">
           <view :class="['detail-amount', amountClass]">
-            <view style="font-size: 40rpx">￥</view>
-            <view> {{ bill.amountFormat }}</view>
+            <view class="detail-amount-type">{{
+              bill.type == 0 ? "-" : "+"
+            }}</view>
+            <view class="detail-amount-text">
+              <view> {{ bill.amountFormat }}</view>
+              <view class="detail-amount-text-char">￥</view>
+            </view>
           </view>
           <view class="detail-asset">{{ bill.asset }}</view>
           <view class="detail-date">{{ bill.timeFormat }}</view>
@@ -192,10 +197,20 @@ export default {
         .detail-amount {
           display: flex;
           justify-content: center;
-          align-items: baseline;
           font-size: 60rpx;
-          font-weight: bold;
-          margin-bottom: 10rpx;
+          &-type {
+            font-weight: bold;
+            margin-right: 5rpx;
+          }
+          &-text {
+            display: flex;
+            align-items: baseline;
+            font-weight: bold;
+            margin-bottom: 10rpx;
+            &-char {
+              font-size: 40rpx;
+            }
+          }
         }
         .detail-asset {
           color: $grey-text-color;
