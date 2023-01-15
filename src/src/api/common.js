@@ -5,6 +5,12 @@ const common = {
     getIconPage(params) {
         return http.get('file/media-image/pages', { params: params })
     },
+
+
+    // 获取七牛Token
+    getQiniuToken() {
+        return http.get('file/upload-token')
+    },
 }
 
 export default common;

@@ -1,5 +1,8 @@
 <template>
   <view class="b-container x-c">
+    <button open-type="chooseAvatar" @chooseavatar="onChooseAvatar">
+      完善信息
+    </button>
     <view class="login" @click="onLogin"
       ><text space="emsp">{{ loading ? "登录中..." : " 登录 " }}</text></view
     >
@@ -88,6 +91,7 @@ export default {
           this.loading = false;
         });
     },
+
     onToLogin(data) {
       // console.log("userinfo", data);
       this.Login({
@@ -113,6 +117,63 @@ export default {
         .catch((err) => {
           this.loading = false;
         });
+    },
+    onChooseAvatar(e) {
+      console.log("e", e);
+      this.$api
+        .getQiniuToken()
+        .then((res) => {
+          console.log("token", res);
+          let d = e.detail;
+          console.log("token", res.data.result);
+          this.uploadImgs(d.avatarUrl, res.data.result);
+        })
+        .finally(() => {
+          this.loading = false;
+        });
+    },
+    uploadImgs(filePath, token) {
+      let that = this;
+      uni.uploadFile({
+        url: "https://up-z2.qiniup.com",
+        filePath: filePath,
+        fileType: "image",
+        name: "file",
+        formData: {
+          token,
+        },
+        header: {
+          "Content-Type": "multipart/form-data",
+        },
+        success: (res) => {
+          console.log("su", res);
+          uni.hideLoading();
+          if (res.statusCode == 403) {
+            that.Tips({
+              title: res.data,
+            });
+          } else {
+            let data = res.data ? JSON.parse(res.data) : {};
+
+            if (data.status == 200) {
+              successCallback && successCallback(data);
+            } else {
+              errorCallback && errorCallback(data);
+
+              that.Tips({
+                title: data.msg,
+              });
+            }
+          }
+        },
+        fail: (err) => {
+          console.log("err", err);
+          uni.hideLoading();
+          that.Tips({
+            title: i18n.t(`上传图片失败`),
+          });
+        },
+      });
     },
   },
 };
