@@ -120,7 +120,7 @@ export default {
       if (this.loading) return;
       this.loading = true;
       this.Login({
-        code: this.preUser.code,
+        openId: this.preUser.openId,
         avatarUrl: this.preUser.avatarUrl,
         nickname: this.preUser.nickname,
       })
