@@ -1,4 +1,5 @@
 import { http } from './service.js'
+import tip from '@/common/utils/tip.js'
 
 const file = {
 
@@ -11,6 +12,7 @@ const file = {
     uploadImageToQiniu(key, file) {
         let that = this;
         return new Promise((resolve, reject) => {
+            tip.loading("上传文件中....");
             that.getQiniuToken().then((res) => {
                 console.log("token res", res);
                 if (!res.data.success) reject(res.data.message)
@@ -30,7 +32,7 @@ const file = {
                     },
                     success: (res) => {
                         console.log("su", res);
-                        uni.hideLoading();
+                        tip.loaded();
                         if (res.statusCode != 200) {
                             let data = JSON.parse(res.data)
                             reject("上回传七牛云失败：" + data.error)
@@ -40,7 +42,7 @@ const file = {
                     },
                     fail: (err) => {
                         console.log("err", err);
-                        uni.hideLoading();
+                        tip.loaded();
                         reject(`上传图片失败`);
                     },
                 });

@@ -9,10 +9,7 @@
           open-type="chooseAvatar"
           @chooseavatar="onChooseAvatar"
         >
-          <image
-            :class="preUser.avatarUrl == '' ? 'user-info-avatar-img' : ''"
-            :src="preUser.avatarUrl"
-          ></image>
+          <image class="user-info-avatar-img" :src="preUser.avatarUrl"></image>
         </button>
         <view v-else class="user-info-avatar-button">
           <image :class="preUser.avatarUrl" :src="preUser.avatarUrl"></image>
@@ -63,6 +60,7 @@ export default {
     ...mapActions(["Login"]),
     // 微信预登录
     preLoginCode() {
+      this.$tip.loading("加载用户信息....");
       uni.login({
         success: (res) => {
           this.$api
@@ -70,16 +68,20 @@ export default {
               code: res.code,
             })
             .then((res) => {
-              console.log("pre", res);
+              // console.log("pre", res);
               if (res.data.success) {
                 this.preUser = res.data.result;
               } else {
                 this.$tip.alert(res.data.msg);
               }
+              this.$tip.loaded();
             })
-            .catch((err) => {});
+            .catch((err) => {
+              this.$tip.loaded();
+            });
         },
         fail: (err) => {
+          this.$tip.loaded();
           this.$tip.toast("授权失败，请重新授权！");
         },
       });
@@ -160,7 +162,7 @@ export default {
       text-align: center;
       line-height: 150rpx;
       background-color: #fff;
-      border: 1rpx solid $expend-color;
+      border: 1rpx solid $primary-color;
 
       image {
         width: 160rpx;
@@ -176,47 +178,51 @@ export default {
         display: flex;
         justify-content: center;
         align-items: center;
+        &:after {
+          border: none;
+        }
+      }
 
-        &-img {
-          &:before {
-            content: "选择头像";
-            position: absolute;
-            right: 0;
-            bottom: 0;
-            width: 160rpx;
-            height: 50rpx;
-            padding-top: 5rpx;
-            background: rgb(71, 162, 113, 0.6);
-            font-size: 25rpx;
-            color: #fff;
-            display: flex;
-            align-items: flex-end;
-            justify-content: center;
-          }
+      &-img {
+        &:before {
+          content: "选择头像";
+          position: absolute;
+          right: 0;
+          bottom: 0;
+          width: 160rpx;
+          height: 50rpx;
+          padding-top: 5rpx;
+          background: rgb(71, 162, 113, 0.6);
+          font-size: 25rpx;
+          color: #fff;
+          display: flex;
+          align-items: flex-end;
+          justify-content: center;
         }
       }
     }
     &-nickname-input {
       font-size: 35rpx;
       text-align: center;
-      color: $expend-color;
-      border-radius: 20rpx;
-      border: 2rpx solid $expend-color;
+      color: $primary-color;
+      border-radius: 15rpx;
+      border: 2rpx solid $light-color;
       padding: 10rpx;
       margin: 30rpx 0;
       &-pcs {
-        color: $expend-color;
+        color: $primary-color;
       }
     }
   }
   .login {
-    font-weight: bold;
-    color: white;
-    text-align: center;
-    border-radius: 40rpx;
-    padding: 20rpx 0;
     width: 70%;
-    background: $expend-color;
+    text-align: center;
+    border: 4rpx solid $bright-color;
+    border-radius: 24rpx;
+    padding: 20rpx 0;
+    font-weight: bold;
+    color: $primary-color;
+    background-color: #fff;
   }
   .auth-login {
     display: flex;
@@ -225,7 +231,7 @@ export default {
     margin-top: 60rpx;
     font-size: 27rpx;
     font-weight: bold;
-    color: $expend-color;
+    color: $primary-color;
     text-align: center;
     text-decoration: underline;
     &-text {
