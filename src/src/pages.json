@@ -120,7 +120,8 @@
 		{
 			"path": "pages/profile/user-detail",
 			"style": {
-				"navigationBarTitleText": "个人信息"
+				"navigationBarTitleText": "个人信息",
+				"navigationBarBackgroundColor": "#DCD6F7"
 			}
 		}
 	],

@@ -1,108 +1,128 @@
 <template>
   <view class="b-container x-c">
-    <button open-type="chooseAvatar" @chooseavatar="onChooseAvatar">
-      完善信息
-    </button>
+    <view class="user-info">
+      <!-- 头像 -->
+      <view class="user-info-avatar">
+        <button
+          v-if="preUser.isExist == 0"
+          class="user-info-avatar-button"
+          open-type="chooseAvatar"
+          @chooseavatar="onChooseAvatar"
+        >
+          <image
+            :class="preUser.avatarUrl == '' ? 'user-info-avatar-img' : ''"
+            :src="preUser.avatarUrl"
+          ></image>
+        </button>
+        <view v-else class="user-info-avatar-button">
+          <image :class="preUser.avatarUrl" :src="preUser.avatarUrl"></image>
+        </view>
+      </view>
+      <!-- 昵称 -->
+      <input
+        v-show="preUser.isExist == 0"
+        type="nickname"
+        class="user-info-nickname-input"
+        placeholder-class="user-nickname-input-pcs"
+        placeholder="请输入昵称"
+        maxlength="10"
+        v-model="preUser.nickname"
+      />
+    </view>
+    <!-- 登录 -->
     <view class="login" @click="onLogin"
       ><text space="emsp">{{ loading ? "登录中..." : " 登录 " }}</text></view
+    >
+
+    <!-- 重新授权 -->
+    <view class="auth-login"
+      ><text class="auth-login-text" @click="onAuthLogin" space="emsp"
+        >重新授权</text
+      ></view
     >
   </view>
 </template>
 
 <script>
 import { mapActions } from "vuex";
+import generator from "@/common/utils/generator.js";
 
 export default {
   data() {
     return {
       loading: false,
+      preUser: {},
     };
   },
   onShow() {
-    // uni.hideHomeButton();
+    // 进行预登录
+    this.preLoginCode();
   },
   onLoad() {},
   methods: {
     ...mapActions(["Login"]),
-    onLogin() {
-      if (this.loading) return;
-      this.loading = true;
-      // uni.login({
-      //   desc: "weixin", // 这个参数是必须的
-      //   success: (res) => {
-      //     // console.log("授权信息", res);
-      //     wx.getUserProfile({
-      //       lang: "zh_CN",
-      //       desc: "用户登录",
-      //       success: (user) => {
-      //         console.log("用户信息", user);
-      //         this.toLogin(user.userInfo, res.code);
-      //       },
-      //       fail: (err) => {
-      //         console.log("getUserProfile error", err);
-      //         this.$tip.error(err.errMsg);
-      //         this.loading = false;
-      //       },
-      //     });
-      //   },
-      //   fail: (err) => {
-      //     console.log("login error", err);
-      //     this.$tip.error(err.errMsg);
-      //     this.loading = false;
-      //   },
-      // });
+    // 微信预登录
+    preLoginCode() {
+      uni.login({
+        success: (res) => {
+          this.$api
+            .preLogin({
+              code: res.code,
+            })
+            .then((res) => {
+              console.log("pre", res);
+              if (res.data.success) {
+                this.preUser = res.data.result;
+              } else {
+                this.$tip.alert(res.data.msg);
+              }
+            })
+            .catch((err) => {});
+        },
+        fail: (err) => {
+          this.$tip.toast("授权失败，请重新授权！");
+        },
+      });
+    },
 
-      var p1 = new Promise((resolve, reject) => {
-        wx.login({
-          success: (res) => {
-            // 这里也可以选择性返回需要的字段
-            resolve(res);
-          },
-          fail: (err) => {
-            reject("登录失败，请稍后再试！");
-          },
-        });
-      });
-      var p2 = new Promise((resolve, reject) => {
-        wx.getUserProfile({
-          desc: "用于完善用户资料",
-          success: (res) => {
-            // 这里也可以选择性返回需要的字段
-            resolve(res.userInfo);
-          },
-          fail: (err) => {
-            reject("授权失败！");
-          },
-        });
-      });
-      // 同时执行p1和p2，并在它们都完成后执行then
-      Promise.all([p1, p2])
-        .then((results) => {
-          // results是一个长度为2的数组，放置着p1、p2的resolve
-          this.onToLogin({
-            // 这里也可以选择性返回需要的字段
-            ...results[0],
-            ...results[1],
-          });
+    // 选择头像并上传
+    onChooseAvatar(e) {
+      this.$api
+        .uploadImageToQiniu(
+          "avatar/" + generator.generateUUID() + ".png",
+          e.detail.avatarUrl
+        )
+        .then((res) => {
+          this.preUser.avatarUrl = res;
         })
         .catch((err) => {
-          // console.log(err);
           this.$tip.toast(err);
-          this.loading = false;
         });
     },
 
-    onToLogin(data) {
-      // console.log("userinfo", data);
+    // 登录
+    onLogin() {
+      // 用户第一次登录时，才需要校验，
+      if (this.preUser.isExist == 0) {
+        if (this.preUser.nickname == undefined || this.preUser.nickname == "") {
+          this.$tip.toast("请输入昵称");
+          return;
+        }
+        if (
+          this.preUser.avatarUrl == undefined ||
+          this.preUser.avatarUrl == ""
+        ) {
+          this.$tip.toast("请选择头像");
+          return;
+        }
+      }
+
+      if (this.loading) return;
+      this.loading = true;
       this.Login({
-        code: data.code,
-        avatarUrl: data.avatarUrl,
-        city: data.city,
-        country: data.country,
-        gender: data.gender,
-        language: data.language,
-        nickName: data.nickName,
-        province: data.province,
+        code: this.preUser.code,
+        avatarUrl: this.preUser.avatarUrl,
+        nickname: this.preUser.nickname,
       })
         .then((res) => {
           // console.log(res);
@@ -118,62 +138,10 @@ export default {
           this.loading = false;
         });
     },
-    onChooseAvatar(e) {
-      console.log("e", e);
-      this.$api
-        .getQiniuToken()
-        .then((res) => {
-          console.log("token", res);
-          let d = e.detail;
-          console.log("token", res.data.result);
-          this.uploadImgs(d.avatarUrl, res.data.result);
-        })
-        .finally(() => {
-          this.loading = false;
-        });
-    },
-    uploadImgs(filePath, token) {
-      let that = this;
-      uni.uploadFile({
-        url: "https://up-z2.qiniup.com",
-        filePath: filePath,
-        fileType: "image",
-        name: "file",
-        formData: {
-          token,
-        },
-        header: {
-          "Content-Type": "multipart/form-data",
-        },
-        success: (res) => {
-          console.log("su", res);
-          uni.hideLoading();
-          if (res.statusCode == 403) {
-            that.Tips({
-              title: res.data,
-            });
-          } else {
-            let data = res.data ? JSON.parse(res.data) : {};
-
-            if (data.status == 200) {
-              successCallback && successCallback(data);
-            } else {
-              errorCallback && errorCallback(data);
-
-              that.Tips({
-                title: data.msg,
-              });
-            }
-          }
-        },
-        fail: (err) => {
-          console.log("err", err);
-          uni.hideLoading();
-          that.Tips({
-            title: i18n.t(`上传图片失败`),
-          });
-        },
-      });
+    // 点击重新授权
+    onAuthLogin() {
+      // 进行预登录
+      this.preLoginCode();
     },
   },
 };
@@ -181,6 +149,66 @@ export default {
 
 <style lang="scss" scope>
 .b-container {
+  .user-info {
+    margin-bottom: 70rpx;
+    &-avatar {
+      width: 150rpx;
+      height: 150rpx;
+      position: relative;
+      border-radius: 50%;
+      margin: 0 auto;
+      text-align: center;
+      line-height: 150rpx;
+      background-color: #fff;
+      border: 1rpx solid $expend-color;
+
+      image {
+        width: 160rpx;
+        height: 160rpx;
+        border-radius: 50%;
+        display: table;
+      }
+
+      &-button {
+        height: 150rpx;
+        padding: 0;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        &-img {
+          &:before {
+            content: "选择头像";
+            position: absolute;
+            right: 0;
+            bottom: 0;
+            width: 160rpx;
+            height: 50rpx;
+            padding-top: 5rpx;
+            background: rgb(71, 162, 113, 0.6);
+            font-size: 25rpx;
+            color: #fff;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+          }
+        }
+      }
+    }
+    &-nickname-input {
+      font-size: 35rpx;
+      text-align: center;
+      color: $expend-color;
+      border-radius: 20rpx;
+      border: 2rpx solid $expend-color;
+      padding: 10rpx;
+      margin: 30rpx 0;
+      &-pcs {
+        color: $expend-color;
+      }
+    }
+  }
   .login {
     font-weight: bold;
     color: white;
@@ -189,6 +217,20 @@ export default {
     padding: 20rpx 0;
     width: 70%;
     background: $expend-color;
+  }
+  .auth-login {
+    display: flex;
+    justify-content: flex-end;
+    width: 60%;
+    margin-top: 60rpx;
+    font-size: 27rpx;
+    font-weight: bold;
+    color: $expend-color;
+    text-align: center;
+    text-decoration: underline;
+    &-text {
+      padding: 10rpx;
+    }
   }
 }
 </style>

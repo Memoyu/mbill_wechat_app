@@ -119,6 +119,19 @@ function getCurWeek(date) {
     return weeks[l];
 }
 
+function getDays(dateStr1, dateStr2) {
+    var startDate = Date.parse(dateStr1);
+    var endDate = Date.parse(dateStr2);
+    if (startDate > endDate) {
+        return 0;
+    }
+    if (startDate == endDate) {
+        return 1;
+    }
+    var days = (endDate - startDate) / (1 * 24 * 60 * 60 * 1000);
+    return Math.floor(days);
+}
+
 module.exports = {
     getCurDateTime,
     getCurDate,
@@ -130,4 +143,5 @@ module.exports = {
     getNextMonth,
     getPrevMonth,
     getCurWeek,
+    getDays
 }

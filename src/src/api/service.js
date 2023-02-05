@@ -25,7 +25,7 @@ http.setConfig((config) => {
     return config
 })
 
-const whiteList = ['account/wxlogin', 'file/upload-token']
+const whiteList = ['account/wxlogin', 'account/wx-pre-login', 'file/upload-token']
 http.interceptors.request.use((config) => { /* 请求之前拦截器。可以使用async await 做异步操作 */
     config.header = {
         ...config.header,

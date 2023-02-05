@@ -3,6 +3,7 @@ import api from "@/api/api"
 import { router } from '@/router'
 import { LOGIN_STATUS, ACCESS_TOKEN, REFRESH_TOKEN, LOGIN_USER } from "@/common/utils/constants"
 import { IS_LOGIN, SET_TOKEN, SET_USER, INIT_BILL } from "../type"
+import datetime from "@/common/utils/datetime";
 
 const state = {
     token: uni.getStorageSync(ACCESS_TOKEN) || '', // token
@@ -10,12 +11,10 @@ const state = {
     defUser: {
         avatarUrl: "/static/assets/avatar.png",
         nickname: "请先登录",
-        days: 0,
     },
     user: uni.getStorageSync(LOGIN_USER) || {
         avatarUrl: "/static/assets/avatar.png",
         nickname: "请先登录",
-        days: 0,
     },
     isLogin: uni.getStorageSync(LOGIN_STATUS) || false,
 }
@@ -23,7 +22,11 @@ const state = {
 const getters = {
     token: state => state.token,
     refreshToken: state => state.refreshToken,
-    user: state => state.user,
+    user: state => {
+        let days = state.user.createTime == undefined ? 0 : datetime.getDays(state.user.createTime, datetime.getCurDateTime());
+        //console.log("总天数", days);
+        return { ...state.user, days }
+    },
     isLogin: state => state.isLogin
 }
 
@@ -36,10 +39,9 @@ const mutations = {
         state.token = token
         state.refreshToken = refreshToken
     },
-    [SET_USER]: (state, { avatarUrl, nickname, days }) => {
+    [SET_USER]: (state, { avatarUrl, nickname }) => {
         state.user.avatarUrl = avatarUrl
         state.user.nickname = nickname
-        state.user.days = days
     }
 }
 
@@ -88,6 +90,11 @@ const actions = {
                 reject(e);
             });
         })
+    },
+    // 更新用户信息
+    UpdateUser({ commit }, user) {
+        uni.setStorageSync(LOGIN_USER, user);
+        commit(SET_USER, user)
     },
     // 登出
     Logout({ commit }) {

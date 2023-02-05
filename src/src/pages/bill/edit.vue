@@ -665,6 +665,8 @@ export default {
   }
   .key-board-header-desc {
     background: #fff;
+    display: flex;
+    align-items: center;
     .choose-asset {
       margin-right: 40rpx;
       .asset-icon {
@@ -673,7 +675,6 @@ export default {
         padding: 0 20rpx;
         .image {
           border-radius: 50%;
-          // background: yellow;
           height: 45rpx;
           width: 45rpx;
         }

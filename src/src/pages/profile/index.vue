@@ -16,7 +16,7 @@
       "
     >
       <view class="avatar-image">
-        <image class="image" mode="widthFix" :src="user.avatarUrl" />
+        <image class="image" mode="scaleToFill" :src="user.avatarUrl" />
       </view>
       <view class="user-info">
         <text class="user-name">{{ user.nickname }}</text>
@@ -180,11 +180,9 @@ export default {
   },
   computed: {
     ...mapState({
-      isLogin: (state) => state.account.isLogin,
-      user: (state) => state.account.user,
       profileStat: (state) => state.bill.profileStat,
     }),
-    ...mapGetters(["isLogin"]),
+    ...mapGetters(["user", "isLogin"]),
   },
   onShow() {
     this.setTabBarIndex(1);
