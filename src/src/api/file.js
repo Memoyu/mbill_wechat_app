@@ -37,7 +37,8 @@ const file = {
                             let data = JSON.parse(res.data)
                             reject("上回传七牛云失败：" + data.error)
                         } else {
-                            resolve(`${host}/${key}`)
+                            console.log(`${host}${key}`);
+                            resolve(`${host}${key}`)
                         }
                     },
                     fail: (err) => {
