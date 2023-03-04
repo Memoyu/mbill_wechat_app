@@ -4,7 +4,7 @@
       <!-- 头像 -->
       <view class="user-info-avatar">
         <button
-          v-if="preUser.isExist == 0"
+          v-if="preUser.isCompletedInfo == 0"
           class="user-info-avatar-button"
           open-type="chooseAvatar"
           @chooseavatar="onChooseAvatar"
@@ -17,13 +17,14 @@
       </view>
       <!-- 昵称 -->
       <input
-        v-show="preUser.isExist == 0"
+        v-show="preUser.isCompletedInfo == 0"
         type="nickname"
         class="user-info-nickname-input"
         placeholder-class="user-nickname-input-pcs"
         placeholder="请输入昵称"
         maxlength="10"
         v-model="preUser.nickname"
+        @blur="onBlurNickname"
       />
     </view>
     <!-- 登录 -->
@@ -102,19 +103,27 @@ export default {
         });
     },
 
+    // 昵称输入框失焦
+    onBlurNickname(e) {
+      this.preUser.nickname = e.detail.value;
+    },
+
     // 登录
     onLogin() {
-      // 用户第一次登录时，才需要校验，
-      if (this.preUser.isExist == 0) {
-        if (this.preUser.nickname == undefined || this.preUser.nickname == "") {
-          this.$tip.toast("请输入昵称");
+      // 用户信息不完整时，才需要校验，
+      if (this.preUser.isCompletedInfo == 0) {
+        if (
+          this.preUser.avatarUrl == undefined ||
+          this.preUser.avatarUrl.trim() == ""
+        ) {
+          this.$tip.toast("请选择头像");
           return;
         }
         if (
-          this.preUser.avatarUrl == undefined ||
-          this.preUser.avatarUrl == ""
+          this.preUser.nickname == undefined ||
+          this.preUser.nickname.trim() == ""
         ) {
-          this.$tip.toast("请选择头像");
+          this.$tip.toast("请输入昵称");
           return;
         }
       }
@@ -160,13 +169,12 @@ export default {
       border-radius: 50%;
       margin: 0 auto;
       text-align: center;
-      line-height: 150rpx;
       background-color: #fff;
       border: 1rpx solid $primary-color;
 
       image {
         width: 160rpx;
-        height: 160rpx;
+        height: 150rpx;
         border-radius: 50%;
         display: table;
       }
