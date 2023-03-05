@@ -1,9 +1,9 @@
 @font-face {
   font-family: "iconfont";
   /* Project id 2203375 */
-  src: url('./static/font/iconfont.woff2?t=1658542745576') format('woff2'),
-    url('./static/font/iconfont.woff?t=1658542745576') format('woff'),
-    url('./static/font/iconfont.ttf?t=1658542745576') format('truetype');
+  src: url('//at.alicdn.com/t/c/font_2203375_tjavpndofbp.woff2?t=1677986067746') format('woff2'),
+    url('//at.alicdn.com/t/c/font_2203375_tjavpndofbp.woff?t=1677986067746') format('woff'),
+    url('//at.alicdn.com/t/c/font_2203375_tjavpndofbp.ttf?t=1677986067746') format('truetype');
 }
 
 .iconfont {
@@ -14,8 +14,16 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+.icon-filter:before {
+  content: "\e6b9";
+}
+
 .icon-list-3:before {
   content: "\e650";
+}
+
+.icon-choose:before {
+  content: "\e628";
 }
 
 .icon-close:before {

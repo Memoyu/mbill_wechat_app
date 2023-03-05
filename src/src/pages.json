@@ -39,7 +39,8 @@
 		{
 			"path": "pages/bill/search",
 			"style": {
-				"navigationBarTitleText": "搜索"
+				"navigationBarTitleText": "搜索",
+				"navigationBarBackgroundColor": "#DCD6F7"
 			}
 		},
 		{

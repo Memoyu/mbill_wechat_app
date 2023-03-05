@@ -1147,10 +1147,10 @@
     "@babel/types" "^7.3.3"
     "vue-template-compiler" "^2.6.10"
 
-"@dcloudio/uni-ui@^1.4.16":
-  "integrity" "sha512-HChJ7vXupOGy1d0GY4k9x4Q7ng+zW3EpliJI7sbW66JOTxf7kZnZNxjg+Gs2yBkE+Wm+iAymZbQEGNSsctoGGQ=="
-  "resolved" "https://registry.npmjs.org/@dcloudio/uni-ui/-/uni-ui-1.4.16.tgz"
-  "version" "1.4.16"
+"@dcloudio/uni-ui@^1.4.26":
+  "integrity" "sha512-JpYXNi9WEmFeTcF6EWrksrMqA0HEl76nxW/Imd0PW1qm/7TORAGSpvMmEDYrMQ3vIbRQFV+n6bhiJIWi34u/5Q=="
+  "resolved" "https://registry.npmmirror.com/@dcloudio/uni-ui/-/uni-ui-1.4.26.tgz"
+  "version" "1.4.26"
 
 "@dcloudio/vue-cli-plugin-hbuilderx@^2.0.1-34720220422002":
   "integrity" "sha512-HWuq1Mq2KHYVVWTDq/e/fFDpqSzEhuAIsjqaHZgEFE1V+4fflmCdgrfOHK4I0uufbgx+DKoABJq0JUIcGZfVhA=="
