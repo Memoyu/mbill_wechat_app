@@ -1,9 +1,9 @@
 @font-face {
   font-family: "iconfont";
   /* Project id 2203375 */
-  src: url('//at.alicdn.com/t/c/font_2203375_tjavpndofbp.woff2?t=1677986067746') format('woff2'),
-    url('//at.alicdn.com/t/c/font_2203375_tjavpndofbp.woff?t=1677986067746') format('woff'),
-    url('//at.alicdn.com/t/c/font_2203375_tjavpndofbp.ttf?t=1677986067746') format('truetype');
+  src: url('//at.alicdn.com/t/c/font_2203375_wydm0np7ggj.woff2?t=1678117645634') format('woff2'),
+    url('//at.alicdn.com/t/c/font_2203375_wydm0np7ggj.woff?t=1678117645634') format('woff'),
+    url('//at.alicdn.com/t/c/font_2203375_wydm0np7ggj.ttf?t=1678117645634') format('truetype');
 }
 
 .iconfont {
@@ -12,6 +12,34 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-note-text:before {
+  content: "\e69c";
+}
+
+.icon-dizhi:before {
+  content: "\e814";
+}
+
+.icon-time:before {
+  content: "\e6e0";
+}
+
+.icon-money:before {
+  content: "\e65b";
+}
+
+.icon-bankcard:before {
+  content: "\e693";
+}
+
+.icon-select:before {
+  content: "\e630";
+}
+
+.icon-category:before {
+  content: "\e627";
 }
 
 .icon-filter:before {

@@ -33,10 +33,118 @@
       :width="drawerWidth"
       @change="onChangeFilterDrawer"
     >
-      <view class="close">
-        <button @click="onCloseFilterDrawer">
-          <text class="word-btn-white">关闭Drawer</text>
-        </button>
+      <view class="search-options">
+        <view class="search-options-btn x-bc">
+          <view @click="onCloseFilterDrawer">确认</view>
+          <view @click="onResetFilter">重置</view>
+        </view>
+        <view class="search-options-container">
+          <!-- 账单类型 -->
+          <view class="search-options-cell">
+            <i class="iconfont icon-select search-options-cell-icon" />
+            <view class="search-options-cell-item">
+              <view class="search-options-cell-item-title x-bc">
+                <text>类型</text>
+                <view class="search-options-cell-item-content">
+                  <text>全部</text>
+                  <i class="iconfont icon-to search-options-cell-to-icon" />
+                </view>
+              </view>
+              <view class="search-options-cell-bottom-line" />
+            </view>
+          </view>
+
+          <!-- 账单分类 -->
+          <view class="search-options-cell">
+            <i class="iconfont icon-category search-options-cell-icon" />
+            <view class="search-options-cell-item">
+              <view class="search-options-cell-item-title x-bc">
+                <text>分类</text>
+                <view class="search-options-cell-item-content">
+                  <text>全部</text>
+                  <i class="iconfont icon-to search-options-cell-to-icon" />
+                </view>
+              </view>
+              <view class="search-options-cell-bottom-line" />
+            </view>
+          </view>
+
+          <!-- 账单账户 -->
+          <view class="search-options-cell">
+            <i class="iconfont icon-bankcard search-options-cell-icon" />
+            <view class="search-options-cell-item">
+              <view class="search-options-cell-item-title x-bc">
+                <text>账户</text>
+                <view class="search-options-cell-item-content">
+                  <text>全部</text>
+                  <i class="iconfont icon-to search-options-cell-to-icon" />
+                </view>
+              </view>
+              <view class="search-options-cell-bottom-line" />
+            </view>
+          </view>
+
+          <!-- 账单时间 -->
+          <view class="search-options-cell">
+            <i class="iconfont icon-time search-options-cell-icon" />
+            <view class="search-options-cell-item">
+              <view class="search-options-cell-item-title x-bc">
+                <text>时间</text>
+                <view class="search-options-cell-item-content">
+                  <text>全部时间</text>
+                  <i class="iconfont icon-to search-options-cell-to-icon" />
+                </view>
+              </view>
+              <view class="search-options-cell-bottom-line" />
+            </view>
+          </view>
+
+          <!-- 账单金额 -->
+          <view class="search-options-cell">
+            <i class="iconfont icon-money search-options-cell-icon" />
+            <view class="search-options-cell-item">
+              <view class="search-options-cell-item-title x-bc">
+                <text>金额</text>
+                <view class="search-options-cell-item-content">
+                  <text>10</text>
+                  <text>-</text>
+                  <text>20</text>
+                  <i class="iconfont icon-to search-options-cell-to-icon" />
+                </view>
+              </view>
+              <view class="search-options-cell-bottom-line" />
+            </view>
+          </view>
+
+          <!-- 账单地址 -->
+          <view class="search-options-cell">
+            <i class="iconfont icon-dizhi search-options-cell-icon" />
+            <view class="search-options-cell-item">
+              <view class="search-options-cell-item-title x-bc">
+                <text>地址</text>
+                <view class="search-options-cell-item-content">
+                  <text>白云</text>
+                  <i class="iconfont icon-to search-options-cell-to-icon" />
+                </view>
+              </view>
+              <view class="search-options-cell-bottom-line" />
+            </view>
+          </view>
+
+          <!-- 账单备注 -->
+          <view class="search-options-cell">
+            <i class="iconfont icon-note-text search-options-cell-icon" />
+            <view class="search-options-cell-item">
+              <view class="search-options-cell-item-title x-bc">
+                <text>备注</text>
+                <view class="search-options-cell-item-content">
+                  <text>账单备注</text>
+                  <i class="iconfont icon-to search-options-cell-to-icon" />
+                </view>
+              </view>
+            </view>
+          </view>
+        </view>
       </view>
     </uni-drawer>
   </view>
@@ -54,24 +162,11 @@ export default {
         begin: datetime.getCurDate(),
         end: datetime.getCurDate(),
       },
-      drawerWidth: 250,
+      drawerWidth: 300,
     };
   },
-  onLoad() {
-    this.getDrawerWidth();
-  },
+  onLoad() {},
   methods: {
-    // // 动态获取Drawer宽度
-    // getDrawerWidth() {
-    //   let that = this;
-    //   uni.getSystemInfo({
-    //     success(res) {
-    //       that.drawerWidth = res.windowWidth * 0.9;
-    //       console.log("宽", that.drawerWidth);
-    //     },
-    //   });
-    // },
-
     // 搜索框清除
     onSearchInputClear() {},
 
@@ -85,10 +180,14 @@ export default {
     onShowFilterDrawer() {
       this.$refs["filterDrawer"].open();
     },
+
     // 关闭窗口
     onCloseFilterDrawer() {
       this.$refs["filterDrawer"].close();
     },
+
+    // 重置筛选项
+    onResetFilter() {},
 
     // 抽屉状态发生变化触发
     onChangeFilterDrawer(e) {
@@ -110,7 +209,7 @@ export default {
 }
 .search {
   &-filter {
-    margin: 20rpx 20rpx;
+    margin: 30rpx 20rpx;
     &-date-picker {
       font-weight: bold;
       align-items: baseline;
@@ -124,11 +223,55 @@ export default {
       color: $primary-color;
       .icon-filter {
         font-size: 35rpx;
-        margin-right: 10rpx;
+        margin-right: 5rpx;
       }
     }
     &-text {
       font-size: 30rpx;
+    }
+  }
+
+  &-options {
+    margin: 40rpx 25rpx;
+    &-btn {
+      font-weight: bold;
+      font-size: 30rpx;
+      color: $primary-color;
+    }
+
+    &-container {
+      margin-top: 50rpx;
+    }
+
+    &-cell {
+      display: flex;
+      align-items: center;
+      font-size: 32rpx;
+      margin: 45rpx 0;
+      &-icon {
+        margin-right: 10rpx;
+        font-size: 40rpx;
+      }
+      &-to-icon {
+        margin-left: 20rpx;
+        font-size: 20rpx;
+        display: flex;
+        align-items: center;
+      }
+      &-item {
+        width: 100%;
+        &-title {
+          margin-bottom: 20rpx;
+        }
+        &-content {
+          display: flex;
+        }
+      }
+      &-bottom-line {
+        height: 2rpx;
+        background: $bright-color;
+        width: 100%;
+      }
     }
   }
 }
