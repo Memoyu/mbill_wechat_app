@@ -37,4 +37,19 @@ page {
     // justify-content: center;
   }
 }
+
+// 原型checkbox
+checkbox .wx-checkbox-input {
+  border-radius: 50%;
+}
+
+checkbox .wx-checkbox-input.wx-checkbox-input-checked {
+  border: 1px solid $light-color;
+  background: $light-color;
+  color: #fff !important;
+}
+
+checkbox .wx-checkbox-input.wx-checkbox-input-checked::before {
+  font-size: 18px;
+}
 </style>

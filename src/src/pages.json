@@ -5,6 +5,7 @@
 			"mb-ba-(.*)": "@/components/base/mbill-$1.vue",
 			"mb-b-(.*)": "@/components/bill/mbill-bill-$1.vue",
 			"mb-stat-(.*)": "@/components/bill/stat/mbill-bill-stat-$1.vue",
+			"mb-search-(.*)": "@/components/bill/search/mbill-bill-search-$1.vue",
 			"mb-ca-(.*)": "@/components/category/mbill-category-$1.vue",
 			"mb-as-(.*)": "@/components/asset/mbill-asset-$1.vue",
 			"mb-po-(.*)": "@/components/pre-order/mbill-po-$1.vue",
