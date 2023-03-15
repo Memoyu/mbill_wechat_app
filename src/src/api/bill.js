@@ -53,6 +53,11 @@ const bill = {
         return http.get('bill/pages', { params: params })
     },
 
+    // 账单检索
+    searchBillPages(params) {
+        return http.get('bill/search', { params: params })
+    },
+
     //#endregion
 
     //#region 账单统计

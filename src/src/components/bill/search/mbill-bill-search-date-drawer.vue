@@ -52,11 +52,11 @@
                   mode="date"
                   @change="onDatePicker($event, 'begin')"
                   fields="day"
-                  :value="date.begin"
+                  :value="diyDate.begin"
                 >
                   <view class="select-list-item-diy-date-title">开始于</view>
                   <view class="select-list-item-diy-date-value">{{
-                    date.begin
+                    diyDate.begin
                   }}</view>
                 </picker>
               </view>
@@ -67,11 +67,11 @@
                   mode="date"
                   @change="onDatePicker($event, 'end')"
                   fields="day"
-                  :value="date.end"
+                  :value="diyDate.end"
                 >
                   <view class="select-list-item-diy-date-title">结束于</view>
                   <view class="select-list-item-diy-date-value">{{
-                    date.end
+                    diyDate.end
                   }}</view>
                 </picker>
               </view>
@@ -93,15 +93,19 @@ export default {
       type: Boolean,
       default: false,
     },
+    date: {
+      type: Object,
+      default: {},
+    },
   },
   data() {
     return {
       height: 300,
       drawerWidth: 300,
       dateList: [
-        [{ name: "全部时间", value: 0, checked: true }],
+        [{ name: "全部时间", value: 0, checked: false }],
         [
-          { name: "今天", value: 1, checked: false },
+          { name: "今天", value: 1, checked: true },
           { name: "昨天", value: 2, checked: false },
           { name: "近7天", value: 3, checked: false },
           { name: "近30天", value: 4, checked: false },
@@ -124,7 +128,7 @@ export default {
         ],
       ],
       isDiy: false,
-      date: {
+      diyDate: {
         begin: datetime.getCurDate(),
         end: datetime.getCurDate(),
       },
@@ -139,6 +143,16 @@ export default {
         this.$refs["dateDrawer"].close();
       }
     },
+    date(val) {
+      console.log("date com", val);
+      if (val.selected == -1) {
+        this.diyDate.begin = this.date.begin;
+        this.diyDate.end = this.date.end;
+        this.onDateDiySwitch();
+      } else {
+        this.onSelectedDate({ value: val.selected });
+      }
+    },
   },
   created() {
     this.dynamicHeight();
@@ -151,59 +165,99 @@ export default {
 
     // 确认
     onConfirm() {
-      this.$emit("update:open", false);
       var range = this.getRangeDate();
+      if (range == null) return;
+      this.$emit("confirm", range);
+      this.$emit("update:open", false);
     },
 
+    // 获取时间区间
     getRangeDate() {
-      var range = {};
+      let range = {};
+      let d = {};
+      let text = "";
+      // console.log("selected", this.selected);
       switch (this.selected) {
         case -1:
-          range = this.date;
+          d = this.getDiyDate();
           break;
         case 0:
-          range = null;
+          text = "全部时间";
           break;
         case 1:
-          range = this.getRecentDateByNum(0);
+          d = this.getRecentDateByNum(0);
+          text = "今天";
           break;
         case 2:
-          var d = this.getRecentDateByNum(1);
-          range = { begin: d.end, end: d.end };
+          d = this.getRecentDateByNum(1);
+          text = "昨天";
           break;
         case 3:
-          range = this.getRecentDateByNum(7);
+          d = this.getRecentDateByNum(7);
+          text = "近7天";
           break;
         case 4:
-          range = this.getRecentDateByNum(30);
+          d = this.getRecentDateByNum(30);
+          text = "近30天";
           break;
         case 5:
-          range = this.getRecentWeekByNum(0);
+          d = this.getRecentWeekByNum(0);
+          text = "本周";
           break;
         case 6:
-          range = this.getRecentWeekByNum(1);
+          d = this.getRecentWeekByNum(1);
+          text = "上周";
           break;
         case 7:
-          range = this.getRecentMonthByNum(0);
+          d = this.getRecentMonthByNum(0);
+          text = "本月";
           break;
         case 8:
-          range = this.getRecentMonthByNum(1);
+          d = this.getRecentMonthByNum(1);
+          text = "上月";
           break;
         case 9:
-          range = this.getRecentQuarter(false);
+          d = this.getRecentQuarter(false);
+          text = "本季";
           break;
         case 10:
-          range = this.getRecentQuarter(true);
+          d = this.getRecentQuarter(true);
+          text = "上季";
           break;
         case 11:
-          range = this.getRecentYearByNum(0);
+          d = this.getRecentYearByNum(0);
+          text = "本年";
           break;
         case 12:
-          range = this.getRecentYearByNum(1);
+          d = this.getRecentYearByNum(1);
+          text = "去年";
           break;
       }
+      text = (text == "" ? "" : text + " / ") + this.getDateText(d);
+      range = { text, ...d, selected: this.selected };
       console.log(range);
       return range;
+    },
+
+    // 获取自定义时间
+    getDiyDate() {
+      if (
+        this.diyDate.begin == undefined ||
+        this.diyDate.begin.trim() == "" ||
+        this.diyDate.end == undefined ||
+        this.diyDate.end.trim() == ""
+      ) {
+        this.$tip.toast("自定义时间不能为空");
+        return;
+      }
+      var b = new Date(this.diyDate.begin);
+      var e = new Date(this.diyDate.end);
+      if (b > e) {
+        this.$tip.toast("自定义开始时间不能大于结束时间");
+        return;
+      }
+
+      return this.diyDate;
     },
 
     // 获取今天到day的区间时间起止
@@ -297,8 +351,9 @@ export default {
       };
     },
 
+    // 选择预定义时间
     onSelectedDate(item) {
-      this.selected = item.value;
+      // console.log("onSelected", item);
       this.initSelectItem(item.value);
       if (this.isDiy) {
         this.isDiy = false;
@@ -307,14 +362,38 @@ export default {
       }
     },
 
+    // 获取时间区间文本信息
+    getDateText(date) {
+      var text;
+      var b = new Date(date.begin);
+      var e = new Date(date.end);
+      var bY = b.getFullYear();
+      var eY = e.getFullYear();
+      var bM = b.getMonth() + 1;
+      var eM = e.getMonth() + 1;
+      var bD = b.getDate();
+      var eD = e.getDate();
+
+      if (bY == eY) {
+        text = `${bY}年${bM}月${bD}日 - ${eM}月${eD}日`;
+      } else {
+        text = `${bY}年${bM}月${bD}日 - ${eY}年${eM}月${eD}日`;
+      }
+      return text;
+    },
+
+    // 切换自定义时间
     onDateDiySwitch() {
       this.isDiy = !this.isDiy;
+      // console.log(this.isDiy);
       if (this.isDiy) {
         this.initSelectItem(-1);
       }
     },
 
+    // 初始化选中项
     initSelectItem(value) {
+      this.selected = value;
       this.dateList.forEach((ds) => {
         ds.forEach((d) => {
           if (d.value == value) d.checked = true;
@@ -323,12 +402,14 @@ export default {
       });
     },
 
+    // 选中Picker时间
     onDatePicker(e, type) {
       if (type == "begin") {
-        this.date.begin = e.detail.value;
+        this.diyDate.begin = e.detail.value;
       } else {
-        this.date.end = e.detail.value;
+        this.diyDate.end = e.detail.value;
       }
+      // console.log("date", this.date);
     },
 
     // 抽屉状态发生变化触发

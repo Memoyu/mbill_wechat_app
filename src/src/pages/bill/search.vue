@@ -2,7 +2,6 @@
   <view class="b-container">
     <view class="bg" />
     <uni-search-bar
-      :focus="true"
       v-model="keyWord"
       radius="100"
       cancelButton="always"
@@ -17,7 +16,7 @@
     <!-- 搜索筛选 -->
     <view class="search-filter x-bc">
       <view class="search-filter-date-picker x-c" @click="onSelectDate">
-        <text class="search-filter-text">{{ datePicker.text }}</text>
+        <text class="search-filter-text">{{ filter.date.text }}</text>
         <i class="iconfont icon-date-to icon-to" />
       </view>
       <view class="search-filter-drawer x-c" @click="onShowFilterDrawer">
@@ -27,10 +26,18 @@
     </view>
 
     <!-- 日期抽屉 -->
-    <mb-search-date-drawer :open.sync="openDate" />
+    <mb-search-date-drawer
+      :open.sync="openDate"
+      @confirm="onDateConfirm"
+      :date="filter.date"
+    />
 
     <!-- 筛选抽屉 -->
-    <mb-search-filter-drawer :open.sync="openFilter" />
+    <mb-search-filter-drawer
+      :filter.sync="filter"
+      :open.sync="openFilter"
+      @confirm="onFilterConfirm"
+    />
   </view>
 </template>
 
@@ -43,14 +50,26 @@ export default {
       openDate: false,
       openFilter: false,
       keyWord: "",
-      datePicker: {
-        text: "今天 / 2023年3月5日 - 3月5日",
-        begin: datetime.getCurDate(),
-        end: datetime.getCurDate(),
+      filter: {
+        date: {
+          text: "",
+          begin: datetime.getCurDate(),
+          end: datetime.getCurDate(),
+        },
       },
     };
   },
-  onLoad() {},
+  onLoad() {
+    var b = new Date();
+    var e = new Date();
+    var bY = b.getFullYear();
+    var bM = b.getMonth() + 1;
+    var eM = e.getMonth() + 1;
+    var bD = b.getDate();
+    var eD = e.getDate();
+    var text = "今日 / " + `${bY}年${bM}月${bD}日 - ${eM}月${eD}日`;
+    this.filter.date.text = text;
+  },
   methods: {
     // 搜索框清除
     onSearchInputClear() {},
@@ -66,9 +85,39 @@ export default {
       this.openDate = true;
     },
 
+    // 确认选择日期
+    onDateConfirm(e) {
+      // console.log("确认", e);
+      this.filter.date = e;
+    },
+
+    // 筛选条件确认
+    onFilterConfirm(e) {
+      this.filter = e;
+    },
+
     // 打开过滤条件窗口
     onShowFilterDrawer() {
       this.openFilter = true;
+    },
+
+    searchBill(filter) {
+      this.$api
+        .searchBillPages({
+          date: this.data.date,
+          dateType: this.data.type,
+          categoryId: this.data.id,
+          ...this.billPage,
+        })
+        .then((res) => {
+          // console.log("列表", res);
+          if (res.data.code === 0) {
+            console.log(res.data);
+          }
+        })
+        .finally(() => {
+          this.loading = false;
+        });
     },
   },
 };
@@ -104,7 +153,7 @@ export default {
       }
     }
     &-text {
-      font-size: 30rpx;
+      font-size: 27rpx;
     }
   }
 }
