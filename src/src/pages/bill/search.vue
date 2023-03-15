@@ -4,11 +4,9 @@
     <uni-search-bar
       v-model="keyWord"
       radius="100"
-      cancelButton="always"
-      cancelText="重置"
+      cancelButton="none"
       placeholder="请输入关键字"
       @confirm="onSearchInputConfirm"
-      @cancel="onSearchInputCancel"
       @clear="onSearchInputClear"
     >
     </uni-search-bar>
@@ -50,35 +48,51 @@ export default {
       openDate: false,
       openFilter: false,
       keyWord: "",
-      filter: {
-        date: {
-          text: "",
-          begin: datetime.getCurDate(),
-          end: datetime.getCurDate(),
-        },
-      },
+      filter: {},
     };
   },
   onLoad() {
-    var b = new Date();
-    var e = new Date();
-    var bY = b.getFullYear();
-    var bM = b.getMonth() + 1;
-    var eM = e.getMonth() + 1;
-    var bD = b.getDate();
-    var eD = e.getDate();
-    var text = "今日 / " + `${bY}年${bM}月${bD}日 - ${eM}月${eD}日`;
-    this.filter.date.text = text;
+    this.initFilter();
+    this.searchBill();
   },
   methods: {
+    //初始化筛选条件
+    initFilter() {
+      this.filter = {
+        types: [],
+        categories: [],
+        assets: [],
+      };
+      var b = new Date();
+      var e = new Date();
+      var bY = b.getFullYear();
+      var bM = b.getMonth() + 1;
+      var eM = e.getMonth() + 1;
+      var bD = b.getDate();
+      var eD = e.getDate();
+      var text = "今日 / " + `${bY}年${bM}月${bD}日 - ${eM}月${eD}日`;
+      this.filter.date = {
+        text,
+        selected: 1,
+        begin: datetime.getCurDate(),
+        end: datetime.getCurDate(),
+      };
+      this.keyWord = "";
+    },
+
     // 搜索框清除
     onSearchInputClear() {},
 
     // 输入框确认
-    onSearchInputConfirm() {},
+    onSearchInputConfirm() {
+      this.searchBill();
+    },
 
-    // 搜索框取消
-    onSearchInputCancel() {},
+    // 搜索框重置
+    onSearchInputReset() {
+      this.initFilter();
+      this.searchBill();
+    },
 
     // 选择事件
     onSelectDate() {
@@ -89,11 +103,13 @@ export default {
     onDateConfirm(e) {
       // console.log("确认", e);
       this.filter.date = e;
+      this.searchBill();
     },
 
     // 筛选条件确认
     onFilterConfirm(e) {
       this.filter = e;
+      this.searchBill();
     },
 
     // 打开过滤条件窗口
@@ -101,13 +117,33 @@ export default {
       this.openFilter = true;
     },
 
-    searchBill(filter) {
+    searchBill() {
+      let types = [];
+      let categories = [];
+      let assets = [];
+      this.filter.types.forEach((t) => {
+        types.push(t.id);
+      });
+      this.filter.categories.forEach((t) => {
+        categories.push(t.id);
+      });
+      this.filter.assets.forEach((t) => {
+        assets.push(t.id);
+      });
+
       this.$api
         .searchBillPages({
-          date: this.data.date,
-          dateType: this.data.type,
-          categoryId: this.data.id,
-          ...this.billPage,
+          keyWord: this.keyWord,
+          types: types,
+          categoryIds: categories,
+          assetIds: assets,
+          date: {
+            begin: this.filter.date.begin,
+            end: this.filter.date.end,
+          },
+          amount: this.filter.amount,
+          address: this.filter.address,
+          remark: this.filter.remark,
         })
         .then((res) => {
           // console.log("列表", res);

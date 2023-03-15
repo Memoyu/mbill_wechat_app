@@ -19,7 +19,7 @@
               <view class="search-options-cell-item-title x-bc">
                 <view>类型</view>
                 <view class="search-options-cell-item-content">
-                  <view class="selected-text">{{ selectedType.text }}</view>
+                  <view class="selected-text">{{ currFilter.type.text }}</view>
                   <i class="iconfont icon-to search-options-cell-to-icon" />
                 </view>
               </view>
@@ -34,7 +34,9 @@
               <view class="search-options-cell-item-title x-bc">
                 <view>分类</view>
                 <view class="search-options-cell-item-content">
-                  <view class="selected-text">{{ selectedCategpry.text }}</view>
+                  <view class="selected-text">{{
+                    currFilter.category.text
+                  }}</view>
                   <i class="iconfont icon-to search-options-cell-to-icon" />
                 </view>
               </view>
@@ -49,7 +51,7 @@
               <view class="search-options-cell-item-title x-bc">
                 <view>账户</view>
                 <view class="search-options-cell-item-content">
-                  <view class="selected-text">{{ selectedAsset.text }}</view>
+                  <view class="selected-text">{{ currFilter.asset.text }}</view>
                   <i class="iconfont icon-to search-options-cell-to-icon" />
                 </view>
               </view>
@@ -64,7 +66,7 @@
               <view class="search-options-cell-item-title x-bc">
                 <view>时间</view>
                 <view class="search-options-cell-item-content">
-                  <view class="selected-text">{{ datePicker.text }}</view>
+                  <view class="selected-text">{{ currFilter.date.text }}</view>
                   <i class="iconfont icon-to search-options-cell-to-icon" />
                 </view>
               </view>
@@ -82,7 +84,7 @@
                   <input
                     class="amount-input"
                     type="number"
-                    v-model="amount.min"
+                    v-model="currFilter.amount.min"
                   />
                   <view
                     style="margin: 0 15rpx; display: flex; align-items: center"
@@ -91,7 +93,7 @@
                   <input
                     class="amount-input"
                     type="number"
-                    v-model="amount.max"
+                    v-model="currFilter.amount.max"
                   />
                 </view>
               </view>
@@ -109,7 +111,7 @@
                   <input
                     class="other-input"
                     placeholder="输入地址"
-                    v-model="address"
+                    v-model="currFilter.address"
                   />
                 </view>
               </view>
@@ -127,7 +129,7 @@
                   <input
                     class="other-input"
                     placeholder="输入备注"
-                    v-model="remark"
+                    v-model="currFilter.remark"
                   />
                 </view>
               </view>
@@ -161,13 +163,15 @@
     <mb-search-date-drawer
       :open.sync="openDate"
       @confirm="onDateConfirm"
-      :date="datePicker"
+      :date="currFilter.date"
     />
   </view>
 </template>
 
 <script>
 import mbillBillSearchSelectDrawer from "./mbill-bill-search-select-drawer.vue";
+import datetime from "@/common/utils/datetime";
+
 export default {
   components: { mbillBillSearchSelectDrawer },
   name: "mbill-bill-search-filter-drawer",
@@ -189,31 +193,12 @@ export default {
       openDate: false,
       drawerWidth: 300,
       types: [
-        { id: 0, name: "支出" },
-        { id: 1, name: "收入" },
+        { id: 0, name: "支出", checked: false },
+        { id: 1, name: "收入", checked: false },
       ],
       categories: [],
       assets: [],
-      selectedType: {
-        text: "",
-        items: [],
-      },
-      selectedCategpry: {
-        text: "",
-        items: [],
-      },
-      selectedAsset: {
-        text: "",
-        items: [],
-      },
-      datePicker: {
-        text: "",
-        begin: "",
-        end: "",
-      },
-      amount: {},
-      address: "",
-      remark: "",
+      currFilter: {},
     };
   },
   watch: {
@@ -225,33 +210,74 @@ export default {
       }
     },
     filter(val) {
-      this.datePicker = val.date;
+      this.currFilter.date = val.date;
       // console.log("watch filter", val);
     },
   },
   created() {
     // console.log("filter", this.filter);
+    this.initFilter();
   },
   methods: {
+    // 初始化参数
+    initFilter() {
+      var b = new Date();
+      var e = new Date();
+      var bY = b.getFullYear();
+      var bM = b.getMonth() + 1;
+      var eM = e.getMonth() + 1;
+      var bD = b.getDate();
+      var eD = e.getDate();
+      var text = "今日 / " + `${bY}年${bM}月${bD}日 - ${eM}月${eD}日`;
+      this.currFilter = {
+        type: {
+          text: "",
+          items: [],
+        },
+        category: {
+          text: "",
+          items: [],
+        },
+        asset: {
+          text: "",
+          items: [],
+        },
+        date: {
+          text,
+          selected: 1,
+          begin: datetime.getCurDate(),
+          end: datetime.getCurDate(),
+        },
+        amount: {},
+        address: "",
+        remark: "",
+      };
+    },
+
+    // 重置
+    onReset() {
+      this.initFilter();
+    },
+
     // 确认
     onConfirm() {
       if (
-        this.amount.min != undefined &&
-        this.amount.max != undefined &&
-        this.amount.min > this.amount.max
+        this.currFilter.amount.min != undefined &&
+        this.currFilter.amount.max != undefined &&
+        this.currFilter.amount.min > this.currFilter.amount.max
       ) {
         this.$tip.toast("金额区间有误");
         return;
       }
 
       this.$emit("confirm", {
-        types: this.selectedType.items,
-        categoryIds: this.selectedCategpry.items,
-        assetIds: this.selectedAsset.items,
-        date: this.datePicker,
-        amount: this.amount,
-        address: this.address,
-        remark: this.remark,
+        types: this.currFilter.type.items,
+        categories: this.currFilter.category.items,
+        assets: this.currFilter.asset.items,
+        date: this.currFilter.date,
+        amount: this.currFilter.amount,
+        address: this.currFilter.address,
+        remark: this.currFilter.remark,
       });
       this.$emit("update:open", false);
     },
@@ -288,16 +314,16 @@ export default {
       // console.log("type", e);
       var count = e.groups.length;
       if (count <= 0) {
-        this.selectedType.text = "";
+        this.currFilter.type.text = "";
       } else {
         var names = [];
         e.groups.slice(0, 2).forEach((g) => {
           names.push(g.name);
         });
-        this.selectedType.text = names.join(", ");
-        if (count > 2) this.selectedType.text += ` 等${count}个`;
+        this.currFilter.type.text = names.join(", ");
+        if (count > 2) this.currFilter.type.text += ` 等${count}个`;
       }
-      this.selectedType.items = e.groups;
+      this.currFilter.type.items = e.groups;
     },
 
     //确认选择分类
@@ -305,16 +331,16 @@ export default {
       // console.log("category", e);
       var count = e.childs.length;
       if (count <= 0) {
-        this.selectedCategpry.text = "";
+        this.currFilter.category.text = "";
       } else {
         var names = [];
         e.childs.slice(0, 2).forEach((c) => {
           names.push(c.name);
         });
-        this.selectedCategpry.text = names.join(", ");
-        if (count > 2) this.selectedCategpry.text += ` 等${count}个`;
+        this.currFilter.category.text = names.join(", ");
+        if (count > 2) this.currFilter.category.text += ` 等${count}个`;
       }
-      this.selectedCategpry.items = e.childs;
+      this.currFilter.category.items = e.childs;
     },
 
     // 确认选择资产
@@ -322,16 +348,16 @@ export default {
       // console.log("asset", e);
       var count = e.childs.length;
       if (count <= 0) {
-        this.selectedAsset.text = "";
+        this.currFilter.asset.text = "";
       } else {
         var names = [];
         e.childs.slice(0, 2).forEach((c) => {
           names.push(c.name);
         });
-        this.selectedAsset.text = names.join(", ");
-        if (count > 2) this.selectedAsset.text += ` 等${count}个`;
+        this.currFilter.asset.text = names.join(", ");
+        if (count > 2) this.currFilter.asset.text += ` 等${count}个`;
       }
-      this.selectedAsset.items = e.childs;
+      this.currFilter.asset.items = e.childs;
     },
 
     // 确认选择日期
@@ -349,10 +375,11 @@ export default {
             var dto = {
               id: g.id,
               name: g.name,
+              checked: false,
               childs: [],
             };
             g.childs.forEach((c) => {
-              dto.childs.push({ id: c.id, name: c.name });
+              dto.childs.push({ id: c.id, name: c.name, checked: false });
             });
             dtos.push(dto);
           });
@@ -371,10 +398,11 @@ export default {
             var dto = {
               id: g.id,
               name: g.name,
+              checked: false,
               childs: [],
             };
             g.childs.forEach((c) => {
-              dto.childs.push({ id: c.id, name: c.name });
+              dto.childs.push({ id: c.id, name: c.name, checked: false });
             });
             dtos.push(dto);
           });

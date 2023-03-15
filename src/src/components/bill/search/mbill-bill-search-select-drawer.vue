@@ -173,7 +173,7 @@ export default {
       }
     },
     groups(val) {
-      // console.log("watch groups", val);
+      //console.log("watch groups", val);
       this.items = val;
     },
   },
@@ -224,6 +224,7 @@ export default {
 
     // 选中分组项 CheckBox
     onSelectedItemCheckBox(item) {
+      console.log("fenzu ", item);
       item.checked = !item.checked;
       // console.log("che", item.checked);
       if (item.childs == undefined || item.childs.length == 0) return;
@@ -236,7 +237,7 @@ export default {
 
     // 选中分组子项
     onSelectedChild(item, child) {
-      //console.log(child);
+      console.log("child", child);
       child.checked = !child.checked;
       var isAllCheck = true;
       var selected = [];

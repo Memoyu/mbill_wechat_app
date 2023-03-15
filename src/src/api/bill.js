@@ -55,7 +55,7 @@ const bill = {
 
     // 账单检索
     searchBillPages(params) {
-        return http.get('bill/search', { params: params })
+        return http.post('bill/search', params)
     },
 
     //#endregion
