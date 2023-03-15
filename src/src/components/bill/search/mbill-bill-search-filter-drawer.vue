@@ -60,11 +60,11 @@
           <!-- 账单时间 -->
           <view class="search-options-cell">
             <i class="iconfont icon-time search-options-cell-icon" />
-            <view class="search-options-cell-item">
+            <view class="search-options-cell-item" @click="onSelectDate">
               <view class="search-options-cell-item-title x-bc">
                 <view>时间</view>
                 <view class="search-options-cell-item-content">
-                  <view>全部时间</view>
+                  <view class="selected-text">{{ datePicker.text }}</view>
                   <i class="iconfont icon-to search-options-cell-to-icon" />
                 </view>
               </view>
@@ -79,9 +79,20 @@
               <view class="search-options-cell-item-title x-bc">
                 <view>金额</view>
                 <view class="search-options-cell-item-content">
-                  <view>10</view>
-                  <view>-</view>
-                  <view>20</view>
+                  <input
+                    class="amount-input"
+                    type="number"
+                    v-model="amount.min"
+                  />
+                  <view
+                    style="margin: 0 15rpx; display: flex; align-items: center"
+                    >—</view
+                  >
+                  <input
+                    class="amount-input"
+                    type="number"
+                    v-model="amount.max"
+                  />
                 </view>
               </view>
               <view class="search-options-cell-bottom-line" />
@@ -95,7 +106,11 @@
               <view class="search-options-cell-item-title x-bc">
                 <view>地址</view>
                 <view class="search-options-cell-item-content">
-                  <view>白云</view>
+                  <input
+                    class="other-input"
+                    placeholder="输入地址"
+                    v-model="address"
+                  />
                 </view>
               </view>
               <view class="search-options-cell-bottom-line" />
@@ -109,7 +124,11 @@
               <view class="search-options-cell-item-title x-bc">
                 <view>备注</view>
                 <view class="search-options-cell-item-content">
-                  <view>账单备注</view>
+                  <input
+                    class="other-input"
+                    placeholder="输入备注"
+                    v-model="remark"
+                  />
                 </view>
               </view>
               <view class="search-options-cell-bottom-line" />
@@ -137,6 +156,13 @@
       :open.sync="openAsset"
       @confirm="onAssetConfirm"
     />
+
+    <!-- 时间 -->
+    <mb-search-date-drawer
+      :open.sync="openDate"
+      @confirm="onDateConfirm"
+      :date="datePicker"
+    />
   </view>
 </template>
 
@@ -150,12 +176,17 @@ export default {
       type: Boolean,
       default: false,
     },
+    filter: {
+      type: Object,
+      default: {},
+    },
   },
   data() {
     return {
       openType: false,
       openCategory: false,
       openAsset: false,
+      openDate: false,
       drawerWidth: 300,
       types: [
         { id: 0, name: "支出" },
@@ -175,6 +206,14 @@ export default {
         text: "",
         items: [],
       },
+      datePicker: {
+        text: "",
+        begin: "",
+        end: "",
+      },
+      amount: {},
+      address: "",
+      remark: "",
     };
   },
   watch: {
@@ -185,11 +224,35 @@ export default {
         this.$refs["filterDrawer"].close();
       }
     },
+    filter(val) {
+      this.datePicker = val.date;
+      // console.log("watch filter", val);
+    },
   },
-
+  created() {
+    // console.log("filter", this.filter);
+  },
   methods: {
     // 确认
     onConfirm() {
+      if (
+        this.amount.min != undefined &&
+        this.amount.max != undefined &&
+        this.amount.min > this.amount.max
+      ) {
+        this.$tip.toast("金额区间有误");
+        return;
+      }
+
+      this.$emit("confirm", {
+        types: this.selectedType.items,
+        categoryIds: this.selectedCategpry.items,
+        assetIds: this.selectedAsset.items,
+        date: this.datePicker,
+        amount: this.amount,
+        address: this.address,
+        remark: this.remark,
+      });
       this.$emit("update:open", false);
     },
 
@@ -198,20 +261,29 @@ export default {
       this.$emit("update:open", e);
     },
 
+    // 打开选择类型抽屉
     onSelectType() {
       this.openType = true;
     },
 
+    // 打开选择分类抽屉
     onSelectCategory() {
       this.loadCategoriesData();
       this.openCategory = true;
     },
 
+    // 打开选择资产抽屉
     onSelectAsset() {
       this.loadAssetsData();
       this.openAsset = true;
     },
 
+    // 打开选择日期抽屉
+    onSelectDate() {
+      this.openDate = true;
+    },
+
+    // 取人选择类型
     onTypeConfirm(e) {
       // console.log("type", e);
       var count = e.groups.length;
@@ -228,6 +300,7 @@ export default {
       this.selectedType.items = e.groups;
     },
 
+    //确认选择分类
     onCategoryConfirm(e) {
       // console.log("category", e);
       var count = e.childs.length;
@@ -244,6 +317,7 @@ export default {
       this.selectedCategpry.items = e.childs;
     },
 
+    // 确认选择资产
     onAssetConfirm(e) {
       // console.log("asset", e);
       var count = e.childs.length;
@@ -258,6 +332,11 @@ export default {
         if (count > 2) this.selectedAsset.text += ` 等${count}个`;
       }
       this.selectedAsset.items = e.childs;
+    },
+
+    // 确认选择日期
+    onDateConfirm(e) {
+      this.datePicker = e;
     },
 
     // 分类数据
@@ -354,12 +433,28 @@ export default {
   }
 }
 .selected-text {
-  font-size: 27rpx;
+  font-size: 28rpx;
   max-width: 320rpx;
   color: $primary-color;
   display: -webkit-box; /*弹性伸缩盒子模型显示*/
   -webkit-box-orient: vertical; /*排列方式*/
   -webkit-line-clamp: 1; /*显示文本行数(这里控制多少行隐藏)*/
   overflow: hidden; /*溢出隐藏*/
+}
+
+.amount-input {
+  font-size: 28rpx;
+  color: $primary-color;
+  margin: 7rpx;
+  text-align: center;
+  width: 100rpx;
+  background-color: $grey-bright-color;
+}
+
+.other-input {
+  font-size: 28rpx;
+  color: $primary-color;
+  margin: 7rpx;
+  text-align: right;
 }
 </style>
