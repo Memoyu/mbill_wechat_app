@@ -169,11 +169,9 @@
 </template>
 
 <script>
-import mbillBillSearchSelectDrawer from "./mbill-bill-search-select-drawer.vue";
 import datetime from "@/common/utils/datetime";
 
 export default {
-  components: { mbillBillSearchSelectDrawer },
   name: "mbill-bill-search-filter-drawer",
   props: {
     open: {
@@ -192,10 +190,7 @@ export default {
       openAsset: false,
       openDate: false,
       drawerWidth: 300,
-      types: [
-        { id: 0, name: "支出", checked: false },
-        { id: 1, name: "收入", checked: false },
-      ],
+      types: [],
       categories: [],
       assets: [],
       currFilter: {},
@@ -252,10 +247,17 @@ export default {
         address: "",
         remark: "",
       };
+      this.types = [
+        { id: 0, name: "支出", checked: false },
+        { id: 1, name: "收入", checked: false },
+      ];
     },
 
     // 重置
     onReset() {
+      this.categories = [];
+      this.assets = [];
+      this.types = [];
       this.initFilter();
     },
 
@@ -362,7 +364,7 @@ export default {
 
     // 确认选择日期
     onDateConfirm(e) {
-      this.datePicker = e;
+      this.currFilter.date = e;
     },
 
     // 分类数据

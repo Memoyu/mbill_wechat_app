@@ -173,7 +173,7 @@ export default {
       }
     },
     groups(val) {
-      //console.log("watch groups", val);
+      console.log("watch groups", val);
       this.items = val;
     },
   },

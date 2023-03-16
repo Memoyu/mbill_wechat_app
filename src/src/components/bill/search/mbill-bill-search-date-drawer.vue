@@ -189,7 +189,11 @@ export default {
           text = "今天";
           break;
         case 2:
-          d = this.getRecentDateByNum(1);
+          let t = this.getRecentDateByNum(1);
+          d = {
+            begin: t.begin,
+            end: t.begin,
+          };
           text = "昨天";
           break;
         case 3:
@@ -267,8 +271,8 @@ export default {
       t.setDate(now.getDate() - num);
       var e = datetime.getCurDate(t);
       return {
-        begin: datetime.getCurDate(),
-        end: e,
+        begin: e,
+        end: datetime.getCurDate(),
       };
     },
 

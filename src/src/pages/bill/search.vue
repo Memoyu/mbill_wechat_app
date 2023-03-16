@@ -1,27 +1,43 @@
 <template>
   <view class="b-container">
     <view class="bg" />
-    <uni-search-bar
-      v-model="keyWord"
-      radius="100"
-      cancelButton="none"
-      placeholder="请输入关键字"
-      @confirm="onSearchInputConfirm"
-      @clear="onSearchInputClear"
-    >
-    </uni-search-bar>
+    <view id="header-filter">
+      <uni-search-bar
+        v-model="keyWord"
+        radius="100"
+        cancelButton="none"
+        placeholder="请输入关键字"
+        @confirm="onSearchInputConfirm"
+        @clear="onSearchInputClear"
+      >
+      </uni-search-bar>
 
-    <!-- 搜索筛选 -->
-    <view class="search-filter x-bc">
-      <view class="search-filter-date-picker x-c" @click="onSelectDate">
-        <text class="search-filter-text">{{ filter.date.text }}</text>
-        <i class="iconfont icon-date-to icon-to" />
-      </view>
-      <view class="search-filter-drawer x-c" @click="onShowFilterDrawer">
-        <i class="iconfont icon-filter icon-filter" />
-        <view class="search-filter-text">筛选</view>
+      <!-- 搜索筛选 -->
+      <view class="search-filter x-bc">
+        <view class="search-filter-date-picker x-c" @click="onSelectDate">
+          <text class="search-filter-text">{{ filter.date.text }}</text>
+          <i class="iconfont icon-date-to icon-to" />
+        </view>
+        <view class="search-filter-drawer x-c" @click="onShowFilterDrawer">
+          <i class="iconfont icon-filter icon-filter" />
+          <view class="search-filter-text">筛选</view>
+        </view>
       </view>
     </view>
+    <scroll-view
+      class="search-items-container"
+      :style="{
+        height: scrollHeight + 'px',
+      }"
+      scroll-y="true"
+      @scrolltolower="onLowerBottom"
+    >
+      <view class="search-items" v-for="(b, index) in items" :key="index">
+        <mb-b-search-item class="search-items-item" :bill="b" />
+      </view>
+      <!-- 空占位 -->
+      <mb-ba-empty v-if="items.length <= 0" />
+    </scroll-view>
 
     <!-- 日期抽屉 -->
     <mb-search-date-drawer
@@ -45,13 +61,21 @@ import datetime from "@/common/utils/datetime";
 export default {
   data() {
     return {
+      scrollHeight: 300,
       openDate: false,
       openFilter: false,
       keyWord: "",
       filter: {},
+      items: [],
+      page: {
+        page: 1,
+        size: 15,
+      },
+      total: 0,
     };
   },
   onLoad() {
+    this.getDynamicHeight();
     this.initFilter();
     this.searchBill();
   },
@@ -85,13 +109,13 @@ export default {
 
     // 输入框确认
     onSearchInputConfirm() {
-      this.searchBill();
+      this.searchBill(true);
     },
 
     // 搜索框重置
     onSearchInputReset() {
       this.initFilter();
-      this.searchBill();
+      this.searchBill(true);
     },
 
     // 选择事件
@@ -103,13 +127,13 @@ export default {
     onDateConfirm(e) {
       // console.log("确认", e);
       this.filter.date = e;
-      this.searchBill();
+      this.searchBill(true);
     },
 
     // 筛选条件确认
     onFilterConfirm(e) {
       this.filter = e;
-      this.searchBill();
+      this.searchBill(true);
     },
 
     // 打开过滤条件窗口
@@ -117,7 +141,21 @@ export default {
       this.openFilter = true;
     },
 
-    searchBill() {
+    // scroll触底事件
+    onLowerBottom() {
+      // console.log("触底加载");
+      if (this.page.page * this.page.size >= this.total) return;
+      // console.log("加载");
+      this.page.page += 1;
+      this.searchBill();
+    },
+
+    // 检索账单
+    searchBill(isCover) {
+      if (isCover) {
+        this.items = [];
+        this.page.page = 1;
+      }
       let types = [];
       let categories = [];
       let assets = [];
@@ -144,16 +182,41 @@ export default {
           amount: this.filter.amount,
           address: this.filter.address,
           remark: this.filter.remark,
+          ...this.page,
         })
         .then((res) => {
-          // console.log("列表", res);
           if (res.data.code === 0) {
             console.log(res.data);
+            this.total = res.data.result.total;
+            let items =
+              res.data.result.items == null ? [] : res.data.result.items;
+            if (this.items.length > 0) {
+              items.forEach((i) => {
+                this.items.push(i);
+              });
+            } else {
+              this.items = items;
+            }
           }
         })
         .finally(() => {
           this.loading = false;
         });
+    },
+
+    // 获取动态高度
+    getDynamicHeight() {
+      let that = this;
+      uni.getSystemInfo({
+        success(res) {
+          let pH = res.windowHeight - 5; // 多出的5px，不让底部触底
+          let query = uni.createSelectorQuery();
+          query.select("#header-filter").fields({ size: true });
+          query.exec((data) => {
+            that.scrollHeight = pH - data[0].height;
+          });
+        },
+      });
     },
   },
 };
@@ -190,6 +253,16 @@ export default {
     }
     &-text {
       font-size: 27rpx;
+    }
+  }
+  &-items {
+    margin: 20rpx;
+    padding: 20rpx;
+    border-radius: 26rpx;
+    background: white;
+    &-item {
+      display: flex;
+      padding: 0 20rpx;
     }
   }
 }
