@@ -1,11 +1,13 @@
 <template>
   <view class="searh-bill-item" @click="onToDetail(bill.id)">
-    <view class="searh-bill-item-main">
-      <view :class="['searh-bill-item-main-type', getTypeClass(bill.type)]">
-        {{ getType(bill.type) }}
-      </view>
-      <view :class="['searh-bill-item-main-amount', getTypeClass(bill.type)]">
-        {{ bill.amountFormat }}￥
+    <view class="searh-bill-item-main x-bc">
+      <view class="searh-bill-item-main-content">
+        <view :class="['searh-bill-item-main-type', getTypeClass(bill.type)]">
+          {{ getType(bill.type) }}
+        </view>
+        <view :class="['searh-bill-item-main-amount', getTypeClass(bill.type)]">
+          {{ bill.amountFormat }}￥
+        </view>
       </view>
       <view class="searh-bill-item-main-time">
         {{ bill.timeFormat }}
@@ -85,14 +87,17 @@ export default {
     display: flex;
     align-items: baseline;
     margin-bottom: 20rpx;
-    &-type {
+    &-content {
+      display: flex;
+      align-items: flex-end;
       font-size: 40rpx;
       font-weight: bold;
-      margin-right: 10rpx;
+    }
+    &-type {
+      margin-right: 20rpx;
     }
     &-amount {
-      margin-right: 30rpx;
-      font-weight: bold;
+      font-size: 30rpx;
     }
     &-time {
       font-size: 27rpx;

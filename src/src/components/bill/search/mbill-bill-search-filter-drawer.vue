@@ -263,10 +263,13 @@ export default {
 
     // 确认
     onConfirm() {
+      console.log(this.currFilter.amount);
       if (
         this.currFilter.amount.min != undefined &&
         this.currFilter.amount.max != undefined &&
-        this.currFilter.amount.min > this.currFilter.amount.max
+        this.currFilter.amount.min.trim() != "" &&
+        this.currFilter.amount.max.trim() != "" &&
+        Number(this.currFilter.amount.min) > Number(this.currFilter.amount.max)
       ) {
         this.$tip.toast("金额区间有误");
         return;
