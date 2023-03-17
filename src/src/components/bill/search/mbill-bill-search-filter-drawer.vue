@@ -206,7 +206,7 @@ export default {
     },
     filter(val) {
       this.currFilter.date = val.date;
-      // console.log("watch filter", val);
+      console.log("watch filter", val);
     },
   },
   created() {
@@ -308,6 +308,7 @@ export default {
 
     // 打开选择日期抽屉
     onSelectDate() {
+      // console.log(this.currFilter.date);
       this.openDate = true;
     },
 

@@ -146,9 +146,11 @@ export default {
     date(val) {
       console.log("date com", val);
       if (val.selected == -1) {
+        this.isDiy = true;
         this.diyDate.begin = this.date.begin;
         this.diyDate.end = this.date.end;
-        this.onDateDiySwitch();
+        this.initSelectItem(-1);
+        this.$forceUpdate();
       } else {
         this.onSelectedDate({ value: val.selected });
       }
@@ -237,9 +239,10 @@ export default {
           text = "去年";
           break;
       }
-      text = (text == "" ? "" : text + " / ") + this.getDateText(d);
+      if (this.selected != 0)
+        text = (text == "" ? "" : text + " / ") + this.getDateText(d);
       range = { text, ...d, selected: this.selected };
-      console.log(range);
+      // console.log(range);
       return range;
     },
 

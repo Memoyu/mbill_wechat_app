@@ -186,7 +186,7 @@ export default {
         })
         .then((res) => {
           if (res.data.code === 0) {
-            console.log(res.data);
+            // console.log(res.data);
             this.total = res.data.result.total;
             let items =
               res.data.result.items == null ? [] : res.data.result.items;
