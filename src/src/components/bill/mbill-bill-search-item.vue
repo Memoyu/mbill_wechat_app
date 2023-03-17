@@ -13,16 +13,16 @@
         {{ bill.timeFormat }}
       </view>
     </view>
-    <view class="x-f">
+    <view class="x-bc">
       <view class="x-f searh-bill-item-sub">
-        <view class="searh-bill-item-sub-title">分类：</view>
+        <!-- <view class="searh-bill-item-sub-title">分类：</view> -->
         <view class="searh-bill-item-sub-icon">
           <image class="image" :src="bill.categoryIcon" />
         </view>
         <view class="searh-bill-item-sub-item">{{ bill.category }}</view>
       </view>
       <view class="x-f searh-bill-item-sub">
-        <view class="searh-bill-item-sub-title">账户：</view>
+        <!-- <view class="searh-bill-item-sub-title">账户：</view> -->
         <view class="searh-bill-item-sub-icon">
           <image class="image" :src="bill.assetIcon" />
         </view>
@@ -83,6 +83,7 @@ export default {
 
 <style lang="scss" scope>
 .searh-bill-item {
+  width: 100%;
   &-main {
     display: flex;
     align-items: baseline;
