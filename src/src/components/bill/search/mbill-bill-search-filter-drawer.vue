@@ -248,8 +248,8 @@ export default {
         remark: "",
       };
       this.types = [
-        { id: 0, name: "支出", checked: false },
-        { id: 1, name: "收入", checked: false },
+        { id: 0, name: "支出", checked: false, childs:[]},
+        { id: 1, name: "收入", checked: false, childs:[]},
       ];
     },
 

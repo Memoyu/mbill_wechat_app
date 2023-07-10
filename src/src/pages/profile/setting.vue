@@ -1,7 +1,7 @@
 <template>
   <view class="b-container">
     <view>
-      <view class="title">设置</view>
+      <view class="title">啥也没有</view>
     </view>
   </view>
 </template>
@@ -19,7 +19,9 @@ export default {
 
 <style>
 .title {
+  margin-top: 80rpx;
   font-size: 36rpx;
   color: #8f8f94;
+  text-align: center;
 }
 </style>
