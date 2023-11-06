@@ -56,13 +56,13 @@ export default {
   data() {
     return {
       scrollHeight: 0,
-      id: 0,
-      groupId: 0,
+      bId: 0,
+      groupBId: 0,
       groupName: "分组名",
       loading: false,
       icons: [],
       asset: {
-        id: 0,
+        bId: 0,
         iconUrl: "",
         icon: "",
         name: "",
@@ -76,19 +76,19 @@ export default {
     };
   },
   onLoad(options) {
-    console.log("op", options);
-    let opId = options.id;
+    // console.log("op", options);
+    let opId = options.bId;
     if (opId != undefined && opId != null) {
-      this.asset.id = options.id;
+      this.asset.bId = options.bId;
       this.getAsset();
     }
-    this.groupId = options.groupId;
+    this.groupBId = options.groupBId;
     this.groupName = options.groupName
       ? decodeURIComponent(options.groupName)
       : "";
     this.dynamicHeight();
     this.getIcons().then(() => {
-      if (this.asset.id == 0) {
+      if (this.asset.bId == 0) {
         this.asset.iconUrl = this.icons[0].url;
         this.asset.icon = this.icons[0].path;
       }
@@ -98,7 +98,7 @@ export default {
   methods: {
     // 获取分类信息
     getAsset() {
-      this.$api.getAsset({ id: this.asset.id }).then((res) => {
+      this.$api.getAsset({ bId: this.asset.bId }).then((res) => {
         let result = res.data.result;
         console.log(result);
         this.asset = result;
@@ -137,10 +137,10 @@ export default {
         return;
       }
       console.log(this.asset);
-      if (this.asset.id != undefined && this.asset.id != 0) {
+      if (this.asset.bId != undefined && this.asset.bId != 0) {
         this.$api
           .editAsset({
-            id: this.asset.id,
+            bId: this.asset.bId,
             name: this.asset.name,
             icon: this.asset.icon,
           })
@@ -154,7 +154,7 @@ export default {
       } else {
         this.$api
           .createAsset({
-            parentId: this.groupId,
+            parentBId: this.groupBId,
             name: this.asset.name,
             icon: this.asset.icon,
             type: 0, // 暂时默认给0吧

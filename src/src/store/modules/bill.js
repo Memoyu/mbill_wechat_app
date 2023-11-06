@@ -154,7 +154,7 @@ const mutations = {
                     if (bills[i].day === g.day) {
                         // 移除已经存在的节点
                         for (var j = 0; j < g.items.length; j++) {
-                            bills[i].items.splice(g.items.findIndex(item => item.id === g.items[j]), 1)
+                            bills[i].items.splice(g.items.findIndex(item => item.bId === g.items[j]), 1)
                         }
 
                         // 合并集合
@@ -177,13 +177,13 @@ const mutations = {
         }
     },
 
-    [DEL_INDEX_BILL]: (state, id) => {
+    [DEL_INDEX_BILL]: (state, bId) => {
         try {
-            // console.log("store mut del", id);
+            // console.log("store mut del", bId);
             for (var b = 0; b < state.indexBills.length; b++) {
 
                 // 获取元素下标
-                let index = state.indexBills[b].items.findIndex(item => item.id == id);
+                let index = state.indexBills[b].items.findIndex(item => item.bId == bId);
                 if (index !== -1) {
                     // 1、删除指定元素
                     // console.log("store mut del", index, res, state.indexBills[b].items);
@@ -323,7 +323,7 @@ const actions = {
                 state.indexBills.forEach((g) => {
                     g.items.forEach((item, i) => {
                         // 找到元素
-                        if (item.id === bill.id) {
+                        if (item.bId === bill.bId) {
                             let source = JSON.parse(JSON.stringify(item));
                             // g.items[i] = bill; // 覆盖源数据，此时item是不受影响的(此处直接覆盖会造成视图不刷新的情况，首页的数据界面不会更新，需要单个赋值)
                             g.items[i].description = bill.description;
@@ -379,7 +379,7 @@ const actions = {
 
                             // 如果更改日期（具体几号），先移除，在添加  (整体操作必须在最后做)
                             if (day != g.day) {
-                                commit(DEL_INDEX_BILL, bill.id);
+                                commit(DEL_INDEX_BILL, bill.bId);
                                 commit(ADD_INDEX_BILL, { bill, date });
                             }
                             throw new Error("Ok"); // 跳出循环
@@ -389,7 +389,7 @@ const actions = {
             } catch (e) {
             };
         } else { // 变更年份、月份则需要删除
-            commit(DEL_INDEX_BILL, bill.id);
+            commit(DEL_INDEX_BILL, bill.bId);
         }
     },
 

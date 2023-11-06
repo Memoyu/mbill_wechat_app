@@ -1,5 +1,7 @@
 <template>
   <view class="profile-container">
+    <uni-notice-bar v-if="noticeStatus" speed=60 show-icon scrollable show-close background-color="#DCD6F7" color="#FFFFFF" @close="handleNoticeClose"
+				text="目前程序已恢复正常，但由于开发者手残，导致用户数据丢失，对此深表歉意！" />
     <view class="bg" />
     <!-- <view class="profile-header">
       <i class="iconfont .icon-weather-thunderstorm-sun header-item" />
@@ -100,11 +102,13 @@
 <script>
 import { mapActions, mapState, mapGetters } from "vuex";
 import { tabbar } from "@/mixins";
+import { NOTICE_STATUS } from "@/common/utils/constants";
 
 export default {
   mixins: [tabbar], //混入文件
   data() {
     return {
+      noticeStatus: false ,
       defaultAvatar: "/static/assets/avatar.png",
       rows: [
         {
@@ -188,7 +192,14 @@ export default {
     this.setTabBarIndex(1);
   },
   onLoad() {
+    if(uni.getStorageSync(NOTICE_STATUS) !== '') {
+      this.noticeStatus = uni.getStorageSync(NOTICE_STATUS);
+    }else {
+      this.noticeStatus = true;
+    }
     this.getProfileTotalStat();
+    console.log("11111",uni.getStorageSync(NOTICE_STATUS)  !==  '');
+    console.log("22222",this.noticeStatus);
   },
   methods: {
     ...mapActions(["getProfileTotalStat"]),
@@ -206,6 +217,9 @@ export default {
       uni.navigateTo({ url: item.path });
     },
     gotoCustomerService() {},
+    handleNoticeClose() {
+      uni.setStorageSync(NOTICE_STATUS, false)
+    }
   },
 };
 </script>

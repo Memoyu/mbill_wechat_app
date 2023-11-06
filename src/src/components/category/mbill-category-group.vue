@@ -6,7 +6,7 @@
         <view
           :class="[
             'item-content',
-            selectedId === item.id ? 'category-item-selected' : '',
+            selectedBId === item.bId ? 'category-item-selected' : '',
           ]"
           v-for="(item, index) in d.childs"
           :key="index"
@@ -40,18 +40,18 @@ export default {
   },
   data() {
     return {
-      selectedId: 0,
+      selectedBId: 0,
     };
   },
   watch: {
     select(value) {
       // console.log("分类", value);
-      this.selectedId = value;
+      this.selectedBId = value;
     },
   },
   methods: {
     onSelectedItem(item) {
-      this.selectedId = item.id;
+      this.selectedBId = item.bId;
       this.$emit("selected", item);
     },
 

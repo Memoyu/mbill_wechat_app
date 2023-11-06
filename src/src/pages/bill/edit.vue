@@ -69,7 +69,7 @@
       >
         <mb-ca-group
           :type="model.type"
-          :select="model.categoryId"
+          :select="model.categoryBId"
           :groups="categoryGroups"
           @selected="onSelectedCategory"
         />
@@ -98,14 +98,14 @@
       </view>
       <view class="key-board-header-desc x-start">
         <view class="x-ac choose-asset" @click="onChooseAsset">
-          <i v-if="model.assetId == 0" class="iconfont icon-assets icon" />
+          <i v-if="model.assetBId == 0" class="iconfont icon-assets icon" />
           <view v-else class="asset-icon">
             <image class="image" :src="model.assetIcon" />
           </view>
           <text
             :class="[
               'text-display',
-              model.assetId == 0 ? 'text' : 'text-choose',
+              model.assetBId == 0 ? 'text' : 'text-choose',
             ]"
             >{{ model.asset }}</text
           >
@@ -135,7 +135,7 @@
       <view class="asset-popup">
         <scroll-view class="asset-list" scroll-y="true">
           <mb-as-group
-            :select="model.assetId"
+            :select="model.assetBId"
             :groups="assetGroups"
             @selected="onSelectedAsset"
           />
@@ -160,20 +160,20 @@ export default {
       group: {}, // 预购分组信息
       loading: false,
       bill: {
-        id: 0,
+        bId: 0,
         type: 0,
         amount: 0,
-        categoryId: 0,
-        assetId: 0,
+        categoryBId: 0,
+        assetBId: 0,
         description: "",
         address: "",
         time: "",
       },
       model: {
-        id: 0,
+        bId: 0,
         type: -1,
-        categoryId: 0,
-        assetId: 0,
+        categoryBId: 0,
+        assetBId: 0,
         assetIcon: "",
         asset: "选择账户",
         description: "",
@@ -201,9 +201,8 @@ export default {
   },
   onLoad(option) {
     // 编辑账单
-    // console.log(option.id);
-    if (option.id != undefined) {
-      this.getBillDetail(option.id);
+    if (option.bId != undefined) {
+      this.getBillDetail(option.bId);
       return;
     }
 
@@ -232,7 +231,7 @@ export default {
     "model.type"(val) {
       // console.log("账单类型变更", val);
       // let type = this.types[val];
-      // this.model.type = type.id;
+      // this.model.type = type.bId;
       this.getCategoryGroups();
     },
     date(val) {
@@ -267,10 +266,10 @@ export default {
     //#region 接口请求
 
     // 获取预购分组详情
-    getPreOrderGroup(id) {
+    getPreOrderGroup(bId) {
       this.$api
         .getPreOrderGroupWithAmount({
-          id: id,
+          bId: bId,
         })
         .then((res) => {
           if (res.data.code === 0) {
@@ -290,10 +289,10 @@ export default {
     },
 
     // 获取账单详情
-    getBillDetail(id, isCopy = false) {
+    getBillDetail(bId, isCopy = false) {
       this.$api
         .billDetail({
-          id: id,
+          bId: bId,
         })
         .then((res) => {
           if (res.data.code === 0) {
@@ -303,7 +302,7 @@ export default {
             // 如果是赋值，就清除id
             let dateTime = new Date();
             if (isCopy) {
-              this.model.id = 0;
+              this.model.bId = 0;
               this.getLocation(); // 更新地址信息
             } else {
               dateTime = new Date(result.time);
@@ -374,7 +373,7 @@ export default {
     onTypeSelected(type) {
       // console.log(type, "触发了呀");
 
-      this.model.type = type.id;
+      this.model.type = type.bId;
       // this.getCategoryGroups();
     },
 
@@ -409,11 +408,11 @@ export default {
     onConfirmNum() {
       if (this.loading) return;
       this.bill = {
-        id: this.model.id,
+        bId: this.model.bId,
         type: this.model.type,
         amount: Number(this.model.amount),
-        categoryId: this.model.categoryId,
-        assetId: this.model.assetId,
+        categoryBId: this.model.categoryBId,
+        assetBId: this.model.assetBId,
         description: this.model.description,
         address: this.model.address,
         time: `${this.date} ${this.model.time}`,
@@ -424,18 +423,18 @@ export default {
         return false;
       }
 
-      if (this.bill.categoryId <= 0) {
+      if (this.bill.categoryBId <= 0) {
         this.$tip.toast("请选择分类");
         return false;
       }
 
-      let ca = this.getCategory(this.bill.categoryId);
+      let ca = this.getCategory(this.bill.categoryBId);
       if (ca == null || ca.type != this.model.type) {
         this.$tip.toast("选择的分类无法在当前账单类型下使用");
         return false;
       }
 
-      if (this.bill.assetId <= 0) {
+      if (this.bill.assetBId <= 0) {
         this.$tip.toast("请选择账户");
         return false;
       }
@@ -449,7 +448,7 @@ export default {
       }
 
       this.loading = true;
-      if (this.bill.id <= 0) {
+      if (this.bill.bId <= 0) {
         this.$api
           .addBill(this.bill)
           .then((res) => {
@@ -461,7 +460,7 @@ export default {
                 date: this.bill.time,
               });
               // 如果是预购转账单，此处需要处理
-              this.orderToBill(bill.id);
+              this.orderToBill(bill.bId);
               this.$Router.back();
             }
             this.loading = false;
@@ -493,26 +492,26 @@ export default {
     },
 
     // 预购转账单处理
-    orderToBill(billId) {
+    orderToBill(billBId) {
       // 先校验，是否为预购
       if (!this.isOrder) return;
       // 获取上一个页面（如果账单过来，必须是预购列表页面），并调用其方法
       let pages = getCurrentPages(); //获取页面栈
       let beforePage = pages[pages.length - 2]; //上一页
       // console.log(beforePage);
-      beforePage.$vm.completedToBillCallback(this.group.id, billId); //直接调用上一页的方法
+      beforePage.$vm.completedToBillCallback(this.group.bId, billBId); //直接调用上一页的方法
     },
 
     // 选中账单分类
     onSelectedCategory(item) {
       // console.log(item);
-      this.model.categoryId = item.id;
+      this.model.categoryBId = item.bId;
     },
 
     // 选中账单账户
     onSelectedAsset(item) {
       // console.log(item);
-      this.model.assetId = item.id;
+      this.model.assetBId = item.bId;
       this.model.asset = item.name;
       this.model.assetIcon = item.iconUrl;
       this.$refs.assetPopup.close();
@@ -552,14 +551,14 @@ export default {
         });
     },
 
-    getCategory(id) {
-      if (id <= 0) return null;
+    getCategory(bId) {
+      if (bId <= 0) return null;
       if (this.categoryGroups.length <= 0) return null;
       let category = null;
       // console.log(this.categoryGroups);
       this.categoryGroups.forEach((ca) => {
         ca.childs.forEach((c) => {
-          if (c.id === id) {
+          if (c.bId === bId) {
             category = c;
           }
         });

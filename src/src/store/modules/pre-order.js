@@ -52,7 +52,7 @@ const mutations = {
     [GROUP_INDEX_EDIT_GROUP]: (state, group) => {
         try {
             for (let i = 0; i < state.IndexGroups.length; i++) {
-                if (group.id == state.IndexGroups[i].id) {
+                if (group.bId == state.IndexGroups[i].bId) {
                     state.IndexGroups[i] = group;
                     throw new Error("Ok"); // 跳出循环
                 }
@@ -63,10 +63,10 @@ const mutations = {
     [GROUP_INDEX_DEL_GROUP]: (state, group) => {
         try {
             for (let i = 0; i < state.IndexGroups.length; i++) {
-                if (group.id == state.IndexGroups[i].id) {
+                if (group.bId == state.IndexGroups[i].bId) {
                     // 减少预购清单页面统计数据
                     state.IndexStat.total -= 1;
-                    if (group.billId != 0)
+                    if (group.billBId != 0)
                         state.IndexStat.toBill -= 1;
                     state.IndexStat.done -= group.done;
                     state.IndexStat.unDone -= group.unDone;
@@ -79,11 +79,11 @@ const mutations = {
         } catch (e) { }
     },
 
-    /*[GROUP_INDEX_MODIFY_PRE_ORDER_AMOUNT]: (state, { groupId, preAmount, op }) => {
+    /*[GROUP_INDEX_MODIFY_PRE_ORDER_AMOUNT]: (state, { groupBId, preAmount, op }) => {
         console.log("preAmount, op", preAmount, op);
         try {
             for (let i = 0; i < state.IndexGroups.length; i++) {
-                if (groupId == state.IndexGroups[i].id) {
+                if (groupBId == state.IndexGroups[i].bId) {
                     let a = state.IndexGroups[i].preAmount;
                     if (op === 0) {
                         state.IndexGroups[i].preAmount = (a + preAmount).fixed(2);
@@ -105,7 +105,7 @@ const mutations = {
     [GROUP_INDEX_MODIFY_PRE_ORDER_STATUS]: (state, order) => {// 仅限于修改完成状态使用
         try {
             for (let i = 0; i < state.IndexGroups.length; i++) {
-                if (order.groupId == state.IndexGroups[i].id) { // 修改该分组完成状态数量
+                if (order.groupBId == state.IndexGroups[i].bId) { // 修改该分组完成状态数量
                     console.log("开始了", order);
                     if (order.status == 0) {
                         // 增加未完成
@@ -132,12 +132,12 @@ const mutations = {
         }
     },
 
-    [GROUP_INDEX_ADD_TO_BILL]: (state, { groupId, billId }) => {
+    [GROUP_INDEX_ADD_TO_BILL]: (state, { groupBId, billBId }) => {
         try {
             for (let i = 0; i < state.IndexGroups.length; i++) {
-                if (groupId == state.IndexGroups[i].id) {
+                if (groupBId == state.IndexGroups[i].bId) {
                     // 赋值账单Id
-                    state.IndexGroups[i].billId = billId;
+                    state.IndexGroups[i].billBId = billBId;
                     throw new Error("Ok"); // 跳出循环
                 }
             }
@@ -148,7 +148,7 @@ const mutations = {
     [GROUP_INDEX_ADD_PRE_ORDER]: (state, order) => {
         try {
             for (let i = 0; i < state.IndexGroups.length; i++) {
-                if (order.groupId == state.IndexGroups[i].id) { // 修改该分组完成状态数量
+                if (order.groupBId == state.IndexGroups[i].bId) { // 修改该分组完成状态数量
                     // 增加未完成
                     state.IndexGroups[i].unDone += 1;
                     throw new Error("Ok"); // 跳出循环
@@ -162,7 +162,7 @@ const mutations = {
     [GROUP_INDEX_DEL_PRE_ORDER]: (state, order) => {
         try {
             for (let i = 0; i < state.IndexGroups.length; i++) {
-                if (order.groupId == state.IndexGroups[i].id) { // 修改该分组完成状态数量
+                if (order.groupBId == state.IndexGroups[i].bId) { // 修改该分组完成状态数量
                     if (order.status == 0) {
                         state.IndexGroups[i].unDone -= 1;
                     } else {

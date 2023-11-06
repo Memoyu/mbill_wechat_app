@@ -311,7 +311,7 @@ export default {
     onCategoryClick(item) {
       // 向外传递参数
       this.$emit("select-category", {
-        id: item.id,
+        bId: item.bId,
         category: item.category,
         date: this.selectMonth,
         type: 0,

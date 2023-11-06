@@ -138,7 +138,7 @@ const doneBtnTitle = "已购";
 export default {
   data() {
     return {
-      groupId: 0,
+      groupBId: 0,
       scrollHeight: 0,
       dialogOptions: {
         ltext: addBtnTitle,
@@ -201,7 +201,7 @@ export default {
   },
   onShow() {},
   onLoad(options) {
-    this.groupId = options.id;
+    this.groupBId = options.bId;
     this.initData();
   },
   onReady() {
@@ -214,20 +214,20 @@ export default {
     },
 
     // 完成预购转账单后回调
-    completedToBillCallback(groupId, billId) {
+    completedToBillCallback(groupBId, billBId) {
       // console.log("转换完成回调");
       this.$api
         .preOrderGroupToBill({
-          id: groupId,
-          billId,
+          bId: groupBId,
+          billBId,
         })
         .then((res) => {
           // console.log("列表", res);
           if (res.data.code === 0) {
             let result = res.data.result;
-            this.stat.billId = billId;
+            this.stat.billBId = billBId;
             this.rtext = "编辑入账";
-            this.$store.commit(GROUP_INDEX_ADD_TO_BILL, { groupId, billId });
+            this.$store.commit(GROUP_INDEX_ADD_TO_BILL, { groupBId, billBId });
           }
         });
     },
@@ -238,13 +238,13 @@ export default {
     getGroupPreOrderStat() {
       this.$api
         .groupPreOrderStat({
-          id: this.groupId,
+          bId: this.groupBId,
         })
         .then((res) => {
           // console.log("列表", res);
           if (res.data.code === 0) {
             this.stat = res.data.result;
-            if (this.stat.billId != 0) this.rtext = "编辑入账";
+            if (this.stat.billBId != 0) this.rtext = "编辑入账";
           }
         });
     },
@@ -255,7 +255,7 @@ export default {
       this.loading = true;
       this.$api
         .groupPreOrders({
-          id: this.groupId,
+          bId: this.groupBId,
           ...this.page,
         })
         .then((res) => {
@@ -292,7 +292,7 @@ export default {
     editPreOrderStatus(order, status) {
       this.$api
         .editPreOrderStatus({
-          id: order.id,
+          bId: order.bId,
           realAmount: order.realAmount,
           status,
         })
@@ -322,7 +322,7 @@ export default {
 
     // 删除预购
     delPreOrder(order) {
-      this.$api.delPreOrder(order.id).then((res) => {
+      this.$api.delPreOrder(order.bId).then((res) => {
         if (res.data.code === 0) {
           // console.log(res);
           this.$refs.editOrderDialog.hide();
@@ -338,7 +338,7 @@ export default {
       let curOrder = {};
       try {
         for (let i = 0; i < this.orders.length; i++) {
-          if (order.id == this.orders[i].id) {
+          if (order.bId == this.orders[i].bId) {
             this.orders[i].status = status;
             curOrder = this.orders[i];
             this.orders[i].realAmount = order.realAmount;
@@ -373,7 +373,7 @@ export default {
       let oldOrder = null;
       try {
         for (let i = 0; i < this.orders.length; i++) {
-          if (newOrder.id == this.orders[i].id) {
+          if (newOrder.bId == this.orders[i].bId) {
             oldOrder = this.orders[i];
             this.orders[i] = newOrder;
             throw new Error("Ok"); // 跳出循环
@@ -407,7 +407,7 @@ export default {
       // console.log("删除", order);
       try {
         for (let i = 0; i < this.orders.length; i++) {
-          if (order.id == this.orders[i].id) {
+          if (order.bId == this.orders[i].bId) {
             // console.log("找到了");
             this.orders.splice(i, 1);
             throw new Error("Ok"); // 跳出循环
@@ -461,10 +461,10 @@ export default {
         this.dialogOptions.ltext = addBtnTitle;
         this.$refs.editOrderDialog.show(this.dialogOptions);
       } else {
-        if (this.stat.billId != 0) {
+        if (this.stat.billBId != 0) {
           this.$Router.push({
             name: "bill-edit",
-            params: { id: this.stat.billId },
+            params: { bId: this.stat.billBId },
           });
         } else {
           // 校验分组中是否存在预购单
@@ -487,7 +487,7 @@ export default {
 
           this.$Router.push({
             name: "bill-edit",
-            params: { group: this.groupId },
+            params: { group: this.groupBId },
           });
         }
       }
@@ -537,7 +537,7 @@ export default {
       }
       // console.log(this.dialogOptions.ltext);
       this.order.time = this.pickerDate;
-      this.order.groupId = this.groupId;
+      this.order.groupBId = this.groupBId;
       if (this.dialogOptions.ltext == addBtnTitle) {
         this.addPreOrder(this.order);
       } else {
@@ -581,7 +581,7 @@ export default {
             .then(async () => {
               this.editPreOrderStatus({ ...o, realAmount: 0 }, 0);
               // 删除首页指定的账单
-              this.$store.commit(DEL_INDEX_BILL, o.billId);
+              this.$store.commit(DEL_INDEX_BILL, o.billBId);
             });
         }
       } else if (e.index == 1) {
@@ -641,11 +641,10 @@ export default {
   }
 }
 .list-content {
-  width: 95%;
   .list-content-items {
-    margin-top: 20rpx;
     padding: 10rpx 0;
     border-radius: 26rpx;
+    margin: 10rpx 15rpx;
     background: white;
   }
   .uni-swipe_button {
@@ -673,9 +672,5 @@ export default {
   }
 }
 
-.bottom-operate {
-  width: 100%;
-  position: absolute;
-  bottom: 0;
-}
+
 </style>

@@ -69,7 +69,7 @@
 <script>
 // 操作类型：0 选中；1 删除；2 新增
 export default {
-  name: "mbill-category-collapse",
+  name: "mbill-group-collapse",
   props: {
     height: {
       type: [Number, String],
@@ -90,7 +90,7 @@ export default {
     items(newVal, oldVal) {
       let dels = [];
       oldVal.forEach((og, index) => {
-        if (newVal.findIndex((ng) => ng.id === og.id) === -1) {
+        if (newVal.findIndex((ng) => ng.bId === og.bId) === -1) {
           dels.push(index);
         }
       });
@@ -192,7 +192,7 @@ export default {
       // 获取排序后数据
       let sorts = list.map((item, index) => {
         return {
-          id: item.id,
+          bId: item.bId,
           sort: list.length - index,
         };
       });

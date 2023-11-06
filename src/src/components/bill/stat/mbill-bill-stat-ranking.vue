@@ -111,7 +111,7 @@ export default {
       billTypes: ["支出", "收入"],
       category: 0,
       categories: [],
-      categoryId: 0,
+      categoryBId: 0,
       dateActive: 0,
       dateTypes: [
         {
@@ -170,7 +170,7 @@ export default {
           date: this.date,
           dateType: this.dateActive,
           billType: this.billType,
-          categoryId: this.categoryId,
+          categoryBId: this.categoryBId,
           ...this.rankingPage,
         })
         .then((res) => {
@@ -194,7 +194,7 @@ export default {
         if (res.data.code === 0) {
           let data = res.data.result;
           this.categories = data;
-          this.categories.unshift({ id: 0, name: "选择分类" });
+          this.categories.unshift({ bId: 0, name: "选择分类" });
         }
       });
     },
@@ -220,7 +220,7 @@ export default {
       if (this.billType == detail.value) return;
       this.billType = detail.value;
       this.category = 0;
-      this.categoryId = 0;
+      this.categoryBId = 0;
       this.loadCategoriesData();
       this.loadStatData();
     },
@@ -231,7 +231,7 @@ export default {
       if (this.category == detail.value) return;
       this.category = detail.value;
       let ca = this.categories[this.category];
-      this.categoryId = ca.id;
+      this.categoryBId = ca.bId;
       this.loadStatData();
     },
 
@@ -246,7 +246,7 @@ export default {
       this.dateActive = 0;
       this.billType = 0;
       this.category = 0;
-      this.categoryId = 0;
+      this.categoryBId = 0;
       this.rankingPage.page = 1;
       this.loadStatData();
     },

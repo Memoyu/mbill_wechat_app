@@ -28,7 +28,7 @@
                   <view class="select-collapse-title-content">
                     <checkbox
                       class="select-collapse-title-content-cb"
-                      :value="item.id"
+                      :value="item.bId"
                       :checked="item.checked"
                       @click.stop="onSelectedItemCheckBox(item)"
                     />
@@ -50,7 +50,7 @@
                 <view class="select-collapse-item">
                   <checkbox
                     class="select-collapse-item-cb"
-                    :value="child.id"
+                    :value="child.bId"
                     :checked="child.checked"
                   />
                   <view class="select-collapse-item-text">{{
@@ -84,84 +84,7 @@ export default {
       height: 300,
       drawerWidth: 300,
       selectAll: false,
-      items: [
-        // {
-        //   name: "足球",
-        //   id: 0,
-        //   checked: false,
-        //   selected: "",
-        //   childs: [
-        //     {
-        //       name: "足球1",
-        //       id: 0,
-        //       checked: false,
-        //     },
-        //     {
-        //       name: "足球2",
-        //       id: 1,
-        //       checked: false,
-        //     },
-        //     {
-        //       name: "足球3",
-        //       id: 2,
-        //       checked: false,
-        //     },
-        //   ],
-        // },
-        // {
-        //   name: "篮球",
-        //   id: 1,
-        //   checked: false,
-        //   selected: "",
-        //   childs: [
-        //     {
-        //       name: "篮球1",
-        //       id: 0,
-        //       checked: false,
-        //     },
-        //     {
-        //       name: "篮球2",
-        //       id: 1,
-        //       checked: false,
-        //     },
-        //     {
-        //       name: "篮球3",
-        //       id: 2,
-        //       checked: false,
-        //     },
-        //   ],
-        // },
-        // {
-        //   name: "游泳",
-        //   id: 2,
-        //   checked: false,
-        //   selected: "",
-        //   childs: [
-        //     {
-        //       name: "游泳1",
-        //       id: 0,
-        //       checked: false,
-        //     },
-        //     {
-        //       name: "游泳2",
-        //       id: 1,
-        //       checked: false,
-        //     },
-        //     {
-        //       name: "游泳3",
-        //       id: 2,
-        //       checked: false,
-        //     },
-        //   ],
-        // },
-        // {
-        //   name: "跑步",
-        //   id: 2,
-        //   checked: false,
-        //   selected: "",
-        //   childs: [],
-        // },
-      ],
+      items: [],
     };
   },
   watch: {
@@ -202,10 +125,10 @@ export default {
         childs: [],
       };
       this.items.forEach((i) => {
-        if (i.checked) checked.groups.push({ id: i.id, name: i.name });
+        if (i.checked) checked.groups.push({ bId: i.bId, name: i.name });
         if (i.childs == undefined) return;
         i.childs.forEach((c) => {
-          if (c.checked) checked.childs.push({ id: c.id, name: c.name });
+          if (c.checked) checked.childs.push({ bId: c.bId, name: c.name });
         });
       });
       this.$emit("confirm", checked);

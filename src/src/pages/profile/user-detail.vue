@@ -148,7 +148,7 @@ export default {
     getUserDetail() {
       this.$api
         .userDetail({
-          id: this.cacheUser.id,
+          bId: this.cacheUser.bId,
         })
         .then((res) => {
           //console.log("user detail", res);
@@ -204,7 +204,7 @@ export default {
 
         this.$api
           .updateUser({
-            id: this.user.id,
+            bId: this.user.bId,
             avatarUrl: this.user.avatarUrl,
             nickname: this.user.nickname,
             gender:
@@ -327,12 +327,7 @@ export default {
     }
   }
 }
-.bottom-operate {
-  width: 100%;
-  position: absolute;
-  bottom: 0;
-  margin-bottom: 40rpx;
-}
+
 
 .edit-item-input {
   .input-item {

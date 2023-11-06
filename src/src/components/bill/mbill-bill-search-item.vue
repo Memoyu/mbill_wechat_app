@@ -1,5 +1,5 @@
 <template>
-  <view class="searh-bill-item" @click="onToDetail(bill.id)">
+  <view class="searh-bill-item" @click="onToDetail(bill.bId)">
     <view class="searh-bill-item-main x-bc">
       <view class="searh-bill-item-main-content">
         <view :class="['searh-bill-item-main-type', getTypeClass(bill.type)]">
@@ -74,8 +74,8 @@ export default {
           return "收入";
       }
     },
-    onToDetail(id) {
-      uni.navigateTo({ url: `/pages/bill/detail?id=${id}` });
+    onToDetail(bId) {
+      uni.navigateTo({ url: `/pages/bill/detail?bId=${bId}` });
     },
   },
 };

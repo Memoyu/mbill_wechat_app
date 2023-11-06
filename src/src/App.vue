@@ -36,6 +36,13 @@ page {
     // align-items: center;
     // justify-content: center;
   }
+
+  .bottom-operate {
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    margin-bottom: 40rpx;
+  }
 }
 
 // 原型checkbox
@@ -52,4 +59,5 @@ checkbox .wx-checkbox-input.wx-checkbox-input-checked {
 checkbox .wx-checkbox-input.wx-checkbox-input-checked::before {
   font-size: 18px;
 }
+
 </style>

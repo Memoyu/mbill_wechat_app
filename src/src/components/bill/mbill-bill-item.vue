@@ -1,5 +1,5 @@
 <template>
-  <view class="mbill-bill-item" @click="onToDetail(bill.id)">
+  <view class="mbill-bill-item" @click="onToDetail(bill.bId)">
     <view class="bill-icon">
       <image class="image" :src="bill.categoryIcon" />
     </view>
@@ -46,8 +46,8 @@ export default {
           return "income-color";
       }
     },
-    onToDetail(id) {
-      uni.navigateTo({ url: `/pages/bill/detail?id=${id}` });
+    onToDetail(bId) {
+      uni.navigateTo({ url: `/pages/bill/detail?bId=${bId}` });
     },
   },
 };

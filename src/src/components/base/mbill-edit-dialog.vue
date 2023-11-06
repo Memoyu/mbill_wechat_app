@@ -127,11 +127,5 @@ export default {
       font-weight: bold;
     }
   }
-  .bottom-operate {
-    width: 100%;
-    position: absolute;
-    bottom: 0;
-    margin-bottom: 20rpx;
-  }
 }
 </style>

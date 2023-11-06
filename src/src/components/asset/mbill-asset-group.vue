@@ -6,7 +6,7 @@
         <view
           :class="[
             'item-content',
-            selectedId === item.id ? 'asset-item-selected' : '',
+            selectedBId === item.bId ? 'asset-item-selected' : '',
           ]"
           v-for="(item, index) in d.childs"
           :key="index"
@@ -36,18 +36,18 @@ export default {
   },
   data() {
     return {
-      selectedId: 0,
+      selectedBId: 0,
     };
   },
   watch: {
     select(value) {
       // console.log("账户", value);
-      this.selectedId = value;
+      this.selectedBId = value;
     },
   },
   methods: {
     onSelectedItem(item) {
-      this.selectedId = item.id;
+      this.selectedBId = item.bId;
       this.$emit("selected", item);
     },
     onAddAsset() {

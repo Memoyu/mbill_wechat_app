@@ -92,7 +92,7 @@ export default {
         .billPages({
           date: this.data.date,
           dateType: this.data.type,
-          categoryId: this.data.id,
+          categoryBId: this.data.bId,
           ...this.billPage,
         })
         .then((res) => {

@@ -379,13 +379,13 @@ export default {
           var dtos = [];
           groups.forEach((g) => {
             var dto = {
-              id: g.id,
+              bId: g.bId,
               name: g.name,
               checked: false,
               childs: [],
             };
             g.childs.forEach((c) => {
-              dto.childs.push({ id: c.id, name: c.name, checked: false });
+              dto.childs.push({ bId: c.bId, name: c.name, checked: false });
             });
             dtos.push(dto);
           });
@@ -402,13 +402,13 @@ export default {
           var dtos = [];
           groups.forEach((g) => {
             var dto = {
-              id: g.id,
+              bId: g.bId,
               name: g.name,
               checked: false,
               childs: [],
             };
             g.childs.forEach((c) => {
-              dto.childs.push({ id: c.id, name: c.name, checked: false });
+              dto.childs.push({ bId: c.bId, name: c.name, checked: false });
             });
             dtos.push(dto);
           });

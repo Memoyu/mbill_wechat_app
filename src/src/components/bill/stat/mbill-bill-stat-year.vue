@@ -356,7 +356,7 @@ export default {
     // 点击对应分类占比
     onCategoryClick(item) {
       this.$emit("select-category", {
-        id: item.id,
+        bId: item.bId,
         category: item.category,
         date: `${this.year}-1`,
         type: 1,

@@ -42,26 +42,15 @@ import { DEL_INDEX_BILL } from "@/store/type";
 export default {
   data() {
     return {
-      id: 0,
+      bId: 0,
       amountClass: "expend-color",
       bill: {
-        // id: 7,
-        // type: 0,
-        // category: "奶茶",
-        // asset: "账户",
-        // categoryIcon: "/static/assets/tea.png",
         amountFormat: "0.0",
-        // description: "这是备注来着",
-        // time: "2022/05/08 13:30",
-        // timeFormat: "星期日 2022/05/08 13:30",
-        // address:
-        //   "广东省广州市白云区萧岗东约大街50号22222222222222222222222222222",
       },
     };
   },
   onLoad(option) {
-    // console.log(option.id);
-    this.id = option.id;
+    this.bId = option.bId;
   },
   onShow() {
     this.getBillDetail();
@@ -71,7 +60,7 @@ export default {
     getBillDetail() {
       this.$api
         .billDetail({
-          id: this.id,
+          bId: this.bId,
         })
         .then((res) => {
           if (res.data.code === 0) {
@@ -90,7 +79,7 @@ export default {
     onBtnClick(e) {
       // console.log("编辑");
       if (e.isLeft) {
-        this.$Router.push({ name: "bill-edit", params: { id: this.bill.id } });
+        this.$Router.push({ name: "bill-edit", params: { bId: this.bill.bId } });
       } else {
         // console.log("删除");
         let pages = getCurrentPages(); //当前页
@@ -98,12 +87,12 @@ export default {
         // console.log(beforePage);
         let that = this;
         this.$tip.choose("是否删除该条账单？", {}, "提示").then(async () => {
-          that.$api.delBill(this.id).then((res) => {
+          that.$api.delBill(this.bId).then((res) => {
             if (res.data.code === 0) {
               // 如果是首页，进行数据处理
               if (beforePage.route === "pages/index/index") {
                 // console.log("处理数据");
-                this.$store.commit(DEL_INDEX_BILL, this.id);
+                this.$store.commit(DEL_INDEX_BILL, this.bId);
               }
               this.$Router.back();
             }
@@ -116,7 +105,7 @@ export default {
     onCopyAndToEdit() {
       this.$Router.push({
         name: "bill-edit",
-        params: { copyId: this.bill.id },
+        params: { copyId: this.bill.bId },
       });
     },
   },
@@ -240,12 +229,6 @@ export default {
       border-bottom: 2rpx solid $primary-color;
       padding-bottom: 3rpx;
     }
-  }
-  .bottom-operate {
-    width: 100%;
-    position: absolute;
-    bottom: 0;
-    margin-bottom: 40rpx;
   }
 }
 </style>

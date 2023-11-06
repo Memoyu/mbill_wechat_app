@@ -163,10 +163,10 @@ export default {
         types.push(t.id);
       });
       this.filter.categories.forEach((t) => {
-        categories.push(t.id);
+        categories.push(t.bId);
       });
       this.filter.assets.forEach((t) => {
-        assets.push(t.id);
+        assets.push(t.bId);
       });
 
       this.$api

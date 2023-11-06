@@ -68,7 +68,7 @@ export default {
       },
       item: {},
       group: {
-        id: 0,
+        bId: 0,
         name: "",
         index: 0,
       },
@@ -159,13 +159,13 @@ export default {
         // 为编辑
         this.$Router.push({
           name: "category-edit",
-          params: { id: item.id, groupId: group.id, groupName: group.name },
+          params: { bId: item.bId, groupBId: group.bId, groupName: group.name },
         });
       } else if (e.type == 1) {
         // 为删除
         // console.log(item, "删除分类");
         this.$tip.choose("是否删除分类？", {}, "删除分类").then(async () => {
-          this.$api.delCategory(item.id).then((res) => {
+          this.$api.delCategory(item.bId).then((res) => {
             if (res.data.code === 0) {
               this.groups[item.gIndex].childs.splice(item.index, 1);
             } else {
@@ -177,7 +177,7 @@ export default {
         // 为新增
         this.$Router.push({
           name: "category-edit",
-          params: { type: this.type, groupId: group.id, groupName: group.name },
+          params: { type: this.type, groupBId: group.bId, groupName: group.name },
         });
       }
     },
@@ -189,11 +189,11 @@ export default {
           return;
         }
 
-        // 没有id 或 id = 0 则为添加分组
-        if (this.group.id != undefined && this.group != 0) {
+        // 没有bId 或 bId = 0 则为添加分组
+        if (this.group.bId != undefined && this.group != 0) {
           this.$api
             .editCategory({
-              id: this.group.id,
+              bId: this.group.bId,
               name: this.group.name,
             })
             .then((res) => {
@@ -219,7 +219,7 @@ export default {
               if (res.data.code === 0) {
                 // console.log(res.data.result);
                 let ca = res.data.result;
-                this.groups.unshift({ id: ca.id, name: ca.name, childs: [] });
+                this.groups.unshift({ bId: ca.bId, name: ca.name, childs: [] });
                 this.$refs.addGroupDialog.hide();
                 // this.getCategoryGroups(this.type);
               } else {
@@ -232,7 +232,7 @@ export default {
         this.$tip
           .choose("同时删除子项，是否删除？", {}, "删除分组")
           .then(async () => {
-            this.$api.delCategory(this.group.id).then((res) => {
+            this.$api.delCategory(this.group.bId).then((res) => {
               if (res.data.code === 0) {
                 this.groups.splice(this.group.index, 1);
                 this.$refs.addGroupDialog.hide();

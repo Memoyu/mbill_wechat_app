@@ -57,12 +57,12 @@ export default {
     return {
       scrollHeight: 0,
       type: 0,
-      groupId: 0,
+      groupBId: 0,
       groupName: "分组名",
       loading: false,
       icons: [],
       category: {
-        id: 0,
+        bId: 0,
         iconUrl: "",
         icon: "",
         name: "",
@@ -77,19 +77,19 @@ export default {
   },
   onLoad(options) {
     // console.log(options);
-    let opId = options.id;
+    let opId = options.bId;
     if (opId != undefined && opId != null) {
-      this.category.id = options.id;
+      this.category.bId = options.bId;
       this.getCategory();
     }
     this.type = options.type;
-    this.groupId = options.groupId;
+    this.groupBId = options.groupBId;
     this.groupName = options.groupName
       ? decodeURIComponent(options.groupName)
       : "";
     this.dynamicHeight();
     this.getIcons().then(() => {
-      if (this.category.id == 0) {
+      if (this.category.bId == 0) {
         this.category.iconUrl = this.icons[0].url;
         this.category.icon = this.icons[0].path;
       }
@@ -99,7 +99,7 @@ export default {
   methods: {
     // 获取分类信息
     getCategory() {
-      this.$api.getCategory({ id: this.category.id }).then((res) => {
+      this.$api.getCategory({ bId: this.category.bId }).then((res) => {
         let result = res.data.result;
         console.log(result);
         this.category = result;
@@ -138,10 +138,10 @@ export default {
         return;
       }
       console.log(this.category);
-      if (this.category.id != undefined && this.category.id != 0) {
+      if (this.category.bId != undefined && this.category.bId != 0) {
         this.$api
           .editCategory({
-            id: this.category.id,
+            bId: this.category.bId,
             name: this.category.name,
             icon: this.category.icon,
           })
@@ -155,7 +155,7 @@ export default {
       } else {
         this.$api
           .createCategory({
-            parentId: this.groupId,
+            parentId: this.groupBId,
             name: this.category.name,
             icon: this.category.icon,
             type: this.type,

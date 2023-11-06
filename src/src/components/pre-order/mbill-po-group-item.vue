@@ -43,7 +43,7 @@ export default {
   methods: {
     onToList(group) {
       uni.navigateTo({
-        url: `/pages/bill/pre-order/list?id=${group.id}`,
+        url: `/pages/bill/pre-order/list?bId=${group.bId}`,
       });
     },
     onEdit(group) {

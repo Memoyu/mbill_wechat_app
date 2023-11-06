@@ -55,7 +55,7 @@
         <uni-swipe-action ref="swipeAction">
           <uni-swipe-action-item
             v-for="g in groups"
-            :key="g.id"
+            :key="g.bId"
             :right-options="swipeOptions"
             @click="onSwipeClick($event, g)"
           >
@@ -219,7 +219,7 @@ export default {
     },
 
     delGroup(group) {
-      this.$api.delPreOrderGroup(group.id).then((res) => {
+      this.$api.delPreOrderGroup(group.bId).then((res) => {
         if (res.data.code === 0) {
           // console.log(res);
           this.$refs.addGroupDialog.hide();
@@ -397,13 +397,11 @@ export default {
   }
 }
 .group-content {
-  width: 95%;
   .group-content-items {
-    margin-top: 20rpx;
-    padding: 6rpx 0;
+    padding: 10rpx 0;
     border-radius: 26rpx;
+    margin: 10rpx 15rpx;
     flex: 1;
-    // padding: 0 30rpx;
     position: relative;
     background-color: #fff;
   }
@@ -431,9 +429,4 @@ export default {
   }
 }
 
-.bottom-operate {
-  width: 100%;
-  position: absolute;
-  bottom: 0;
-}
 </style>
