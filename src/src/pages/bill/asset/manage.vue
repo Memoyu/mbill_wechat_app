@@ -156,7 +156,7 @@ export default {
           return;
         }
 
-        // 没有id 或 bId = 0 则为添加分组
+        // 没有bId 或 bId = 0 则为添加分组
         if (this.group.bId != undefined && this.group != 0) {
           this.$api
             .editAsset({
@@ -177,6 +177,7 @@ export default {
         } else {
           this.$api
             .createAsset({
+              parentBId: 0,
               type: 0, // type 暂时默认0
               name: this.group.name,
               sort: this.groups.length + 1,

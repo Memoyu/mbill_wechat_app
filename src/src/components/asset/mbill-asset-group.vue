@@ -92,7 +92,7 @@ export default {
   .to-add-asset {
     color: $dark-color;
     font-weight: bold;
-    margin-bottom: 30rpx;
+    padding: 30rpx 0 40rpx 0;
     text-align: center;
   }
 }

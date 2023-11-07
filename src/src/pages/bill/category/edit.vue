@@ -155,7 +155,7 @@ export default {
       } else {
         this.$api
           .createCategory({
-            parentId: this.groupBId,
+            parentBId: this.groupBId,
             name: this.category.name,
             icon: this.category.icon,
             type: this.type,

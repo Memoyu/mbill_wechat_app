@@ -290,6 +290,7 @@ export default {
 
     // 编辑预购状态
     editPreOrderStatus(order, status) {
+      console.log("order", order)
       this.$api
         .editPreOrderStatus({
           bId: order.bId,
@@ -642,6 +643,7 @@ export default {
 }
 .list-content {
   .list-content-items {
+    position:relative;
     padding: 10rpx 0;
     border-radius: 26rpx;
     margin: 10rpx 15rpx;

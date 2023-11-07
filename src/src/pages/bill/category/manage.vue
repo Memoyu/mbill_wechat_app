@@ -211,6 +211,7 @@ export default {
         } else {
           this.$api
             .createCategory({
+              parentBId: 0,
               name: this.group.name,
               type: this.type,
               sort: this.groups.length + 1,
