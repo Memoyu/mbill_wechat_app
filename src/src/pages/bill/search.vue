@@ -173,8 +173,8 @@ export default {
         .searchBillPages({
           keyWord: this.keyWord,
           types: types,
-          categoryIds: categories,
-          assetIds: assets,
+          categoryBIds: categories,
+          assetBIds: assets,
           date: {
             begin: this.filter.date.begin,
             end: this.filter.date.end,

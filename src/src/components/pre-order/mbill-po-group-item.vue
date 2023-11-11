@@ -2,7 +2,7 @@
   <view
     :class="[
       'mbill-po-group-item',
-      group.billId == 0 ? '' : ' mbill-po-group-item-tag',
+      group.billBId == 0 ? '' : ' mbill-po-group-item-tag',
     ]"
   >
     <view class="group-item-content" @click="onToList(group)">
