@@ -79,16 +79,32 @@
     <!-- 数字键盘 -->
     <view class="key-board-container" id="edit-key-board-container">
       <view class="key-board-header-location x-ac">
-        <i
-          :class="[
-            'iconfont',
-            'icon-location',
-            'icon-padding ',
-            !locationStatus ? 'icon-color' : '',
-          ]"
-          @click="onSwitchChange"
-          @longtap="onSwitchLongtap"
-        />
+        <mb-ba-tooltip placement="top-start" ref="locationTooltip"  :visible.sync="locationTooltipShow">
+          <view slot="content">
+            <view>
+              <view>长按开启自动获取位置哦</view>
+              <view
+                style="
+                  display: flex;
+                  justify-content: flex-end;
+                  margin-top: 10px;
+                "
+              >
+                <view style="color: #108ee9" @click.stop="onCloseTooltip">知道了</view>
+              </view>
+            </view>
+          </view>
+          <i
+            :class="[
+              'iconfont',
+              'icon-location',
+              'icon-padding ',
+              !locationStatus ? 'icon-color' : '',
+            ]"
+            @tap.stop="onSwitchChange"
+            @longtap="onSwitchLongtap"
+          />
+        </mb-ba-tooltip>
         <input
           type="text"
           class="input-address-text"
@@ -148,7 +164,7 @@
 <script>
 import { mapActions } from "vuex";
 import Location from "@/common/utils/location";
-import { LOCATION_STATUS } from "@/common/utils/constants";
+import { LOCATION_STATUS, LOCATION_KNOW_STATUS } from "@/common/utils/constants";
 import datetime from "@/common/utils/datetime";
 import { ADD_INDEX_BILL, MODIFY_INDEX_BILL } from "@/store/type";
 
@@ -197,6 +213,7 @@ export default {
       locationStatus: uni.getStorageSync(LOCATION_STATUS) || false,
       refreshCategory: "",
       refreshAsset: "",
+      locationTooltipShow: false,
     };
   },
   onLoad(option) {
@@ -223,7 +240,14 @@ export default {
     this.model.type = 0;
     this.getLocation();
   },
-  onShow() {},
+  onShow() {
+    if(uni.getStorageSync(LOCATION_KNOW_STATUS) !== '') {
+      this.locationTooltipShow = false;
+    }else {
+      this.locationTooltipShow = true;
+    }
+
+  },
   onReady() {
     this.dynamicHeight();
   },
@@ -350,7 +374,7 @@ export default {
             data.map((i) => {
               that.scrollHeight += i.height;
             });
-            that.scrollHeight = pH - that.scrollHeight;
+            that.scrollHeight = pH - that.scrollHeight - 5;
             // console.log(that.scrollHeight);
           });
         },
@@ -517,6 +541,13 @@ export default {
       this.$refs.assetPopup.close();
     },
 
+    // 知道了按下
+    onCloseTooltip() {
+      this.$refs.locationTooltip.close();
+      this.locationTooltipShow = false;
+      uni.setStorageSync(LOCATION_KNOW_STATUS, true)
+    },
+
     // 位置信息获取开关切换(点击获取)
     onSwitchChange() {
       // console.log("获取位置", this.locationStatus);
@@ -530,6 +561,8 @@ export default {
     // 位置信息获取开关切换(长按开关)
     onSwitchLongtap() {
       // console.log("长按");
+      // 关闭提示
+      this.onCloseTooltip();
       this.locationStatus = !this.locationStatus;
       uni.setStorageSync(LOCATION_STATUS, this.locationStatus);
       if (this.locationStatus) {

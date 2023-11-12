@@ -198,8 +198,8 @@ export default {
       this.noticeStatus = true;
     }
     this.getProfileTotalStat();
-    console.log("11111",uni.getStorageSync(NOTICE_STATUS)  !==  '');
-    console.log("22222",this.noticeStatus);
+    // console.log("11111",uni.getStorageSync(NOTICE_STATUS)  !==  '');
+    // console.log("22222",this.noticeStatus);
   },
   methods: {
     ...mapActions(["getProfileTotalStat"]),
