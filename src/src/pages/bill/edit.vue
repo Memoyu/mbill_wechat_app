@@ -79,7 +79,11 @@
     <!-- 数字键盘 -->
     <view class="key-board-container" id="edit-key-board-container">
       <view class="key-board-header-location x-ac">
-        <mb-ba-tooltip placement="top-start" ref="locationTooltip"  :visible.sync="locationTooltipShow">
+        <mb-ba-tooltip
+          placement="top-start"
+          ref="locationTooltip"
+          :visible.sync="locationTooltipShow"
+        >
           <view slot="content">
             <view>
               <view>长按开启自动获取位置哦</view>
@@ -90,7 +94,9 @@
                   margin-top: 10px;
                 "
               >
-                <view style="color: #108ee9" @click.stop="onCloseTooltip">知道了</view>
+                <view style="color: #108ee9" @click.stop="onCloseTooltip"
+                  >知道了</view
+                >
               </view>
             </view>
           </view>
@@ -164,7 +170,10 @@
 <script>
 import { mapActions } from "vuex";
 import Location from "@/common/utils/location";
-import { LOCATION_STATUS, LOCATION_KNOW_STATUS } from "@/common/utils/constants";
+import {
+  LOCATION_STATUS,
+  LOCATION_KNOW_STATUS,
+} from "@/common/utils/constants";
 import datetime from "@/common/utils/datetime";
 import { ADD_INDEX_BILL, MODIFY_INDEX_BILL } from "@/store/type";
 
@@ -217,6 +226,8 @@ export default {
     };
   },
   onLoad(option) {
+    this.getLocationKnownStatus();
+
     // 编辑账单
     if (option.bId != undefined) {
       this.getBillDetail(option.bId);
@@ -240,14 +251,7 @@ export default {
     this.model.type = 0;
     this.getLocation();
   },
-  onShow() {
-    if(uni.getStorageSync(LOCATION_KNOW_STATUS) !== '') {
-      this.locationTooltipShow = false;
-    }else {
-      this.locationTooltipShow = true;
-    }
-
-  },
+  onShow() {},
   onReady() {
     this.dynamicHeight();
   },
@@ -545,7 +549,7 @@ export default {
     onCloseTooltip() {
       this.$refs.locationTooltip.close();
       this.locationTooltipShow = false;
-      uni.setStorageSync(LOCATION_KNOW_STATUS, true)
+      uni.setStorageSync(LOCATION_KNOW_STATUS, true);
     },
 
     // 位置信息获取开关切换(点击获取)
@@ -572,6 +576,15 @@ export default {
         // 关闭获取地理位置
         // this.model.address = "";
         this.$tip.toast("自动获取地址信息已关闭");
+      }
+    },
+
+    // 获取操作提示状态
+    getLocationKnownStatus() {
+      if (uni.getStorageSync(LOCATION_KNOW_STATUS) !== "") {
+        this.locationTooltipShow = false;
+      } else {
+        this.locationTooltipShow = true;
       }
     },
 
