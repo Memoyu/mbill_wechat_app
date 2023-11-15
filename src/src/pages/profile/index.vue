@@ -106,7 +106,7 @@
         </view>
       </view>
     </view>
-    <view class="app-version">v2.1.4</view>
+    <view class="app-version">v2.4.0</view>
   </view>
 </template>
 
@@ -269,6 +269,7 @@ export default {
 }
 
 .profile-header {
+  height: 60rpx;
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
@@ -281,9 +282,9 @@ export default {
   }
   &-weather {
     display: flex;
-    align-items: center;
+
     color: white;
-    font-size: 60rpx;
+    font-size: 50rpx;
   }
   margin: 0 20rpx;
 }
