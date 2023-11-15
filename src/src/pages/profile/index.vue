@@ -1,21 +1,23 @@
 <template>
   <view class="profile-container">
-    <uni-notice-bar
-      v-if="notice.show"
-      speed="60"
-      show-icon
-      scrollable
-      show-close
-      background-color="#DCD6F7"
-      color="#FFFFFF"
-      @close="handleNoticeClose"
-      :text="notice.content"
-    />
     <view class="bg" />
-    <!-- <view class="profile-header">
-      <i class="iconfont .icon-weather-thunderstorm-sun header-item" />
-      <text>广东-广州</text>
-    </view> -->
+    <view class="profile-header">
+      <uni-notice-bar
+        class="profile-header-notice"
+        v-if="notice.show"
+        speed="60"
+        show-icon
+        scrollable
+        show-close
+        background-color="transparent"
+        color="#FFFFFF"
+        @close="handleNoticeClose"
+        :text="notice.content"
+      />
+      <i
+        class="iconfont .icon-weather-thunderstorm-sun profile-header-weather"
+      />
+    </view>
     <!-- 用户信息 -->
     <view
       class="profile-info"
@@ -265,15 +267,25 @@ export default {
   height: 30%;
   border-radius: 0 0 30rpx 30rpx;
 }
+
 .profile-header {
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
-  .header-item {
-    margin-right: 20rpx;
-    font-size: 50rpx;
+  &-notice {
+    width: 100%;
+    .uni-noticebar {
+      padding: 0 20rpx !important;
+      margin-bottom: 0 !important;
+    }
   }
-  margin: 0 30rpx;
+  &-weather {
+    display: flex;
+    align-items: center;
+    color: white;
+    font-size: 60rpx;
+  }
+  margin: 0 20rpx;
 }
 .profile-info {
   margin: 0 40rpx;
