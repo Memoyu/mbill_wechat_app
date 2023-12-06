@@ -22,6 +22,8 @@
 
 项目为个人记账微信小程序端实现。
 
+部署文档：[mbill部署相关 ](https://www.yuque.com/memoyu/sz8ae0/pnbr6haohkhid0tf)
+
 &nbsp;
 
 ## 相关项目
