@@ -18,4 +18,4 @@ const ENV_API_URL = {
 
 export const BASE_URL = ENV_BASE_URL[process.env.NODE_ENV || 'development']; //域名
 export const API_URL = ENV_API_URL[process.env.NODE_ENV || 'development']; //后台接口域名
-export const MAP_KEY = 'Z26BZ-SYOWD-63A4O-HK3CL-W5BIQ-RMFWX'; //腾讯地图Key
+export const MAP_KEY = 'Z36BZ-SYOWD-63A4O-HK3CL-W5BIQ-RMFWX'; //腾讯地图Key
