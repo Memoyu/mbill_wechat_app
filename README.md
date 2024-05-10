@@ -1,6 +1,6 @@
 <h1  align="center">
     <a href="http://memoyu.cn/">
-        <img width="100" height="100" src="https://github.com/Memoyu/Memoyu.Core/blob/master/doc/images/memoyu.png">
+        <img width="100" height="100" src="https://raw.githubusercontent.com/Memoyu/CoreMe/master/doc/images/memoyu.png">
     </a>
     </br>
     </br>
@@ -57,11 +57,11 @@
 
 **小程序效果：（界面在迭代中，部分与效果有所不同）**
 
-![小程序效果图](https://github.com/Memoyu/mbill_wechat_app/blob/main/doc/效果图.png)
+![小程序效果图](https://raw.githubusercontent.com/Memoyu/mbill_wechat_app/main/doc/%E6%95%88%E6%9E%9C%E5%9B%BE.png)
 
 **小程序二维码：**
 
-![小程序二维码](https://github.com/Memoyu/mbill_wechat_app/blob/main/doc/qrcode.jpg)
+![小程序二维码](https://raw.githubusercontent.com/Memoyu/mbill_wechat_app/main/doc/qrcode.jpg)
 
 &nbsp;
 
