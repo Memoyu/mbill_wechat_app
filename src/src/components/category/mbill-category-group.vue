@@ -34,7 +34,7 @@ export default {
       default: 0,
     },
     select: {
-      type: Number,
+      type: String,
       default: 0,
     },
   },

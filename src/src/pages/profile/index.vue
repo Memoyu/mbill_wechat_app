@@ -106,7 +106,7 @@
         </view>
       </view>
     </view>
-    <view class="app-version">v2.4.0</view>
+    <view class="app-version">v2.4.5</view>
   </view>
 </template>
 

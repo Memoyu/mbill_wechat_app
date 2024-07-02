@@ -30,7 +30,7 @@ export default {
       default: [],
     },
     select: {
-      type: Number,
+      type: String,
       default: 0,
     },
   },
