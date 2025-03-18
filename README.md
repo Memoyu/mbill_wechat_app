@@ -1,6 +1,6 @@
 <h1  align="center">
     <a href="http://memoyu.cn/">
-        <img width="100" height="100" src="https://raw.githubusercontent.com/Memoyu/CoreMe/master/doc/images/memoyu.png">
+        <img width="100" height="100" src="https://raw.githubusercontent.com/Memoyu/Memoyu/main/logo.png">
     </a>
     </br>
     </br>
