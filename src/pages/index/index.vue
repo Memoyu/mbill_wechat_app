@@ -9,73 +9,47 @@ definePage({
   type: 'home',
   style: {
     // 'custom' 表示开启自定义导航栏，默认 'default'
-    navigationStyle: 'default',
+    navigationStyle: 'custom',
     navigationBarTitleText: '首页',
+  },
+})
+
+const lockScroll = ref(false)
+provide('lockScroll', {
+  lockScroll,
+  updateLockScroll: (newValue) => {
+    lockScroll.value = newValue
   },
 })
 
 onLoad(() => {
   console.log('测试 uni API 自动引入: onLoad')
 })
-
-const { success: showSuccess } = useToast()
-
-const model = reactive<{
-  value1: string
-  value2: string
-}>({
-  value1: '',
-  value2: '',
-})
-
-const form = ref()
-
-function handleSubmit() {
-  form.value
-    .validate()
-    .then(({ valid, errors }) => {
-      if (valid) {
-        showSuccess({
-          msg: '校验通过',
-        })
-      }
-    })
-    .catch((error) => {
-      console.log(error, 'error')
-    })
-}
 </script>
 
 <template>
-  <view class="px-4 pt-safe dark:bg-[var(--wot-dark-background2)]">
-    <!-- <wd-form ref="form" :model="model">
-      <wd-cell-group border>
-        <wd-input
-          v-model="model.value1"
-          label="用户名"
-          label-width="100px"
-          prop="value1"
-          clearable
-          placeholder="请输入用户名"
-          :rules="[{ required: true, message: '请填写用户名' }]"
-        />
-        <wd-input
-          v-model="model.value2"
-          label="密码"
-          label-width="100px"
-          prop="value2"
-          show-password
-          clearable
-          placeholder="请输入密码"
-          :rules="[{ required: true, message: '请填写密码' }]"
-        />
-      </wd-cell-group>
-      <view class="footer">
-        <wd-button type="primary" size="large" block @click="handleSubmit">
-          提交
-        </wd-button>
-      </view>
-    </wd-form> -->
-    <view>dddd</view>
+  <page-meta :page-style="lockScroll ? 'overflow:hidden' : ''" />
+  <view class="relative w-screen bg-white transition-all">
+    <view class="pointer-events-none fixed inset-0 overflow-hidden">
+      <view
+        v-for="i in 3"
+        :key="i"
+        class="absolute rounded-full bg-gray-900/[0.02]"
+        :style="{
+          width: `${350 + i * 100}px`,
+          height: `${350 + i * 100}px`,
+          left: i === 1 ? '-5%' : i === 2 ? '105%' : '50%',
+          top: i === 1 ? '-5%' : i === 2 ? '105%' : '65%',
+          transform: `translate(-50%, -50%) rotate(${i * 45}deg)`,
+          background:
+            i === 1
+              ? 'linear-gradient(135deg, rgba(0,0,0,0.02), rgba(0,0,0,0.01))'
+              : i === 2
+                ? 'linear-gradient(225deg, rgba(0,0,0,0.02), rgba(0,0,0,0.01))'
+                : 'linear-gradient(45deg, rgba(0,0,0,0.02), rgba(0,0,0,0.01))',
+        }"
+      />
+    </view>
+    <view>222</view>
   </view>
 </template>

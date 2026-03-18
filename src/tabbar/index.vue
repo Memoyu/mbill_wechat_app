@@ -1,27 +1,20 @@
 <script setup lang="ts">
 // i-carbon-code
-import { customTabbarEnable, needHideNativeTabbar, tabbarCacheEnable } from './config'
 import { tabbarList, tabbarStore } from './store'
 import TabbarItem from './TabbarItem.vue'
 
-// #ifdef MP-WEIXIN
 // 将自定义节点设置成虚拟的（去掉自定义组件包裹层），更加接近Vue组件的表现，能更好的使用flex属性
 defineOptions({
   virtualHost: true,
 })
-// #endif
-
-/**
- * 中间的鼓包tabbarItem的点击事件
- */
-function handleClickBulge() {
-  uni.showToast({
-    title: '点击了中间的鼓包tabbarItem',
-    icon: 'none',
-  })
-}
 
 function handleClick(index: number) {
+  // console.log(this)
+  // activeCircleRef.value.classList.add('jello-animation')
+  // setTimeout(() =>
+  //   activeCircleRef.value.classList.remove('jello-animation')
+  // }, 500)
+
   // 点击原来的不做操作
   if (index === tabbarStore.curIdx) {
     return
@@ -30,94 +23,99 @@ function handleClick(index: number) {
   if (!list[index]) {
     return
   }
-  if (list[index].isBulge) {
-    handleClickBulge()
-    return
-  }
+
   const url = list[index].pagePath
   tabbarStore.setCurIdx(index)
-  if (tabbarCacheEnable) {
-    uni.switchTab({ url })
-  }
-  else {
-    uni.navigateTo({ url })
-  }
-}
-// #ifndef MP-WEIXIN || MP-ALIPAY
-// 因为有了 custom:true， 微信里面不需要多余的hide操作
-onLoad(() => {
-  // 解决原生 tabBar 未隐藏导致有2个 tabBar 的问题
-  needHideNativeTabbar
-  && uni.hideTabBar({
-    fail(err) {
-      console.log('hideTabBar fail: ', err)
-    },
-    success(res) {
-      // console.log('hideTabBar success: ', res)
-    },
-  })
-})
-// #endif
-
-const activeColor = 'var(--wot-color-theme, #1890ff)'
-const inactiveColor = '#666'
-function getColorByIndex(index: number) {
-  return tabbarStore.curIdx === index ? activeColor : inactiveColor
+  uni.switchTab({ url })
 }
 </script>
 
 <template>
-  <view v-if="customTabbarEnable" class="h-50px pb-safe">
-    <view class="border-and-fixed dark:bg-[var(--wot-dark-background2)]" @touchmove.stop.prevent>
-      <view class="h-50px flex items-center">
+  <view class="">
+    <view class="tabbar-box mx-auto w-90% flex dark:bg-[var(--wot-dark-background2)]" @touchmove.stop.prevent>
+      <view
+        class="tabbar-shadow relative flex flex-1 items-center justify-between rounded-full bg-white/70 px-2.5 py-1.5"
+      >
+        <view id="activeCircle" class="active-circle jello-animation" :style="{ left: `${(46 + (tabbarStore.curIdx) * 103)}` + 'px' }" />
         <view
           v-for="(item, index) in tabbarList" :key="index"
           class="flex flex-1 flex-col items-center justify-center"
-          :style="{ color: getColorByIndex(index) }"
           @click="handleClick(index)"
         >
-          <view v-if="item.isBulge" class="relative">
-            <!-- 中间一个鼓包tabbarItem的处理 -->
-            <view class="bulge">
-              <TabbarItem :item="item" :index="index" class="text-center" is-bulge />
-            </view>
-          </view>
-          <TabbarItem v-else :item="item" :index="index" class="relative px-3 text-center" />
+          <TabbarItem :item="item" :index="index" class="relative text-center" />
         </view>
       </view>
-
+      <!-- 自定义添加按钮 -->
+      <view
+        class="tabbar-shadow ml-5 flex items-center gap-2 rounded-full bg-indigo-500/10 px-4 transition-colors"
+        hover-class="bg-indigo-500/15 scale-95"
+        :hover-start-time="0"
+        :hover-stay-time="200"
+      >
+        <text class="i-carbon-add text-20px text-indigo-500" />
+        <text class="text-sm text-indigo-500 font-medium">添加</text>
+      </view>
       <view class="pb-safe" />
     </view>
   </view>
 </template>
 
 <style scoped lang="scss">
-.border-and-fixed {
+.tabbar-box {
   position: fixed;
-  bottom: 0;
+  bottom: 32px;
   left: 0;
   right: 0;
   z-index: 1000;
   box-sizing: border-box;
 }
-// 中间鼓包的样式
-.bulge {
-  position: absolute;
-  top: -20px;
-  left: 50%;
-  transform-origin: top center;
-  transform: translateX(-50%) scale(0.5) translateY(-33%);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 250rpx;
-  height: 250rpx;
-  border-radius: 50%;
-  background-color: #fff;
-  box-shadow: inset 0 0 0 1px #fefefe;
 
-  &:active {
-    // opacity: 0.8;
+.tabbar-shadow {
+  @apply: shadow-lg;
+  box-shadow:
+    0 8px 24px -6px rgba(0, 0, 0, 0.12),
+    0 4px 8px -4px rgba(0, 0, 0, 0.08);
+}
+
+/* 选中项的背景圆 */
+.active-circle {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  position: absolute;
+  bottom: calc(50% - 15px);
+  transition: 0.4s ease-in-out;
+  @apply: bg-indigo-500/15;
+}
+
+.jello-animation {
+  /* 执行动画：动画名 时长 线性的 停留在最后一帧 */
+  animation: jello 0.8s linear forwards;
+}
+
+/* 定义动画 */
+/* 果冻Q弹效果 */
+@keyframes jello {
+  0% {
+    transform: scale(1, 1);
+  }
+  30% {
+    transform: scale(1.25, 0.75);
+  }
+  40% {
+    transform: scale(0.75, 1.25);
+  }
+  50% {
+    transform: scale(1.15, 0.85);
+  }
+  65% {
+    transform: scale(0.95, 1.05);
+  }
+  75% {
+    transform: scale(1.05, 0.95);
+  }
+  100% {
+    transform: scale(1, 1);
   }
 }
 </style>

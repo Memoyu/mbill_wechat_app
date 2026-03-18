@@ -1,13 +1,13 @@
 import type { CustomTabBarItem, CustomTabBarItemBadge } from './types'
+import type { RemoveLeadingSlashFromUnion } from '@/typings'
 import { computed, reactive } from 'vue'
 import { useUserStore } from '@/store/user'
-
-import { tabbarList as _tabbarList, selectedTabbarStrategy, TABBAR_STRATEGY_MAP } from './config'
+import { tabbarList as _tabbarList } from './config'
 
 /** tabbarList 里面的 path 从 pages.config.ts 得到 */
 const baseTabbarList = reactive<CustomTabBarItem[]>(_tabbarList.map(item => ({
   ...item,
-  pagePath: item.pagePath.startsWith('/') ? item.pagePath : `/${item.pagePath}`, // 统一成 '/' 开头的路径
+  pagePath: item.pagePath.startsWith('/') ? item.pagePath : `/${item.pagePath}` as RemoveLeadingSlashFromUnion<_LocationUrl>, // 统一成 '/' 开头的路径
 })))
 
 const userRoles = computed(() => {
@@ -31,9 +31,6 @@ const tabbarList = computed(() => {
 })
 
 export function isPageTabbar(path: string) {
-  if (selectedTabbarStrategy === TABBAR_STRATEGY_MAP.NO_TABBAR) {
-    return false
-  }
   const _path = path.split('?')[0]
   return tabbarList.value.some(item => item.pagePath === _path)
 }
