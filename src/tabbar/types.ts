@@ -16,8 +16,6 @@ export type CustomTabBarItemBadge = number | 'dot'
 export interface CustomTabBarItem {
   text: string
   pagePath: RemoveLeadingSlashFromUnion<_LocationUrl>
-  /** 图标类型，不建议用 image 模式，因为需要配置 2 张图，更麻烦 */
-  iconType: 'uiLib' | 'unocss' | 'iconfont' | 'image'
   /**
    * icon 的路径
    * - uiLib: wot-design-uni 图标的 icon prop
@@ -30,8 +28,6 @@ export interface CustomTabBarItem {
   iconActive?: string
   /** badge 显示一个数字或 小红点 */
   badge?: CustomTabBarItemBadge
-  /** 是否是中间的鼓包tabbarItem */
-  isBulge?: boolean
   // roles 不写 → 所有用户都能看到；roles 写了 → 只有匹配角色可见
   roles?: UserRole[]
 }

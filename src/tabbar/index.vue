@@ -1,5 +1,4 @@
 <script setup lang="ts">
-// i-carbon-code
 import { tabbarList, tabbarStore } from './store'
 import TabbarItem from './TabbarItem.vue'
 
@@ -36,7 +35,6 @@ function handleClick(index: number) {
       <view
         class="tabbar-shadow relative flex flex-1 items-center justify-between rounded-full bg-white/70 px-2.5 py-1.5"
       >
-        <view id="activeCircle" class="active-circle jello-animation" :style="{ left: `${(46 + (tabbarStore.curIdx) * 103)}` + 'px' }" />
         <view
           v-for="(item, index) in tabbarList" :key="index"
           class="flex flex-1 flex-col items-center justify-center"
@@ -66,7 +64,7 @@ function handleClick(index: number) {
   bottom: 32px;
   left: 0;
   right: 0;
-  z-index: 1000;
+  // z-index: 1000;
   box-sizing: border-box;
 }
 
@@ -75,47 +73,5 @@ function handleClick(index: number) {
   box-shadow:
     0 8px 24px -6px rgba(0, 0, 0, 0.12),
     0 4px 8px -4px rgba(0, 0, 0, 0.08);
-}
-
-/* 选中项的背景圆 */
-.active-circle {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  position: absolute;
-  bottom: calc(50% - 15px);
-  transition: 0.4s ease-in-out;
-  @apply: bg-indigo-500/15;
-}
-
-.jello-animation {
-  /* 执行动画：动画名 时长 线性的 停留在最后一帧 */
-  animation: jello 0.8s linear forwards;
-}
-
-/* 定义动画 */
-/* 果冻Q弹效果 */
-@keyframes jello {
-  0% {
-    transform: scale(1, 1);
-  }
-  30% {
-    transform: scale(1.25, 0.75);
-  }
-  40% {
-    transform: scale(0.75, 1.25);
-  }
-  50% {
-    transform: scale(1.15, 0.85);
-  }
-  65% {
-    transform: scale(0.95, 1.05);
-  }
-  75% {
-    transform: scale(1.05, 0.95);
-  }
-  100% {
-    transform: scale(1, 1);
-  }
 }
 </style>

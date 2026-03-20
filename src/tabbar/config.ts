@@ -6,15 +6,13 @@ export const customTabbarList: CustomTabBarItem[] = [
   {
     text: '首页',
     pagePath: 'pages/index/index',
-    iconType: 'unocss',
-    icon: 'i-carbon-home',
+    icon: 'icon-home',
   },
   {
-    text: '我的',
-    pagePath: 'pages/me/me',
-    iconType: 'unocss',
-    icon: 'i-carbon-face-pending',
-  }, 
+    text: '统计',
+    pagePath: 'pages/statis/index',
+    icon: 'icon-statis',
+  },
 ]
 
 /**

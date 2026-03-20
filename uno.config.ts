@@ -74,12 +74,9 @@ export default defineConfig({
   ],
   // 动态图标需要在这里配置，或者写在vue页面中注释掉
   safelist: [
-    'i-carbon-code',
-    'i-carbon-home',
-    'i-carbon-face-pending',
+    'i-carbon-settings',
     'i-carbon-add',
-    'i-carbon-ibm-watson-language-translator',
-    'i-carbon-menu',
+    'i-carbon-account',
   ],
   rules: [
     [
