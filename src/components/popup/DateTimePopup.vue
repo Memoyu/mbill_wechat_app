@@ -57,9 +57,9 @@ function handleConfirmClick() {
 .datetime-picker-toolbar {
   position: relative;
   display: flex;
-  font-size: var(--wot-picker-toolbar-fs, var(--wot-fs-title, 16px));
-  height: var(--wot-picker-toolbar-height, 54px);
-  line-height: var(--wot-picker-action-height, 16px);
+  font-size: 16px;
+  height: 54px;
+  line-height: 16px;
   justify-content: space-between;
   align-items: center;
   box-sizing: border-box;
@@ -69,13 +69,13 @@ function handleConfirmClick() {
   display: block;
   border: none;
   outline: none;
-  font-size: var(--wot-picker-toolbar-fs, var(--wot-fs-title, 16px));
-  color: var(--wot-picker-toolbar-finish-color, var(--wot-color-theme, #4d80f0));
+  font-size: 16px;
+  color: #4d80f0;
   background: transparent;
   padding: 24px 15px 14px;
 }
 
 .datetime-picker-action-cancel {
-  color: var(--wot-picker-toolbar-cancel-color, #666666);
+  color: #666666;
 }
 </style>

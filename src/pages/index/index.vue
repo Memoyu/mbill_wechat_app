@@ -25,7 +25,8 @@ provide('lockScroll', {
 })
 
 const avatarUrl = 'https://wot-ui.cn/assets/panda.jpg'
-const ledgerName = ref('日常账本')
+const ledger = ref('2323234341')
+const ledgerName = ref('日常账本字符222222233333333')
 const isUserInfoShow = ref(false)
 const isLedgersShow = ref(false)
 const isSettingsShow = ref(false)
@@ -56,7 +57,6 @@ onLoad(() => {
 })
 
 onMounted(() => {
-  console.log('测试 uni API 自动引入: onMounted')
   nextTick(() => getSwiperItemHeight(0))
 })
 
@@ -74,14 +74,16 @@ function handleChangeSwiper(e) {
 }
 
 function getSwiperItemHeight(item) {
-  const instance = getCurrentInstance()
   const query = uni.createSelectorQuery()
-
   query.selectAll(`.calendar-content`).boundingClientRect((data: any[]) => {
     // console.log(data, 'boundingClientRect') // 输出元素位置信息
     const content = data[item]
     swiperHeight.value = content?.height ?? 290
   }).exec()
+}
+
+function handleChangeLedger(item) {
+  ledgerName.value = item.name
 }
 </script>
 
@@ -96,7 +98,7 @@ function getSwiperItemHeight(item) {
       paddingTop: `${Math.max(safeAreaInsets?.top, 28)}px`,
     }"
   >
-    <view class="flex items-center gap-3 px-3">
+    <view class="flex items-center gap-2 px-2">
       <!-- 用户信息按钮 -->
       <view
         class="sticky-item p-1"
@@ -108,20 +110,21 @@ function getSwiperItemHeight(item) {
         <wd-avatar :size="40" :src="avatarUrl" />
       </view>
 
-      <!-- 设置按钮 -->
-      <view
-        class="sticky-item p-2 px-3"
+      <!-- 账本按钮 -->
+      <!-- <view
+        class="sticky-item ledger-sticky-item p-2 px-3"
         hover-class="sticky-item-hover"
         :hover-start-time="0"
         :hover-stay-time="200"
         @tap="() => {
-          isSettingsShow = true;
+          isLedgersShow = true;
           console.log(dateValue);
         }"
       >
-        <text class="i-carbon-settings text-sm" />
-        <text class="whitespace-nowrap text-sm">设置</text>
-      </view>
+        <wd-icon class="flex-shrink-0 text-sm" name="arrow-down" />
+        <text class="truncate text-sm">{{ ledgerName }}</text>
+        <ledger-popup v-model="isLedgersShow" v-model:value="ledger" @change="handleChangeLedger" />
+      </view> -->
 
       <!-- 设置按钮 -->
       <view
@@ -137,36 +140,57 @@ function getSwiperItemHeight(item) {
     </view>
   </view>
 
+  <!-- 账本 -->
+  <view class="mx-3 mt3">
+    <ledger-list />
+  </view>
+
   <!-- 日历头部 -->
-  <view class="mx-5 flex items-center justify-between">
-    <view>
-      <view class="mb-2 font-bold" @click="() => isDateSelectShow = true">
-        {{ dateValueText }}
+  <view class="mt-3 w-screen">
+    <view class="mx-3 rounded-3xl bg-indigo-300/20 px-5 py-4">
+      <view class="mb-2 flex justify-between">
+        <view class="flex items-center">
+          <view class="mr-1 font-bold" @click="() => isDateSelectShow = true">
+            {{ dateValueText }}
+          </view>
+          <wd-icon size="16" name="arrow-down" />
+        </view>
+        <view class="iconfont icon-today text-lg" />
       </view>
-      <view class="flex space-x-5">
-        <view class="flex">
-          收<view class="ml-1 text-green">
-            1100
+      <view class="h-55x mt-3 flex justify-between">
+        <view class="flex flex-col items-center justify-between">
+          <view class="text-gray-500">
+            本月结余
+          </view>
+          <view class="ml-1 text-xl text-green font-bold">
+            10,000,000
           </view>
         </view>
-        <view class="flex">
-          支<view class="ml-1 text-red">
-            1000
+        <view class="flex flex-col justify-between">
+          <view class="flex">
+            <view class="text-gray-500">
+              本月收入
+            </view>
+            <view class="ml-1 text-red font-bold">
+              1100
+            </view>
           </view>
-        </view>
-        <view class="flex">
-          余<view class="ml-1">
-            100
+          <view class="flex">
+            <view class="text-gray-500">
+              本月支出
+            </view>
+            <view class="ml-1 text-green font-bold">
+              1000
+            </view>
           </view>
         </view>
       </view>
-      <date-time-popup v-model="isDateSelectShow" v-model:date="dateValue" type="year-month" />
     </view>
-    <view class="iconfont icon-today text-30px" />
+    <date-time-popup v-model="isDateSelectShow" v-model:date="dateValue" type="year-month" />
   </view>
 
   <!-- 日历组件 -->
-  <view class="mx-3 mt-3 rounded-3xl bg-indigo-500/15">
+  <view class="mx-3 mt-3 rounded-3xl bg-white/70 px-3">
     <view class="calendar-weeks">
       <view v-for="item in 7" :key="item" class="calendar-week">
         {{ weekLabel(item) }}
@@ -187,7 +211,12 @@ function getSwiperItemHeight(item) {
       </template>
     </wd-swiper>
   </view>
-  <view class="mt-5 h-20 bg-indigo-300" />
+  <view class="mt-3">
+    <!-- 近期收支汇总 -->
+    <view class="mx-3 rounded-3xl bg-white/70">
+      //
+    </view>
+  </view>
 </template>
 
 <style lang="scss" scoped>
@@ -197,6 +226,11 @@ function getSwiperItemHeight(item) {
 .sticky-item-hover {
   @apply: bg-gray-200/80 !scale-97 transform-origin-center;
 }
+
+.ledger-sticky-item {
+  width: calc(80% - 190px);
+}
+
 .calendar-weeks {
   display: flex;
   height: 36px;
