@@ -31,9 +31,9 @@ function handleClick(index: number) {
 
 <template>
   <view class="">
-    <view class="tabbar-box mx-auto w-90% flex dark:bg-[var(--wot-dark-background2)]" @touchmove.stop.prevent>
+    <view class="tabbar-box mx-auto w-90% flex" @touchmove.stop.prevent>
       <view
-        class="tabbar-shadow relative flex flex-1 items-center justify-between rounded-full bg-white/70 px-2.5 py-1.5"
+        class="tabbar-shadow relative flex flex-1 items-center justify-between rounded-full px-2.5 py-1.5"
       >
         <view
           v-for="(item, index) in tabbarList" :key="index"
@@ -53,13 +53,13 @@ function handleClick(index: number) {
         <text class="i-carbon-add text-20px text-indigo-500" />
         <text class="text-sm text-indigo-500 font-medium">添加</text>
       </view>
-      <view class="pb-safe" />
     </view>
   </view>
 </template>
 
 <style scoped lang="scss">
 .tabbar-box {
+  @apply: bg-white dark:bg-[var(--wot-dark-background2)];
   position: fixed;
   bottom: 32px;
   left: 0;

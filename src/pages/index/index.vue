@@ -213,10 +213,15 @@ function handleChangeLedger(item) {
   </view>
   <view class="mt-3">
     <!-- 近期收支汇总 -->
-    <view class="mx-3 rounded-3xl bg-white/70">
+    <!-- <view class="mx-3 rounded-3xl bg-white/70">
       //
-    </view>
+    </view> -->
+
+    <keyboard />
   </view>
+  <!-- 底部占位容器 -->
+  <!-- <view class="w-full" style="height: 100px" /> -->
+  <view class="pb-safe-tbar" />
 </template>
 
 <style lang="scss" scoped>

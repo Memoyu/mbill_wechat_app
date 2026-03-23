@@ -38,8 +38,7 @@ defineExpose({
 
     <wd-config-provider :theme="theme" :theme-vars="themeVars">
       <KuRootView />
+      <FgTabbar v-if="isCurrentPageTabbar" />
     </wd-config-provider>
-
-    <FgTabbar v-if="isCurrentPageTabbar" />
   </view>
 </template>

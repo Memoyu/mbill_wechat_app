@@ -88,6 +88,7 @@ export default defineConfig({
     ],
     ['pt-safe', { 'padding-top': 'env(safe-area-inset-top)' }],
     ['pb-safe', { 'padding-bottom': 'env(safe-area-inset-bottom)' }],
+    ['pb-safe-tbar', { 'padding-bottom': 'calc(45px + env(safe-area-inset-bottom))' }],
   ],
   theme: {
     colors: {
