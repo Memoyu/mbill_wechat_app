@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import dayjs from 'dayjs'
 import { getWeekLabel } from '@/utils/date'
-import { safeAreaInsets } from '@/utils/systemInfo'
 
 defineOptions({
   name: 'Home',
@@ -92,12 +91,7 @@ function handleChangeLedger(item) {
   <draw-background1 />
 
   <!-- 顶部操作 -->
-  <view
-    class="sticky left-0 top-0 z-5 w-screen bg-white/70 backdrop-blur-md"
-    :style="{
-      paddingTop: `${Math.max(safeAreaInsets?.top, 28)}px`,
-    }"
-  >
+  <view class="sticky left-0 top-0 z-5 w-screen bg-white/70 backdrop-blur-md">
     <view class="flex items-center gap-2 px-2">
       <!-- 用户信息按钮 -->
       <view
@@ -216,12 +210,7 @@ function handleChangeLedger(item) {
     <!-- <view class="mx-3 rounded-3xl bg-white/70">
       //
     </view> -->
-
-    <keyboard />
   </view>
-  <!-- 底部占位容器 -->
-  <!-- <view class="w-full" style="height: 100px" /> -->
-  <view class="pb-safe-tbar" />
 </template>
 
 <style lang="scss" scoped>

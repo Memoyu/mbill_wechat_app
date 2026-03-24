@@ -8,6 +8,13 @@ export interface Key {
   emphasize?: boolean
 }
 
+defineOptions({
+  options: {
+    addGlobalClass: true,
+    virtualHost: true,
+    styleIsolation: 'shared',
+  },
+})
 const props = defineProps<{
   small?: boolean
   value: Key
@@ -41,15 +48,6 @@ function onTouchEnd() {
 }
 </script>
 
-<script  lang="ts">
-export default {
-  options: {
-    // 将自定义节点设置成虚拟的，更加接近Vue组件的表现
-    virtualHost: true,
-  },
-}
-</script>
-
 <template>
   <view class="keyboard-key-box" :class="[small ? 'keyboard-key-box-small' : '']" @touchstart="onTouchStart" @touchmove="onTouchMove" @touchend="onTouchEnd">
     <view :class="keyClass">
@@ -77,6 +75,7 @@ export default {
 }
 
 .keyboard-key {
+  @apply: bg-white dark:bg-[var(--wot-dark-background3)]
   display: flex;
   align-items: center;
   justify-content: center;
@@ -84,17 +83,16 @@ export default {
   font-size: 17px;
   font-weight: bold;
   line-height: 1.5;
-  background: rgb(255, 255, 255);
   border-radius: 8px;
 
   &:active {
-    @apply: bg-indigo-300;
+    @apply: bg-indigo-400 dark:bg-indigo-600;
   }
 }
 
 .keyboard-key-emphasize {
+  @apply: bg-indigo-300 dark:bg-indigo-500;
   font-weight: 400;
-  @apply: bg-indigo-300/20;
 }
 
 .keyboard-key-icon {

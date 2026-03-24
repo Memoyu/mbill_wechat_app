@@ -88,7 +88,6 @@ export default defineConfig({
     ],
     ['pt-safe', { 'padding-top': 'env(safe-area-inset-top)' }],
     ['pb-safe', { 'padding-bottom': 'env(safe-area-inset-bottom)' }],
-    ['pb-safe-tbar', { 'padding-bottom': 'calc(45px + env(safe-area-inset-bottom))' }],
   ],
   theme: {
     colors: {
@@ -101,6 +100,7 @@ export default defineConfig({
       '3xs': ['18rpx', '26rpx'],
     },
   },
+  darkMode: 'class', // 基于CSS类名切换
   // windows 系统会报错：[plugin:unocss:transformers:pre] Cannot overwrite a zero-length range - use append Left or prependRight instead.
   // 去掉下面的就正常了
   // content: {

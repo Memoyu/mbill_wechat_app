@@ -36,8 +36,9 @@ defineExpose({
       {{ helloKuRoot }}，这里可以配置全局的东西
     </view>
 
-    <wd-config-provider :theme="theme" :theme-vars="themeVars">
+    <wd-config-provider :theme="theme" :theme-vars="themeVars" :custom-class="`page-wraper ${theme}`">
       <KuRootView />
+      <wd-toast />
       <FgTabbar v-if="isCurrentPageTabbar" />
     </wd-config-provider>
   </view>

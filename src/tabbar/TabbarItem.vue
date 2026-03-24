@@ -17,7 +17,8 @@ const isActive = computed(() => {
     <!-- <view class="tabbar-item-text text-sm">
       {{ item.text }}
     </view> -->
-    <view class="iconfont text-20px" :class="[item.icon, isActive ? 'shake-left-to-right' : '']" />
+
+    <view class="iconfont z-1 text-20px" :class="[item.icon, isActive ? 'shake-left-to-right' : '']" />
     <view v-if="isActive" class="iconfont icon-bg shake-right-to-left" :class="[`${item.icon}-filled`]" />
   </view>
 </template>
@@ -26,10 +27,9 @@ const isActive = computed(() => {
 .tabbar-item-text {
 }
 .icon-bg {
-  @apply: absolute text-17px text-indigo-500;
+  @apply: absolute text-17px text-indigo-500/60;
   bottom: 6px;
   right: 8px;
-  z-index: -1;
 }
 
 /* 定义抖动动画 */

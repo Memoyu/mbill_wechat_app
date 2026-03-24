@@ -1,8 +1,18 @@
 <script lang="ts" setup>
 import type { Key } from './keyItem.vue'
 
-const emit = defineEmits(['press'])
-
+defineOptions({
+  options: {
+    addGlobalClass: true,
+    virtualHost: true,
+    styleIsolation: 'shared',
+  },
+})
+const props = defineProps<{
+  cursor: number
+}>()
+const emit = defineEmits(['press', 'update:cursor'])
+const input = defineModel<string>()
 // 数字键
 const keys = computed(() => genBasicKeys())
 
@@ -28,20 +38,41 @@ const delKey: Key = {
 }
 // 完成/提交键
 const confirmKey: Key = {
-  key: '^',
+  key: 'confirm',
   text: '完成',
   emphasize: true,
 }
 
 function genBasicKeys(): Key[] {
   const keys: Key[] = Array.from({ length: 9 }, (_, i) => ({ key: i + 1 }))
-  // 0：零, .：小数点, ~：再记
-  keys.push({ key: 0 }, { key: '.' }, { key: '~', text: '再记', emphasize: true })
+  // 0：零, .：小数点, custom：再记
+  keys.push({ key: 0 }, { key: '.' }, { key: 'custom', text: '再记', emphasize: true })
   return keys
 }
 
-function handleKeyPress(value) {
-  console.log(value)
+function handleKeyPress(key) {
+  const value = input.value
+  console.log(props.cursor, 'cursor')
+
+  if (key === 'custom' || key === 'confirm') {
+    emit('press', key, value)
+    return
+  }
+
+  if (key === 'delete') {
+    // console.log(value)
+
+    const newValue = value.slice(0, props.cursor - 1) + value.slice(props.cursor)
+    emit('update:cursor', props.cursor - 1)
+    input.value = newValue
+  }
+  else {
+    const newValue = value.slice(0, props.cursor) + key + value.slice(props.cursor)
+    emit('update:cursor', props.cursor + 1)
+    input.value = newValue
+  }
+
+  emit('press', key, input.value)
 }
 </script>
 
@@ -64,8 +95,7 @@ function handleKeyPress(value) {
 
 <style lang="scss">
 .keyboard {
-  background: var(--wot-color-gray-2, #f2f3f5);
-  color: var(--wot-color-black, rgb(0, 0, 0));
+  @apply: bg-gray-100 dark:bg-[var(--wot-dark-background6)] text-black dark:text-white;
   -webkit-user-select: none;
   user-select: none;
 }
