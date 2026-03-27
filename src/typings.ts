@@ -1,8 +1,8 @@
 // 枚举定义
 
-export enum TestEnum {
-  A = '1',
-  B = '2',
+export enum BillTypeEnum {
+  Expend = 0,
+  Income = 1,
 }
 
 // uni.uploadFile文件上传参数

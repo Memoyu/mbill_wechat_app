@@ -1,3 +1,5 @@
+import dayjs from 'dayjs'
+
 const weeks = computed(() => {
   return [
     '日',
@@ -54,4 +56,35 @@ export function getWeekLabel(index: number) {
     index = index % 7
   }
   return weeks.value[index]
+}
+
+/**
+ * 格式化时间：当天返回“今天”，昨天返回“昨天”，其余返回“年-月-日”
+ * @param {string | number | Date} date - 输入的时间
+ * @returns {string} 格式化后的时间字符串
+ */
+export function getDateFormat(date: string | number | Date): string {
+  const inputDate = dayjs(date)
+  const today = dayjs().startOf('day')
+  const yesterday = dayjs().subtract(1, 'day').startOf('day')
+
+  if (inputDate.isSame(today, 'day')) {
+    return '今天'
+  }
+  else if (inputDate.isSame(yesterday, 'day')) {
+    return '昨天'
+  }
+  else {
+    return inputDate.format('YYYY-MM-DD')
+  }
+}
+
+/**
+ * 获取指定日期是周几（中文）
+ * @param {string | number | Date} date - 输入的日期
+ * @returns {string} 周几（如：日、一、二...）
+ */
+export function getWeekday(date: string | number | Date): string {
+  const dayIndex = dayjs(date).day() // 获取星期索引（0 表示周日）
+  return `周${weeks.value[dayIndex]}` // 复用已有的 weeks 数组
 }

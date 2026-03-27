@@ -281,3 +281,20 @@ export function objToStyle(styles: Record<string, any> | Record<string, any>[]):
   // 如果 styles 不是对象也不是数组，则直接返回
   return ''
 }
+
+/**
+ * 格式化金额，保留两位小数，并用逗号分隔千位
+ * @param {number | string} amount - 输入的金额
+ * @returns {string} 格式化后的金额字符串
+ */
+export function formatAmount(amount: number | string): string {
+  // 转换为数字类型，并保留两位小数
+const num = Number.parseFloat(amount.toString()).toFixed(2)
+
+  // 使用正则表达式添加千位分隔符
+  const parts = num.split('.')
+  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',') // 千位分隔符
+
+  // 返回格式化后的金额
+  return parts.join('.')
+}

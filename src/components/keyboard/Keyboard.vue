@@ -8,6 +8,7 @@ defineOptions({
     styleIsolation: 'shared',
   },
 })
+
 const props = defineProps<{
   cursor: number
 }>()
@@ -52,7 +53,7 @@ function genBasicKeys(): Key[] {
 
 function handleKeyPress(key) {
   const value = input.value
-  console.log(props.cursor, 'cursor')
+  // console.log(props.cursor, 'cursor')
 
   if (key === 'custom' || key === 'confirm') {
     emit('press', key, value)

@@ -25,5 +25,9 @@ export default defineUniPages({
     },
   },
   // tabbar 的配置统一在 “./src/tabbar/config.ts” 文件中
+  subPackages: [{
+    root: 'pages-demo',
+    pages: [],
+  }],
   tabBar: tabBar as any,
 })

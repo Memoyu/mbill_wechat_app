@@ -13,7 +13,10 @@
     "cliVersion": "4.0.15",
     "unibestVersion": "4.3.0",
     "unibestUpdateTime": "2026-01-10",
-    "createdAt": "2026-03-16 11:00:06"
+    "createdAt": "2026-03-16 11:00:06",
+    "charts": {
+      "ucharts": true
+    }
   },
   "packageManager": "pnpm@10.10.0",
   "description": "memo bill 个人记账项目",
@@ -118,6 +121,7 @@
     "@dcloudio/uni-mp-weixin": "3.0.0-4070620250821001",
     "@dcloudio/uni-mp-xhs": "3.0.0-4070620250821001",
     "@dcloudio/uni-quickapp-webview": "3.0.0-4070620250821001",
+    "@qiun/ucharts": "2.5.0-20230101",
     "abortcontroller-polyfill": "^1.7.8",
     "dayjs": "1.11.10",
     "pinia": "2.0.36",
