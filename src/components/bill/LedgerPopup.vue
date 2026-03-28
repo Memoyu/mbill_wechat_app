@@ -78,10 +78,10 @@ function handleManageClick() {
         <text class="text-base font-semibold">账本</text>
 
         <view class="flex items-center space-x-4">
-          <view class="title-icon-box flex px-3" @click="handleAllSelectClick">
-            <text v-if="isAllSelected" class="iconfont icon-close title-icon" />
+          <view class="title-icon-box flex px-4" @click="handleAllSelectClick">
+            <text v-if="isAllSelected" class="iconfont icon-close text-sm" />
             <text v-else class="iconfont icon-check title-icon" />
-            <text class="ml-2 text-sm">{{ isAllSelected ? '取消全选' : '全选' }}</text>
+            <text class="ml-2 text-xs">{{ isAllSelected ? '取消全选' : '全选' }}</text>
           </view>
 
           <view class="title-icon-box" @click="handleScanClick">
@@ -123,7 +123,7 @@ function handleManageClick() {
 
 <style lang="scss" scoped>
 .title-icon-box {
-  @apply:flex items-center justify-center rounded-full bg-gray-50 p-2;
+  @apply:flex items-center justify-center rounded-full bg-gray-50 p-1;
 }
 .title-icon {
   @apply: text-20px text-gray-700;

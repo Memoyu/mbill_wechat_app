@@ -74,9 +74,8 @@ function handleCalendarClick() {
         @tap="isLedgersShow = true"
       >
         <wd-icon class="flex-shrink-0 text-sm" name="arrow-down" />
-        <text class="truncate text-sm">{{ ledgerName }}</text>
+        <text class="line-clamp-1 text-xs">{{ ledgerName }}</text>
       </view>
-
       <!-- 设置按钮 -->
       <view
         class="sticky-item p-2 px-3"
@@ -86,7 +85,7 @@ function handleCalendarClick() {
         @tap="isSettingsShow = true"
       >
         <text class="i-carbon-settings text-sm" />
-        <text class="whitespace-nowrap text-sm">设置</text>
+        <text class="whitespace-nowrap text-xs">设置</text>
       </view>
     </view>
   </view>

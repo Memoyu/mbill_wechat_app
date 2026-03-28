@@ -55,8 +55,8 @@ function handleClickCustomBar() {
         :hover-stay-time="200"
         @click="handleClickCustomBar"
       >
-        <text class="i-carbon-add text-20px" />
-        <text class="text-sm font-medium">添加</text>
+        <text class="i-carbon-add text-xl" />
+        <text class="text-xs font-semibold">添加</text>
       </view>
     </view>
   </view>
