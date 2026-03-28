@@ -49,7 +49,7 @@ const data = {
 
 <template>
   <view>
-    <view class="flex items-center justify-between">
+    <view class="flex items-start justify-between">
       <view>
         <view class="font-bold">
           本周汇总

@@ -1,5 +1,45 @@
+<script lang="ts" setup>
+import { gradients } from '@/constants/gradients'
+
+const props = defineProps<{
+  data: any
+}>()
+defineEmits<{
+  (e: 'tap'): void
+}>()
+
+// 在 script setup 中添加
+const decorationCache = new Map()
+
+// 修改 getGradientById 函数
+function getGradientById(cardId: string) {
+  // 如果卡盒有指定颜色,则使用指定的颜色
+  if (props.data.color !== undefined) {
+    return gradients[props.data.color]
+  }
+
+  // 对于没有指定颜色的卡盒，使用随机但固定的颜色
+  const cacheKey = `gradient-${cardId}`
+  if (decorationCache.has(cacheKey)) {
+    return decorationCache.get(cacheKey)
+  }
+
+  const len = cardId.length
+  const seed
+    = cardId.charCodeAt(0) + cardId.charCodeAt(Math.floor(len / 2)) + cardId.charCodeAt(len - 1)
+
+  const gradient = gradients[seed % gradients.length]
+  decorationCache.set(cacheKey, gradient)
+  return gradient
+}
+
+function handleMoreBtnTap() {
+  console.log('更多')
+}
+</script>
+
 <template>
-  <view class="group relative transform-gpu animate-fade-in animate-duration-300 transition-all duration-300">
+  <view class="relative transform-gpu animate-fade-in animate-duration-300 transition-all duration-300" @tap.stop="$emit('tap')">
     <!-- 添加阴影容器 -->
     <view
       class="absolute inset-0 rounded-xl transition-all duration-200 -z-1"
@@ -14,7 +54,6 @@
       hover-class="scale-97 origin-center"
       :hover-start-time="0"
       :hover-stay-time="200"
-      @tap="onBoxClick"
     >
       <!-- 账簿封面 -->
       <view class="aspect-[5/4] bg-gradient-to-br" :style="{ background: getGradientById(data.ledgerId) }">
@@ -31,13 +70,13 @@
 
         <view class="absolute inset-0 flex flex-col p-3">
           <!-- 右上角操作按钮 -->
-          <view class="absolute right-3 top-3 z-10">
+          <view class="absolute right-3 top-3 z-100">
             <view
               class="h-6 w-6 flex items-center justify-center rounded-full bg-white/90 shadow-[0_4px_8px_rgba(0,0,0,0.04)]"
               hover-class="bg-gray-50"
               :hover-start-time="0"
               :hover-stay-time="200"
-              @tap.stop="onMoreBtnTap"
+              @tap.stop="handleMoreBtnTap"
             >
               <wd-icon name="ellipsis" />
             </view>
@@ -84,49 +123,11 @@
         </view>
       </view>
     </view>
+
+    <!-- 添加插槽 -->
+    <slot name="action" />
   </view>
 </template>
-
-<script lang="ts" setup>
-import { gradients } from '@/constants/gradients'
-
-const props = defineProps<{
-  data: any
-}>()
-
-function onBoxClick() {
-
-}
-
-// 在 script setup 中添加
-const decorationCache = new Map()
-
-// 修改 getGradientById 函数
-function getGradientById(cardId: string) {
-  // 如果卡盒有指定颜色,则使用指定的颜色
-  if (props.data.color !== undefined) {
-    return gradients[props.data.color]
-  }
-
-  // 对于没有指定颜色的卡盒，使用随机但固定的颜色
-  const cacheKey = `gradient-${cardId}`
-  if (decorationCache.has(cacheKey)) {
-    return decorationCache.get(cacheKey)
-  }
-
-  const len = cardId.length
-  const seed
-    = cardId.charCodeAt(0) + cardId.charCodeAt(Math.floor(len / 2)) + cardId.charCodeAt(len - 1)
-
-  const gradient = gradients[seed % gradients.length]
-  decorationCache.set(cacheKey, gradient)
-  return gradient
-}
-
-function onMoreBtnTap(e: any) {
-
-}
-</script>
 
 <style scoped>
 .text-2xs {

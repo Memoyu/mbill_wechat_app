@@ -283,13 +283,14 @@ export function objToStyle(styles: Record<string, any> | Record<string, any>[]):
 }
 
 /**
- * 格式化金额，保留两位小数，并用逗号分隔千位
+ * 格式化Float，保留两位小数，并用逗号分隔千位
  * @param {number | string} amount - 输入的金额
+ * @param {number} [digit] - 保留的小数位数
  * @returns {string} 格式化后的金额字符串
  */
-export function formatAmount(amount: number | string): string {
+export function formatFloat(amount: number | string, digit: number = 2): string {
   // 转换为数字类型，并保留两位小数
-const num = Number.parseFloat(amount.toString()).toFixed(2)
+const num = Number.parseFloat(amount.toString()).toFixed(digit)
 
   // 使用正则表达式添加千位分隔符
   const parts = num.split('.')

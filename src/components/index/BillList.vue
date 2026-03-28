@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { BillGroupRes } from '@/api/types/bill'
-import { formatAmount } from '@/utils'
+import { formatFloat } from '@/utils'
 import { getDateFormat, getWeekday } from '@/utils/date'
 
 const billGroups = ref<BillGroupRes[]>([{
@@ -24,7 +24,7 @@ const billGroups = ref<BillGroupRes[]>([{
       amount: 100.78,
       date: new Date('2026-03-01 23:13:05'),
       remark: '购物--dwawdawdawdajfkafjke交罚款我房间啊集副卡杰尔夫卡巨额罚款讲课费金卡',
-      tags: ['标签1', '标签2', '标签3', '标签4'],
+      tags: ['标签1', '标签2', '标签3', '标签4', '标签31', '标签42', '标签33', '标签44', '标签35', '标签46'],
       address: '广州白云',
     },
   ],
@@ -156,7 +156,7 @@ const billGroups = ref<BillGroupRes[]>([{
               收入
             </text>
             <text class="ml-1 text-emerald">
-              {{ formatAmount(g.income) }}
+              {{ formatFloat(g.income) }}
             </text>
           </view>
 
@@ -165,7 +165,7 @@ const billGroups = ref<BillGroupRes[]>([{
               支出
             </text>
             <text class="ml-1 text-rose">
-              {{ formatAmount(g.expend) }}
+              {{ formatFloat(g.expend) }}
             </text>
           </view>
         </view>

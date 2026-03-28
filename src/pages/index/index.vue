@@ -16,19 +16,11 @@ definePage({
   layout: false, // 当前页面不适用layout
 })
 
-const lockScroll = ref(false)
-provide('lockScroll', {
-  lockScroll,
-  updateLockScroll: (newValue) => {
-    lockScroll.value = newValue
-  },
-})
-
 const date = ref(Date.now())
 const avatarUrl = 'https://wot-ui.cn/assets/panda.jpg'
 const ledger = ref('2323234341')
 const ledgerName = ref('日常账本字符222222233333333')
-const isUserInfoShow = ref(false)
+const isUserShow = ref(false)
 const isLedgersShow = ref(false)
 const isSettingsShow = ref(false)
 const isDateSelectShow = ref(false)
@@ -40,12 +32,6 @@ const dateText = computed(() => {
 onLoad(() => {
 })
 
-function handleUserClick() {
-  uni.navigateTo({
-    url: '/pages/me/index',
-  })
-}
-
 function handleLedgerChange(item) {
   ledgerName.value = item.name
 }
@@ -55,16 +41,11 @@ function handleCalendarClick() {
     url: '/pages/calendar/index',
   })
 }
-
-function handleSettingsClick() {
-  uni.navigateTo({
-    url: '/pages-demo/ucharts/index',
-  })
-}
 </script>
 
 <template>
-  <page-meta :page-style="lockScroll ? 'overflow:hidden' : ''" />
+  <!-- 处理滚动穿透 -->
+  <page-meta :page-style="`overflow:${isLedgersShow || isDateSelectShow || isUserShow || isSettingsShow ? 'hidden' : 'visible'};`" />
   <draw-background1 />
 
   <!-- 顶部操作 -->
@@ -79,7 +60,7 @@ function handleSettingsClick() {
         hover-class="sticky-item-hover"
         :hover-start-time="0"
         :hover-stay-time="200"
-        @tap="handleUserClick"
+        @tap="isUserShow = true"
       >
         <wd-avatar :size="40" :src="avatarUrl" />
       </view>
@@ -90,7 +71,7 @@ function handleSettingsClick() {
         hover-class="sticky-item-hover"
         :hover-start-time="0"
         :hover-stay-time="200"
-        @tap="() => { isLedgersShow = !isLedgersShow }"
+        @tap="isLedgersShow = true"
       >
         <wd-icon class="flex-shrink-0 text-sm" name="arrow-down" />
         <text class="truncate text-sm">{{ ledgerName }}</text>
@@ -102,7 +83,7 @@ function handleSettingsClick() {
         hover-class="bg-gray-200/80 !scale-97 transform-origin-center"
         :hover-start-time="0"
         :hover-stay-time="200"
-        @tap="handleSettingsClick"
+        @tap="isSettingsShow = true"
       >
         <text class="i-carbon-settings text-sm" />
         <text class="whitespace-nowrap text-sm">设置</text>
@@ -172,6 +153,10 @@ function handleSettingsClick() {
   <date-time-popup v-model="isDateSelectShow" v-model:date="date" type="year-month" />
   <!-- 账本弹窗 -->
   <ledger-popup v-model="isLedgersShow" v-model:value="ledger" @change="handleLedgerChange" />
+  <!-- 用户弹窗 -->
+  <user-popup v-model="isUserShow" />
+  <!-- 设置弹窗 -->
+  <setting-popup v-model="isSettingsShow" />
 </template>
 
 <style lang="scss" scoped>
