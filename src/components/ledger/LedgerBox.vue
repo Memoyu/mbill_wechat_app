@@ -7,6 +7,8 @@ const props = defineProps<{
 defineEmits<{
   (e: 'tap'): void
 }>()
+const actionShow = ref(false)
+const actionTitle = ref('')
 
 // 在 script setup 中添加
 const decorationCache = new Map()
@@ -33,8 +35,14 @@ function getGradientById(cardId: string) {
   return gradient
 }
 
-function handleMoreBtnTap() {
-  console.log('更多')
+function handleActionClick() {
+  actionTitle.value = props.data.name
+  actionShow.value = true
+}
+
+function handleActionSelect(panel) {
+  console.log('选择了操作:', panel)
+  actionShow.value = false
 }
 </script>
 
@@ -51,9 +59,6 @@ function handleMoreBtnTap() {
 
     <view
       class="relative overflow-hidden rounded-xl bg-white transition-all duration-200"
-      hover-class="scale-97 origin-center"
-      :hover-start-time="0"
-      :hover-stay-time="200"
     >
       <!-- 账簿封面 -->
       <view class="aspect-[5/4] bg-gradient-to-br" :style="{ background: getGradientById(data.ledgerId) }">
@@ -72,11 +77,8 @@ function handleMoreBtnTap() {
           <!-- 右上角操作按钮 -->
           <view class="absolute right-3 top-3 z-100">
             <view
-              class="h-6 w-6 flex items-center justify-center rounded-full bg-white/90 shadow-[0_4px_8px_rgba(0,0,0,0.04)]"
-              hover-class="bg-gray-50"
-              :hover-start-time="0"
-              :hover-stay-time="200"
-              @tap.stop="handleMoreBtnTap"
+              class="h-6 w-6 flex items-center justify-center rounded-full bg-white/40 shadow-[0_4px_8px_rgba(0,0,0,0.04)]"
+              @tap.stop="handleActionClick"
             >
               <wd-icon name="ellipsis" />
             </view>
@@ -126,6 +128,12 @@ function handleMoreBtnTap() {
 
     <!-- 添加插槽 -->
     <slot name="action" />
+    <!-- 更多操作 -->
+    <ledger-action-popup
+      v-model="actionShow"
+      :ledger="data"
+      @select="handleActionSelect"
+    />
   </view>
 </template>
 

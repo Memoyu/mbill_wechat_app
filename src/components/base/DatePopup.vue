@@ -36,16 +36,17 @@ function handleConfirmClick() {
     :close-on-click-modal="true"
     :safe-area-inset-bottom="true"
     root-portal
+    lazy-render
     custom-style="border-radius: 16px 16px 0 0;"
     @close="() => show = false"
   >
     <view class="datetime-picker-toolbar">
       <!-- 取消按钮 -->
-      <view class="datetime-picker-action datetime-picker-action-cancel" @click="() => show = false">
+      <view class="datetime-picker-action datetime-picker-action-cancel" @tap="() => show = false">
         取消
       </view>
       <!-- 确定按钮 -->
-      <view class="datetime-picker-action" @click="handleConfirmClick">
+      <view class="datetime-picker-action" @tap="handleConfirmClick">
         完成
       </view>
     </view>

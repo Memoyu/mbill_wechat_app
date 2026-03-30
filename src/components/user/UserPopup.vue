@@ -2,7 +2,23 @@
 import { formatFloat } from '@/utils'
 
 const show = defineModel<boolean>()
-
+const actions = [{
+  title: '账本管理',
+  icon: 'i-my-icons-ledger-manage',
+  action: () => { uni.navigateTo({ url: '/pages/ledger/index' }) },
+}, {
+  title: '分类管理',
+  icon: 'i-my-icons-category-manage',
+  action: () => { uni.navigateTo({ url: '/pages/ledger/index' }) },
+}, {
+  title: '账户管理',
+  icon: 'i-my-icons-account-manage',
+  action: () => { uni.navigateTo({ url: '/pages/ledger/index' }) },
+}, {
+  title: '标签管理',
+  icon: 'i-my-icons-tag-manage',
+  action: () => { uni.navigateTo({ url: '/pages/ledger/index' }) },
+}]
 const days = ref(29200)
 const bills = ref(34445223)
 const user = ref({
@@ -56,14 +72,12 @@ function handleCancelClick() {
 
         <view class="user-block">
           <wd-grid :column="4">
-            <wd-grid-item icon="picture" text="账本管理" />
-            <wd-grid-item icon="picture" text="标签管理" />
-            <wd-grid-item icon="picture" text="分类管理" />
-            <wd-grid-item icon="picture" text="账户管理" />
-            <wd-grid-item icon="picture" text="文字" />
-            <wd-grid-item icon="picture" text="文字" />
-            <wd-grid-item icon="picture" text="文字" />
-            <wd-grid-item icon="picture" text="文字" />
+            <wd-grid-item v-for="item in actions" :key="item.title" @tap="item.action">
+              <view class="flex flex-col items-center">
+                <text class="my-icons text-3xl" :class="[item.icon]" />
+                <text>{{ item.title }}</text>
+              </view>
+            </wd-grid-item>
           </wd-grid>
         </view>
 

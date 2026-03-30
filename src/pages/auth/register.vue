@@ -23,7 +23,7 @@ function doRegister() {
     <view class="text-center">
       注册页
     </view>
-    <button class="mt-4 w-40 text-center" @click="doRegister">
+    <button class="mt-4 w-40 text-center" @tap="doRegister">
       点击模拟注册
     </button>
   </view>

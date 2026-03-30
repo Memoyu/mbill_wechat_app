@@ -42,7 +42,7 @@ function handleClickCustomBar() {
         <view
           v-for="(item, index) in tabbarList" :key="index"
           class="flex flex-1 flex-col items-center justify-center"
-          @click="handleClickItemBar(index)"
+          @tap="handleClickItemBar(index)"
         >
           <TabbarItem :item="item" :index="index" class="relative text-center" />
         </view>
@@ -53,7 +53,7 @@ function handleClickCustomBar() {
         hover-class="bg-indigo-500/15 scale-95"
         :hover-start-time="0"
         :hover-stay-time="200"
-        @click="handleClickCustomBar"
+        @tap="handleClickCustomBar"
       >
         <text class="i-carbon-add text-xl" />
         <text class="text-xs font-semibold">添加</text>

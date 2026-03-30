@@ -67,10 +67,10 @@ function handleLogout() {
 
     <view class="mt-[60vh] px-3">
       <view class="m-auto w-160px text-center">
-        <button v-if="tokenStore.hasLogin" type="warn" class="w-full" @click="handleLogout">
+        <button v-if="tokenStore.hasLogin" type="warn" class="w-full" @tap="handleLogout">
           退出登录
         </button>
-        <button v-else type="primary" class="w-full" @click="handleLogin">
+        <button v-else type="primary" class="w-full" @tap="handleLogin">
           登录
         </button>
       </view>

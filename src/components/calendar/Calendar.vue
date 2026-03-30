@@ -65,7 +65,7 @@ function getSwiperItemHeight(item) {
     :autoplay="false"
     :indicator="false"
     :list="swiperList"
-    @click="handleSwiperClick"
+    @tap="handleSwiperClick"
     @change="handleSwiperChange"
   >
     <template #default="{ item }">

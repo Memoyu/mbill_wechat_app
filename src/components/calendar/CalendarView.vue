@@ -110,7 +110,7 @@ function handleDateClick(index: number) {
           item.type ? dayTypeClass(item.type) : ''
         }`"
         :style="index === 0 ? firstDayStyle : ''"
-        @click="handleDateClick(index)"
+        @tap="handleDateClick(index)"
       >
         <view class="calendar-day-box">
           <view class="calendar-day-text">

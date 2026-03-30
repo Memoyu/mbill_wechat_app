@@ -58,7 +58,7 @@ const data = {
           收入：2333.00，支出：344.66
         </view>
       </view>
-      <view class="mr-2 flex items-center justify-center rounded-full bg-white/70 p-1">
+      <view class="flex items-center justify-center rounded-full bg-white/70 p-1">
         <wd-icon name="ellipsis" size="18" />
       </view>
     </view>

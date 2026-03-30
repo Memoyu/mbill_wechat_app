@@ -170,8 +170,10 @@ const billGroups = ref<BillGroupRes[]>([{
           </view>
         </view>
       </view>
-      <view v-for="b in g.bills" :key="b.billId" class="mt-2 rounded-lg bg-gray-100/60 p-3">
-        <bill-item :bill="b" />
+      <view class="mt-2 rounded-lg bg-gray-100/60 px-3">
+        <view v-for="b in g.bills" :key="b.billId" class="py-3">
+          <bill-item :bill="b" />
+        </view>
       </view>
     </view>
   </view>

@@ -7,7 +7,6 @@ const props = defineProps<{
 }>()
 const emit = defineEmits(['change', 'update:value'])
 const show = defineModel<boolean>()
-const innerValue = ref()
 
 const toast = useToast()
 const ledgerStore = useLedgerStore()
@@ -21,12 +20,6 @@ const isAllSelected = computed(() => {
   return ledgerPickerStore.isAllSelected
 })
 
-watch(() => props.value, (val) => {
-  if (val) {
-    innerValue.value = val
-  }
-})
-
 function handleLedgerItemClick(item) {
   console.log('点击')
   ledgerPickerStore.toggleLedgerSelection(item.ledgerId)
@@ -34,8 +27,6 @@ function handleLedgerItemClick(item) {
 
 function handleCancelClick() {
   show.value = false
-  // 恢复初始值
-  innerValue.value = props.value
 }
 
 function handleAllSelectClick() {
@@ -57,6 +48,9 @@ function handleScanClick() {
 
 function handleManageClick() {
   // 账本管理页
+  uni.navigateTo({
+    url: '/pages/ledger/index',
+  })
 }
 </script>
 
@@ -68,6 +62,7 @@ function handleManageClick() {
     :safe-area-inset-bottom="true"
     custom-class="rounded-t-3xl relative h-60vh"
     lock-scroll
+    lazy-render
     @close="handleCancelClick"
   >
     <view class="h-full overflow-auto">
@@ -78,16 +73,16 @@ function handleManageClick() {
         <text class="text-base font-semibold">账本</text>
 
         <view class="flex items-center space-x-4">
-          <view class="title-icon-box flex px-4" @click="handleAllSelectClick">
+          <view class="title-icon-box px-4" @tap="handleAllSelectClick">
             <text v-if="isAllSelected" class="iconfont icon-close text-sm" />
             <text v-else class="iconfont icon-check title-icon" />
             <text class="ml-2 text-xs">{{ isAllSelected ? '取消全选' : '全选' }}</text>
           </view>
 
-          <view class="title-icon-box" @click="handleScanClick">
+          <view class="title-icon-box" @tap="handleScanClick">
             <view class="iconfont icon-scan title-icon" />
           </view>
-          <view class="title-icon-box" @click="handleManageClick">
+          <view class="title-icon-box" @tap="handleManageClick">
             <view class="iconfont icon-manage title-icon" />
           </view>
         </view>
@@ -123,7 +118,7 @@ function handleManageClick() {
 
 <style lang="scss" scoped>
 .title-icon-box {
-  @apply:flex items-center justify-center rounded-full bg-gray-50 p-1;
+  @apply: flex items-center justify-center rounded-full bg-gray-50 p-1;
 }
 .title-icon {
   @apply: text-20px text-gray-700;

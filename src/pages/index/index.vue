@@ -13,7 +13,6 @@ definePage({
     navigationStyle: 'custom',
     navigationBarTitleText: '首页',
   },
-  layout: false, // 当前页面不适用layout
 })
 
 const date = ref(Date.now())
@@ -32,20 +31,20 @@ const dateText = computed(() => {
 onLoad(() => {
 })
 
-function handleLedgerChange(item) {
-  ledgerName.value = item.name
-}
-
 function handleCalendarClick() {
   uni.navigateTo({
     url: '/pages/calendar/index',
   })
 }
+
+function handleLedgerChange(item) {
+  ledgerName.value = item.name
+}
 </script>
 
 <template>
   <!-- 处理滚动穿透 -->
-  <page-meta :page-style="`overflow:${isLedgersShow || isDateSelectShow || isUserShow || isSettingsShow ? 'hidden' : 'visible'};`" />
+  <page-meta :page-style="`overflow:${isLedgersShow || isUserShow || isSettingsShow || isDateSelectShow ? 'hidden' : 'visible'};`" />
   <draw-background1 />
 
   <!-- 顶部操作 -->
@@ -90,46 +89,23 @@ function handleCalendarClick() {
     </view>
   </view>
 
+  <!-- 日期栏 -->
+  <view class="w-screen">
+    <view class="flex justify-between px-5">
+      <view class="flex items-center" @tap="() => isDateSelectShow = true">
+        <view class="mr-1 font-bold">
+          {{ dateText }}
+        </view>
+        <wd-icon size="16" name="arrow-down" />
+      </view>
+      <view class="iconfont icon-calendar text-2xl" @tap="handleCalendarClick" />
+    </view>
+  </view>
+
   <!-- 账单月汇总 -->
   <view class="mt-3 w-screen">
     <view class="mx-3 rounded-xl bg-indigo-300/20 px-2 py-3">
-      <view class="mb-2 flex justify-between">
-        <view class="flex items-center">
-          <view class="mr-1 font-bold" @click="() => isDateSelectShow = true">
-            {{ dateText }}
-          </view>
-          <wd-icon size="16" name="arrow-down" />
-        </view>
-        <view class="iconfont icon-calendar text-2xl" @click="handleCalendarClick" />
-      </view>
-      <view class="h-55x mt-3 flex justify-between">
-        <view class="flex flex-col items-center justify-between">
-          <view class="text-gray-500">
-            本月结余
-          </view>
-          <view class="ml-1 text-xl text-green font-bold">
-            10,000,000
-          </view>
-        </view>
-        <view class="flex flex-col justify-between">
-          <view class="flex">
-            <view class="text-gray-500">
-              本月收入
-            </view>
-            <view class="ml-1 text-red font-bold">
-              1100
-            </view>
-          </view>
-          <view class="flex">
-            <view class="text-gray-500">
-              本月支出
-            </view>
-            <view class="ml-1 text-green font-bold">
-              1000
-            </view>
-          </view>
-        </view>
-      </view>
+      <month-summary />
     </view>
   </view>
 
@@ -149,7 +125,7 @@ function handleCalendarClick() {
   <wd-gap height="calc(32px + var(--wot-tabbar-height, 50px))" />
 
   <!-- 日期选择弹窗 -->
-  <date-time-popup v-model="isDateSelectShow" v-model:date="date" type="year-month" />
+  <date-popup v-model="isDateSelectShow" v-model:date="date" type="year-month" />
   <!-- 账本弹窗 -->
   <ledger-popup v-model="isLedgersShow" v-model:value="ledger" @change="handleLedgerChange" />
   <!-- 用户弹窗 -->
