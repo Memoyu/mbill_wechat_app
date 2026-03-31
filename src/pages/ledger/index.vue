@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import lodash from 'lodash'
 import { useLedgerStore } from '@/store'
+import { systemInfo } from '@/utils/systemInfo'
 
 definePage({
   style: {
@@ -17,9 +18,11 @@ const scrollTop = ref(0)
 const targetIndex = ref(-1)
 const currentIndex = ref(-1)
 const oldIndex = ref(-1)
-const maxItems = 13
+const activeIndex = ref(-1)
+const maxItems = 7
+const scrollHeight = ref(300)
 
-const itemHeight = computed(() => 85)
+const itemHeight = computed(() => 100)
 
 function initPosition(arr: any[]) {
   return arr.map((item, index) => {
@@ -34,29 +37,24 @@ function initPosition(arr: any[]) {
 onMounted(() => {
   scrollTop.value = 0
   ledgerWithPos.value = lodash.cloneDeep(initPosition(ledgerStore.ledgers))
+  nextTick(() => {
+    uni.createSelectorQuery().select('#LEDGER_NAVBAR').boundingClientRect((data: UniApp.NodeInfo) => {
+      // console.log(data)
+      scrollHeight.value = systemInfo.windowHeight - (data.height + 16) // 16为外层view的padding
+    }).exec()
+  })
 })
-
-function scrollList() {
-  const middleIndex = (maxItems - 1) / 2
-  if (targetIndex.value > middleIndex) {
-    scrollTop.value = (targetIndex.value - middleIndex) * itemHeight.value
-  }
-  else {
-    scrollTop.value = 0.1
-    nextTick(() => {
-      scrollTop.value = 0
-    })
-  }
-}
 
 function handleScanClick() {
 
 }
 
 function handleDragStart(index) {
+  // console.log(index)
   currentIndex.value = index
   oldIndex.value = index
   sorting.value = true
+  activeIndex.value = index
 }
 
 function handleDragEnd() {
@@ -65,21 +63,22 @@ function handleDragEnd() {
   sorting.value = false
   ledgerWithPos.value[oldIndex.value].y = targetIndex.value * itemHeight.value
   ledgerWithPos.value = initPosition(ledgerWithPos.value.sort((item1, item2) => item1.y - item2.y))
+  activeIndex.value = -1
   oldIndex.value = -1
   currentIndex.value = -1
   targetIndex.value = -1
 }
 
 function handleSortChange(e: any) {
+  // console.log(e)
   if (e.detail.source !== 'touch' || !sorting.value) {
     return
   }
 
-  // console.log(e.detail)
   const { y } = e.detail
   const currentY = Math.floor((y + itemHeight.value / 2) / itemHeight.value)
   targetIndex.value = Math.min(currentY, ledgerWithPos.value.length - 1)
-
+  // console.log(targetIndex.value, currentIndex.value)
   if (targetIndex.value !== currentIndex.value && targetIndex.value >= 0) {
     const newList = lodash.cloneDeep(ledgerWithPos.value)
     const elementToMove = newList.splice(oldIndex.value, 1)[0]
@@ -102,12 +101,26 @@ function handleSortChange(e: any) {
     })
   }
 }
+
+function scrollList() {
+  const middleIndex = (maxItems - 1) / 2
+  if (targetIndex.value > middleIndex) {
+    scrollTop.value = (targetIndex.value - middleIndex) * itemHeight.value
+  }
+  else {
+    scrollTop.value = 0.1
+    nextTick(() => {
+      scrollTop.value = 0
+    })
+  }
+  // console.log(scrollTop.value, 'scrollTop')
+}
 </script>
 
 <template>
   <page-meta :page-style="`overflow:${show ? 'hidden' : 'visible'};`" />
   <draw-background2 />
-  <nav-bar>
+  <nav-bar id="LEDGER_NAVBAR">
     <template #title>
       <text> 账本管理 </text>
     </template>
@@ -129,10 +142,11 @@ function handleSortChange(e: any) {
     <view class="p-2">
       <scroll-view
         scroll-y
-        class="relative flex-1"
+        class="relative"
         :scroll-top="scrollTop"
         scroll-with-animation
         :enhanced="true"
+        :style="{ height: `${scrollHeight}px` }"
       >
         <movable-area
           class="ledger-movable-area"
@@ -142,7 +156,7 @@ function handleSortChange(e: any) {
         >
           <movable-view
             v-for="(item, index) in ledgerWithPos"
-            :key="item.ledgerId"
+            :key="`${item.ledgerId}-${index}`"
             class="ledger-movable-item"
             :style="{
               height: `${itemHeight}px`,
@@ -155,15 +169,7 @@ function handleSortChange(e: any) {
             :disabled="!sorting"
             @change="handleSortChange"
           >
-            <view class="ledger-item-box bg-gray-200" :class="{ 'ledger-item-box--active': oldIndex === index }" :style="{ height: `${itemHeight - 6}px` }">
-              <view
-                class="ledger-drag-handle"
-                @touchend="handleDragEnd"
-                @touchstart="handleDragStart(index)"
-              >
-                <text class="i-carbon-draggable" />
-              </view>
-
+            <view :key="item.ledgerId" class="ledger-item-box bg-gray-200" :class="{ 'ledger-item-box--active': activeIndex === index }" :style="{ height: `${itemHeight - 10}px` }">
               <view class="ledger-content">
                 <text class="line-clamp-1 font-semibold">{{ item.name }}</text>
                 <view class="mt-2 flex items-center text-xs">
@@ -184,6 +190,14 @@ function handleSortChange(e: any) {
                   <text>共{{ item.count }}条账单</text>
                   <text>创建于{{ item.createTime }}</text>
                 </view>
+              </view>
+
+              <view
+                class="ledger-drag-handle"
+                @touchstart="handleDragStart(index)"
+                @touchend="handleDragEnd"
+              >
+                <text class="i-carbon-draggable" />
               </view>
             </view>
           </movable-view>
@@ -210,10 +224,6 @@ function handleSortChange(e: any) {
   transition: background-color 0.2s;
 }
 
-.ledger-item-box--active {
-  background-color: white;
-}
-
 .ledger-item-box {
   border-radius: 19px;
   box-sizing: border-box;
@@ -221,8 +231,13 @@ function handleSortChange(e: any) {
   align-items: center;
   width: 100%;
   padding: 0.5rem 0;
-  margin: 0.5rem 0;
+  margin: 0.9rem 0;
   // border-bottom: 1px solid #f0f0f0;
+}
+
+.ledger-item-box--active {
+  @apply: bg-indigo-400 dark:bg-indigo-600;
+  margin: 0;
 }
 
 .ledger-drag-handle {
@@ -230,12 +245,13 @@ function handleSortChange(e: any) {
   flex-shrink: 0;
   align-items: center;
   justify-content: center;
-  margin-right: 0.5rem;
   font-size: 1.25rem;
   color: #999;
+  padding-right: 0.9rem;
 }
 
 .ledger-content {
+  margin-left: 0.9rem;
   flex: 1;
   width: calc(100% - 48px);
   display: flex;

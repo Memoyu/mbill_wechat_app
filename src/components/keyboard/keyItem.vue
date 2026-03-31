@@ -28,19 +28,19 @@ const keyClass = computed(() => {
   return `keyboard-key ${props.value.emphasize ? 'keyboard-key-emphasize' : ''}`
 })
 
-function onTouchStart(event: TouchEvent) {
+function handleTouchStart(event: TouchEvent) {
   touch.touchStart(event)
   active.value = true
 }
 
-function onTouchMove(event: TouchEvent) {
+function handleTouchMove(event: TouchEvent) {
   touch.touchMove(event)
   if (touch.direction.value) {
     active.value = false
   }
 }
 
-function onTouchEnd() {
+function handleTouchEnd() {
   if (active.value) {
     active.value = false
     emit('press', props.value.key)
@@ -49,7 +49,7 @@ function onTouchEnd() {
 </script>
 
 <template>
-  <view class="keyboard-key-box" :class="[small ? 'keyboard-key-box-small' : '']" @touchstart="onTouchStart" @touchmove="onTouchMove" @touchend="onTouchEnd">
+  <view class="keyboard-key-box" :class="[small ? 'keyboard-key-box-small' : '']" @touchstart="handleTouchStart" @touchmove="handleTouchMove" @touchend="handleTouchEnd">
     <view :class="keyClass">
       <template v-if="value.key === 'delete'">
         <wd-icon custom-class="keyboard-key-icon" name="keyboard-delete" size="22px" />

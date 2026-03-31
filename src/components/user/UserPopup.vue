@@ -9,15 +9,15 @@ const actions = [{
 }, {
   title: '分类管理',
   icon: 'i-my-icons-category-manage',
-  action: () => { uni.navigateTo({ url: '/pages/ledger/index' }) },
+  action: () => { uni.navigateTo({ url: '/pages/category/index' }) },
 }, {
   title: '账户管理',
   icon: 'i-my-icons-account-manage',
-  action: () => { uni.navigateTo({ url: '/pages/ledger/index' }) },
+  action: () => { uni.navigateTo({ url: '/pages/account/index' }) },
 }, {
   title: '标签管理',
   icon: 'i-my-icons-tag-manage',
-  action: () => { uni.navigateTo({ url: '/pages/ledger/index' }) },
+  action: () => { uni.navigateTo({ url: '/pages/tag/index' }) },
 }]
 const days = ref(29200)
 const bills = ref(34445223)
