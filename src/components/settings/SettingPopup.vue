@@ -1,8 +1,13 @@
 <script setup lang="ts">
+import { useSettingsStore } from '@/store'
+
 const show = defineModel<boolean>()
 
-const version = ref('1.2.4.5')
+const settingsStore = useSettingsStore()
+
+const version = ref(settingsStore.version)
 const dark = ref(false)
+
 function handleCancelClick() {
   show.value = false
 }

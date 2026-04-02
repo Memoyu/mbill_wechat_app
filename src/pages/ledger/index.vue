@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import lodash from 'lodash'
 import { useLedgerStore } from '@/store'
 import { systemInfo } from '@/utils/systemInfo'
 
@@ -10,33 +9,12 @@ definePage({
   },
 })
 const ledgerStore = useLedgerStore()
+const ledgers = ref(ledgerStore.ledgers)
 
 const show = ref(false)
-const sorting = ref(false)
-const ledgerWithPos = ref([])
-const scrollTop = ref(0)
-const targetIndex = ref(-1)
-const currentIndex = ref(-1)
-const oldIndex = ref(-1)
-const activeIndex = ref(-1)
-const maxItems = 7
 const scrollHeight = ref(300)
 
-const itemHeight = computed(() => 100)
-
-function initPosition(arr: any[]) {
-  return arr.map((item, index) => {
-    return {
-      ...item,
-      y: index * itemHeight.value,
-      x: 0,
-    }
-  })
-}
-
 onMounted(() => {
-  scrollTop.value = 0
-  ledgerWithPos.value = lodash.cloneDeep(initPosition(ledgerStore.ledgers))
   nextTick(() => {
     uni.createSelectorQuery().select('#LEDGER_NAVBAR').boundingClientRect((data: UniApp.NodeInfo) => {
       // console.log(data)
@@ -49,71 +27,8 @@ function handleScanClick() {
 
 }
 
-function handleDragStart(index) {
-  // console.log(index)
-  currentIndex.value = index
-  oldIndex.value = index
-  sorting.value = true
-  activeIndex.value = index
-}
-
-function handleDragEnd() {
-  if (!sorting.value)
-    return
-  sorting.value = false
-  ledgerWithPos.value[oldIndex.value].y = targetIndex.value * itemHeight.value
-  ledgerWithPos.value = initPosition(ledgerWithPos.value.sort((item1, item2) => item1.y - item2.y))
-  activeIndex.value = -1
-  oldIndex.value = -1
-  currentIndex.value = -1
-  targetIndex.value = -1
-}
-
-function handleSortChange(e: any) {
-  // console.log(e)
-  if (e.detail.source !== 'touch' || !sorting.value) {
-    return
-  }
-
-  const { y } = e.detail
-  const currentY = Math.floor((y + itemHeight.value / 2) / itemHeight.value)
-  targetIndex.value = Math.min(currentY, ledgerWithPos.value.length - 1)
-  // console.log(targetIndex.value, currentIndex.value)
-  if (targetIndex.value !== currentIndex.value && targetIndex.value >= 0) {
-    const newList = lodash.cloneDeep(ledgerWithPos.value)
-    const elementToMove = newList.splice(oldIndex.value, 1)[0]
-    newList.splice(targetIndex.value, 0, elementToMove)
-    scrollList()
-
-    ledgerWithPos.value.forEach((item, index) => {
-      // 当前项通过手动拖动已经到了指定位置，因此需要重新排序其他项的高度
-      if (index !== oldIndex.value) {
-        // 找到所有项在新数组中的位置
-        const newItemIndex = newList.findIndex(newItem => newItem.ledgerId === item.ledgerId)
-        // 根据新数组的位置重新置y值
-        item.y = newItemIndex * itemHeight.value
-        // console.log(item.y)
-      }
-    })
-
-    nextTick(() => {
-      currentIndex.value = targetIndex.value
-    })
-  }
-}
-
-function scrollList() {
-  const middleIndex = (maxItems - 1) / 2
-  if (targetIndex.value > middleIndex) {
-    scrollTop.value = (targetIndex.value - middleIndex) * itemHeight.value
-  }
-  else {
-    scrollTop.value = 0.1
-    nextTick(() => {
-      scrollTop.value = 0
-    })
-  }
-  // console.log(scrollTop.value, 'scrollTop')
+function handleSortChange(list) {
+  console.log(list, '重新排序')
 }
 </script>
 
@@ -139,70 +54,39 @@ function scrollList() {
   </nav-bar>
 
   <view class="w-screen">
-    <view class="p-2">
-      <scroll-view
-        scroll-y
-        class="relative"
-        :scroll-top="scrollTop"
-        scroll-with-animation
-        :enhanced="true"
-        :style="{ height: `${scrollHeight}px` }"
-      >
-        <movable-area
-          class="ledger-movable-area"
-          :style="{
-            height: `${ledgerWithPos.length * itemHeight}px`,
-          }"
-        >
-          <movable-view
-            v-for="(item, index) in ledgerWithPos"
-            :key="`${item.ledgerId}-${index}`"
-            class="ledger-movable-item"
-            :style="{
-              height: `${itemHeight}px`,
-              zIndex: oldIndex === index ? 10 : 1,
-            }"
-            :x="item.x"
-            :y="`${item.y}px`"
-            direction="vertical"
-            out-of-bounds
-            :disabled="!sorting"
-            @change="handleSortChange"
-          >
-            <view :key="item.ledgerId" class="ledger-item-box bg-gray-200" :class="{ 'ledger-item-box--active': activeIndex === index }" :style="{ height: `${itemHeight - 10}px` }">
-              <view class="ledger-content">
-                <text class="line-clamp-1 font-semibold">{{ item.name }}</text>
-                <view class="mt-2 flex items-center text-xs">
-                  <text>
-                    收入
-                  </text>
-                  <text class="ml-2 text-emerald font-bold">
-                    2000000
-                  </text>
-                  <text class="ml-4">
-                    支出
-                  </text>
-                  <text class="ml-2 text-rose font-bold">
-                    2000000
-                  </text>
-                </view>
-                <view class="mt-2 flex items-center text-xs">
-                  <text>共{{ item.count }}条账单</text>
-                  <text>创建于{{ item.createTime }}</text>
-                </view>
+    <view class="px-3 py-2">
+      <drag-sort-view :list="ledgers" key-prop="ledgerId" :height="scrollHeight" @change="handleSortChange">
+        <template #content="{ item }">
+          <view class="ledger-item-box" :class="[item.active ? 'bg-gray-200' : '']">
+            <view class="ledger-item-content">
+              <text class="line-clamp-1 font-semibold">{{ item.name }}</text>
+              <view class="mt-2 flex items-center text-xs">
+                <text>
+                  收入
+                </text>
+                <text class="ml-2 text-emerald font-bold">
+                  2000000
+                </text>
+                <text class="ml-4">
+                  支出
+                </text>
+                <text class="ml-2 text-rose font-bold">
+                  2000000
+                </text>
               </view>
-
-              <view
-                class="ledger-drag-handle"
-                @touchstart="handleDragStart(index)"
-                @touchend="handleDragEnd"
-              >
-                <text class="i-carbon-draggable" />
+              <view class="mt-2 flex items-center text-xs">
+                <text>共{{ item.count }}条账单</text>
+                <text>创建于{{ item.createTime }}</text>
               </view>
             </view>
-          </movable-view>
-        </movable-area>
-      </scroll-view>
+            <view class="ledger-item-more">
+              <view class="flex items-center justify-center rounded-full bg-white p-1">
+                <wd-icon name="ellipsis" size="18" />
+              </view>
+            </view>
+          </view>
+        </template>
+      </drag-sort-view>
     </view>
   </view>
 </template>
@@ -212,49 +96,28 @@ function scrollList() {
   @apply: flex items-center justify-center rounded-full bg-gray-50 p-2 px-4;
 }
 
-.ledger-movable-area {
-  position: relative;
-  width: 100%;
-}
-
-.ledger-movable-item {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  transition: background-color 0.2s;
-}
-
 .ledger-item-box {
+  display: flex;
   border-radius: 19px;
   box-sizing: border-box;
-  display: flex;
-  align-items: center;
-  width: 100%;
   padding: 0.5rem 0;
-  margin: 0.9rem 0;
   // border-bottom: 1px solid #f0f0f0;
 }
 
-.ledger-item-box--active {
-  @apply: bg-indigo-400 dark:bg-indigo-600;
-  margin: 0;
-}
-
-.ledger-drag-handle {
-  display: flex;
-  flex-shrink: 0;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.25rem;
-  color: #999;
-  padding-right: 0.9rem;
-}
-
-.ledger-content {
+.ledger-item-content {
   margin-left: 0.9rem;
   flex: 1;
   width: calc(100% - 48px);
   display: flex;
   flex-direction: column;
+}
+.ledger-item-more {
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  height: 100%;
+  flex-shrink: 0;
+  color: #999;
+  padding: 0 0.9rem;
 }
 </style>
