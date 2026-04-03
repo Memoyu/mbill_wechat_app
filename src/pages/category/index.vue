@@ -30,6 +30,10 @@ function handleCreateClick() {
 function handleSortChange(list: any[]) {
   console.log('handleSortChange', list)
 }
+
+function handelExpandClick() {
+  console.log('展开')
+}
 </script>
 
 <template>
@@ -50,18 +54,28 @@ function handleSortChange(list: any[]) {
   </nav-bar>
   <view class="w-screen">
     <view class="p-2">
-      <drag-sort-view :list="categories" key-prop="categoryId" :height="scrollHeight" @change="handleSortChange">
+      <drag-sort-view-test :list="categories" key-prop="categoryId" :height="scrollHeight" @change="handleSortChange">
         <template #content="{ item }">
-          <view class="category-item-box" :class="[item.active ? 'bg-gray-200' : '']">
-            <view class="category-item-content">
+          <view class="category-title-box" @tap="handelExpandClick">
+            <view class="category-title">
               <view>{{ item.name }}</view>
             </view>
-            <view class="category-item-more">
+            <view class="category-more">
               <text class="i-carbon-draggable" />
             </view>
           </view>
+          <view class="grid grid-cols-4 gap-4 p-2">
+            <view v-for="c in item.childs" :key="c.categoryId">
+              <view class="flex flex-col items-center">
+                <wd-img :width="30" round :height="30" :src="c.icon" />
+                <view class="category-item-title">
+                  {{ c.name }}
+                </view>
+              </view>
+            </view>
+          </view>
         </template>
-      </drag-sort-view>
+      </drag-sort-view-test>
     </view>
   </view>
 </template>
@@ -71,7 +85,7 @@ function handleSortChange(list: any[]) {
   @apply: flex items-center justify-center rounded-full bg-gray-50 p-2 px-4;
 }
 
-.category-item-box {
+.category-title-box {
   display: flex;
   align-items: center;
   border-radius: 19px;
@@ -80,14 +94,14 @@ function handleSortChange(list: any[]) {
   // border-bottom: 1px solid #f0f0f0;
 }
 
-.category-item-content {
+.category-title {
   margin-left: 0.9rem;
   flex: 1;
   width: calc(100% - 48px);
   display: flex;
   flex-direction: column;
 }
-.category-item-more {
+.category-more {
   display: flex;
   flex-shrink: 0;
   align-items: center;

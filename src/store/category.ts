@@ -10,37 +10,37 @@ const initState = {
       {
         categoryId: '12311',
         name: '早餐',
-        icon: '',
+        icon: 'https://wot-ui.cn/assets/panda.jpg',
       },
       {
         categoryId: '12312',
         name: '午餐',
-        icon: '',
+        icon: 'https://wot-ui.cn/assets/panda.jpg',
       },
       {
         categoryId: '12313',
         name: '晚餐',
-        icon: '',
+        icon: 'https://wot-ui.cn/assets/panda.jpg',
       },
       {
         categoryId: '12314',
         name: '饮料酒水',
-        icon: '',
+        icon: 'https://wot-ui.cn/assets/panda.jpg',
       },
       {
         categoryId: '12315',
         name: '零食',
-        icon: '',
+        icon: 'https://wot-ui.cn/assets/panda.jpg',
       },
       {
         categoryId: '12316',
         name: '生鲜食品',
-        icon: '',
+        icon: 'https://wot-ui.cn/assets/panda.jpg',
       },
       {
         categoryId: '12317',
         name: '请客吃饭',
-        icon: '',
+        icon: 'https://wot-ui.cn/assets/panda.jpg',
       },
     ],
   }, {
@@ -51,37 +51,37 @@ const initState = {
       {
         categoryId: '12321',
         name: '日常家居',
-        icon: '',
+        icon: 'https://wot-ui.cn/assets/panda.jpg',
       },
       {
         categoryId: '12322',
         name: '个人美妆',
-        icon: '',
+        icon: 'https://wot-ui.cn/assets/panda.jpg',
       },
       {
         categoryId: '12323',
         name: '手机数码',
-        icon: '',
+        icon: 'https://wot-ui.cn/assets/panda.jpg',
       },
       {
         categoryId: '12324',
         name: '虚拟充值',
-        icon: '',
+        icon: 'https://wot-ui.cn/assets/panda.jpg',
       },
       {
         categoryId: '12325',
         name: '生活电器',
-        icon: '',
+        icon: 'https://wot-ui.cn/assets/panda.jpg',
       },
       {
         categoryId: '12326',
         name: '配饰腕表',
-        icon: '',
+        icon: 'https://wot-ui.cn/assets/panda.jpg',
       },
       {
         categoryId: '12327',
         name: '母婴玩具',
-        icon: '',
+        icon: 'https://wot-ui.cn/assets/panda.jpg',
       },
     ],
   }, {
