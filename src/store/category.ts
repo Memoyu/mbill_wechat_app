@@ -124,7 +124,41 @@ const initState = {
     name: '送礼人情',
     icon: '',
     childs: [
-
+      {
+        categoryId: 'h12381',
+        name: '早餐1',
+        icon: 'https://wot-ui.cn/assets/panda.jpg',
+      },
+      {
+        categoryId: 'h12382',
+        name: '午餐2',
+        icon: 'https://wot-ui.cn/assets/panda.jpg',
+      },
+      {
+        categoryId: 'h12383',
+        name: '晚餐3',
+        icon: 'https://wot-ui.cn/assets/panda.jpg',
+      },
+      {
+        categoryId: 'h12384',
+        name: '饮料酒水4',
+        icon: 'https://wot-ui.cn/assets/panda.jpg',
+      },
+      {
+        categoryId: 'h12385',
+        name: '零食5',
+        icon: 'https://wot-ui.cn/assets/panda.jpg',
+      },
+      {
+        categoryId: 'h12386',
+        name: '生鲜食品6',
+        icon: 'https://wot-ui.cn/assets/panda.jpg',
+      },
+      {
+        categoryId: 'h12387',
+        name: '请客吃饭7',
+        icon: 'https://wot-ui.cn/assets/panda.jpg',
+      },
     ],
   }],
 }

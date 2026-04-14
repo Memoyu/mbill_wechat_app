@@ -63,7 +63,7 @@ function handelExpandClick() {
           </view>
         </template>
         <template #content="{ item }">
-          <view class="grid grid-cols-4 gap-4 p-2">
+          <view v-if="item.childs && item.childs.length > 0" class="grid grid-cols-4 gap-4 p-2">
             <view v-for="c in item.childs" :key="c.categoryId">
               <view class="flex flex-col items-center">
                 <wd-img :width="30" round :height="30" :src="c.icon" />

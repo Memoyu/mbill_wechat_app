@@ -29,20 +29,21 @@ const sorting = ref(false)
 const sortChanged = ref(false)
 const showList = ref([])
 const cloneList = ref([])
+const expandeds = ref({})
 const scrollTop = ref(0)
 const targetIndex = ref(-1)
 const currentIndex = ref(-1)
 const oldIndex = ref(-1)
 
 const areaHeight = ref(80)
-const expandeds = ref({})
+
 const dragDirection = ref<'upward' | 'down'>()
 
 const { proxy } = getCurrentInstance() as any
 
 // 展开/收起当前项
 function setExpanded(item) {
-  return expandeds[item.drag_id] = !getExpanded(item)
+  expandeds[item.drag_id] = !getExpanded(item)
 }
 
 // 获取当前项的展开状态
@@ -115,30 +116,29 @@ function updatePosition(arr: any[]) {
       drag_id: item[props.keyProp],
     }
 
-    // let drag_key = `slot-${Math.random()}-${index}`
-    // // 如果x轴和y轴没变，那么不用更新key来刷新状态
-    // if (y === item.y) {
-    //   if (currentIndex.value !== index) {
-    //     // 非当前点击的下标和目标下标的下标不需要生成新的key
-    //     drag_key = item.drag_key
-    //   }
-    // }
-    // // 判断拖动位置的元素是那个
-    // data.drag_key = drag_key
+    let drag_key = `slot-${Math.random()}-${index}-${getExpanded(data)}`
+    // 如果x轴和y轴没变，那么不用更新key来刷新状态
+    if (y === item.y) {
+      if (currentIndex.value !== index) {
+        // 非当前点击的下标和目标下标的下标不需要生成新的key
+        drag_key = item.drag_key
+      }
+    }
+    // 判断拖动位置的元素是那个
+    data.drag_key = drag_key
 
-    data.drag_key = `${data.drag_id}-${index}`
+    // data.drag_key = `${data.drag_id}-${index}-${getExpanded(data)}`
 
-    console.log(data.drag_key, 'drag_key')
+    // console.log(data.drag_key, 'drag_key')
     return data
   })
   // console.log(showList.value)
   // console.log(cloneList.value)
+  showList.value = temp
   const last = temp[temp.length - 1]
   areaHeight.value = last.y + getItemHeight(last)
-  nextTick(() => {
-    showList.value = temp
-    cloneList.value = lodash.cloneDeep(temp)
-  })
+
+  cloneList.value = lodash.cloneDeep(temp)
 }
 
 function handleTap(index) {
@@ -172,6 +172,10 @@ function handleTouchEnd() {
 
   if (targetIndex.value >= 0 && currentIndex.value >= 0 && targetIndex.value !== currentIndex.value) {
     cloneList.value.splice(targetIndex.value, 0, ...cloneList.value.splice(currentIndex.value, 1))
+  }
+  else {
+    // 在没有项与项之间的位置调换时，给一个微量偏移处理
+    showList.value[currentIndex.value].y += 0.001
   }
 
   updatePosition(cloneList.value)
@@ -334,13 +338,11 @@ function getTargetIndex(e) {
         @touchstart="handleTouchStart(index, $event)"
         @touchmove="handleTouchMove" @touchend="handleTouchEnd"
       >
-        <view :style="{ overflow: 'hidden' }">
-          <view class="dragSlotTitle">
-            <slot name="title" :item="item" :index="index" />
-          </view>
-          <view class="dragSlotContent">
-            <slot name="content" :item="item" :index="index" />
-          </view>
+        <view class="dragSlotTitle">
+          <slot name="title" :item="item" :index="index" />
+        </view>
+        <view class="dragSlotContent">
+          <slot name="content" :item="item" :index="index" />
         </view>
       </movable-view>
     </movable-area>
@@ -357,11 +359,12 @@ function getTargetIndex(e) {
   width: 100%;
   // transition: height 0.3s ease-in-out;
   overflow: hidden;
-  background-color: gainsboro;
+  border-radius: 10px;
+  @apply: bg-gray-300/[0.3] dark:bg-[#292929];
 }
 
 .drag-movable-item--active {
-  @apply: bg-indigo-400 dark:bg-indigo-600;
+  @apply: bg-gray-200 dark:bg-[#565657];
 }
 
 .drag-item-box {
