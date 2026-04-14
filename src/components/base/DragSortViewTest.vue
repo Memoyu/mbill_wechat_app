@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import lodash from 'lodash'
+import { useTouch } from 'wot-design-uni'
 
 defineOptions({
   options: {
@@ -8,40 +9,54 @@ defineOptions({
     styleIsolation: 'shared',
   },
 })
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   keyProp: string
   list: any[]
   height: number
-}>()
+  gap?: number
+  expand?: boolean
+}>(), {
+  expand: false,
+  gap: 5,
+})
 const emit = defineEmits(['change'])
 
 const { vibrate } = useVibrate()
+const touch = useTouch()
 
 const scrollHeight = ref(300)
 const sorting = ref(false)
 const sortChanged = ref(false)
-const listPos = ref([])
+const showList = ref([])
+const cloneList = ref([])
 const scrollTop = ref(0)
 const targetIndex = ref(-1)
 const currentIndex = ref(-1)
 const oldIndex = ref(-1)
-const maxItems = 7
-const paddingY = 10
-const minHeight = ref(50)
-const itemWidth = ref(80)
+
+const areaHeight = ref(80)
+const expandeds = ref({})
+const dragDirection = ref<'upward' | 'down'>()
 
 const { proxy } = getCurrentInstance() as any
 
-function getItemHeight(item) {
-  return item.collapsed ? item.height : minHeight.value
+// 展开/收起当前项
+function setExpanded(item) {
+  return expandeds[item.drag_id] = !getExpanded(item)
 }
 
-const areaHeight = computed(() => {
-  return listPos.value.reduce((acc, cur) => acc + cur.height, 0)
-})
+// 获取当前项的展开状态
+function getExpanded(item) {
+  return expandeds[item.drag_id] ?? false
+}
+
+// 获取当前项的高度
+function getItemHeight(item) {
+  return getExpanded(item) ? item.maxHeight : item.minHeight
+}
 
 watch(() => props.list, (l) => {
-  initPosition(l)
+  updatePosition(l)
 }, { immediate: true, deep: true })
 
 watch(() => props.height, (h) => {
@@ -55,47 +70,84 @@ onMounted(() => {
 })
 
 function calculateItemSize() {
-  uni.createSelectorQuery()
-    .in(proxy)
-    .selectAll('.drag-item-box')
-    .boundingClientRect((res: UniApp.NodeInfo[]) => {
-      if (res) {
-        listPos.value.forEach((item, index) => {
-          item.height = res[index].height
-        })
+  // 获取原始项高度
+  (props.expand
+    ? uni.createSelectorQuery().in(proxy).selectAll('.dragSlotTitle')
+    : uni.createSelectorQuery().in(proxy).selectAll('.dragSlotContent')).boundingClientRect((ts: UniApp.NodeInfo[]) => {
+    // console.log(ts, props.expand, 'init height')
+    if (ts) {
+      // 初始赋值选项的最高、最低高度
+      for (let i = 0; i < ts.length; i++) {
+        const height = ts[i].height
+        cloneList.value[i].minHeight = height
+        cloneList.value[i].maxHeight = height
       }
-    })
-    .exec()
-}
 
-function initPosition(arr: any[]) {
-  listPos.value = arr.map((item, index) => {
-    return {
-      ...item,
-      collapsed: false,
-      height: minHeight.value,
-      y: index * minHeight.value,
-      x: 0,
+      // 如果是需要展开的，则获取内容的高度
+      if (props.expand) {
+        // 获取内容的高度
+        uni.createSelectorQuery().in(proxy).selectAll('.dragSlotContent').boundingClientRect((cs: UniApp.NodeInfo[]) => {
+          // console.log(cs, 'max height')
+          if (cs) {
+            for (let i = 0; i < cs.length; i++) {
+              cloneList.value[i].maxHeight = cs[i].height + cloneList.value[i].minHeight
+            }
+          }
+          updatePosition(cloneList.value)
+        }).exec()
+      }
+      else {
+        updatePosition(cloneList.value)
+      }
     }
-  })
-  // console.log(listPos.value)
+  }).exec()
 }
 
 function updatePosition(arr: any[]) {
-  let totalHeight = 0
-  listPos.value = arr.map((item, index) => {
-    const y = totalHeight
-    totalHeight += getItemHeight(item)
-    return {
+  const newList = lodash.cloneDeep(arr)
+
+  const temp = newList.map((item, index) => {
+    const y = getItemY(index, newList)
+    const data = {
       ...item,
       y,
       x: 0,
+      drag_id: item[props.keyProp],
     }
+
+    // let drag_key = `slot-${Math.random()}-${index}`
+    // // 如果x轴和y轴没变，那么不用更新key来刷新状态
+    // if (y === item.y) {
+    //   if (currentIndex.value !== index) {
+    //     // 非当前点击的下标和目标下标的下标不需要生成新的key
+    //     drag_key = item.drag_key
+    //   }
+    // }
+    // // 判断拖动位置的元素是那个
+    // data.drag_key = drag_key
+
+    data.drag_key = `${data.drag_id}-${index}`
+
+    console.log(data.drag_key, 'drag_key')
+    return data
+  })
+  // console.log(showList.value)
+  // console.log(cloneList.value)
+  const last = temp[temp.length - 1]
+  areaHeight.value = last.y + getItemHeight(last)
+  nextTick(() => {
+    showList.value = temp
+    cloneList.value = lodash.cloneDeep(temp)
   })
 }
 
+function handleTap(index) {
+  // console.log('组件展开', item)
+  setExpanded(showList.value[index])
+  updatePosition(showList.value)
+}
+
 function handleDragStart(index) {
-  // console.log(index)
   currentIndex.value = index
   oldIndex.value = index
   sorting.value = true
@@ -104,11 +156,13 @@ function handleDragStart(index) {
   vibrate()
 }
 
-function handleTouchStart(index) {
-  const item = listPos.value[index]
-  // console.log('组件展开', item)
-  item.collapsed = !item.collapsed
-  updatePosition(listPos.value)
+function handleTouchStart(index, event: TouchEvent) {
+  touch.touchStart(event)
+}
+
+function handleTouchMove(event: TouchEvent) {
+  touch.touchMove(event)
+  dragDirection.value = touch.deltaY.value > 0 ? 'down' : 'upward'
 }
 
 function handleTouchEnd() {
@@ -116,24 +170,41 @@ function handleTouchEnd() {
     return
   sorting.value = false
 
-  if (targetIndex.value > -1 && targetIndex.value !== oldIndex.value) {
-    listPos.value[oldIndex.value].y = targetIndex.value * getItemHeight(listPos.value[oldIndex.value])
+  if (targetIndex.value >= 0 && currentIndex.value >= 0 && targetIndex.value !== currentIndex.value) {
+    cloneList.value.splice(targetIndex.value, 0, ...cloneList.value.splice(currentIndex.value, 1))
   }
-  else {
-    // 在没有项与项之间的位置调换时，给一个微量偏移处理
-    listPos.value[oldIndex.value].y += 0.001
+
+  updatePosition(cloneList.value)
+
+  if (sortChanged.value) {
+    const endList = showList.value.map(item => omit(item))
+    emit('change', endList)
+    sortChanged.value = false
   }
-  // console.log(targetIndex.value, listPos.value)
-  nextTick(() => {
-    oldIndex.value = -1
-    currentIndex.value = -1
-    targetIndex.value = -1
-    updatePosition(listPos.value.sort((item1, item2) => item1.y - item2.y))
-    if (sortChanged.value) {
-      emit('change', [...listPos.value])
-      sortChanged.value = false
+
+  oldIndex.value = -1
+  currentIndex.value = -1
+  targetIndex.value = -1
+}
+
+// 省略初始化时添加的 x，y和key等参数
+function omit(obj, args = ['x', 'y', 'drag_key', 'drag_id', 'maxHeight', 'minHeight']) {
+  if (!args)
+    return obj
+  const newObj = {}
+  const isString = typeof args === 'string'
+  const keys = Object.keys(obj).filter((item) => {
+    if (isString) {
+      return item !== args
     }
+    return !args.includes(item)
   })
+
+  keys.forEach((key) => {
+    if (obj[key] !== undefined)
+      newObj[key] = obj[key]
+  })
+  return newObj
 }
 
 function handleSortChange(e: any) {
@@ -143,34 +214,86 @@ function handleSortChange(e: any) {
   }
 
   const { y } = e.detail
-  console.log(y, e, 'handleSortChange')
-  const currentY = Math.floor((y + minHeight.value / 2) / minHeight.value)
-  targetIndex.value = Math.min(currentY, listPos.value.length - 1)
+  // console.log(y, e, 'handleSortChange')
+  // const currentY = Math.floor((y + minHeight.value / 2) / minHeight.value)
+
+  targetIndex.value = getTargetIndex(e)
   // console.log(targetIndex.value, currentIndex.value)
-  if (targetIndex.value !== currentIndex.value && targetIndex.value >= 0) {
-    const newList = lodash.cloneDeep(listPos.value)
-    const elementToMove = newList.splice(oldIndex.value, 1)[0]
+  if (targetIndex.value !== oldIndex.value && oldIndex.value >= 0 && targetIndex.value >= 0) {
+    // console.log(targetIndex.value, 'target')
+
+    const replaceList = lodash.cloneDeep(cloneList.value)
+    const newList = lodash.cloneDeep(cloneList.value)
+    const elementToMove = newList.splice(currentIndex.value, 1)[0]
     newList.splice(targetIndex.value, 0, elementToMove)
 
-    listPos.value.forEach((item, index) => {
+    replaceList.splice(targetIndex.value, 0, ...replaceList.splice(currentIndex.value, 1))
+
+    showList.value.forEach((item, index) => {
       // 当前项通过手动拖动已经到了指定位置，因此需要重新排序其他项的高度
-      if (index !== oldIndex.value) {
+      if (index !== currentIndex.value) {
         // 找到所有项在新数组中的位置
-        const newIndex = newList.findIndex(newItem => newItem[props.keyProp] === item[props.keyProp])
+        const newIndex = newList.findIndex(newItem => newItem.drag_id === item.drag_id)
         // 根据新数组的位置重新置y值
-        item.y = newIndex * getItemHeight(item)
+        item.y = getItemY(newIndex, replaceList)
         // console.log(item.y)
       }
     })
 
-    nextTick(() => {
-      currentIndex.value = targetIndex.value
-      // TODO：暂时禁用滚动，目前会存在选中项漂移情况
-      // scrollList()
-    })
-
+    oldIndex.value = targetIndex.value
     sortChanged.value = true
   }
+}
+
+// 获取当前的位置
+function getItemY(index, list = showList.value) {
+  // 通过计算重新算换 偏移单位。
+  let y = 0
+  // 如果是 单项数据时，不需要通过getItemHeight来排，而是需要根据每个item的高度自动填充
+  for (let i = 0; i < list.length; i++) {
+    if (index === i)
+      break
+    y += getItemHeight(list[i]) + props.gap
+  }
+  // console.log(y, 'y')
+  return y
+}
+
+function getTargetIndex(e) {
+  const list = cloneList.value
+  const { x, y } = e.detail
+  // 列表的情况, 无需考虑leo_x轴;  通过leo_y轴和列表的高度来判断;
+  let target = -1
+  let currentH = 0
+  for (let i = 0; i < cloneList.value.length; i++) {
+    currentH += getItemHeight(list[i]) + props.gap
+    if (dragDirection.value === 'down') {
+      // 往下的情况下 ---- 当前活动的下标的高度( 也就是拖动的底部 )碰到下一个元素时； 赋值下标
+      /*
+          下一个下标的5/1；位置触发
+          如果到了最后一个时，让下一个触发的高度变成当前拖动到指定位置的高度，避免照成到达了底部后下标位置有差异的问题；
+        **/
+      const item = list[i + 1]
+      const nextH = item ? getItemHeight(item) / 5 : currentH
+      // console.log(y, currentH, nextH, i, 'nextH')
+      if (currentH > (y + getItemHeight(list[currentIndex.value]) - nextH)) {
+        target = i
+        break
+      }
+    }
+    else {
+      // 往上拖拽时 ---- 当前活动的下标( 也就是拖动的顶部 )碰到上一个元素时； 赋值下标
+      const item = list[i - 1]
+      const theH = item ? (getItemHeight(item) + props.gap) / 5 : 0 // 下一个下标的5/1；位置触发
+      if (currentH > (y + theH)) {
+        target = i
+        break
+      }
+    }
+  }
+
+  // console.log(target, 'target')
+  return target
 }
 </script>
 
@@ -189,26 +312,35 @@ function handleSortChange(e: any) {
         height: `${areaHeight}px`,
       }"
     >
+      <!-- item.drag_key -->
       <movable-view
-        v-for="(item, index) in listPos"
-        :key="`${item[keyProp]}-${index}`"
+        v-for="(item, index) in showList"
+        :key="item.drag_key"
         class="drag-movable-item"
         :style="{
           height: `${getItemHeight(item)}px`,
-          zIndex: oldIndex === index ? 10 : 1,
+          zIndex: currentIndex === index ? 10 : 1,
         }"
+        :class="[currentIndex === index ? 'drag-movable-item--active' : '']"
+        animation
         :x="item.x"
         :y="`${item.y}px`"
         direction="vertical"
-        out-of-bounds
+        :out-of-bounds="true"
         :disabled="!sorting"
         @change="handleSortChange"
+        @tap="handleTap(index)"
         @longpress="handleDragStart(index)"
-        @touchstart="handleTouchStart(index)"
-        @touchend="handleTouchEnd"
+        @touchstart="handleTouchStart(index, $event)"
+        @touchmove="handleTouchMove" @touchend="handleTouchEnd"
       >
-        <view class="drag-item-box" :class="[oldIndex === index ? 'drag-item-box--active' : '']">
-          <slot name="content" :item="item" :index="index" />
+        <view :style="{ overflow: 'hidden' }">
+          <view class="dragSlotTitle">
+            <slot name="title" :item="item" :index="index" />
+          </view>
+          <view class="dragSlotContent">
+            <slot name="content" :item="item" :index="index" />
+          </view>
         </view>
       </movable-view>
     </movable-area>
@@ -223,20 +355,23 @@ function handleSortChange(e: any) {
 
 .drag-movable-item {
   width: 100%;
-  transition: background-color 0.2s;
+  // transition: height 0.3s ease-in-out;
   overflow: hidden;
+  background-color: gainsboro;
+}
+
+.drag-movable-item--active {
+  @apply: bg-indigo-400 dark:bg-indigo-600;
 }
 
 .drag-item-box {
+  display: flex;
+  justify-content: space-between;
   width: 100%;
   position: relative;
   padding: 0;
   box-sizing: border-box;
-  background-color: aquamarine;
+  background-color: gainsboro;
   margin-top: 5px;
-}
-
-.drag-item-box--active {
-  @apply: bg-indigo-400 dark:bg-indigo-600;
 }
 </style>

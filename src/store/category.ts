@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 // 初始化状态
 const initState = {
   categories: [{
-    categoryId: '1231',
+    categoryId: 'a1231',
     name: '食品餐饮',
     icon: '',
     childs: [
@@ -44,7 +44,7 @@ const initState = {
       },
     ],
   }, {
-    categoryId: '1232',
+    categoryId: 'b1232',
     name: '购物消费',
     icon: '',
     childs: [
@@ -85,42 +85,42 @@ const initState = {
       },
     ],
   }, {
-    categoryId: '1233',
+    categoryId: 'c1233',
     name: '出行交通',
     icon: '',
     childs: [
 
     ],
   }, {
-    categoryId: '1234',
+    categoryId: 'd1234',
     name: '休闲娱乐',
     icon: '',
     childs: [
 
     ],
   }, {
-    categoryId: '1235',
+    categoryId: 'e1235',
     name: '健康医疗',
     icon: '',
     childs: [
 
     ],
   }, {
-    categoryId: '1236',
+    categoryId: 'f1236',
     name: '居家生活',
     icon: '',
     childs: [
 
     ],
   }, {
-    categoryId: '1237',
+    categoryId: 'g1237',
     name: '文化教育',
     icon: '',
     childs: [
 
     ],
   }, {
-    categoryId: '1238',
+    categoryId: 'h1238',
     name: '送礼人情',
     icon: '',
     childs: [

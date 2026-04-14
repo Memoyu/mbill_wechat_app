@@ -54,16 +54,15 @@ function handelExpandClick() {
   </nav-bar>
   <view class="w-screen">
     <view class="p-2">
-      <drag-sort-view-test :list="categories" key-prop="categoryId" :height="scrollHeight" @change="handleSortChange">
-        <template #content="{ item }">
+      <drag-sort-view-test expand :gap="8" :list="categories" key-prop="categoryId" :height="scrollHeight" @change="handleSortChange">
+        <template #title="{ item }">
           <view class="category-title-box" @tap="handelExpandClick">
             <view class="category-title">
               <view>{{ item.name }}</view>
             </view>
-            <view class="category-more">
-              <text class="i-carbon-draggable" />
-            </view>
           </view>
+        </template>
+        <template #content="{ item }">
           <view class="grid grid-cols-4 gap-4 p-2">
             <view v-for="c in item.childs" :key="c.categoryId">
               <view class="flex flex-col items-center">
@@ -100,14 +99,6 @@ function handelExpandClick() {
   width: calc(100% - 48px);
   display: flex;
   flex-direction: column;
-}
-.category-more {
-  display: flex;
-  flex-shrink: 0;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.25rem;
-  color: #999;
-  padding-right: 0.9rem;
+  font-weight: bold;
 }
 </style>
