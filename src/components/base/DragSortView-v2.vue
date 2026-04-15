@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import lodash from 'lodash'
 import { useTouch } from 'wot-design-uni'
-import { omit } from '@/utils'
 
 defineOptions({
   options: {
@@ -14,16 +13,13 @@ const props = withDefaults(defineProps<{
   keyProp: string
   list: any[]
   height: number
-  direction?: 'all' | 'vertical' | 'horizontal'
   gap?: number
   expand?: boolean
 }>(), {
-  direction: 'vertical',
-  gap: 5,
   expand: false,
+  gap: 5,
 })
 const emit = defineEmits(['change'])
-const COM_INTERNAL_ARGS = ['x', 'y', 'drag_key', 'drag_id', 'maxHeight', 'minHeight']
 
 const { vibrate } = useVibrate()
 const touch = useTouch()
@@ -69,43 +65,43 @@ watch(() => props.height, (h) => {
 })
 
 onMounted(() => {
-  calculateItemSize()
+  nextTick(() => {
+    calculateItemSize()
+  })
 })
 
 function calculateItemSize() {
-  nextTick(() => {
   // 获取原始项高度
-    (props.expand
-      ? uni.createSelectorQuery().in(proxy).selectAll('.dragSlotTitle')
-      : uni.createSelectorQuery().in(proxy).selectAll('.dragSlotContent')).boundingClientRect((ts: UniApp.NodeInfo[]) => {
+  (props.expand
+    ? uni.createSelectorQuery().in(proxy).selectAll('.dragSlotTitle')
+    : uni.createSelectorQuery().in(proxy).selectAll('.dragSlotContent')).boundingClientRect((ts: UniApp.NodeInfo[]) => {
     // console.log(ts, props.expand, 'init height')
-      if (ts) {
+    if (ts) {
       // 初始赋值选项的最高、最低高度
-        for (let i = 0; i < ts.length; i++) {
-          const height = ts[i].height
-          cloneList.value[i].minHeight = height
-          cloneList.value[i].maxHeight = height
-        }
-
-        // 如果是需要展开的，则获取内容的高度
-        if (props.expand) {
-        // 获取内容的高度
-          uni.createSelectorQuery().in(proxy).selectAll('.dragSlotContent').boundingClientRect((cs: UniApp.NodeInfo[]) => {
-          // console.log(cs, 'max height')
-            if (cs) {
-              for (let i = 0; i < cs.length; i++) {
-                cloneList.value[i].maxHeight = cs[i].height + cloneList.value[i].minHeight
-              }
-            }
-            updatePosition(cloneList.value)
-          }).exec()
-        }
-        else {
-          updatePosition(cloneList.value)
-        }
+      for (let i = 0; i < ts.length; i++) {
+        const height = ts[i].height
+        cloneList.value[i].minHeight = height
+        cloneList.value[i].maxHeight = height
       }
-    }).exec()
-  })
+
+      // 如果是需要展开的，则获取内容的高度
+      if (props.expand) {
+        // 获取内容的高度
+        uni.createSelectorQuery().in(proxy).selectAll('.dragSlotContent').boundingClientRect((cs: UniApp.NodeInfo[]) => {
+          // console.log(cs, 'max height')
+          if (cs) {
+            for (let i = 0; i < cs.length; i++) {
+              cloneList.value[i].maxHeight = cs[i].height + cloneList.value[i].minHeight
+            }
+          }
+          updatePosition(cloneList.value)
+        }).exec()
+      }
+      else {
+        updatePosition(cloneList.value)
+      }
+    }
+  }).exec()
 }
 
 function updatePosition(arr: any[]) {
@@ -131,6 +127,9 @@ function updatePosition(arr: any[]) {
     // 判断拖动位置的元素是那个
     data.drag_key = drag_key
 
+    // data.drag_key = `${data.drag_id}-${index}-${getExpanded(data)}`
+
+    // console.log(data.drag_key, 'drag_key')
     return data
   })
   // console.log(showList.value)
@@ -157,7 +156,7 @@ function handleDragStart(index) {
   vibrate()
 }
 
-function handleTouchStart(event: TouchEvent) {
+function handleTouchStart(index, event: TouchEvent) {
   touch.touchStart(event)
 }
 
@@ -182,7 +181,7 @@ function handleTouchEnd() {
   updatePosition(cloneList.value)
 
   if (sortChanged.value) {
-    const endList = showList.value.map(item => omit(item, COM_INTERNAL_ARGS))
+    const endList = showList.value.map(item => omit(item))
     emit('change', endList)
     sortChanged.value = false
   }
@@ -192,11 +191,35 @@ function handleTouchEnd() {
   targetIndex.value = -1
 }
 
+// 省略初始化时添加的 x，y和key等参数
+function omit(obj, args = ['x', 'y', 'drag_key', 'drag_id', 'maxHeight', 'minHeight']) {
+  if (!args)
+    return obj
+  const newObj = {}
+  const isString = typeof args === 'string'
+  const keys = Object.keys(obj).filter((item) => {
+    if (isString) {
+      return item !== args
+    }
+    return !args.includes(item)
+  })
+
+  keys.forEach((key) => {
+    if (obj[key] !== undefined)
+      newObj[key] = obj[key]
+  })
+  return newObj
+}
+
 function handleSortChange(e: any) {
   // console.log(e)
   if (e.detail.source !== 'touch' || !sorting.value) {
     return
   }
+
+  const { y } = e.detail
+  // console.log(y, e, 'handleSortChange')
+  // const currentY = Math.floor((y + minHeight.value / 2) / minHeight.value)
 
   targetIndex.value = getTargetIndex(e)
   // console.log(targetIndex.value, currentIndex.value)
@@ -305,14 +328,14 @@ function getTargetIndex(e) {
         :class="[currentIndex === index ? 'drag-movable-item--active' : '']"
         animation
         :x="item.x"
-        :y="item.y"
+        :y="`${item.y}px`"
         direction="vertical"
         :out-of-bounds="true"
         :disabled="!sorting"
         @change="handleSortChange"
-        @tap.stop="handleTap(index)"
+        @tap="handleTap(index)"
         @longpress="handleDragStart(index)"
-        @touchstart="handleTouchStart"
+        @touchstart="handleTouchStart(index, $event)"
         @touchmove="handleTouchMove" @touchend="handleTouchEnd"
       >
         <view class="dragSlotTitle">

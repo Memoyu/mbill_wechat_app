@@ -31,6 +31,14 @@ function handleSortChange(list: any[]) {
   console.log('handleSortChange', list)
 }
 
+function handleChildSortChange(list: any[]) {
+  console.log('handleChildSortChange', list)
+}
+
+function handleTapItem(item) {
+  console.log('handleTapItem', item)
+}
+
 function handelExpandClick() {
   console.log('展开')
 }
@@ -63,15 +71,17 @@ function handelExpandClick() {
           </view>
         </template>
         <template #content="{ item }">
-          <view v-if="item.childs && item.childs.length > 0" class="grid grid-cols-4 gap-4 p-2">
-            <view v-for="c in item.childs" :key="c.categoryId">
-              <view class="flex flex-col items-center">
-                <wd-img :width="30" round :height="30" :src="c.icon" />
-                <view class="category-item-title">
-                  {{ c.name }}
+          <view v-if="item.childs && item.childs.length > 0" class="p-2">
+            <drag-sort-all-view-test :item-height="70" :gap="8" :column="4" :list="item.childs" key-prop="categoryId" @change="handleChildSortChange" @tap-item="handleTapItem">
+              <template #content="data">
+                <view class="flex flex-col items-center items-center p-2">
+                  <wd-img :width="30" round :height="30" :src="data.item.icon" />
+                  <view class="category-item-title">
+                    {{ data.item.name }}
+                  </view>
                 </view>
-              </view>
-            </view>
+              </template>
+            </drag-sort-all-view-test>
           </view>
         </template>
       </drag-sort-view-test>

@@ -83,6 +83,11 @@ const initState = {
         name: '母婴玩具',
         icon: 'https://wot-ui.cn/assets/panda.jpg',
       },
+      {
+        categoryId: '12327',
+        name: '测试分类',
+        icon: 'https://wot-ui.cn/assets/panda.jpg',
+      },
     ],
   }, {
     categoryId: 'c1233',

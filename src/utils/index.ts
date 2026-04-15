@@ -290,7 +290,7 @@ export function objToStyle(styles: Record<string, any> | Record<string, any>[]):
  */
 export function formatFloat(amount: number | string, digit: number = 2): string {
   // 转换为数字类型，并保留两位小数
-const num = Number.parseFloat(amount.toString()).toFixed(digit)
+  const num = Number.parseFloat(amount.toString()).toFixed(digit)
 
   // 使用正则表达式添加千位分隔符
   const parts = num.split('.')
@@ -298,4 +298,29 @@ const num = Number.parseFloat(amount.toString()).toFixed(digit)
 
   // 返回格式化后的金额
   return parts.join('.')
+}
+
+export function toFixed(num: number, digit: number = 2): number {
+  const c = 10 * digit
+  return Math.floor(num * c) / c
+}
+
+// 删除对象中的属性
+export function omit(obj, args): object {
+  if (!args)
+    return obj
+  const newObj = {}
+  const isString = typeof args === 'string'
+  const keys = Object.keys(obj).filter((item) => {
+    if (isString) {
+      return item !== args
+    }
+    return !args.includes(item)
+  })
+
+  keys.forEach((key) => {
+    if (obj[key] !== undefined)
+      newObj[key] = obj[key]
+  })
+  return newObj
 }
