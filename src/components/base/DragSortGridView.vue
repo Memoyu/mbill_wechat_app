@@ -12,7 +12,6 @@ defineOptions({
 const props = withDefaults(defineProps<{
   keyProp: string
   list: any[]
-  itemHeight: number
   gap?: number
   column?: number
   hasAdd?: boolean
@@ -37,10 +36,12 @@ const oldIndex = ref(-1)
 
 const areaHeight = ref(200)
 const itemWidth = ref(80)
+const itemHeight = ref(80)
 
 const { proxy } = getCurrentInstance() as any
 
 watch(() => props.list, (newList) => {
+  console.log('grid 更新', newList)
   const list = lodash.cloneDeep(newList)
 
   if (props.hasAdd) {
@@ -60,22 +61,27 @@ onMounted(() => {
 
 function calculateItemSize() {
   nextTick(() => {
-    uni.createSelectorQuery().in(proxy).select('.dragSortBox').boundingClientRect((res: UniApp.NodeInfo) => {
-      if (res) {
-        // console.log(res)
-        const w = res.width
+    const list = cloneList.value
+    uni.createSelectorQuery().in(proxy).select('.dragSortBox').boundingClientRect((box: UniApp.NodeInfo) => {
+      if (box) {
+      // console.log(res)
+        const w = box.width
         itemWidth.value = toFixed((w - ((props.column - 1) * props.gap)) / props.column)
-        updatePosition(cloneList.value)
       }
+      uni.createSelectorQuery().in(proxy).selectAll('.dragSlotContent').boundingClientRect((contents: UniApp.NodeInfo[]) => {
+        if (contents) {
+          const maxHeight = Math.max(...contents.map(c => c.height))
+          itemHeight.value = maxHeight
+          updatePosition(list)
+        }
+      }).exec()
     }).exec()
   })
 }
 
-function updatePosition(arr: any[]) {
-  const newList = lodash.cloneDeep(arr)
-
-  showList.value = newList.map((item, index) => {
-    const [x, y] = getPosition(index, newList)
+function updatePosition(list: any[]) {
+  showList.value = list.map((item, index) => {
+    const [x, y] = getPosition(index, list)
     const data = {
       ...item,
       y,
@@ -97,11 +103,13 @@ function updatePosition(arr: any[]) {
     // console.log(data.drag_key, 'drag_key')
     return data
   })
+  cloneList.value = lodash.cloneDeep(showList.value)
   // console.log(showList.value)
   // console.log(cloneList.value)
-  areaHeight.value = Math.ceil(showList.value.length / props.column) * (props.itemHeight + props.gap)
+  nextTick(() => {
+    areaHeight.value = Math.ceil(showList.value.length / props.column) * (itemHeight.value + props.gap)
   // console.log(areaHeight.value, 'areaHeight')
-  cloneList.value = lodash.cloneDeep(showList.value)
+  })
 }
 
 function handleDragStart(index) {
@@ -113,18 +121,6 @@ function handleDragStart(index) {
   // vibrate()
 }
 
-function handleTap(index) {
-  // console.log('item tap', index)
-  const item = showList.value[index]
-  const data = { isAdd: false, item: omit(item, COM_INTERNAL_ARGS) }
-  if (item.drag_id === ADD_DRAG_ID) {
-    data.isAdd = true
-    data.item = undefined
-  }
-
-  emit('tapItem', data)
-}
-
 function handleTouchEnd() {
   if (!sorting.value)
     return
@@ -132,6 +128,7 @@ function handleTouchEnd() {
 
   if (targetIndex.value >= 0 && currentIndex.value >= 0 && targetIndex.value !== currentIndex.value) {
     cloneList.value.splice(targetIndex.value, 0, ...cloneList.value.splice(currentIndex.value, 1))
+    // console.log(cloneList.value, '调换')
   }
   else {
     // 在没有项与项之间的位置调换时，给一个微量偏移处理
@@ -142,7 +139,7 @@ function handleTouchEnd() {
   updatePosition(cloneList.value)
 
   if (sortChanged.value) {
-    let endList = showList.value
+    let endList = lodash.cloneDeep(showList.value)
     // 去除添加项
     if (props.hasAdd) {
       endList = endList.slice(0, -1)
@@ -168,8 +165,6 @@ function handleSortChange(e: any) {
   const targetItem = showList.value[targetIndex.value]
   if (targetIndex.value !== oldIndex.value && oldIndex.value >= 0 && targetIndex.value >= 0 && !targetItem.disabled) {
     // console.log(targetIndex.value, 'target')
-
-    const replaceList = lodash.cloneDeep(cloneList.value)
     const newList = lodash.cloneDeep(cloneList.value)
     const elementToMove = newList.splice(currentIndex.value, 1)[0]
     newList.splice(targetIndex.value, 0, elementToMove)
@@ -180,7 +175,7 @@ function handleSortChange(e: any) {
         // 找到所有项在新数组中的位置
         const newIndex = newList.findIndex(newItem => newItem.drag_id === item.drag_id)
         // 根据新数组的位置重新置y值
-        const [x, y] = getPosition(newIndex, replaceList)
+        const [x, y] = getPosition(newIndex, newList)
         item.x = x
         item.y = y
         // console.log(item.y)
@@ -202,7 +197,7 @@ function getPosition(index, list = showList.value) {
 
   // 通过计算重新算换 偏移单位。
   const v = Math.floor(index / props.column)
-  let y = v * props.itemHeight
+  let y = v * itemHeight.value
   if (y > 0) {
     y += v * props.gap
   }
@@ -218,8 +213,8 @@ function getTargetIndex(e) {
 
   // x 手指按下拖动，产生的位置，超出了item的宽度，那么就改变下标，包括y轴。
   const currentX = Math.floor((x + itemWidth.value / 2) / itemWidth.value)
-  const currentY = Math.floor((y + props.itemHeight / 2) / props.itemHeight)
-  // moveToIndex：通过计算横排数量，偏移量（ leo_x，leo_y ），得出下标位置
+  const currentY = Math.floor((y + itemHeight.value / 2) / itemHeight.value)
+  // target：通过计算横排数量，偏移量（ x，y ），得出下标位置
   target = Math.min(currentY * props.column + currentX, list.length - 1) // 滑到了哪个位置
 
   // console.log(target, 'target')
@@ -253,11 +248,10 @@ function getTargetIndex(e) {
         :disabled="item.disabled || !sorting "
         @change="handleSortChange"
         @longpress="handleDragStart(index)"
-        @tap.stop="handleTap(index)"
-        @touchend="handleTouchEnd"
+        @touchend.stop="handleTouchEnd"
       >
-        <view v-if="item.drag_id !== ADD_DRAG_ID" class="dragAllSlotContent">
-          <slot name="content" :item="item" :index="index" />
+        <view v-if="item.drag_id !== ADD_DRAG_ID" class="dragSlotContent">
+          <slot name="content" :grid-item="{ ...item, index }" />
         </view>
         <view v-else class="drag-add-item">
           <text class="iconfont icon-plus" :style="{ fontSize: '30px' }" />

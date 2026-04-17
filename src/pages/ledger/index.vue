@@ -55,7 +55,7 @@ function handleSortChange(list) {
 
   <view class="w-screen">
     <view class="px-3 py-2">
-      <drag-sort-view :list="ledgers" :gap="8" key-prop="ledgerId" :height="scrollHeight" @change="handleSortChange">
+      <drag-sort-list-view :list="ledgers" :gap="8" key-prop="ledgerId" :height="scrollHeight" @change="handleSortChange">
         <template #content="{ item }">
           <view class="ledger-item-box">
             <view class="ledger-item-content">
@@ -86,7 +86,7 @@ function handleSortChange(list) {
             </view>
           </view>
         </template>
-      </drag-sort-view>
+      </drag-sort-list-view>
     </view>
   </view>
 </template>

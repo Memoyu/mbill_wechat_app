@@ -28,19 +28,21 @@ function handleCreateClick() {
 }
 
 function handleSortChange(list: any[]) {
-  console.log('handleSortChange', list)
+  // console.log('handleSortChange', list)
+  // categories.value = list
 }
 
-function handleChildSortChange(list: any[]) {
-  console.log('handleChildSortChange', list)
+function handleChildSortChange(list: any[], parentIdx) {
+  // console.log('handleChildSortChange', list)
+  // categories.value[parentIdx].childs = list
 }
 
 function handleTapItem(item) {
-  console.log('handleTapItem', item)
+  // console.log('handleTapItem', item)
 }
 
 function handelExpandClick() {
-  console.log('展开')
+  // console.log('展开')
 }
 </script>
 
@@ -62,29 +64,29 @@ function handelExpandClick() {
   </nav-bar>
   <view class="w-screen">
     <view class="p-2">
-      <drag-sort-view-test expand :gap="8" :list="categories" key-prop="categoryId" :height="scrollHeight" @change="handleSortChange">
-        <template #title="{ item }">
+      <drag-sort-list-expand-view-test expand :gap="8" :list="categories" key-prop="categoryId" :height="scrollHeight" @change="handleSortChange">
+        <template #title="{ listItem }">
           <view class="category-title-box" @tap="handelExpandClick">
             <view class="category-title">
-              <view>{{ item.name }}</view>
+              <view>{{ listItem.name }}</view>
             </view>
           </view>
         </template>
-        <template #content="{ item }">
-          <view v-if="item.childs && item.childs.length > 0" class="p-2">
-            <drag-sort-all-view-test :item-height="70" :gap="8" :column="4" :list="item.childs" key-prop="categoryId" @change="handleChildSortChange" @tap-item="handleTapItem">
-              <template #content="data">
+        <template #content="{ listItem }">
+          <view v-if="listItem.childs && listItem.childs.length > 0" class="p-2">
+            <drag-sort-grid-view-test :item-height="70" :gap="8" :column="4" :list="listItem.childs" key-prop="categoryId" @change="list => handleChildSortChange(list, listItem.index)" @tap-item="handleTapItem">
+              <template #content="{ gridItem }">
                 <view class="flex flex-col items-center items-center p-2">
-                  <wd-img :width="30" round :height="30" :src="data.item.icon" />
+                  <wd-img :width="30" round :height="30" :src="gridItem.icon" />
                   <view class="category-item-title">
-                    {{ data.item.name }}
+                    {{ gridItem.name }}
                   </view>
                 </view>
               </template>
-            </drag-sort-all-view-test>
+            </drag-sort-grid-view-test>
           </view>
         </template>
-      </drag-sort-view-test>
+      </drag-sort-list-expand-view-test>
     </view>
   </view>
 </template>

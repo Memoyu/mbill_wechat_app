@@ -43,6 +43,7 @@ const initState = {
         icon: 'https://wot-ui.cn/assets/panda.jpg',
       },
     ],
+    createTime: '2024-06-02 12:09:00',
   }, {
     categoryId: 'b1232',
     name: '购物消费',
@@ -84,11 +85,52 @@ const initState = {
         icon: 'https://wot-ui.cn/assets/panda.jpg',
       },
       {
-        categoryId: '12327',
+        categoryId: '12328',
         name: '测试分类',
         icon: 'https://wot-ui.cn/assets/panda.jpg',
       },
+      {
+        categoryId: '123212',
+        name: '日常家居2',
+        icon: 'https://wot-ui.cn/assets/panda.jpg',
+      },
+      {
+        categoryId: '123222',
+        name: '个人美妆2',
+        icon: 'https://wot-ui.cn/assets/panda.jpg',
+      },
+      {
+        categoryId: '123232',
+        name: '手机数码2',
+        icon: 'https://wot-ui.cn/assets/panda.jpg',
+      },
+      {
+        categoryId: '123242',
+        name: '虚拟充值2',
+        icon: 'https://wot-ui.cn/assets/panda.jpg',
+      },
+      {
+        categoryId: '123252',
+        name: '生活电器2',
+        icon: 'https://wot-ui.cn/assets/panda.jpg',
+      },
+      {
+        categoryId: '123262',
+        name: '配饰腕表2',
+        icon: 'https://wot-ui.cn/assets/panda.jpg',
+      },
+      {
+        categoryId: '123272',
+        name: '母婴玩具2',
+        icon: 'https://wot-ui.cn/assets/panda.jpg',
+      },
+      {
+        categoryId: '123282',
+        name: '测试分类2',
+        icon: 'https://wot-ui.cn/assets/panda.jpg',
+      },
     ],
+    createTime: '2024-06-02 12:59:00',
   }, {
     categoryId: 'c1233',
     name: '出行交通',
@@ -96,6 +138,7 @@ const initState = {
     childs: [
 
     ],
+    createTime: '2024-06-02 12:49:00',
   }, {
     categoryId: 'd1234',
     name: '休闲娱乐',
@@ -103,6 +146,7 @@ const initState = {
     childs: [
 
     ],
+    createTime: '2024-06-02 12:39:00',
   }, {
     categoryId: 'e1235',
     name: '健康医疗',
@@ -110,6 +154,7 @@ const initState = {
     childs: [
 
     ],
+    createTime: '2024-06-02 12:29:00',
   }, {
     categoryId: 'f1236',
     name: '居家生活',
@@ -117,6 +162,7 @@ const initState = {
     childs: [
 
     ],
+    createTime: '2024-06-02 12:19:00',
   }, {
     categoryId: 'g1237',
     name: '文化教育',
@@ -124,6 +170,7 @@ const initState = {
     childs: [
 
     ],
+    createTime: '2024-06-02 12:09:32',
   }, {
     categoryId: 'h1238',
     name: '送礼人情',
@@ -165,6 +212,7 @@ const initState = {
         icon: 'https://wot-ui.cn/assets/panda.jpg',
       },
     ],
+    createTime: '2024-06-02 12:09:30',
   }],
 }
 
