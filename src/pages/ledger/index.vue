@@ -56,10 +56,10 @@ function handleSortChange(list) {
   <view class="w-screen">
     <view class="px-3 py-2">
       <drag-sort-list-view :list="ledgers" :gap="8" key-prop="ledgerId" :height="scrollHeight" @change="handleSortChange">
-        <template #content="{ item }">
+        <template #content="{ listItem }">
           <view class="ledger-item-box">
             <view class="ledger-item-content">
-              <text class="line-clamp-1 font-semibold">{{ item.name }}</text>
+              <text class="line-clamp-1 font-semibold">{{ listItem.name }}</text>
               <view class="mt-2 flex items-center text-xs">
                 <text>
                   收入
@@ -75,8 +75,8 @@ function handleSortChange(list) {
                 </text>
               </view>
               <view class="mt-2 flex items-center text-xs">
-                <text>共{{ item.count }}条账单</text>
-                <text>创建于{{ item.createTime }}</text>
+                <text>共{{ listItem.count }}条账单</text>
+                <text>创建于{{ listItem.createTime }}</text>
               </view>
             </view>
             <view class="ledger-item-more">

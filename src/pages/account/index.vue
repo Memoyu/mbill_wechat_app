@@ -55,19 +55,33 @@ function handelItemClick() {
   </nav-bar>
   <view class="w-screen">
     <view class="p-2">
-      <drag-sort-list-view-test :gap="8" :list="categories" key-prop="categoryId" :height="scrollHeight" @change="handleSortChange">
-        <template #content="{ item }">
-          <view class="category-title-box" @tap="handelItemClick">
+      <drag-sort-list-view expand :gap="8" :list="categories" key-prop="categoryId" :height="scrollHeight" @change="handleSortChange">
+        <template #title="{ listItem }">
+          <view class="category-title-box" @tap="handelExpandClick">
             <view class="mb-2 font-bold">
-              {{ item.name }}
+              {{ listItem.name }}
             </view>
             <view class="flex justify-between text-sm text-gray-500">
-              <view>共{{ item.childs.length }}个分类</view>
-              <view>{{ item.createTime }}</view>
+              <view>共{{ listItem.childs.length }}个分类</view>
+              <view>{{ listItem.createTime }}</view>
             </view>
           </view>
         </template>
-      </drag-sort-list-view-test>
+        <template #content="{ listItem }">
+          <view v-if="listItem.childs && listItem.childs.length > 0" class="p-2">
+            <drag-sort-grid-view :gap="8" :column="4" :list="listItem.childs" key-prop="categoryId" @change="list => handleChildSortChange(list, listItem)">
+              <template #content="{ gridItem }">
+                <view class="flex flex-col items-center items-center p-2">
+                  <wd-img :width="30" round :height="30" :src="gridItem.icon" />
+                  <view class="category-item-title">
+                    {{ gridItem.name }}
+                  </view>
+                </view>
+              </template>
+            </drag-sort-grid-view>
+          </view>
+        </template>
+      </drag-sort-list-view>
     </view>
   </view>
 </template>

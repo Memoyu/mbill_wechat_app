@@ -13,7 +13,7 @@ const categoryStore = useCategoryStore()
 
 const show = ref(false)
 const scrollHeight = ref(300)
-const categories = ref(categoryStore.categories)
+const categories = ref([])
 
 onMounted(() => {
   nextTick(() => {
@@ -25,16 +25,15 @@ onMounted(() => {
 
 function handleCreateClick() {
   console.log('handleCreateClick')
+  categories.value = categoryStore.categories
 }
 
 function handleSortChange(list: any[]) {
-  // console.log('handleSortChange', list)
-  // categories.value = list
+  console.log('handleSortChange', list)
 }
 
-function handleChildSortChange(list: any[], parentIdx) {
-  // console.log('handleChildSortChange', list)
-  // categories.value[parentIdx].childs = list
+function handleChildSortChange(list: any[], parent) {
+  console.log('handleChildSortChange', list, parent)
 }
 
 function handleTapItem(item) {
@@ -64,17 +63,21 @@ function handelExpandClick() {
   </nav-bar>
   <view class="w-screen">
     <view class="p-2">
-      <drag-sort-list-expand-view-test expand :gap="8" :list="categories" key-prop="categoryId" :height="scrollHeight" @change="handleSortChange">
+      <drag-sort-list-view-test expand :gap="8" :list="categories" key-prop="categoryId" :height="scrollHeight" @change="handleSortChange">
         <template #title="{ listItem }">
           <view class="category-title-box" @tap="handelExpandClick">
-            <view class="category-title">
-              <view>{{ listItem.name }}</view>
+            <view class="mb-2 font-bold">
+              {{ listItem.name }}
+            </view>
+            <view class="flex justify-between text-sm text-gray-500">
+              <view>共{{ listItem.childs.length }}个分类</view>
+              <view>{{ listItem.createTime }}</view>
             </view>
           </view>
         </template>
         <template #content="{ listItem }">
           <view v-if="listItem.childs && listItem.childs.length > 0" class="p-2">
-            <drag-sort-grid-view-test :item-height="70" :gap="8" :column="4" :list="listItem.childs" key-prop="categoryId" @change="list => handleChildSortChange(list, listItem.index)" @tap-item="handleTapItem">
+            <drag-sort-grid-view-test :gap="8" :column="4" :list="listItem.childs" key-prop="categoryId" @change="list => handleChildSortChange(list, listItem)">
               <template #content="{ gridItem }">
                 <view class="flex flex-col items-center items-center p-2">
                   <wd-img :width="30" round :height="30" :src="gridItem.icon" />
@@ -86,7 +89,7 @@ function handelExpandClick() {
             </drag-sort-grid-view-test>
           </view>
         </template>
-      </drag-sort-list-expand-view-test>
+      </drag-sort-list-view-test>
     </view>
   </view>
 </template>
@@ -97,20 +100,8 @@ function handelExpandClick() {
 }
 
 .category-title-box {
-  display: flex;
-  align-items: center;
   border-radius: 19px;
   box-sizing: border-box;
-  padding: 0.5rem 0;
-  // border-bottom: 1px solid #f0f0f0;
-}
-
-.category-title {
-  margin-left: 0.9rem;
-  flex: 1;
-  width: calc(100% - 48px);
-  display: flex;
-  flex-direction: column;
-  font-weight: bold;
+  padding: 0.7rem;
 }
 </style>
