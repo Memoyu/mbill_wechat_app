@@ -21,7 +21,7 @@ function handleTodayClick() {
 }
 
 function handleMonthChange(month: number) {
-  console.log('月份切换', month)
+  // console.log('月份切换', month)
 }
 </script>
 
