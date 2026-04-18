@@ -20,9 +20,9 @@ const props = withDefaults(defineProps<{
   column: 3,
   hasAdd: true,
 })
-const emit = defineEmits(['change'])
+const emit = defineEmits(['change', 'add'])
 const ADD_DRAG_ID = 'add-item'
-const COM_INTERNAL_ARGS = ['x', 'y', 'drag_key', 'drag_id', 'width', 'height', 'disabled']
+const COM_INTERNAL_ARGS = ['x', 'y', 'drag_id', 'width', 'height', 'disabled']
 
 const { vibrate } = useVibrate()
 
@@ -38,6 +38,11 @@ const itemWidth = ref(80)
 const itemHeight = ref(80)
 
 const { proxy } = getCurrentInstance() as any
+
+const addIconSize = computed(() => {
+  const size = toFixed(Math.min(itemWidth.value, itemHeight.value) * 0.42)
+  return `${Math.max(size, 20)}px`
+})
 
 watch(() => props.list, (newList, old) => {
   console.log('grid 更新', newList, old)
@@ -79,14 +84,12 @@ function calculateItemSize() {
 }
 
 function initList(list: any[]) {
-  showList.value = list.map((item, index) => {
-    const dragId = item[props.keyProp]
+  showList.value = list.map((item) => {
     const data = {
       ...item,
       y: 0,
       x: 0,
-      drag_id: dragId,
-      drag_key: dragId,
+      drag_id: item[props.keyProp],
     }
     return data
   })
@@ -236,6 +239,10 @@ function getTargetIndex(e) {
 function getListIndex(drag_id, list = cloneList.value) {
   return list.findIndex(item => item.drag_id === drag_id)
 }
+
+function handleAddItemTap() {
+  emit('add')
+}
 </script>
 
 <template>
@@ -248,7 +255,7 @@ function getListIndex(drag_id, list = cloneList.value) {
     >
       <movable-view
         v-for="item in showList"
-        :key="item.drag_key"
+        :key="item.drag_id"
         class="drag-movable-item"
         :style="{
           height: `${itemHeight}px`,
@@ -269,8 +276,8 @@ function getListIndex(drag_id, list = cloneList.value) {
         <view v-if="item.drag_id !== ADD_DRAG_ID" class="dragSlotContent">
           <slot name="content" :grid-item="{ ...item }" />
         </view>
-        <view v-else class="drag-add-item">
-          <text class="iconfont icon-plus" :style="{ fontSize: '30px' }" />
+        <view v-else class="drag-add-item" @tap.stop="handleAddItemTap">
+          <text class="iconfont icon-plus" :style="{ fontSize: addIconSize }" />
         </view>
       </movable-view>
     </movable-area>
@@ -285,7 +292,6 @@ function getListIndex(drag_id, list = cloneList.value) {
 
 .drag-movable-item {
   width: 100%;
-  // transition: height 0.3s ease-in-out;
   overflow: hidden;
   border-radius: 10px;
   @apply: bg-gray-300/[0.3] dark:bg-[#292929];

@@ -13,7 +13,7 @@ const categoryStore = useCategoryStore()
 
 const show = ref(false)
 const scrollHeight = ref(300)
-const categories = ref([])
+const categories = ref(categoryStore.categories)
 
 onMounted(() => {
   nextTick(() => {
@@ -25,7 +25,7 @@ onMounted(() => {
 
 function handleCreateClick() {
   console.log('handleCreateClick')
-  categories.value = categoryStore.categories
+  // categories.value = categoryStore.categories
 }
 
 function handleSortChange(list: any[]) {
@@ -36,12 +36,8 @@ function handleChildSortChange(list: any[], parent) {
   console.log('handleChildSortChange', list, parent)
 }
 
-function handleTapItem(item) {
-  // console.log('handleTapItem', item)
-}
-
-function handelListItemTap() {
-  // console.log('展开')
+function handleEditItemTap(item) {
+  console.log('handleEditItemTap', item)
 }
 </script>
 
@@ -65,20 +61,18 @@ function handelListItemTap() {
     <view class="p-2">
       <drag-sort-list-view-test expand :gap="8" :list="categories" key-prop="categoryId" :height="scrollHeight" @change="handleSortChange">
         <template #title="{ listItem }">
-          <view class="category-title-box" @tap="handelListItemTap">
+          <view class="category-title-box">
             <view class="flex items-center justify-between">
-              <view class="flex-1">
-                <view class="mb-2 font-bold">
-                  {{ listItem.name }}
-                </view>
-                <view class="flex justify-between text-sm text-gray-500">
-                  <view>共{{ listItem.childs.length }}个子类</view>
-                  <view>{{ listItem.createTime }}</view>
-                </view>
+              <view class="mr-3">
+                <wd-icon v-if="listItem.expand" name="arrow-down" />
+                <wd-icon v-else name="arrow-right" />
               </view>
-              <view class="ml-3">
-                <wd-icon v-if="listItem.expand" name="arrow-down" size="22px" />
-                <wd-icon v-else name="arrow-right" size="22px" />
+              <view class="flex-1 font-bold">
+                {{ listItem.name }}
+              </view>
+
+              <view class="px-2" @tap.stop="handleEditItemTap(listItem)">
+                <wd-icon name="view-list" />
               </view>
             </view>
           </view>
@@ -87,7 +81,7 @@ function handelListItemTap() {
           <view v-if="listItem.childs && listItem.childs.length > 0" class="p-2">
             <drag-sort-grid-view-test :gap="8" :column="4" :list="listItem.childs" key-prop="categoryId" @change="list => handleChildSortChange(list, listItem)">
               <template #content="{ gridItem }">
-                <view class="flex flex-col items-center items-center p-2">
+                <view class="flex flex-col items-center p-2">
                   <wd-img :width="30" round :height="30" :src="gridItem.icon" />
                   <view class="category-item-title">
                     {{ gridItem.name }}
@@ -110,6 +104,6 @@ function handelListItemTap() {
 .category-title-box {
   border-radius: 19px;
   box-sizing: border-box;
-  padding: 0.7rem;
+  padding: 0.9rem;
 }
 </style>

@@ -36,8 +36,8 @@ function handleChildSortChange(list: any[], parent) {
   console.log('handleChildSortChange', list, parent)
 }
 
-function handelListItemTap() {
-  console.log('点击 item')
+function handleEditItemTap(item) {
+  console.log('handleEditItemTap', item)
 }
 </script>
 
@@ -61,20 +61,18 @@ function handelListItemTap() {
     <view class="p-2">
       <drag-sort-list-view expand :gap="8" :list="accounts" key-prop="accountId" :height="scrollHeight" @change="handleSortChange">
         <template #title="{ listItem }">
-          <view class="account-title-box" @tap="handelListItemTap">
+          <view class="account-title-box">
             <view class="flex items-center justify-between">
-              <view class="flex-1">
-                <view class="mb-2 font-bold">
-                  {{ listItem.name }}
-                </view>
-                <view class="flex justify-between text-sm text-gray-500">
-                  <view>共{{ listItem.childs.length }}个子类</view>
-                  <view>{{ listItem.createTime }}</view>
-                </view>
+              <view class="mr-3">
+                <wd-icon v-if="listItem.expand" name="arrow-down" />
+                <wd-icon v-else name="arrow-right" />
               </view>
-              <view class="ml-3">
-                <wd-icon v-if="listItem.expand" name="arrow-down" size="22px" />
-                <wd-icon v-else name="arrow-right" size="22px" />
+              <view class="flex-1 font-bold">
+                {{ listItem.name }}
+              </view>
+
+              <view class="px-2" @tap.stop="handleEditItemTap(listItem)">
+                <wd-icon name="view-list" />
               </view>
             </view>
           </view>
@@ -83,7 +81,7 @@ function handelListItemTap() {
           <view v-if="listItem.childs && listItem.childs.length > 0" class="p-2">
             <drag-sort-grid-view :gap="8" :column="4" :list="listItem.childs" key-prop="accountId" @change="list => handleChildSortChange(list, listItem)">
               <template #content="{ gridItem }">
-                <view class="flex flex-col items-center items-center p-2">
+                <view class="flex flex-col items-center p-2">
                   <wd-img :width="30" round :height="30" :src="gridItem.icon" />
                   <view class="account-item-title">
                     {{ gridItem.name }}

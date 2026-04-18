@@ -22,7 +22,7 @@ const props = withDefaults(defineProps<{
   expand: false,
 })
 const emit = defineEmits(['change'])
-const COM_INTERNAL_ARGS = ['x', 'y', 'drag_key', 'drag_id', 'height', 'expand']
+const COM_INTERNAL_ARGS = ['x', 'y', 'drag_id', 'height', 'expand']
 
 const { vibrate } = useVibrate()
 const touch = useTouch()
@@ -136,14 +136,12 @@ function calculateItemSize() {
 function initList(list: any[]) {
   // console.log(list)
   showList.value = list.map((item, index) => {
-    const dragId = item[props.keyProp]
     const data = {
       ...item,
       expand: item.expand ?? false,
       y: 0,
       x: 0,
-      drag_id: dragId,
-      drag_key: dragId,
+      drag_id: item[props.keyProp],
     }
 
     return data
@@ -344,11 +342,12 @@ function getListIndex(drag_id, list = cloneList.value) {
     >
       <movable-view
         v-for="item in showList"
-        :key="item.drag_key"
+        :key="item.drag_id"
         class="drag-movable-item"
         :style="{
           height: `${item.height}px`,
           zIndex: currentId === item.drag_id ? 10 : 1,
+          transition: `height ${(item.expand ? 0.5 : 0.3)}s ease-in-out`,
         }"
         :class="[currentId === item.drag_id ? 'drag-movable-item--active' : '']"
         animation
@@ -385,7 +384,6 @@ function getListIndex(drag_id, list = cloneList.value) {
 
 .drag-movable-item {
   width: 100%;
-  transition: height 0.3s ease-in-out;
   overflow: hidden;
   border-radius: 10px;
   @apply: bg-gray-300/[0.3] dark:bg-[#292929];

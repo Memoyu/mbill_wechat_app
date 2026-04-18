@@ -39,6 +39,13 @@ const firstDayStyle = computed(() => {
   return objToStyle(dayStyle)
 })
 
+const dateMonth = computed(() => {
+  const date = new Date(props.month)
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  return `${year}年${month}月`
+})
+
 const dayTypeClass = computed(() => {
   return (type: string) => {
     return `is-${type}`
@@ -103,6 +110,9 @@ function handleDateClick(index: number) {
 <template>
   <view class="calendar rounded-2xl">
     <view class="calendar-days">
+      <view class="calendar-month-text">
+        {{ dateMonth }}
+      </view>
       <view
         v-for="(item, index) in days"
         :key="index"
@@ -127,9 +137,11 @@ function handleDateClick(index: number) {
 
 <style scoped>
 .calendar {
+  position: relative;
 }
 
 .calendar-days {
+  position: relative;
   display: flex;
   flex-wrap: wrap;
   font-size: 16px;
@@ -167,5 +179,14 @@ function handleDateClick(index: number) {
   line-height: 1.1;
   font-size: 10px;
   text-align: center;
+}
+
+.calendar-month-text {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translate(-50%, 0);
+  white-space: nowrap;
+  @apply: text-40px text-gray-200/60 font-semibold;
 }
 </style>

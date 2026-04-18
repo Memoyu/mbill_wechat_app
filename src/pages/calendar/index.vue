@@ -19,6 +19,10 @@ const dateText = computed(() => {
 function handleTodayClick() {
   // 定位到今天
 }
+
+function handleMonthChange(month: number) {
+  console.log('月份切换', month)
+}
 </script>
 
 <template>
@@ -38,7 +42,7 @@ function handleTodayClick() {
       </view>
     </template>
     <template #action>
-      <view class="flex items-center gap-3 text-sm">
+      <view class="mt-3 flex items-center gap-3 text-sm">
         <slot name="action" />
         <view class="flex">
           <view>
@@ -71,7 +75,7 @@ function handleTodayClick() {
   </nav-bar>
   <!-- 日历组件 -->
   <view class="mx-3 mt-3 rounded-3xl bg-white/70 px-3">
-    <calendar />
+    <calendar v-model="date" @change="handleMonthChange" />
   </view>
 
   <!-- 日期选择弹窗 -->

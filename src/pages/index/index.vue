@@ -90,7 +90,7 @@ function handleLedgerChange(item) {
   </view>
 
   <!-- 日期栏 -->
-  <view class="w-screen">
+  <view class="mt-3 w-screen">
     <view class="flex justify-between px-5">
       <view class="flex items-center" @tap="() => isDateSelectShow = true">
         <view class="mr-1 font-bold">
