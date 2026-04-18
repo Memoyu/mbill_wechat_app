@@ -40,7 +40,7 @@ function handleTapItem(item) {
   // console.log('handleTapItem', item)
 }
 
-function handelExpandClick() {
+function handelListItemTap() {
   // console.log('展开')
 }
 </script>
@@ -65,13 +65,21 @@ function handelExpandClick() {
     <view class="p-2">
       <drag-sort-list-view-test expand :gap="8" :list="categories" key-prop="categoryId" :height="scrollHeight" @change="handleSortChange">
         <template #title="{ listItem }">
-          <view class="category-title-box" @tap="handelExpandClick">
-            <view class="mb-2 font-bold">
-              {{ listItem.name }}
-            </view>
-            <view class="flex justify-between text-sm text-gray-500">
-              <view>共{{ listItem.childs.length }}个分类</view>
-              <view>{{ listItem.createTime }}</view>
+          <view class="category-title-box" @tap="handelListItemTap">
+            <view class="flex items-center justify-between">
+              <view class="flex-1">
+                <view class="mb-2 font-bold">
+                  {{ listItem.name }}
+                </view>
+                <view class="flex justify-between text-sm text-gray-500">
+                  <view>共{{ listItem.childs.length }}个子类</view>
+                  <view>{{ listItem.createTime }}</view>
+                </view>
+              </view>
+              <view class="ml-3">
+                <wd-icon v-if="listItem.expand" name="arrow-down" size="22px" />
+                <wd-icon v-else name="arrow-right" size="22px" />
+              </view>
             </view>
           </view>
         </template>

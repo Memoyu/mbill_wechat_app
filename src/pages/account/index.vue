@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useCategoryStore } from '@/store'
+import { useAccountStore } from '@/store'
 import { systemInfo } from '@/utils/systemInfo'
 
 definePage({
@@ -9,11 +9,11 @@ definePage({
   },
 })
 
-const categoryStore = useCategoryStore()
+const accountStore = useAccountStore()
 
 const show = ref(false)
 const scrollHeight = ref(300)
-const categories = ref(categoryStore.categories)
+const accounts = ref(accountStore.accounts)
 
 onMounted(() => {
   nextTick(() => {
@@ -29,10 +29,14 @@ function handleCreateClick() {
 
 function handleSortChange(list: any[]) {
   // console.log('handleSortChange', list)
-  // categories.value = list
+  // accounts.value = list
 }
 
-function handelItemClick() {
+function handleChildSortChange(list: any[], parent) {
+  console.log('handleChildSortChange', list, parent)
+}
+
+function handelListItemTap() {
   console.log('点击 item')
 }
 </script>
@@ -55,25 +59,33 @@ function handelItemClick() {
   </nav-bar>
   <view class="w-screen">
     <view class="p-2">
-      <drag-sort-list-view expand :gap="8" :list="categories" key-prop="categoryId" :height="scrollHeight" @change="handleSortChange">
+      <drag-sort-list-view expand :gap="8" :list="accounts" key-prop="accountId" :height="scrollHeight" @change="handleSortChange">
         <template #title="{ listItem }">
-          <view class="category-title-box" @tap="handelExpandClick">
-            <view class="mb-2 font-bold">
-              {{ listItem.name }}
-            </view>
-            <view class="flex justify-between text-sm text-gray-500">
-              <view>共{{ listItem.childs.length }}个分类</view>
-              <view>{{ listItem.createTime }}</view>
+          <view class="account-title-box" @tap="handelListItemTap">
+            <view class="flex items-center justify-between">
+              <view class="flex-1">
+                <view class="mb-2 font-bold">
+                  {{ listItem.name }}
+                </view>
+                <view class="flex justify-between text-sm text-gray-500">
+                  <view>共{{ listItem.childs.length }}个子类</view>
+                  <view>{{ listItem.createTime }}</view>
+                </view>
+              </view>
+              <view class="ml-3">
+                <wd-icon v-if="listItem.expand" name="arrow-down" size="22px" />
+                <wd-icon v-else name="arrow-right" size="22px" />
+              </view>
             </view>
           </view>
         </template>
         <template #content="{ listItem }">
           <view v-if="listItem.childs && listItem.childs.length > 0" class="p-2">
-            <drag-sort-grid-view :gap="8" :column="4" :list="listItem.childs" key-prop="categoryId" @change="list => handleChildSortChange(list, listItem)">
+            <drag-sort-grid-view :gap="8" :column="4" :list="listItem.childs" key-prop="accountId" @change="list => handleChildSortChange(list, listItem)">
               <template #content="{ gridItem }">
                 <view class="flex flex-col items-center items-center p-2">
                   <wd-img :width="30" round :height="30" :src="gridItem.icon" />
-                  <view class="category-item-title">
+                  <view class="account-item-title">
                     {{ gridItem.name }}
                   </view>
                 </view>
@@ -91,16 +103,10 @@ function handelItemClick() {
   @apply: flex items-center justify-center rounded-full bg-gray-50 p-2 px-4;
 }
 
-.category-title-box {
+.account-title-box {
   border-radius: 19px;
   box-sizing: border-box;
   padding: 0.7rem;
   // border-bottom: 1px solid #f0f0f0;
-}
-
-.category-title {
-  display: flex;
-  flex-direction: column;
-  font-weight: bold;
 }
 </style>

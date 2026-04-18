@@ -127,7 +127,7 @@ function calculateItemSize() {
           list[i].height = res[i].height
         }
 
-        updatePosition(list)
+        updatePosition()
       }
     }).exec()
   }, 0)
@@ -201,27 +201,30 @@ function handleTouchEnd() {
 
   // console.log('touch end', showList.value)
   sorting.value = false
-  const currentIndex = getListIndex(currentId.value)
   if (targetId.value !== '' && targetId.value !== currentId.value) {
-    const targetIndex = getListIndex(targetId.value)
-    cloneList.value.splice(targetIndex, 0, ...cloneList.value.splice(currentIndex, 1))
-    const y = getPosition(targetIndex)
-    cloneList.value[currentIndex].y = y
-    const i = getListIndex(currentId.value, showList.value)
-    showList.value[i].y = y
-    // console.log('调换', lodash.cloneDeep(showList.value))
+    cloneList.value.map((item, index) => {
+      const y = getPosition(index)
+      const i = getListIndex(item.drag_id, showList.value)
+      item.y = y
+      showList.value[i].y = y
+      return item
+    })
+    // console.log('调换', currentId.value, targetId.value, cloneList.value, showList.value)
   }
   else {
-    // console.log('偏移')
-    const y = getPosition(currentIndex)
-    const item = showList.value[getListIndex(currentId.value, showList.value)]
-    // 增加偏移量
+    const cloneIndex = getListIndex(currentId.value)
+    const y = getPosition(cloneIndex)
+
+    // 获取showList item，加偏移量
+    const showIndex = getListIndex(currentId.value, showList.value)
+    const item = showList.value[showIndex]
     item.y += 0.001
+
     // DOM 更新循环结束之后执行延迟回调，恢复原位
     nextTick(() => {
       item.y = y
     })
-    // console.log(y, currentId.value, targetId.value, item, showList.value, cloneList.value, 'showList.value[currentIndex]')
+    // console.log('偏移', currentId.value, targetId.value, cloneList.value, showList.value)
   }
 
   if (sortChanged.value) {

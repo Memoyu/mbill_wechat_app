@@ -71,7 +71,7 @@ function calculateItemSize() {
 
           const w = res.width
           itemWidth.value = toFixed((w - ((props.column - 1) * props.gap)) / props.column)
-          updatePosition(cloneList.value)
+          updatePosition()
         }).exec()
       }
     }).exec()
@@ -119,36 +119,34 @@ function handleTouchEnd() {
 
   // console.log('touch end', showList.value)
   sorting.value = false
-  console.log(currentId.value, targetId.value, showList.value, 'handleTouchEnd')
-  const currentIndex = getListIndex(currentId.value)
   if (targetId.value !== '' && targetId.value !== currentId.value) {
-    const targetIndex = getListIndex(targetId.value)
-    cloneList.value.splice(targetIndex, 0, ...cloneList.value.splice(currentIndex, 1))
-    const [x, y] = getPosition(targetIndex)
-    cloneList.value[currentIndex].x = x
-    cloneList.value[currentIndex].y = y
-
-    const i = getListIndex(currentId.value, showList.value)
-    showList.value[i].x = x
-    showList.value[i].y = y
-    // console.log('调换', lodash.cloneDeep(showList.value))
+    cloneList.value.map((item, index) => {
+      const [x, y] = getPosition(index)
+      const i = getListIndex(item.drag_id, showList.value)
+      item.x = x
+      item.y = y
+      showList.value[i].x = x
+      showList.value[i].y = y
+      return item
+    })
+    // console.log('调换', currentId.value, targetId.value, cloneList.value, showList.value)
   }
   else {
-    const [x, y] = getPosition(currentIndex)
-    // console.log(x, y, 'handleTouchEnd xy')
-    const item = showList.value[getListIndex(currentId.value, showList.value)]
-    // 增加偏移量
+    const cloneIndex = getListIndex(currentId.value)
+    const [x, y] = getPosition(cloneIndex)
+
+    // 获取showList item，加偏移量
+    const showIndex = getListIndex(currentId.value, showList.value)
+    const item = showList.value[showIndex]
     item.x += 0.001
     item.y += 0.001
-    // console.log(lodash.cloneDeep(showList.value), 'handleTouchEnd')
+
     // DOM 更新循环结束之后执行延迟回调，恢复原位
     nextTick(() => {
       item.x = x
       item.y = y
-      // console.log(lodash.cloneDeep(showList.value), 'handleTouchEnd')
     })
-
-    // console.log(y, currentId.value, targetId.value, item, showList.value, cloneList.value, 'showList.value[currentIndex]')
+    // console.log('偏移', currentId.value, targetId.value, cloneList.value, showList.value)
   }
 
   if (sortChanged.value) {
@@ -224,14 +222,11 @@ function getPosition(index, list = cloneList.value) {
 function getTargetIndex(e) {
   const list = cloneList.value
   const { x, y } = e.detail
-
-  let target = ''
-
   // x 手指按下拖动，产生的位置，超出了item的宽度，那么就改变下标，包括y轴。
   const currentX = Math.floor((x + itemWidth.value / 2) / itemWidth.value)
   const currentY = Math.floor((y + itemHeight.value / 2) / itemHeight.value)
   // target：通过计算横排数量，偏移量（ x，y ），得出下标位置
-  target = Math.min(currentY * props.column + currentX, list.length - 2) // 滑到了哪个位置
+  const target = Math.min(currentY * props.column + currentX, list.length - 2) // 滑到了哪个位置
 
   // console.log(target, 'target')
   return list[target].drag_id
