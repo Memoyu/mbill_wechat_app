@@ -95,6 +95,7 @@ function tryAddSwiperItem() {
     if (currentIndex.value <= 2) {
       const firstDate = dateList.value.at(0)
       dateList.value.unshift(dayjs(firstDate).subtract(1, 'month').startOf('month').valueOf())
+      // 插入前面，index发生改变，需要调整当前swiper current
       currentIndex.value += 1
       oldIndex.value = currentIndex.value
     }
