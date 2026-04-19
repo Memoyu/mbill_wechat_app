@@ -77,6 +77,9 @@ function handleMonthChange(month: number) {
   <view class="mx-3 mt-3 rounded-3xl bg-white/70 px-3">
     <calendar v-model="date" @change="handleMonthChange" />
   </view>
+  <view class="w-full">
+    <bill-list />
+  </view>
 
   <!-- 日期选择弹窗 -->
   <date-popup v-model="isDateSelectShow" v-model:date="date" type="year-month" />

@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import dayjs from 'dayjs'
-import lodash from 'lodash'
 import { getWeekLabel } from '@/utils/date'
 
 const props = defineProps<{
@@ -63,12 +62,13 @@ function handleSwiperChange(e) {
 
   const index = e.detail.current
   const month = dateList.value[index]
-  getSwiperItemHeight()
+
   emit('change', month)
   currentDate.value = month
   date.value = month
   currentIndex.value = index
   // console.log(currentIndex.value, 'currentIndex.value')
+  getSwiperItemHeight()
 }
 
 function handleSwiperAnimationFinish(e) {
@@ -105,13 +105,14 @@ function tryAddSwiperItem() {
 }
 function getSwiperItemHeight() {
   const month = currentDate.value
+  console.log('date', dayjs(month).format('YYYY-MM'))
   setTimeout(() =>
     uni
       .createSelectorQuery()
       .in(proxy)
       .select(`#calendar-view-${month}`)
       .boundingClientRect((view: UniApp.NodeInfo) => {
-        // console.log(view, month, 'boundingClientRect')
+        console.log(view, month, 'boundingClientRect')
         // 输出元素位置信息
         swiperHeight.value = view?.height ?? INIT_HEIGHT
       })
@@ -127,6 +128,7 @@ function getSwiperItemHeight() {
   </view>
 
   <swiper
+    class="calendar-swiper"
     :current="currentIndex"
     :style="{ height: `${swiperHeight}px` }"
     :autoplay="false"
@@ -154,5 +156,9 @@ function getSwiperItemHeight() {
 .calendar-week {
   flex: 1 1 0%;
   text-align: center;
+}
+
+.calendar-swiper {
+  transition: height 0.3s ease-in-out;
 }
 </style>
