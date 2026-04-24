@@ -10,10 +10,12 @@ const props = defineProps<{
 const emit = defineEmits(['update:cursor'])
 const input = defineModel<string>()
 
+const touch = useTouch()
+const { proxy } = getCurrentInstance() as any
+
 const maxWidth = systemInfo.windowWidth // 最大画布宽度
-// 响应式宽度
 const canvasWidth = ref(maxWidth)
-const canvasHeight = 30 // Canvas 高度
+const canvasHeight = 28 // Canvas 高度
 const px = 10 // 初始偏移量
 
 // 光标位置
@@ -23,8 +25,6 @@ let ctx: UniApp.CanvasContext | null = null
 let canvas: HTMLCanvasElement | null = null
 const canvasId = ref('textCanvas')
 
-const touch = useTouch()
-const { proxy } = getCurrentInstance() as any
 const pixelRatio = ref<number>(1) // 像素比
 const active = ref<boolean>(false)
 
@@ -93,9 +93,8 @@ function drawCanvas() {
     return
 
   setCanvasStyle()
-
+  updateCanvasSize()
   redrawCanvas()
-  //  updateCanvasSize()
 }
 
 // 重绘画布
@@ -103,32 +102,32 @@ function redrawCanvas() {
   if (!ctx)
     return
 
-  // 清空画布
-  ctx.clearRect(0, 0, canvasWidth.value, canvasHeight)
+  // 清空画布(调整width会清空画布)
+  // ctx.clearRect(0, 0, canvasWidth.value, canvasHeight)
 
   setCanvasStyle()
   // 绘制文本
   ctx.fillText(input.value, px, canvasHeight / 2)
 
   // 绘制光标
-  const py = 5 // 光标上下padding
   const textBeforeCursor = input.value.slice(0, cursorPosition.value)
   const cursorX = px + ctx.measureText(textBeforeCursor).width
   ctx.beginPath()
-  ctx.moveTo(cursorX, py)
-  ctx.lineTo(cursorX, canvasHeight - py)
+  ctx.moveTo(cursorX, 2)
+  ctx.lineTo(cursorX, canvasHeight - 2)
   ctx.setStrokeStyle('#00f')
   ctx.setLineWidth(2)
   ctx.stroke()
 
-  console.log(cursorX, 'cursorX')
-  ctx.translate(cursorX, py)
   // 刷新画布
   ctx.draw()
 }
+
 function updateCanvasSize() {
-  // const textWidth = ctx.measureText(input.value).width + 20
-  // canvasWidth.value = Math.ceil(textWidth + px * 2)
+  let textWidth = ctx.measureText(input.value).width
+  textWidth = Math.ceil(textWidth + px * 2)
+  // 20 为增量
+  canvasWidth.value = textWidth + 20
   canvas.width = canvasWidth.value * pixelRatio.value
   canvas.height = canvasHeight * pixelRatio.value
   ctx.scale(pixelRatio.value, pixelRatio.value)
@@ -171,7 +170,7 @@ function onTouchEnd(event: TouchEvent) {
     const char = input.value[i]
 
     const charWidth = ctx.measureText(char).width
-    console.log(char, charWidth, 'char')
+    // console.log(char, charWidth, 'char')
     if (x <= totalWidth + charWidth / 2) {
       newIndex = i
       break
@@ -197,5 +196,12 @@ function onTouchEnd(event: TouchEvent) {
 .amount-input {
   width: 100vw;
   overflow-x: auto;
+}
+.amount-input::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+  color: transparent;
+  background: transparent;
 }
 </style>

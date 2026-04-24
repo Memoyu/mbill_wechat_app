@@ -10,7 +10,7 @@ definePage({
 })
 
 const billTypes = ['支出', '收入']
-const amountValue = ref('121.3124+124.235-23674×341231÷223')
+const amountValue = ref('')
 const tempCursor = ref(amountValue.value.length)
 
 const isLedgersShow = ref(false)

@@ -41,7 +41,7 @@ const amountColor = computed(() => {
         <wd-icon name="location" />
         <text class="line-clamp-1 ml-2">{{ bill.address }}</text>
       </view>
-      <view v-if="bill.tags && bill.tags.length > 0" class="mt-2 flex overflow-x-auto space-x-2">
+      <view v-if="bill.tags && bill.tags.length > 0" class="bill-tags mt-2 flex overflow-x-auto space-x-2">
         <view v-for="tag in bill.tags" :key="tag" class="flex-shrink-0 rounded-full bg-indigo-300/40 px-2 py-1 text-xs">
           {{ tag }}
         </view>
@@ -51,7 +51,11 @@ const amountColor = computed(() => {
 </template>
 
 <style lang="scss" scoped>
-.fesf {
-  color: aliceblue !important;
+.bill-tags::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+  color: transparent;
+  background: transparent;
 }
 </style>
