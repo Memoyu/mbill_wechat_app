@@ -121,8 +121,6 @@ function redrawCanvas() {
   ctx.setLineWidth(2)
   ctx.stroke()
 
-  console.log(cursorX, 'cursorX')
-  ctx.translate(cursorX, py)
   // 刷新画布
   ctx.draw()
 }
@@ -139,7 +137,7 @@ function setCanvasStyle() {
   ctx.setTextBaseline('middle')
   ctx.setTextAlign('left')
   // ctx.setFontSize(16 * pixelRatio.value)
-  ctx.font = `${18}px sans-serif`
+  ctx.font = `${17}px sans-serif`
   ctx.setFillStyle('#000')
 }
 
@@ -169,9 +167,8 @@ function onTouchEnd(event: TouchEvent) {
   // 逐字符累加宽度，找到最接近点击位置的字符索引
   for (let i = 0; i < input.value.length; i++) {
     const char = input.value[i]
-
+    // console.log(char, 'char')
     const charWidth = ctx.measureText(char).width
-    console.log(char, charWidth, 'char')
     if (x <= totalWidth + charWidth / 2) {
       newIndex = i
       break

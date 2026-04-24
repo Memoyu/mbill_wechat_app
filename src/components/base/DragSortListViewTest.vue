@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import lodash from 'lodash'
-import { s } from 'node_modules/vite/dist/node/types.d-aGj9QkWt'
 import { useTouch } from 'wot-design-uni'
 import { omit } from '@/utils'
 

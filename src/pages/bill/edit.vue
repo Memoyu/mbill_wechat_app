@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { useLedgerStore } from '@/store'
+import { objToStyle } from '@/utils'
 
 definePage({
   style: {
@@ -9,7 +10,7 @@ definePage({
 })
 
 const billTypes = ['支出', '收入']
-const amountValue = ref('')
+const amountValue = ref('121.3124+124.235-23674×341231÷223')
 const tempCursor = ref(amountValue.value.length)
 
 const isLedgersShow = ref(false)
@@ -17,6 +18,13 @@ const currentType = ref(0)
 const currentLedger = ref()
 
 const ledgerStore = useLedgerStore()
+
+const segmentStyle = computed(() => {
+  const style = {
+    borderRadius: '18px',
+  }
+  return `${objToStyle(style)}`
+})
 
 onMounted(() => {
   currentLedger.value = ledgerStore.ledgers[0]
@@ -48,7 +56,7 @@ function handleLedgerChange(ledger: any) {
   </nav-bar>
   <view class="flex justify-center">
     <view class="w-60%">
-      <wd-segmented v-model:value="currentType" :custom-style="{ borderRadius: '18px' }" :options="billTypes">
+      <wd-segmented v-model:value="currentType" :custom-style="segmentStyle" :options="billTypes">
         <template #label="{ option }">
           <view class="rounded-full bg-white">
             {{ option.value }}
@@ -65,7 +73,7 @@ function handleLedgerChange(ledger: any) {
   </view>
 
   <!-- 账本弹窗 -->
-  <ledger-popup v-model="isLedgersShow" v-model:value="ledger" @change="handleLedgerChange" />
+  <ledger-popup v-model="isLedgersShow" v-model:value="currentLedger.ledgerId" @change="handleLedgerChange" />
 </template>
 
 <style lang="scss" scoped>
