@@ -17,7 +17,7 @@ const tags = ref(tagStore.tags)
 
 onMounted(() => {
   nextTick(() => {
-    uni.createSelectorQuery().select('#LEDGER_NAVBAR').boundingClientRect((data: UniApp.NodeInfo) => {
+    uni.createSelectorQuery().select('#TOP_NAVBAR').boundingClientRect((data: UniApp.NodeInfo) => {
       scrollHeight.value = systemInfo.windowHeight - (data.height + 16) // 16为外层view的padding
     }).exec()
   })
@@ -44,7 +44,7 @@ function handleEditItemTap(item) {
 <template>
   <page-meta :page-style="`overflow:${show ? 'hidden' : 'visible'};`" />
   <draw-background2 />
-  <nav-bar id="LEDGER_NAVBAR">
+  <nav-bar id="TOP_NAVBAR">
     <template #title>
       <text> 标签管理 </text>
     </template>

@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 
 // 初始化状态
 const initState = {
-  categories: [{
+  expends: [{
     categoryId: 'a1231',
     name: '食品餐饮',
     icon: '',
@@ -214,6 +214,8 @@ const initState = {
     ],
     createTime: '2024-06-02 12:09:30',
   }],
+
+  incomes: [],
 }
 
 export const useCategoryStore = defineStore(

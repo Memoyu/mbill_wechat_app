@@ -16,7 +16,7 @@ const scrollHeight = ref(300)
 
 onMounted(() => {
   nextTick(() => {
-    uni.createSelectorQuery().select('#LEDGER_NAVBAR').boundingClientRect((data: UniApp.NodeInfo) => {
+    uni.createSelectorQuery().select('#TOP_NAVBAR').boundingClientRect((data: UniApp.NodeInfo) => {
       // console.log(data)
       scrollHeight.value = systemInfo.windowHeight - (data.height + 16) // 16为外层view的padding
     }).exec()
@@ -35,7 +35,7 @@ function handleSortChange(list) {
 <template>
   <page-meta :page-style="`overflow:${show ? 'hidden' : 'visible'};`" />
   <draw-background2 />
-  <nav-bar id="LEDGER_NAVBAR">
+  <nav-bar id="TOP_NAVBAR">
     <template #title>
       <text> 账本管理 </text>
     </template>
