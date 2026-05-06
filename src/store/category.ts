@@ -5,7 +5,7 @@ const initState = {
   expends: [{
     categoryId: 'a1231',
     name: '食品餐饮',
-    icon: '',
+    icon: 'https://wot-ui.cn/assets/panda.jpg',
     childs: [
       {
         categoryId: '12311',
@@ -47,7 +47,7 @@ const initState = {
   }, {
     categoryId: 'b1232',
     name: '购物消费',
-    icon: '',
+    icon: 'https://wot-ui.cn/assets/panda.jpg',
     childs: [
       {
         categoryId: '12321',
@@ -134,7 +134,7 @@ const initState = {
   }, {
     categoryId: 'c1233',
     name: '出行交通',
-    icon: '',
+    icon: 'https://wot-ui.cn/assets/panda.jpg',
     childs: [
 
     ],
@@ -142,7 +142,7 @@ const initState = {
   }, {
     categoryId: 'd1234',
     name: '休闲娱乐',
-    icon: '',
+    icon: 'https://wot-ui.cn/assets/panda.jpg',
     childs: [
 
     ],
@@ -150,7 +150,7 @@ const initState = {
   }, {
     categoryId: 'e1235',
     name: '健康医疗',
-    icon: '',
+    icon: 'https://wot-ui.cn/assets/panda.jpg',
     childs: [
 
     ],
@@ -158,7 +158,7 @@ const initState = {
   }, {
     categoryId: 'f1236',
     name: '居家生活',
-    icon: '',
+    icon: 'https://wot-ui.cn/assets/panda.jpg',
     childs: [
 
     ],
@@ -166,7 +166,7 @@ const initState = {
   }, {
     categoryId: 'g1237',
     name: '文化教育',
-    icon: '',
+    icon: 'https://wot-ui.cn/assets/panda.jpg',
     childs: [
 
     ],
@@ -174,7 +174,7 @@ const initState = {
   }, {
     categoryId: 'h1238',
     name: '送礼人情',
-    icon: '',
+    icon: 'https://wot-ui.cn/assets/panda.jpg',
     childs: [
       {
         categoryId: 'h12381',
