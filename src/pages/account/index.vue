@@ -107,4 +107,8 @@ function handleEditItemTap(item) {
   padding: 0.7rem;
   // border-bottom: 1px solid #f0f0f0;
 }
+
+.account-item-title {
+  font-size: 12px;
+}
 </style>

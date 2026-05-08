@@ -106,4 +106,8 @@ function handleEditItemTap(item) {
   box-sizing: border-box;
   padding: 0.9rem;
 }
+
+.category-item-title {
+  font-size: 12px;
+}
 </style>

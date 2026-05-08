@@ -82,7 +82,7 @@ function handleEditItemTap(item) {
             <drag-sort-grid-view :gap="8" :column="4" :list="listItem.childs" key-prop="tagId" @change="list => handleChildSortChange(list, listItem)">
               <template #content="{ gridItem }">
                 <view class="flex items-center justify-center bg-indigo-500/10 px-1.5 py-2" @tap.stop="() => {}">
-                  <view class="line-clamp-1 text-nowrap">
+                  <view class="tag-item-title line-clamp-1 text-nowrap">
                     {{ gridItem.name }}
                   </view>
                 </view>
@@ -105,5 +105,9 @@ function handleEditItemTap(item) {
   box-sizing: border-box;
   padding: 0.7rem;
   // border-bottom: 1px solid #f0f0f0;
+}
+
+.tag-item-title {
+  font-size: 12px;
 }
 </style>
