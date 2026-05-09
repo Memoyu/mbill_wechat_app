@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { it } from 'node:test'
 import { useCategoryStore } from '@/store'
 
 const props = withDefaults(defineProps<{
@@ -7,7 +6,7 @@ const props = withDefaults(defineProps<{
   height: number
   column?: number
 }>(), {
-  column: 4,
+  column: 5,
 })
 
 const { proxy } = getCurrentInstance() as any
@@ -63,34 +62,38 @@ function handleCategoryItemTap(item: any) {
 
 <template>
   <scroll-view scroll-y :style="{ height: `${height}px` }">
-    <view class="py-3">
-      <view v-for="(items, index) in group" :key="index" class="mb-2 flex flex-col" :class="{}">
-        <wd-row :gutter="10" justify="space-between">
-          <wd-col v-for="item in items" :key="item.categoryId" :span="6" @tap="handleCategoryGroupTap(item, index)">
-            <view class="flex flex-col items-center rounded-lg py-3">
+    <view v-for="(items, index) in group" :key="index" class="flex flex-col">
+      <view class="grid grid-cols-5 gap-2">
+        <view
+          v-for="item in items" :key="item.categoryId"
+          class="flex flex-col items-center rounded-lg py-3"
+          :class="[selected?.categoryId === item.categoryId ? 'category-selected' : '']"
+          @tap="handleCategoryGroupTap(item, index)"
+        >
+          <view :class="[item.childs && item.childs.length > 1 ? 'parent-category-icon' : '']">
+            <wd-img :width="30" round :height="30" :src="item.icon" />
+          </view>
+          <view class="category-item-title">
+            {{ item.name }}
+          </view>
+        </view>
+      </view>
+
+      <view
+        class="childs-category-box rounded-lg bg-gray-200"
+        :style="{ height: childIndex === index && childs && childs.length > 0 && expand ? `${childHeight}px` : '0px' }"
+      >
+        <view :id="`CATEGORY-CHILDS-${index}`" class="p-2">
+          <view class="grid grid-cols-5 gap-2">
+            <view
+              v-for="item in childs" :key="item.categoryId"
+              class="flex flex-col items-center rounded-lg py-3"
+              :class="[selected.categoryId === item.categoryId ? 'category-selected' : '']"
+              @tap="handleCategoryItemTap(item)"
+            >
               <wd-img :width="30" round :height="30" :src="item.icon" />
               <view class="category-item-title">
                 {{ item.name }}
-              </view>
-            </view>
-          </wd-col>
-        </wd-row>
-        <view
-
-          class="childs-category-box mx-3 rounded-lg bg-gray-200"
-          :style="{ height: childIndex === index && childs && childs.length > 0 && expand ? `${childHeight}px` : '0px' }"
-        >
-          <view :id="`CATEGORY-CHILDS-${index}`" class="p-2">
-            <view class="grid grid-cols-4 gap-2">
-              <view
-                v-for="item in childs" :key="item.categoryId"
-                class="flex flex-col items-center rounded-lg py-3"
-                @tap="handleCategoryItemTap(item)"
-              >
-                <wd-img :width="30" round :height="30" :src="item.icon" />
-                <view class="category-item-title">
-                  {{ item.name }}
-                </view>
               </view>
             </view>
           </view>
@@ -105,9 +108,29 @@ function handleCategoryItemTap(item: any) {
   height: 0px;
   transition: height 0.3s ease-in-out;
   overflow: hidden;
+  margin-top: 5px;
+}
+.parent-category-icon {
+  position: relative;
+  &:before {
+    content: '';
+    position: absolute;
+    color: white;
+    right: -6px;
+    bottom: 0;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    z-index: 9;
+    border: 3px solid white;
+    @apply: bg-indigo-300;
+  }
 }
 
 .category-item-title {
   font-size: 12px;
+}
+.category-selected {
+  @apply: bg-indigo-300/30;
 }
 </style>

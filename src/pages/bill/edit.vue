@@ -89,7 +89,9 @@ function handleLedgerChange(ledger: any) {
       :indicator="false" :autoplay="false" :height="categoryPickerHeight"
     >
       <template #default="{ item }">
-        <category-picker :type="item === '0' ? 0 : 1" :height="categoryPickerHeight" />
+        <view class="p-3">
+          <category-picker :type="item === '0' ? 0 : 1" :height="categoryPickerHeight" />
+        </view>
       </template>
     </wd-swiper>
   </view>
