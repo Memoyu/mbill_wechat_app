@@ -1,15 +1,19 @@
 <script setup lang="ts">
-import type { DateTimeType } from '@wot-ui/ui/components/wd-datetime-picker-view/types'
-
 const props = withDefaults(defineProps<{
   date: number
-  type?: DateTimeType
 }>(), {
-  type: 'datetime',
+
 })
 const emit = defineEmits(['change', 'update:date'])
 const show = defineModel<boolean>()
 const innerDate = ref(Date.now())
+const calendarViewRef = ref()
+
+watch(() => show.value, (val) => {
+  if (val) {
+    calendarViewRef.value && calendarViewRef.value.scrollIntoView()
+  }
+})
 
 watch(() => props.date, (val) => {
   if (val) {
@@ -50,7 +54,7 @@ function handleConfirmClick() {
         完成
       </view>
     </view>
-    <wd-datetime-picker-view v-model="innerDate" :type="type" @change="handleDateChange" />
+    <wd-calendar-view ref="calendarViewRef" v-model="innerDate" type="datetime" hide-second @change="handleDateChange" />
   </wd-popup>
 </template>
 

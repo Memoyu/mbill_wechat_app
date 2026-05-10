@@ -15,7 +15,7 @@ function back() {
         hover-class="bg-gray-100/80 scale-95" :hover-start-time="0" :hover-stay-time="200"
         @tap="back"
       >
-        <wd-icon name="thin-arrow-left" size="18px" class="text-gray-500" />
+        <wd-icon name="left" size="18px" class="text-gray-500" />
       </view>
       <!-- 标题/操作栏  -->
       <view>

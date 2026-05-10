@@ -20,21 +20,26 @@ const keys = computed(() => genBasicKeys())
 // 运算符键
 const opKeys: Key[] = [{
   key: '+',
+  icon: 'plus',
   emphasize: true,
 }, {
   key: '-',
+  icon: 'minus',
   emphasize: true,
 }, {
   key: '×',
+  icon: 'close',
   emphasize: true,
 }, {
   key: '÷',
+  icon: 'division',
   emphasize: true,
 }]
 
 // 删除键
 const delKey: Key = {
   key: 'delete',
+  icon: 'del',
   emphasize: true,
 }
 // 完成/提交键

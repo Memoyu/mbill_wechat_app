@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { useTouch } from 'wot-design-uni'
+import { useTouch } from '@wot-ui/ui'
 import { systemInfo } from '@/utils/systemInfo'
 
 const props = defineProps<{

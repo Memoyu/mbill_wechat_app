@@ -1,4 +1,4 @@
-import type { ConfigProviderThemeVars } from 'wot-design-uni'
+import type { ConfigProviderThemeVars } from '@wot-ui/ui'
 
 /**
  * 主题色选项接口

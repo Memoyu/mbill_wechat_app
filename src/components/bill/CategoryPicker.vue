@@ -13,12 +13,25 @@ const { proxy } = getCurrentInstance() as any
 const categoryStore = useCategoryStore()
 
 const categories = ref(props.type === 0 ? categoryStore.expends : categoryStore.incomes)
+const scrollHeight = ref(props.height)
 const group = ref(getColumnList())
 const childs = ref()
 const childIndex = ref(0)
 const expand = ref(false)
 const childHeight = ref(0)
 const selected = ref()
+
+const itemsBoxClass = computed(() => {
+  return [
+    'grid gap-2',
+    `grid-cols-5`, // 固定写5列
+  ]
+})
+
+watch(() => props.height, (nh) => {
+  scrollHeight.value = nh
+  console.log(scrollHeight.value, 'scrollHeight')
+})
 
 function getColumnList() {
   const list = []
@@ -61,39 +74,41 @@ function handleCategoryItemTap(item: any) {
 </script>
 
 <template>
-  <scroll-view scroll-y :style="{ height: `${height}px` }">
-    <view v-for="(items, index) in group" :key="index" class="flex flex-col">
-      <view class="grid grid-cols-5 gap-2">
-        <view
-          v-for="item in items" :key="item.categoryId"
-          class="flex flex-col items-center rounded-lg py-3"
-          :class="[selected?.categoryId === item.categoryId ? 'category-selected' : '']"
-          @tap="handleCategoryGroupTap(item, index)"
-        >
-          <view :class="[item.childs && item.childs.length > 1 ? 'parent-category-icon' : '']">
-            <wd-img :width="30" round :height="30" :src="item.icon" />
-          </view>
-          <view class="category-item-title">
-            {{ item.name }}
+  <scroll-view scroll-y :style="{ height: `${scrollHeight}px` }">
+    <view class="p-2">
+      <view v-for="(items, index) in group" :key="index" class="flex flex-col">
+        <view :class="itemsBoxClass">
+          <view
+            v-for="item in items" :key="item.categoryId"
+            class="flex flex-col items-center rounded-lg py-2"
+            :class="[selected?.categoryId === item.categoryId ? 'category-selected' : '']"
+            @tap="handleCategoryGroupTap(item, index)"
+          >
+            <view :class="[item.childs && item.childs.length > 1 ? 'parent-category-icon' : '']">
+              <wd-img :width="30" round :height="30" :src="item.icon" />
+            </view>
+            <view class="category-item-title">
+              {{ item.name }}
+            </view>
           </view>
         </view>
-      </view>
 
-      <view
-        class="childs-category-box rounded-lg bg-gray-200"
-        :style="{ height: childIndex === index && childs && childs.length > 0 && expand ? `${childHeight}px` : '0px' }"
-      >
-        <view :id="`CATEGORY-CHILDS-${index}`" class="p-2">
-          <view class="grid grid-cols-5 gap-2">
-            <view
-              v-for="item in childs" :key="item.categoryId"
-              class="flex flex-col items-center rounded-lg py-3"
-              :class="[selected.categoryId === item.categoryId ? 'category-selected' : '']"
-              @tap="handleCategoryItemTap(item)"
-            >
-              <wd-img :width="30" round :height="30" :src="item.icon" />
-              <view class="category-item-title">
-                {{ item.name }}
+        <view
+          class="childs-category-box rounded-lg bg-gray-200"
+          :style="{ height: childIndex === index && childs && childs.length > 0 && expand ? `${childHeight}px` : '0px' }"
+        >
+          <view :id="`CATEGORY-CHILDS-${index}`" class="p-2">
+            <view :class="itemsBoxClass">
+              <view
+                v-for="item in childs" :key="item.categoryId"
+                class="flex flex-col items-center rounded-lg py-2"
+                :class="[selected.categoryId === item.categoryId ? 'category-selected' : '']"
+                @tap="handleCategoryItemTap(item)"
+              >
+                <wd-img :width="30" round :height="30" :src="item.icon" />
+                <view class="category-item-title">
+                  {{ item.name }}
+                </view>
               </view>
             </view>
           </view>

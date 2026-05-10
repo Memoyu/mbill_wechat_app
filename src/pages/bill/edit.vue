@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import dayjs from 'dayjs'
 import { useLedgerStore } from '@/store'
 import { objToStyle } from '@/utils'
 import { systemInfo } from '@/utils/systemInfo'
@@ -15,10 +16,16 @@ const amountValue = ref('')
 const tempCursor = ref(amountValue.value.length)
 
 const isLedgersShow = ref(false)
+const isDateTimeShow = ref(false)
+const isAccountShow = ref(false)
 const categoryPickerHeight = ref(0)
 const currentType = ref(0)
 const currentLedger = ref()
-const currentLedgerId = ref(currentLedger.value?.ledgerId)
+const currentLedgerId = ref()
+
+const dateTime = ref(Date.now())
+const remark = ref('')
+const tags = ref([])
 
 const ledgerStore = useLedgerStore()
 
@@ -29,31 +36,57 @@ const segmentStyle = computed(() => {
   return `${objToStyle(style)}`
 })
 
+watch(() => tags.value, (newTags, oldTags) => {
+  if (oldTags.length < 1 || newTags.length < 1) {
+    initFixedHeight()
+  }
+})
+
 onMounted(() => {
   currentLedger.value = ledgerStore.ledgers[0]
+  currentLedgerId.value = currentLedger.value.ledgerId
+  initFixedHeight()
+})
 
+function initFixedHeight() {
   nextTick(() => {
     uni.createSelectorQuery().select('#TOP_NAVBAR').boundingClientRect((top: UniApp.NodeInfo) => {
       const topHeight = top.height
       uni.createSelectorQuery().select('#BOTTOM_INPUT').boundingClientRect((bottom: UniApp.NodeInfo) => {
         categoryPickerHeight.value = systemInfo.windowHeight - (topHeight + bottom.height)
-        console.log(topHeight, bottom.height, categoryPickerHeight.value, 'categoryPickerHeight')
+        // console.log(topHeight, bottom.height, categoryPickerHeight.value, 'categoryPickerHeight')
       }).exec()
     }).exec()
   })
-})
+}
+
 function handlePressKeyboard(key: any, value: string) {
   // console.log(key, value)
 
 }
 
 function handleLedgerChange(ledger: any) {
-  currentLedger.value = ledger
+  if (!ledger || ledger.length < 1)
+    return
+  currentLedger.value = ledger[0]
+}
+
+function handleDateTimeChange(dateTime: any) {
+  console.log(dateTime, 'select date time')
+  dateTime.value = dateTime
+}
+
+function handleTagSelectTap() {
+  if (tags.value.length > 0) {
+    tags.value = []
+    return
+  }
+  tags.value = ['服装鞋帽', '美妆护肤', '数码电子', '日用百货', '图书文具', '母婴用品', '宠物用品']
 }
 </script>
 
 <template>
-  <page-meta :page-style="`overflow:${isLedgersShow ? 'hidden' : 'visible'};`" />
+  <page-meta :page-style="`overflow:${isLedgersShow || isDateTimeShow || isAccountShow ? 'hidden' : 'visible'};`" />
   <draw-background1 />
   <!-- 导航栏 -->
   <nav-bar id="TOP_NAVBAR">
@@ -61,7 +94,7 @@ function handleLedgerChange(ledger: any) {
       <view class="w-full flex justify-between">
         <!-- 账本按钮 -->
         <view class="flex items-center" @tap="isLedgersShow = true">
-          <wd-icon class="flex-shrink-0" name="arrow-down" />
+          <wd-icon class="flex-shrink-0" name="caret-down" />
           <text class="line-clamp-1 ml-2">{{ currentLedger?.name }}</text>
         </view>
       </view>
@@ -83,49 +116,71 @@ function handleLedgerChange(ledger: any) {
       </view>
     </template>
   </nav-bar>
-  <view class="" :style="{ height: `${categoryPickerHeight}px` }">
+  <!-- 账单分类 -->
+  <view class="">
     <wd-swiper
       v-model:current="currentType" :list="['0', '1']"
       :indicator="false" :autoplay="false" :height="categoryPickerHeight"
     >
       <template #default="{ item }">
-        <view class="p-3">
-          <category-picker :type="item === '0' ? 0 : 1" :height="categoryPickerHeight" />
-        </view>
+        <category-picker :type="item === '0' ? 0 : 1" :height="categoryPickerHeight" />
       </template>
     </wd-swiper>
   </view>
 
   <view id="BOTTOM_INPUT" class="absolute bottom-0 left-0 right-0">
-    <amount-input v-model="amountValue" v-model:cursor="tempCursor" />
+    <!-- 标签 -->
+    <view v-if="tags && tags.length > 0" class="hide-view-scrollbar flex overflow-x-auto px-2 py-1 space-x-2">
+      <view v-for="tag in tags" :key="tag" class="flex-shrink-0 rounded-full bg-indigo-300/40 px-2 py-1 text-xs">
+        {{ tag }}
+      </view>
+    </view>
+    <!-- 账单属性 -->
+    <view class="flex items-center px-2 py-1 space-x-xl">
+      <view class="flex items-center justify-center" @tap="isDateTimeShow = true">
+        <!-- 日期 -->
+        <wd-icon name="calendar-line" size="20px" />
+        <text class="ml-1">{{ dayjs(dateTime).format('YYYY-MM-DD HH:MM') }}</text>
+      </view>
+      <view class="flex items-center justify-center" @tap="isAccountShow = true">
+        <!-- 账户 -->
+        <wd-img :width="22" round :height="22" src="https://wot-ui.cn/assets/panda.jpg" />
+        <text class="ml-1">现金</text>
+      </view>
+      <view class="flex items-center justify-center" @tap="handleTagSelectTap">
+        <!-- 标签 -->
+        <wd-icon name="tag" size="20px" />
+        <text class="ml-1">标签</text>
+      </view>
+    </view>
+    <!-- 账单总额、备注 -->
+    <view class="flex items-center justify-between px-2 py-1 space-x-xl">
+      <view class="w-full shrink-1">
+        <!-- 备注 -->
+        <wd-input v-model="remark" compact type="text" placeholder="账单备注" />
+      </view>
+      <view>
+        <!-- 总金额 -->
+        <wd-text :text="amountValue" mode="price" type="success" size="17px" />
+      </view>
+    </view>
+
+    <!-- 键盘输入框 -->
+    <view class="py-1">
+      <amount-input v-model="amountValue" v-model:cursor="tempCursor" />
+    </view>
+    <!-- 金额键盘 -->
     <keyboard v-model="amountValue" v-model:cursor="tempCursor" @press="handlePressKeyboard" />
     <view class="pb-safe" />
   </view>
 
   <!-- 账本弹窗 -->
-  <ledger-popup v-model="isLedgersShow" v-model:value="currentLedgerId" @change="handleLedgerChange" />
+  <ledger-popup v-model="isLedgersShow" v-model:value="currentLedgerId" type="single" :store="false" @change="handleLedgerChange" />
+  <!-- 日期弹窗 -->
+  <date-time-popup v-model="isDateTimeShow" v-model:date="dateTime" @change="handleDateTimeChange" />
+  <account-popup v-model="isAccountShow" />
 </template>
 
 <style lang="scss" scoped>
-.amount-input-box {
-  position: relative;
-}
-.amount-input-cursor {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  height: 100%;
-  width: 1px;
-  background-color: rebeccapurple;
-  animation: blink 1s infinite;
-}
-@keyframes blink {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0;
-  }
-}
+
 </style>

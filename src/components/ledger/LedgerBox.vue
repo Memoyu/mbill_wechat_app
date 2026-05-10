@@ -80,7 +80,7 @@ function handleActionSelect(panel) {
               class="h-6 w-6 flex items-center justify-center rounded-full bg-white/40 shadow-[0_4px_8px_rgba(0,0,0,0.04)]"
               @tap.stop="handleActionClick"
             >
-              <wd-icon name="ellipsis" />
+              <wd-icon name="more" />
             </view>
           </view>
 

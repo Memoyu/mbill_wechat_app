@@ -62,7 +62,7 @@ function handleCancelClick() {
         <view class="user-block">
           <view class="flex items-center justify-between px-4 py-2">
             <text class="font-semibold">用户信息</text>
-            <wd-icon name="edit-outline" />
+            <wd-icon name="edit" />
           </view>
           <wd-cell title="ID" size="small" :value="user.userId || '-'" />
           <wd-cell title="邮箱" size="small" :value="user.email || '-'" />

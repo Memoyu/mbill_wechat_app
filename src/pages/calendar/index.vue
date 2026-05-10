@@ -36,7 +36,7 @@ function handleMonthChange(month: number) {
           <text class="mr-2">
             {{ dateText }}
           </text>
-          <wd-icon name="arrow-down" />
+          <wd-icon name="caret-down" />
         </view>
         <view class="iconfont icon-today text-xl" @click="handleTodayClick" />
       </view>

@@ -17,7 +17,6 @@ definePage({
 
 const date = ref(Date.now())
 const avatarUrl = 'https://wot-ui.cn/assets/panda.jpg'
-const ledger = ref('2323234341')
 const ledgerName = ref('日常账本字符222222233333333')
 const isUserShow = ref(false)
 const isLedgersShow = ref(false)
@@ -72,7 +71,7 @@ function handleLedgerChange(item) {
         :hover-stay-time="200"
         @tap="isLedgersShow = true"
       >
-        <wd-icon class="flex-shrink-0 text-sm" name="arrow-down" />
+        <wd-icon class="flex-shrink-0 text-sm" name="caret-down" />
         <text class="line-clamp-1 text-xs">{{ ledgerName }}</text>
       </view>
       <!-- 设置按钮 -->
@@ -96,7 +95,7 @@ function handleLedgerChange(item) {
         <view class="mr-1 font-bold">
           {{ dateText }}
         </view>
-        <wd-icon size="16" name="arrow-down" />
+        <wd-icon size="16" name="caret-down" />
       </view>
       <view class="iconfont icon-calendar text-2xl" @tap="handleCalendarClick" />
     </view>
@@ -127,7 +126,7 @@ function handleLedgerChange(item) {
   <!-- 日期选择弹窗 -->
   <date-popup v-model="isDateSelectShow" v-model:date="date" type="year-month" />
   <!-- 账本弹窗 -->
-  <ledger-popup v-model="isLedgersShow" v-model:value="ledger" @change="handleLedgerChange" />
+  <ledger-popup v-model="isLedgersShow" @change="handleLedgerChange" />
   <!-- 用户弹窗 -->
   <user-popup v-model="isUserShow" />
   <!-- 设置弹窗 -->

@@ -64,15 +64,15 @@ function handleEditItemTap(item) {
           <view class="account-title-box">
             <view class="flex items-center justify-between">
               <view class="mr-3">
-                <wd-icon v-if="listItem.expand" name="arrow-down" />
-                <wd-icon v-else name="arrow-right" />
+                <wd-icon v-if="listItem.expand" name="caret-down" />
+                <wd-icon v-else name="caret-right" />
               </view>
               <view class="flex-1 font-bold">
                 {{ listItem.name }}
               </view>
 
               <view class="px-2" @tap.stop="handleEditItemTap(listItem)">
-                <wd-icon name="view-list" />
+                <wd-icon name="menu" />
               </view>
             </view>
           </view>

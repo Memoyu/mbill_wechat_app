@@ -81,7 +81,7 @@ function handleSortChange(list) {
             </view>
             <view class="ledger-item-more">
               <view class="flex items-center justify-center rounded-full bg-white p-1">
-                <wd-icon name="ellipsis" size="18" />
+                <wd-icon name="more" size="18" />
               </view>
             </view>
           </view>

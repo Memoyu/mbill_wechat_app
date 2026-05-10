@@ -1,10 +1,11 @@
 <script lang="ts" setup>
+import { useTouch } from '@wot-ui/ui'
 import { computed, ref } from 'vue'
-import { useTouch } from 'wot-design-uni'
 
 export interface Key {
   key: string | number // key值
   text?: string // key文本
+  icon?: string // 图标
   emphasize?: boolean
 }
 
@@ -51,8 +52,8 @@ function handleTouchEnd() {
 <template>
   <view class="keyboard-key-box" :class="[small ? 'keyboard-key-box-small' : '']" @touchstart="handleTouchStart" @touchmove="handleTouchMove" @touchend="handleTouchEnd">
     <view :class="keyClass">
-      <template v-if="value.key === 'delete'">
-        <wd-icon custom-class="keyboard-key-icon" name="keyboard-delete" size="22px" />
+      <template v-if="value.icon">
+        <wd-icon custom-class="keyboard-key-icon" :name="value.icon" :size="`${(value.key === 'delete' ? 22 : 17)}px`" />
       </template>
       <template v-else>
         {{ value.text || value.key }}

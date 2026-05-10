@@ -1,16 +1,27 @@
 <script setup lang="ts">
-import { useToast } from 'wot-design-uni'
+import { useToast } from '@wot-ui/ui'
 import { useLedgerPickerStore, useLedgerStore } from '@/store'
 
-const props = defineProps<{
-  value: string
-}>()
-const emit = defineEmits(['change', 'update:value'])
+const props = withDefaults(defineProps<{
+  value?: string
+  store?: boolean
+  type?: 'multiple' | 'single'
+}>(), {
+  store: true,
+  type: 'multiple',
+})
+const emit = defineEmits(['change'])
 const show = defineModel<boolean>()
 
 const toast = useToast()
 const ledgerStore = useLedgerStore()
 const ledgerPickerStore = useLedgerPickerStore()
+
+const currentLedgerId = ref()
+
+watch(() => props.value, (val) => {
+  currentLedgerId.value = val
+})
 
 const ledgers = computed(() => {
   return ledgerStore.ledgers
@@ -20,9 +31,21 @@ const isAllSelected = computed(() => {
   return ledgerPickerStore.isAllSelected
 })
 
+const isMultiple = computed(() => {
+  return props.type === 'multiple'
+})
+
 function handleLedgerItemClick(item) {
   console.log('点击')
-  ledgerPickerStore.toggleLedgerSelection(item.ledgerId)
+  let selecteds = ledgerPickerStore.selectedLedgers
+  if (props.store) {
+    ledgerPickerStore.toggleLedgerSelection(item.ledgerId)
+  }
+  else {
+    currentLedgerId.value = item.ledgerId
+    selecteds = [item]
+  }
+  emit('change', selecteds)
 }
 
 function handleCancelClick() {
@@ -73,7 +96,7 @@ function handleManageClick() {
         <text class="text-base font-semibold">账本</text>
 
         <view class="flex items-center space-x-4">
-          <view class="title-icon-box px-4" @tap="handleAllSelectClick">
+          <view v-if="isMultiple" class="title-icon-box px-4" @tap="handleAllSelectClick">
             <text v-if="isAllSelected" class="iconfont icon-close text-sm" />
             <text v-else class="iconfont icon-check title-icon" />
             <text class="ml-2 text-xs">{{ isAllSelected ? '取消全选' : '全选' }}</text>
@@ -93,6 +116,7 @@ function handleManageClick() {
             <!-- 选中效果遮罩 -->
             <template #action>
               <view
+                v-if="store"
                 class="absolute inset-0 z-10 rounded-2xl transition-all duration-200"
                 :class="[
                   ledgerPickerStore.isLedgerSelected(leg.ledgerId)
@@ -103,6 +127,23 @@ function handleManageClick() {
                 <!-- 选中状态的 check 图标 -->
                 <view
                   v-if="ledgerPickerStore.isLedgerSelected(leg.ledgerId)"
+                  class="absolute bottom-3 right-3 h-5 w-5 flex animate-fade-in animate-duration-200 items-center justify-center rounded-full bg-indigo-500 shadow-sm"
+                >
+                  <text class="iconfont icon-check text-xs text-white" />
+                </view>
+              </view>
+              <view
+                v-else
+                class="absolute inset-0 z-10 rounded-2xl transition-all duration-200"
+                :class="[
+                  leg.ledgerId === currentLedgerId
+                    ? 'bg-indigo-500/10 ring-2 ring-indigo-500'
+                    : 'bg-transparent',
+                ]"
+              >
+                <!-- 选中状态的 check 图标 -->
+                <view
+                  v-if="leg.ledgerId === currentLedgerId"
                   class="absolute bottom-3 right-3 h-5 w-5 flex animate-fade-in animate-duration-200 items-center justify-center rounded-full bg-indigo-500 shadow-sm"
                 >
                   <text class="iconfont icon-check text-xs text-white" />

@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { useTouch } from 'wot-design-uni'
-import { canvas2dAdapter } from 'wot-design-uni/components/common/canvasHelper'
+import { useTouch } from '@wot-ui/ui'
+import { canvas2dAdapter } from '@wot-ui/ui/common/canvasHelper'
 import { objToStyle } from '@/utils'
 import { systemInfo } from '@/utils/systemInfo'
 
@@ -187,7 +187,7 @@ function onTouchEnd(event: TouchEvent) {
 </script>
 
 <template>
-  <view class="amount-input">
+  <view class="amount-input hide-view-scrollbar">
     <canvas :id="canvasId" type="2d" :style="canvasStyle" :canvas-id="canvasId" @touchstart="onTouchStart" @touchmove="onTouchMove" @touchend="onTouchEnd" />
   </view>
 </template>
@@ -196,12 +196,5 @@ function onTouchEnd(event: TouchEvent) {
 .amount-input {
   width: 100vw;
   overflow-x: auto;
-}
-.amount-input::-webkit-scrollbar {
-  display: none;
-  width: 0;
-  height: 0;
-  color: transparent;
-  background: transparent;
 }
 </style>
