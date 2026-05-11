@@ -29,54 +29,11 @@ function handleConfirmClick() {
 </script>
 
 <template>
-  <wd-popup
-    v-model="show"
-    position="bottom"
-    :hide-when-close="false"
-    :close-on-click-modal="true"
-    :safe-area-inset-bottom="true"
-    root-portal
-    lazy-render
-    custom-style="border-radius: 16px 16px 0 0;"
-    @close="() => show = false"
-  >
-    <view class="datetime-picker-toolbar">
-      <!-- 取消按钮 -->
-      <view class="datetime-picker-action datetime-picker-action-cancel" @tap="() => show = false">
-        取消
-      </view>
-      <!-- 确定按钮 -->
-      <view class="datetime-picker-action" @tap="handleConfirmClick">
-        完成
-      </view>
-    </view>
+  <mbill-popup v-model="show">
     <wd-datetime-picker-view v-model="innerDate" :type="type" @change="handleDateChange" />
-  </wd-popup>
+  </mbill-popup>
 </template>
 
 <style lang="scss" scoped>
-.datetime-picker-toolbar {
-  position: relative;
-  display: flex;
-  font-size: 16px;
-  height: 54px;
-  line-height: 16px;
-  justify-content: space-between;
-  align-items: center;
-  box-sizing: border-box;
-}
 
-.datetime-picker-action {
-  display: block;
-  border: none;
-  outline: none;
-  font-size: 16px;
-  color: #4d80f0;
-  background: transparent;
-  padding: 24px 15px 14px;
-}
-
-.datetime-picker-action-cancel {
-  color: #666666;
-}
 </style>

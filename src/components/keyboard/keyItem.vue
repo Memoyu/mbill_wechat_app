@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { useTouch } from '@wot-ui/ui'
+import { useTouch } from '@wot-ui/ui/composables/useTouch'
 import { computed, ref } from 'vue'
 
 export interface Key {

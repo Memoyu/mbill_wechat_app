@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { useTouch } from '@wot-ui/ui'
 import { canvas2dAdapter } from '@wot-ui/ui/common/canvasHelper'
+import { useTouch } from '@wot-ui/ui/composables/useTouch'
 import { objToStyle } from '@/utils'
 import { systemInfo } from '@/utils/systemInfo'
 

@@ -123,7 +123,7 @@ function handleTagSelectTap() {
       :indicator="false" :autoplay="false" :height="categoryPickerHeight"
     >
       <template #default="{ item }">
-        <category-picker :type="item === '0' ? 0 : 1" :height="categoryPickerHeight" />
+        <category-view :type="item === '0' ? 0 : 1" :height="categoryPickerHeight" />
       </template>
     </wd-swiper>
   </view>

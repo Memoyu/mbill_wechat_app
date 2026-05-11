@@ -78,7 +78,7 @@ function handleMonthChange(month: number) {
     <calendar v-model="date" @change="handleMonthChange" />
   </view>
   <view class="w-full">
-    <bill-list />
+    <bill-list-view />
   </view>
 
   <!-- 日期选择弹窗 -->

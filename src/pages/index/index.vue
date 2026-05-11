@@ -117,7 +117,7 @@ function handleLedgerChange(item) {
 
   <!-- 账单列表 -->
   <view>
-    <bill-list />
+    <bill-list-view />
   </view>
 
   <!-- 底部安全区(因为没有使用layout) -->

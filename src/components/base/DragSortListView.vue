@@ -1,6 +1,6 @@
 <script lang="ts" setup>
+import { useTouch } from '@wot-ui/ui/composables/useTouch'
 import lodash from 'lodash'
-import { useTouch } from '@wot-ui/ui'
 import { omit } from '@/utils'
 
 defineOptions({
