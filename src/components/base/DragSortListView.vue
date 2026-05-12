@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { useTouch } from '@wot-ui/ui/composables/useTouch'
 import lodash from 'lodash'
+import { c } from 'node_modules/vite/dist/node/types.d-aGj9QkWt'
 import { omit } from '@/utils'
 
 defineOptions({
@@ -40,6 +41,11 @@ const currentId = ref('')
 const initHeights = ref({})
 
 const dragDirection = ref<'upward' | 'down'>()
+
+const computedAreaHeight = computed(() => {
+  const height = areaHeight.value >= scrollHeight.value ? areaHeight.value + 85 : areaHeight.value
+  return height
+})
 
 const { proxy } = getCurrentInstance() as any
 
@@ -336,7 +342,7 @@ function getListIndex(drag_id, list = cloneList.value) {
     <movable-area
       class="drag-movable-area"
       :style="{
-        height: `${areaHeight}px`,
+        height: `${computedAreaHeight}px`,
       }"
     >
       <movable-view

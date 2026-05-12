@@ -59,7 +59,7 @@ function handleEditItemTap(item) {
   </nav-bar>
   <view class="w-screen">
     <view class="p-2">
-      <drag-sort-list-view-test expand :gap="8" :list="categories" key-prop="categoryId" :height="scrollHeight" @change="handleSortChange">
+      <drag-sort-list-view expand :gap="8" :list="categories" key-prop="categoryId" :height="scrollHeight" @change="handleSortChange">
         <template #title="{ listItem }">
           <view class="category-title-box">
             <view class="flex items-center justify-between">
@@ -79,7 +79,7 @@ function handleEditItemTap(item) {
         </template>
         <template #content="{ listItem }">
           <view v-if="listItem.childs && listItem.childs.length > 0" class="p-2">
-            <drag-sort-grid-view-test :gap="8" :column="4" :list="listItem.childs" key-prop="categoryId" @change="list => handleChildSortChange(list, listItem)">
+            <drag-sort-grid-view :gap="8" :column="4" :list="listItem.childs" key-prop="categoryId" @change="list => handleChildSortChange(list, listItem)">
               <template #content="{ gridItem }">
                 <view class="flex flex-col items-center p-2">
                   <wd-img :width="30" round :height="30" :src="gridItem.icon" />
@@ -88,10 +88,10 @@ function handleEditItemTap(item) {
                   </view>
                 </view>
               </template>
-            </drag-sort-grid-view-test>
+            </drag-sort-grid-view>
           </view>
         </template>
-      </drag-sort-list-view-test>
+      </drag-sort-list-view>
     </view>
   </view>
 </template>

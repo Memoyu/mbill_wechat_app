@@ -11,6 +11,23 @@ definePage({
 const ledgerStore = useLedgerStore()
 const ledgers = ref(ledgerStore.ledgers)
 
+const actions: ActionItem[] = [
+  {
+    title: '创建账本',
+    icon: 'plus',
+    action: () => {
+      console.log('创建账本')
+    },
+  },
+  {
+    title: '加入账本',
+    icon: 'scan',
+    action: () => {
+      console.log('加入账本')
+    },
+  },
+]
+
 const show = ref(false)
 const scrollHeight = ref(300)
 
@@ -40,7 +57,7 @@ function handleSortChange(list) {
       <text> 账本管理 </text>
     </template>
     <template #action>
-      <view class="mt-3 flex items-center gap-3">
+      <!-- <view class="mt-3 flex items-center gap-3">
         <view class="nav-bar-action-icon-box" @tap="handleScanClick">
           <wd-icon name="plus" />
           <text class="ml-2">创建</text>
@@ -49,7 +66,7 @@ function handleSortChange(list) {
           <wd-icon name="scan" />
           <text class="ml-2">扫码</text>
         </view>
-      </view>
+      </view> -->
     </template>
   </nav-bar>
 
@@ -89,6 +106,8 @@ function handleSortChange(list) {
       </drag-sort-list-view>
     </view>
   </view>
+  <!-- 底部操作栏 -->
+  <bottom-action :actions="actions" />
 </template>
 
 <style lang="scss" scoped>
