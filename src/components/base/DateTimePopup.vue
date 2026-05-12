@@ -11,7 +11,9 @@ const calendarViewRef = ref()
 
 watch(() => show.value, (val) => {
   if (val) {
-    calendarViewRef.value && calendarViewRef.value.scrollIntoView()
+    nextTick(() => {
+      calendarViewRef.value && calendarViewRef.value.scrollIntoView()
+    })
   }
 })
 
@@ -21,11 +23,7 @@ watch(() => props.date, (val) => {
   }
 })
 
-function handleDateChange(val) {
-
-}
-
-function handleConfirmClick() {
+function handleDateChange() {
   emit('change', { value: innerDate.value })
   emit('update:date', innerDate.value)
   show.value = false

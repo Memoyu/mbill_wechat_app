@@ -19,7 +19,7 @@ const initState = {
       tagId: 't1002',
       name: '交通出行',
       childs: [
-        { tagId: 't100201', name: '公交地铁' },
+        { tagId: 't100201', name: '公交地铁呼呼呼' },
         { tagId: 't100202', name: '打车租车' },
         { tagId: 't100203', name: '加油充电' },
         { tagId: 't100204', name: '停车过路' },

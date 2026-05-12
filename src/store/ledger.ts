@@ -4,7 +4,7 @@ import { defineStore } from 'pinia'
 const initState = {
   ledgers: [{
     ledgerId: '12323234341',
-    name: '日常账本字符222222233333333日常账本字符日常账本字符',
+    name: '日常账本字符日常账本字符日常账本字符',
     count: 100,
     createTime: '2024-06-01 12:00:00',
   }, {

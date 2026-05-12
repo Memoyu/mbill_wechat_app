@@ -67,12 +67,16 @@ export function getDateFormat(date: string | number | Date): string {
   const inputDate = dayjs(date)
   const today = dayjs().startOf('day')
   const yesterday = dayjs().subtract(1, 'day').startOf('day')
+  const year = dayjs().startOf('year')
 
   if (inputDate.isSame(today, 'day')) {
     return '今天'
   }
   else if (inputDate.isSame(yesterday, 'day')) {
     return '昨天'
+  }
+  else if (inputDate.isSame(year, 'year')) {
+    return inputDate.format('MM-DD')
   }
   else {
     return inputDate.format('YYYY-MM-DD')

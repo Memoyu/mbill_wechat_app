@@ -96,17 +96,17 @@ function handleManageClick() {
         <text class="text-base font-semibold">账本</text>
 
         <view class="flex items-center space-x-4">
-          <view v-if="isMultiple" class="title-icon-box px-4" @tap="handleAllSelectClick">
-            <text v-if="isAllSelected" class="iconfont icon-close text-sm" />
-            <text v-else class="iconfont icon-check title-icon" />
-            <text class="ml-2 text-xs">{{ isAllSelected ? '取消全选' : '全选' }}</text>
+          <view v-if="isMultiple" class="title-icon-box" @tap="handleAllSelectClick">
+            <wd-icon v-if="isAllSelected" name="close" />
+            <wd-icon v-else name="check" />
+            <text class="ml-2">{{ isAllSelected ? '取消全选' : '全选' }}</text>
           </view>
 
           <view class="title-icon-box" @tap="handleScanClick">
-            <view class="iconfont icon-scan title-icon" />
+            <wd-icon name="scan" />
           </view>
           <view class="title-icon-box" @tap="handleManageClick">
-            <view class="iconfont icon-manage title-icon" />
+            <wd-icon name="more" />
           </view>
         </view>
       </view>
@@ -159,7 +159,7 @@ function handleManageClick() {
 
 <style lang="scss" scoped>
 .title-icon-box {
-  @apply: flex items-center justify-center rounded-full bg-gray-50 p-1;
+  @apply: flex items-center justify-center rounded-full bg-gray-50 py-2 px-4;
 }
 .title-icon {
   @apply: text-20px text-gray-700;

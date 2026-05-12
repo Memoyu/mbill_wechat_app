@@ -20,7 +20,7 @@ function back() {
       <!-- 标题/操作栏  -->
       <view>
         <!-- 标题 -->
-        <view class="w-[50vw] flex items-center justify-between text-lg text-gray-800 font-semibold">
+        <view class="w-[50vw] flex items-center justify-between text-16px text-gray-800 font-semibold">
           <slot name="title" />
         </view>
         <!-- 操作按钮 -->

@@ -2,6 +2,7 @@
 import dayjs from 'dayjs'
 import { useLedgerStore } from '@/store'
 import { objToStyle } from '@/utils'
+import { getDateFormat } from '@/utils/date'
 import { systemInfo } from '@/utils/systemInfo'
 
 definePage({
@@ -18,6 +19,7 @@ const tempCursor = ref(amountValue.value.length)
 const isLedgersShow = ref(false)
 const isDateTimeShow = ref(false)
 const isAccountShow = ref(false)
+const isTagShow = ref(false)
 const categoryPickerHeight = ref(0)
 const currentType = ref(0)
 const currentLedger = ref()
@@ -26,6 +28,7 @@ const currentLedgerId = ref()
 const dateTime = ref(Date.now())
 const remark = ref('')
 const tags = ref([])
+const accountId = ref()
 
 const ledgerStore = useLedgerStore()
 
@@ -86,7 +89,7 @@ function handleTagSelectTap() {
 </script>
 
 <template>
-  <page-meta :page-style="`overflow:${isLedgersShow || isDateTimeShow || isAccountShow ? 'hidden' : 'visible'};`" />
+  <page-meta :page-style="`overflow:${isLedgersShow || isDateTimeShow || isAccountShow || isTagShow ? 'hidden' : 'visible'};`" />
   <draw-background1 />
   <!-- 导航栏 -->
   <nav-bar id="TOP_NAVBAR">
@@ -104,7 +107,7 @@ function handleTagSelectTap() {
         <view class="relative flex rounded-full bg-gray-200/50 p-1 px-2">
           <view
             class="absolute bottom-2 z--1 h-2 w-8 rounded-full bg-indigo-300 transition-all duration-300"
-            :style="{ left: (currentType === 0 ? '15px' : '63px') }"
+            :style="{ left: (currentType === 0 ? '14px' : '58px') }"
           />
           <view class="px-2 py-1" @tap="currentType = 0">
             支出
@@ -140,14 +143,14 @@ function handleTagSelectTap() {
       <view class="flex items-center justify-center" @tap="isDateTimeShow = true">
         <!-- 日期 -->
         <wd-icon name="calendar-line" size="20px" />
-        <text class="ml-1">{{ dayjs(dateTime).format('YYYY-MM-DD HH:MM') }}</text>
+        <text class="ml-1">{{ `${getDateFormat(dateTime)} ${dayjs(dateTime).format('HH:MM')}` }}</text>
       </view>
       <view class="flex items-center justify-center" @tap="isAccountShow = true">
         <!-- 账户 -->
         <wd-img :width="22" round :height="22" src="https://wot-ui.cn/assets/panda.jpg" />
         <text class="ml-1">现金</text>
       </view>
-      <view class="flex items-center justify-center" @tap="handleTagSelectTap">
+      <view class="flex items-center justify-center" @tap="isTagShow = true">
         <!-- 标签 -->
         <wd-icon name="tag" size="20px" />
         <text class="ml-1">标签</text>
@@ -178,7 +181,10 @@ function handleTagSelectTap() {
   <ledger-popup v-model="isLedgersShow" v-model:value="currentLedgerId" type="single" :store="false" @change="handleLedgerChange" />
   <!-- 日期弹窗 -->
   <date-time-popup v-model="isDateTimeShow" v-model:date="dateTime" @change="handleDateTimeChange" />
-  <account-popup v-model="isAccountShow" />
+  <!-- 账户弹窗 -->
+  <account-popup v-model="isAccountShow" v-model:account="accountId" />
+  <!-- 标签弹窗 -->
+  <tag-popup v-model="isTagShow" v-model:tags="tags" />
 </template>
 
 <style lang="scss" scoped>

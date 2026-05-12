@@ -64,10 +64,10 @@ function handleCancelClick() {
             <text class="font-semibold">用户信息</text>
             <wd-icon name="edit" />
           </view>
-          <wd-cell title="ID" size="small" :value="user.userId || '-'" />
-          <wd-cell title="邮箱" size="small" :value="user.email || '-'" />
-          <wd-cell title="手机" size="small" :value="user.mobile || '-'" />
-          <wd-cell title="注册" size="small" :value="user.createTime || '-'" />
+          <wd-cell title="ID" :value="user.userId || '-'" />
+          <wd-cell title="邮箱" :value="user.email || '-'" />
+          <wd-cell title="手机" :value="user.mobile || '-'" />
+          <wd-cell title="注册" :value="user.createTime || '-'" />
         </view>
 
         <view class="user-block">
@@ -75,14 +75,14 @@ function handleCancelClick() {
             <wd-grid-item v-for="item in actions" :key="item.title" @tap="item.action">
               <view class="flex flex-col items-center">
                 <text class="my-icons text-3xl" :class="[item.icon]" />
-                <text>{{ item.title }}</text>
+                <text class="text-xs">{{ item.title }}</text>
               </view>
             </wd-grid-item>
           </wd-grid>
         </view>
 
         <view class="user-block">
-          <wd-button type="error" custom-class="custom-shadow">
+          <wd-button type="danger" custom-class="custom-shadow">
             退出登录
           </wd-button>
         </view>

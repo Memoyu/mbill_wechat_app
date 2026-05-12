@@ -17,10 +17,17 @@ const categorySrc = computed(() => {
 const amountColor = computed(() => {
   return props.bill.type === 0 ? 'rgb(251 113 133)' : 'rgb(52 211 153)'
 })
+
+function handleBillTap() {
+  // console.log("账单", props.bill);
+  uni.navigateTo({
+    url: `/pages/bill/detail?id=${props.bill.billId}`,
+  })
+}
 </script>
 
 <template>
-  <view class="text-sm">
+  <view class="text-sm" @tap="handleBillTap">
     <!-- 分类图标 -->
     <view class="flex items-center justify-between">
       <view class="flex items-center">

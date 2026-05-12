@@ -23,7 +23,7 @@ onMounted(() => {
   })
 })
 
-function handleCreateClick() {
+function handleCreateTap() {
   console.log('handleCreateClick')
 }
 
@@ -49,10 +49,10 @@ function handleEditItemTap(item) {
       <text> 账户管理 </text>
     </template>
     <template #action>
-      <view class="flex items-center gap-3">
-        <view class="action-icon-box" @tap="handleCreateClick">
-          <text class="iconfont icon-plus title-icon" />
-          <text class="ml-2 text-xs">创建</text>
+      <view class="mt-3 flex items-center gap-3">
+        <view class="nav-bar-action-icon-box" @tap="handleCreateTap">
+          <wd-icon name="plus" />
+          <text class="ml-2">创建</text>
         </view>
       </view>
     </template>
@@ -97,10 +97,6 @@ function handleEditItemTap(item) {
 </template>
 
 <style lang="scss" scoped>
-.action-icon-box {
-  @apply: flex items-center justify-center rounded-full bg-gray-50 p-2 px-4;
-}
-
 .account-title-box {
   border-radius: 19px;
   box-sizing: border-box;

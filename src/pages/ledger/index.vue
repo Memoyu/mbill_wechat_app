@@ -40,14 +40,14 @@ function handleSortChange(list) {
       <text> 账本管理 </text>
     </template>
     <template #action>
-      <view class="flex items-center gap-3">
-        <view class="action-icon-box" @tap="handleScanClick">
-          <text class="iconfont icon-plus title-icon" />
-          <text class="ml-2 text-xs">创建</text>
+      <view class="mt-3 flex items-center gap-3">
+        <view class="nav-bar-action-icon-box" @tap="handleScanClick">
+          <wd-icon name="plus" />
+          <text class="ml-2">创建</text>
         </view>
-        <view class="action-icon-box" @tap="handleScanClick">
-          <text class="iconfont icon-scan title-icon" />
-          <text class="ml-2 text-xs">扫码</text>
+        <view class="nav-bar-action-icon-box" @tap="handleScanClick">
+          <wd-icon name="scan" />
+          <text class="ml-2">扫码</text>
         </view>
       </view>
     </template>
@@ -92,10 +92,6 @@ function handleSortChange(list) {
 </template>
 
 <style lang="scss" scoped>
-.action-icon-box {
-  @apply: flex items-center justify-center rounded-full bg-gray-50 p-2 px-4;
-}
-
 .ledger-item-box {
   display: flex;
   border-radius: 19px;

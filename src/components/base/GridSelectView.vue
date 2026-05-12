@@ -4,7 +4,7 @@ import { objToStyle } from '@/utils'
 export interface GridSelectItem {
   id: string
   name: string
-  icon: string
+  icon?: string
   childs: GridSelectItem[]
 }
 
@@ -12,8 +12,10 @@ const props = withDefaults(defineProps<{
   list: GridSelectItem[]
   height: number
   column?: number
+  hasIcon?: boolean
 }>(), {
   column: 5,
+  hasIcon: true,
 })
 const emit = defineEmits(['change'])
 
@@ -98,15 +100,26 @@ function handleItemTap(item: any) {
         <view :style="itemsBoxStyle">
           <view
             v-for="item in items" :key="item.id"
-            class="flex flex-col items-center rounded-lg py-2"
+            class="my-2"
             :class="[selected?.id === item.id ? 'grid-select-item-selected' : '']"
-            @tap="handleColumnItemTap(item, index)"
+            @tap="handleColumnItemTap(item, index as number)"
           >
-            <view :class="[item.childs && item.childs.length > 1 ? 'grid-select-parent-icon' : '']">
-              <wd-img :width="30" round :height="30" :src="item.icon" />
+            <view v-if="hasIcon" class="grid-select-item-box-has-icon">
+              <view :class="[item.childs && item.childs.length > 1 ? 'grid-select-parent-more' : '']">
+                <wd-img :width="30" round :height="30" :src="item.icon" />
+              </view>
+              <view class="grid-select-item-title">
+                {{ item.name }}
+              </view>
             </view>
-            <view class="grid-select-item-title">
-              {{ item.name }}
+            <view
+              v-else
+              class="grid-select-item-box"
+              :class="[item.childs && item.childs.length > 1 ? 'grid-select-parent-more' : '']"
+            >
+              <view class="grid-select-item-title">
+                {{ item.name }}
+              </view>
             </view>
           </view>
         </view>
@@ -119,13 +132,19 @@ function handleItemTap(item: any) {
             <view :style="itemsBoxStyle">
               <view
                 v-for="item in childs" :key="item.id"
-                class="flex flex-col items-center rounded-lg py-2"
                 :class="[selected.id === item.id ? 'grid-select-item-selected' : '']"
                 @tap="handleItemTap(item)"
               >
-                <wd-img :width="30" round :height="30" :src="item.icon" />
-                <view class="grid-select-item-title">
-                  {{ item.name }}
+                <view v-if="hasIcon" class="grid-select-item-box-has-icon">
+                  <wd-img :width="30" round :height="30" :src="item.icon" />
+                  <view class="grid-select-item-title">
+                    {{ item.name }}
+                  </view>
+                </view>
+                <view v-else class="grid-select-item-box">
+                  <view class="grid-select-item-title">
+                    {{ item.name }}
+                  </view>
                 </view>
               </view>
             </view>
@@ -137,7 +156,7 @@ function handleItemTap(item: any) {
 </template>
 
 <style lang="scss" scoped>
-.grid-select-parent-icon {
+.grid-select-parent-more {
   position: relative;
   &:before {
     content: '';
@@ -153,18 +172,27 @@ function handleItemTap(item: any) {
     @apply: bg-indigo-300;
   }
 }
+
+.grid-select-item-box {
+  @apply: font-bold rounded-lg py-3 px-2 bg-indigo-300/20;
+}
+
+.grid-select-item-box-has-icon {
+  @apply: flex flex-col items-center py-2;
+}
+
 .grid-select-item-title {
   font-size: 12px;
+  @apply: line-clamp-1 text-nowrap text-center;
 }
 
 .grid-select-item-selected {
-  @apply: bg-indigo-300/30;
+  @apply: rounded-lg bg-indigo-300/30;
 }
 
 .grid-select-childs-box {
   height: 0px;
   transition: height 0.3s ease-in-out;
   overflow: hidden;
-  margin-top: 5px;
 }
 </style>
