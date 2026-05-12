@@ -17,9 +17,11 @@ const props = withDefaults(defineProps<{
   height: number
   gap?: number
   expand?: boolean
+  safeArea?: boolean
 }>(), {
   gap: 5,
   expand: false,
+  safeArea: false,
 })
 const emit = defineEmits(['change'])
 const COM_INTERNAL_ARGS = ['x', 'y', 'drag_id', 'height', 'expand']
@@ -43,7 +45,10 @@ const initHeights = ref({})
 const dragDirection = ref<'upward' | 'down'>()
 
 const computedAreaHeight = computed(() => {
-  const height = areaHeight.value >= scrollHeight.value ? areaHeight.value + 85 : areaHeight.value
+  if (!props.safeArea)
+    return areaHeight.value
+  const movableHeight = scrollHeight.value - 85
+  const height = areaHeight.value > movableHeight ? areaHeight.value + 85 : areaHeight.value
   return height
 })
 

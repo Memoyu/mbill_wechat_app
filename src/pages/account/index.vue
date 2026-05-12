@@ -10,6 +10,15 @@ definePage({
 })
 
 const accountStore = useAccountStore()
+const actions: ActionItem[] = [
+  {
+    title: '创建账户',
+    icon: 'plus',
+    action: () => {
+      console.log('创建账户')
+    },
+  },
+]
 
 const show = ref(false)
 const scrollHeight = ref(300)
@@ -49,17 +58,17 @@ function handleEditItemTap(item) {
       <text> 账户管理 </text>
     </template>
     <template #action>
-      <view class="mt-3 flex items-center gap-3">
+      <!-- <view class="mt-3 flex items-center gap-3">
         <view class="nav-bar-action-icon-box" @tap="handleCreateTap">
           <wd-icon name="plus" />
           <text class="ml-2">创建</text>
         </view>
-      </view>
+      </view> -->
     </template>
   </nav-bar>
   <view class="w-screen">
     <view class="p-2">
-      <drag-sort-list-view expand :gap="8" :list="accounts" key-prop="accountId" :height="scrollHeight" @change="handleSortChange">
+      <drag-sort-list-view safe-area expand :gap="8" :list="accounts" key-prop="accountId" :height="scrollHeight" @change="handleSortChange">
         <template #title="{ listItem }">
           <view class="account-title-box">
             <view class="flex items-center justify-between">
@@ -94,6 +103,8 @@ function handleEditItemTap(item) {
       </drag-sort-list-view>
     </view>
   </view>
+  <!-- 底部操作栏 -->
+  <bottom-action :actions="actions" />
 </template>
 
 <style lang="scss" scoped>

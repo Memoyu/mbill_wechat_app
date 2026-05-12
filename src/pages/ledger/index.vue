@@ -72,7 +72,7 @@ function handleSortChange(list) {
 
   <view class="w-screen">
     <view class="px-3 py-2">
-      <drag-sort-list-view :list="ledgers" :gap="8" key-prop="ledgerId" :height="scrollHeight" @change="handleSortChange">
+      <drag-sort-list-view safe-area :list="ledgers" :gap="8" key-prop="ledgerId" :height="scrollHeight" @change="handleSortChange">
         <template #content="{ listItem }">
           <view class="ledger-item-box">
             <view class="ledger-item-content">

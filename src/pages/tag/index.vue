@@ -10,7 +10,15 @@ definePage({
 })
 
 const tagStore = useTagStore()
-
+const actions: ActionItem[] = [
+  {
+    title: '创建标签',
+    icon: 'plus',
+    action: () => {
+      console.log('创建标签')
+    },
+  },
+]
 const show = ref(false)
 const scrollHeight = ref(300)
 const tags = ref(tagStore.tags)
@@ -49,17 +57,17 @@ function handleEditItemTap(item) {
       <text> 标签管理 </text>
     </template>
     <template #action>
-      <view class="mt-3 flex items-center gap-3">
+      <!-- <view class="mt-3 flex items-center gap-3">
         <view class="nav-bar-action-icon-box" @tap="handleCreateClick">
           <wd-icon name="plus" />
           <text class="ml-2">创建</text>
         </view>
-      </view>
+      </view> -->
     </template>
   </nav-bar>
   <view class="w-screen">
     <view class="p-2">
-      <drag-sort-list-view expand :gap="8" :list="tags" key-prop="tagId" :height="scrollHeight" @change="handleSortChange">
+      <drag-sort-list-view safe-area expand :gap="8" :list="tags" key-prop="tagId" :height="scrollHeight" @change="handleSortChange">
         <template #title="{ listItem }">
           <view class="tag-title-box">
             <view class="flex items-center justify-between">
@@ -93,6 +101,8 @@ function handleEditItemTap(item) {
       </drag-sort-list-view>
     </view>
   </view>
+  <!-- 底部操作栏 -->
+  <bottom-action :actions="actions" />
 </template>
 
 <style lang="scss" scoped>
