@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import type { ActionItem } from '@/typings'
 import { useLedgerStore } from '@/store'
 import { systemInfo } from '@/utils/systemInfo'
 
@@ -10,24 +11,18 @@ definePage({
 })
 const ledgerStore = useLedgerStore()
 const ledgers = ref(ledgerStore.ledgers)
-
 const actions: ActionItem[] = [
   {
-    title: '创建账本',
+    title: '创建',
     icon: 'plus',
-    action: () => {
-      console.log('创建账本')
-    },
+    action: handleCreateTap,
   },
   {
-    title: '加入账本',
+    title: '加入',
     icon: 'scan',
-    action: () => {
-      console.log('加入账本')
-    },
+    action: handleScanTap,
   },
 ]
-
 const show = ref(false)
 const scrollHeight = ref(300)
 
@@ -40,8 +35,12 @@ onMounted(() => {
   })
 })
 
-function handleScanClick() {
+function handleCreateTap() {
+  console.log('handleCreateTap')
+}
 
+function handleScanTap() {
+  console.log('handleScanTap')
 }
 
 function handleSortChange(list) {
@@ -52,27 +51,10 @@ function handleSortChange(list) {
 <template>
   <page-meta :page-style="`overflow:${show ? 'hidden' : 'visible'};`" />
   <draw-background2 />
-  <nav-bar id="TOP_NAVBAR">
-    <template #title>
-      <text> 账本管理 </text>
-    </template>
-    <template #action>
-      <!-- <view class="mt-3 flex items-center gap-3">
-        <view class="nav-bar-action-icon-box" @tap="handleScanClick">
-          <wd-icon name="plus" />
-          <text class="ml-2">创建</text>
-        </view>
-        <view class="nav-bar-action-icon-box" @tap="handleScanClick">
-          <wd-icon name="scan" />
-          <text class="ml-2">扫码</text>
-        </view>
-      </view> -->
-    </template>
-  </nav-bar>
-
+  <nav-bar id="TOP_NAVBAR" :actions="actions" title="账本管理" />
   <view class="w-screen">
     <view class="px-3 py-2">
-      <drag-sort-list-view safe-area :list="ledgers" :gap="8" key-prop="ledgerId" :height="scrollHeight" @change="handleSortChange">
+      <drag-sort-list-view :list="ledgers" :gap="8" key-prop="ledgerId" :height="scrollHeight" @change="handleSortChange">
         <template #content="{ listItem }">
           <view class="ledger-item-box">
             <view class="ledger-item-content">
@@ -106,8 +88,6 @@ function handleSortChange(list) {
       </drag-sort-list-view>
     </view>
   </view>
-  <!-- 底部操作栏 -->
-  <bottom-action :actions="actions" />
 </template>
 
 <style lang="scss" scoped>

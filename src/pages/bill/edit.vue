@@ -139,21 +139,26 @@ function handleTagSelectTap() {
       </view>
     </view>
     <!-- 账单属性 -->
-    <view class="flex items-center px-2 py-1 space-x-xl">
-      <view class="flex items-center justify-center" @tap="isDateTimeShow = true">
+    <view class="bill-attr-box">
+      <view class="bill-attr-box-item" @tap="isDateTimeShow = true">
         <!-- 日期 -->
         <wd-icon name="calendar-line" size="20px" />
         <text class="ml-1">{{ `${getDateFormat(dateTime)} ${dayjs(dateTime).format('HH:MM')}` }}</text>
       </view>
-      <view class="flex items-center justify-center" @tap="isAccountShow = true">
+      <view class="bill-attr-box-item" @tap="isAccountShow = true">
         <!-- 账户 -->
         <wd-img :width="22" round :height="22" src="https://wot-ui.cn/assets/panda.jpg" />
         <text class="ml-1">现金</text>
       </view>
-      <view class="flex items-center justify-center" @tap="isTagShow = true">
+      <view class="bill-attr-box-item" @tap="isTagShow = true">
         <!-- 标签 -->
         <wd-icon name="tag" size="20px" />
         <text class="ml-1">标签</text>
+      </view>
+      <view class="bill-attr-box-item" @tap="isTagShow = true">
+        <!-- 标签 -->
+        <wd-icon name="location" size="20px" />
+        <text class="ml-1">地点</text>
       </view>
     </view>
     <!-- 账单总额、备注 -->
@@ -188,5 +193,10 @@ function handleTagSelectTap() {
 </template>
 
 <style lang="scss" scoped>
-
+.bill-attr-box {
+  @apply: flex items-center px-2 py-1 gap-2;
+  &-item {
+    @apply: flex items-center justify-center py-1.5 px-2.5 bg-indigo-200/40 rounded-full;
+  }
+}
 </style>

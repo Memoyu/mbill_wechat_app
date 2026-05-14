@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import { useTouch } from '@wot-ui/ui/composables/useTouch'
 import lodash from 'lodash'
-import { c } from 'node_modules/vite/dist/node/types.d-aGj9QkWt'
 import { omit } from '@/utils'
 
 defineOptions({
@@ -17,11 +16,11 @@ const props = withDefaults(defineProps<{
   height: number
   gap?: number
   expand?: boolean
-  safeArea?: boolean
+  safeArea?: number
 }>(), {
   gap: 5,
   expand: false,
-  safeArea: false,
+  safeArea: 0,
 })
 const emit = defineEmits(['change'])
 const COM_INTERNAL_ARGS = ['x', 'y', 'drag_id', 'height', 'expand']
@@ -45,10 +44,10 @@ const initHeights = ref({})
 const dragDirection = ref<'upward' | 'down'>()
 
 const computedAreaHeight = computed(() => {
-  if (!props.safeArea)
+  if (props.safeArea === 0)
     return areaHeight.value
-  const movableHeight = scrollHeight.value - 85
-  const height = areaHeight.value > movableHeight ? areaHeight.value + 85 : areaHeight.value
+  const movableHeight = scrollHeight.value - props.safeArea
+  const height = areaHeight.value > movableHeight ? areaHeight.value + props.safeArea : areaHeight.value
   return height
 })
 

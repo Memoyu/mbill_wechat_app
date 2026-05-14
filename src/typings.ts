@@ -1,8 +1,20 @@
 // 枚举定义
-
 export enum BillTypeEnum {
   Expend = 0,
   Income = 1,
+}
+
+export enum BillWayEnum {
+  Manual = 0,
+  Auto = 1,
+}
+
+// action 参数
+export interface ActionItem {
+  title: string
+  icon: string
+  danger?: boolean
+  action: () => void
 }
 
 // uni.uploadFile文件上传参数

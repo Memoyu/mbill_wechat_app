@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { ActionItem } from '@/typings'
 import { useCategoryStore } from '@/store'
 import { systemInfo } from '@/utils/systemInfo'
 
@@ -12,14 +13,11 @@ definePage({
 const categoryStore = useCategoryStore()
 const actions: ActionItem[] = [
   {
-    title: '创建分类',
+    title: '创建',
     icon: 'plus',
-    action: () => {
-      console.log('创建分类')
-    },
+    action: handleCreateTap,
   },
 ]
-
 const show = ref(false)
 const scrollHeight = ref(300)
 const categories = ref(categoryStore.expends)
@@ -32,8 +30,8 @@ onMounted(() => {
   })
 })
 
-function handleCreateClick() {
-  console.log('handleCreateClick')
+function handleCreateTap() {
+  console.log('handleCreateTap')
   // categories.value = categoryStore.categories
 }
 
@@ -53,22 +51,10 @@ function handleEditItemTap(item) {
 <template>
   <page-meta :page-style="`overflow:${show ? 'hidden' : 'visible'};`" />
   <draw-background2 />
-  <nav-bar id="TOP_NAVBAR">
-    <template #title>
-      <text> 分类管理 </text>
-    </template>
-    <template #action>
-      <!-- <view class="mt-3 flex items-center gap-3">
-        <view class="nav-bar-action-icon-box" @tap="handleCreateClick">
-          <text class="iconfont icon-plus title-icon" />
-          <text class="ml-2">创建</text>
-        </view>
-      </view> -->
-    </template>
-  </nav-bar>
+  <nav-bar id="TOP_NAVBAR" :actions="actions" title="分类管理" />
   <view class="w-screen">
     <view class="p-2">
-      <drag-sort-list-view safe-area expand :gap="8" :list="categories" key-prop="categoryId" :height="scrollHeight" @change="handleSortChange">
+      <drag-sort-list-view expand :gap="8" :list="categories" key-prop="categoryId" :height="scrollHeight" @change="handleSortChange">
         <template #title="{ listItem }">
           <view class="category-title-box">
             <view class="flex items-center justify-between">
@@ -103,8 +89,6 @@ function handleEditItemTap(item) {
       </drag-sort-list-view>
     </view>
   </view>
-  <!-- 底部操作栏 -->
-  <bottom-action :actions="actions" />
 </template>
 
 <style lang="scss" scoped>

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { ActionItem } from '@/typings'
 import { useAccountStore } from '@/store'
 import { systemInfo } from '@/utils/systemInfo'
 
@@ -12,14 +13,11 @@ definePage({
 const accountStore = useAccountStore()
 const actions: ActionItem[] = [
   {
-    title: '创建账户',
+    title: '创建',
     icon: 'plus',
-    action: () => {
-      console.log('创建账户')
-    },
+    action: handleCreateTap,
   },
 ]
-
 const show = ref(false)
 const scrollHeight = ref(300)
 const accounts = ref(accountStore.accounts)
@@ -33,7 +31,7 @@ onMounted(() => {
 })
 
 function handleCreateTap() {
-  console.log('handleCreateClick')
+  console.log('handleCreateTap')
 }
 
 function handleSortChange(list: any[]) {
@@ -53,22 +51,10 @@ function handleEditItemTap(item) {
 <template>
   <page-meta :page-style="`overflow:${show ? 'hidden' : 'visible'};`" />
   <draw-background2 />
-  <nav-bar id="TOP_NAVBAR">
-    <template #title>
-      <text> 账户管理 </text>
-    </template>
-    <template #action>
-      <!-- <view class="mt-3 flex items-center gap-3">
-        <view class="nav-bar-action-icon-box" @tap="handleCreateTap">
-          <wd-icon name="plus" />
-          <text class="ml-2">创建</text>
-        </view>
-      </view> -->
-    </template>
-  </nav-bar>
+  <nav-bar id="TOP_NAVBAR" :actions="actions" title="账户管理" />
   <view class="w-screen">
     <view class="p-2">
-      <drag-sort-list-view safe-area expand :gap="8" :list="accounts" key-prop="accountId" :height="scrollHeight" @change="handleSortChange">
+      <drag-sort-list-view expand :gap="8" :list="accounts" key-prop="accountId" :height="scrollHeight" @change="handleSortChange">
         <template #title="{ listItem }">
           <view class="account-title-box">
             <view class="flex items-center justify-between">
@@ -103,8 +89,6 @@ function handleEditItemTap(item) {
       </drag-sort-list-view>
     </view>
   </view>
-  <!-- 底部操作栏 -->
-  <bottom-action :actions="actions" />
 </template>
 
 <style lang="scss" scoped>

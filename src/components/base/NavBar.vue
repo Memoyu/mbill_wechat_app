@@ -1,6 +1,11 @@
 <script lang="ts" setup>
+import type { ActionItem } from '@/typings'
 import { safeAreaInsets } from '@/utils/systemInfo'
 
+const props = defineProps<{
+  title?: string
+  actions?: ActionItem[]
+}>()
 function back() {
   uni.navigateBack()
 }
@@ -21,11 +26,20 @@ function back() {
       <view>
         <!-- 标题 -->
         <view class="w-[50vw] flex items-center justify-between text-16px text-gray-800 font-semibold">
-          <slot name="title" />
+          <text v-if="title && title.length > 0"> {{ title }} </text>
+          <slot v-else name="title" />
         </view>
         <!-- 操作按钮 -->
         <view>
-          <slot name="action" />
+          <view v-if="actions && actions.length > 0">
+            <view class="mt-3 flex items-center gap-3">
+              <view v-for="(item, index) in actions" :key="index" class="nav-bar-action-icon-box" @tap="item.action">
+                <wd-icon :name="item.icon" />
+                <text class="ml-2">{{ item.title }}</text>
+              </view>
+            </view>
+          </view>
+          <slot v-else name="action" />
         </view>
       </view>
     </view>
