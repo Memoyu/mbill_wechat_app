@@ -13,6 +13,11 @@ export const customTabbarList: CustomTabBarItem[] = [
     pagePath: 'pages/statis/index',
     icon: 'icon-statis',
   },
+  {
+    text: '模块',
+    pagePath: 'pages/module/index',
+    icon: 'icon-cube',
+  },
 ]
 
 /**

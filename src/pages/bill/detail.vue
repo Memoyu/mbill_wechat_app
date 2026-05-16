@@ -288,6 +288,14 @@ onLoad((options) => {
   height: 20px;
   background: #f3f4f6;
 
+  // 左右透明半圆缺口
+  mask:
+    radial-gradient(circle 10px at 0 50%, transparent 100%, black 0) left,
+    radial-gradient(circle 10px at 100% 50%, transparent 100%, black 0) right;
+  mask-size: 51% 100%;
+  mask-position: left, right;
+  mask-repeat: no-repeat;
+
   // 中间虚线
   &::before {
     content: '';
@@ -306,20 +314,6 @@ onLoad((options) => {
     height: 2px;
     border-top: none;
   }
-
-  // 左右透明半圆缺口
-  -webkit-mask:
-    radial-gradient(circle 10px at 0 50%, transparent 100%, black 0) left,
-    radial-gradient(circle 10px at 100% 50%, transparent 100%, black 0) right;
-  mask:
-    radial-gradient(circle 10px at 0 50%, transparent 100%, black 0) left,
-    radial-gradient(circle 10px at 100% 50%, transparent 100%, black 0) right;
-  -webkit-mask-size: 51% 100%;
-  mask-size: 51% 100%;
-  -webkit-mask-position: left, right;
-  mask-position: left, right;
-  -webkit-mask-repeat: no-repeat;
-  mask-repeat: no-repeat;
 }
 .bill-bottom-box {
   @apply: bg-gray-100 rounded-b-lg p-3;

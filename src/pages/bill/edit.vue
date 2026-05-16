@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import dayjs from 'dayjs'
 import { useLedgerStore } from '@/store'
-import { objToStyle } from '@/utils'
 import { getDateFormat } from '@/utils/date'
 import { systemInfo } from '@/utils/systemInfo'
 
@@ -12,7 +11,7 @@ definePage({
   },
 })
 
-const billTypes = ['支出', '收入']
+const typeOptions = ['支出', '收入']
 const amountValue = ref('')
 const tempCursor = ref(amountValue.value.length)
 
@@ -21,7 +20,7 @@ const isDateTimeShow = ref(false)
 const isAccountShow = ref(false)
 const isTagShow = ref(false)
 const categoryPickerHeight = ref(0)
-const currentType = ref(0)
+const activeType = ref(0)
 const currentLedger = ref()
 const currentLedgerId = ref()
 
@@ -29,14 +28,13 @@ const dateTime = ref(Date.now())
 const remark = ref('')
 const tags = ref([])
 const accountId = ref()
+const accountName = ref('虚拟账户-支付宝')
+const address = ref('广东省广州市广州市天河区人民政府(天府路西)')
 
 const ledgerStore = useLedgerStore()
 
-const segmentStyle = computed(() => {
-  const style = {
-    borderRadius: '18px',
-  }
-  return `${objToStyle(style)}`
+const showAddress = computed(() => {
+  return address.value.length > 12 ? `···${address.value.substring(address.value.length - 12)}` : address.value
 })
 
 watch(() => tags.value, (newTags, oldTags) => {
@@ -103,26 +101,15 @@ function handleTagSelectTap() {
       </view>
     </template>
     <template #action>
-      <view class="mt-4 flex">
-        <view class="relative flex rounded-full bg-gray-200/50 p-1 px-2">
-          <view
-            class="absolute bottom-2 z--1 h-2 w-8 rounded-full bg-indigo-300 transition-all duration-300"
-            :style="{ left: (currentType === 0 ? '14px' : '58px') }"
-          />
-          <view class="px-2 py-1" @tap="currentType = 0">
-            支出
-          </view>
-          <view class="px-2 py-1" @tap="currentType = 1">
-            收入
-          </view>
-        </view>
+      <view class="mt-4 rounded-full bg-gray-200/50 py-2">
+        <mbill-segmented v-model="activeType" :options="typeOptions" />
       </view>
     </template>
   </nav-bar>
   <!-- 账单分类 -->
   <view class="">
     <wd-swiper
-      v-model:current="currentType" :list="['0', '1']"
+      v-model:current="activeType" :list="['0', '1']"
       :indicator="false" :autoplay="false" :height="categoryPickerHeight"
     >
       <template #default="{ item }">
@@ -139,7 +126,7 @@ function handleTagSelectTap() {
       </view>
     </view>
     <!-- 账单属性 -->
-    <view class="bill-attr-box">
+    <view class="bill-attr-box hide-view-scrollbar">
       <view class="bill-attr-box-item" @tap="isDateTimeShow = true">
         <!-- 日期 -->
         <wd-icon name="calendar-line" size="20px" />
@@ -148,7 +135,7 @@ function handleTagSelectTap() {
       <view class="bill-attr-box-item" @tap="isAccountShow = true">
         <!-- 账户 -->
         <wd-img :width="22" round :height="22" src="https://wot-ui.cn/assets/panda.jpg" />
-        <text class="ml-1">现金</text>
+        <text class="ml-1">{{ accountName }}</text>
       </view>
       <view class="bill-attr-box-item" @tap="isTagShow = true">
         <!-- 标签 -->
@@ -156,9 +143,9 @@ function handleTagSelectTap() {
         <text class="ml-1">标签</text>
       </view>
       <view class="bill-attr-box-item" @tap="isTagShow = true">
-        <!-- 标签 -->
+        <!-- 地点 -->
         <wd-icon name="location" size="20px" />
-        <text class="ml-1">地点</text>
+        <text class="ml-1">{{ showAddress }}</text>
       </view>
     </view>
     <!-- 账单总额、备注 -->
@@ -194,7 +181,8 @@ function handleTagSelectTap() {
 
 <style lang="scss" scoped>
 .bill-attr-box {
-  @apply: flex items-center px-2 py-1 gap-2;
+  white-space: nowrap;
+  @apply: flex items-center px-2 py-1 gap-2 overflow-x-auto;
   &-item {
     @apply: flex items-center justify-center py-1.5 px-2.5 bg-indigo-200/40 rounded-full;
   }

@@ -43,16 +43,12 @@ watch(() => props.height, (nh) => {
 
 watch(() => props.list, (list) => {
   initColumnList(list)
-}, { deep: true, immediate: true })
-
-onMounted(() => {
-  initColumnList(props.list)
-})
+}, { deep: true })
 
 function initColumnList(list) {
   const cols = []
   const ls = list ?? []
-  console.log(ls, 'ls')
+  // console.log(ls, 'ls')
   for (let i = 0; i < ls.length; i += props.column) {
     cols.push(ls.slice(i, i + props.column))
   }
