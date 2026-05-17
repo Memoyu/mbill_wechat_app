@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { ILedger } from '@/api/types/ledger'
 import { useToast } from '@wot-ui/ui'
 import { useLedgerPickerStore, useLedgerStore } from '@/store'
 
@@ -35,7 +36,7 @@ const isMultiple = computed(() => {
   return props.type === 'multiple'
 })
 
-function handleLedgerItemClick(item) {
+function handleLedgerItemClick(item: ILedger) {
   console.log('点击')
   let selecteds = ledgerPickerStore.selectedLedgers
   if (props.store) {
@@ -43,7 +44,7 @@ function handleLedgerItemClick(item) {
   }
   else {
     currentLedgerId.value = item.ledgerId
-    selecteds = [item]
+    selecteds = [item.ledgerId]
   }
   emit('change', selecteds)
 }

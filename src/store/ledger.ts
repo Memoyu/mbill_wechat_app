@@ -1,7 +1,10 @@
+import type { ILedger } from '@/api/types/ledger'
 import { defineStore } from 'pinia'
 
 // 初始化状态
-const initState = {
+const initState: {
+  ledgers: ILedger[]
+} = {
   ledgers: [{
     ledgerId: '12323234341',
     name: '日常账本字符日常账本字符日常账本字符',

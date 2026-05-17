@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import type { ILedger } from '@/api/types/ledger'
 import dayjs from 'dayjs'
 import { safeAreaInsets } from '@/utils/systemInfo'
 
@@ -36,7 +37,7 @@ function handleCalendarClick() {
   })
 }
 
-function handleLedgerChange(item) {
+function handleLedgerChange(item: ILedger) {
   ledgerName.value = item.name
 }
 </script>

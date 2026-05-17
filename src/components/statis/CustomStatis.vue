@@ -1,5 +1,15 @@
 <script lang="ts" setup>
+let isInit = false
 
+defineExpose({
+  init,
+})
+
+function init() {
+  if (isInit)
+    return
+  isInit = true
+}
 </script>
 
 <template>

@@ -8,7 +8,7 @@ const props = defineProps<{
   cursor: number
 }>()
 const emit = defineEmits(['update:cursor'])
-const input = defineModel<string>()
+const input = defineModel<string>({ default: '' })
 
 const touch = useTouch()
 const { proxy } = getCurrentInstance() as any
@@ -78,7 +78,7 @@ onMounted(() => {
       // console.log(res)
       if (res && res.node) {
         canvas = res.node
-        ctx = canvas2dAdapter(canvas.getContext('2d') as CanvasRenderingContext2D)
+        ctx = canvas2dAdapter(canvas?.getContext('2d') as CanvasRenderingContext2D)
         updateCanvasSize()
         drawCanvas()
       }
@@ -124,7 +124,10 @@ function redrawCanvas() {
 }
 
 function updateCanvasSize() {
-  let textWidth = ctx.measureText(input.value).width
+  if (!ctx || !canvas)
+    return
+
+  let textWidth = ctx.measureText(input.value).width ?? 0
   textWidth = Math.ceil(textWidth + px * 2)
   // 20 为增量
   canvasWidth.value = textWidth + 20
@@ -134,7 +137,9 @@ function updateCanvasSize() {
   // console.log('算出size', textWidth, canvas.width, canvas.height, pixelRatio.value)
 }
 function setCanvasStyle() {
-// 设置字体样式
+  if (!ctx)
+    return
+  // 设置字体样式
   ctx.setTextBaseline('middle')
   ctx.setTextAlign('left')
   // ctx.setFontSize(16 * pixelRatio.value)

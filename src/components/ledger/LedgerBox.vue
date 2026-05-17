@@ -1,12 +1,11 @@
 <script lang="ts" setup>
+import type { ILedger } from '@/api/types/ledger'
 import { gradients } from '@/constants/gradients'
 
 const props = defineProps<{
-  data: any
+  data: ILedger
 }>()
-defineEmits<{
-  (e: 'tap'): void
-}>()
+const emit = defineEmits(['tap'])
 const actionShow = ref(false)
 const actionTitle = ref('')
 
@@ -40,14 +39,14 @@ function handleActionClick() {
   actionShow.value = true
 }
 
-function handleActionSelect(panel) {
+function handleActionSelect(panel: string) {
   console.log('选择了操作:', panel)
   actionShow.value = false
 }
 </script>
 
 <template>
-  <view class="relative transform-gpu animate-fade-in animate-duration-300 transition-all duration-300" @tap.stop="$emit('tap')">
+  <view class="relative transform-gpu animate-fade-in animate-duration-300 transition-all duration-300" @tap.stop="emit('tap', data)">
     <!-- 添加阴影容器 -->
     <view
       class="absolute inset-0 rounded-xl transition-all duration-200 -z-1"

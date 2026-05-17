@@ -22,7 +22,7 @@ function initSelectItem() {
     return {
       id: a.tagId,
       name: a.name,
-      childs: a.childs.map((c) => {
+      childs: (a.childs ?? []).map((c) => {
         return {
           id: c.tagId,
           name: c.name,

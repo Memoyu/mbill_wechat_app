@@ -1,7 +1,10 @@
+import type { IAccount } from '@/api/types/account'
 import { defineStore } from 'pinia'
 
 // 初始化状态
-const initState = {
+const initState: {
+  accounts: IAccount[]
+} = {
   accounts: [{
     accountId: '1231',
     name: '资金账户',

@@ -122,7 +122,7 @@ const relatedBill = ref({
   ],
 })
 
-onLoad((options) => {
+onLoad((options: any) => {
   console.log('账单id', options.id)
 })
 </script>

@@ -17,7 +17,7 @@ watch(() => props.date, (val) => {
   }
 })
 
-function handleDateChange(val) {
+function handleDateChange() {
 
 }
 

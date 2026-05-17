@@ -13,7 +13,7 @@ const props = defineProps<{
   cursor: number
 }>()
 const emit = defineEmits(['press', 'update:cursor'])
-const input = defineModel<string>()
+const input = defineModel<string>({ default: '' })
 // 数字键
 const keys = computed(() => genBasicKeys())
 
@@ -56,7 +56,7 @@ function genBasicKeys(): Key[] {
   return keys
 }
 
-function handleKeyPress(key) {
+function handleKeyPress(key: string | number) {
   const value = input.value
   // console.log(props.cursor, 'cursor')
 

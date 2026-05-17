@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { ITag } from '@/api/types/tag'
 import type { ActionItem } from '@/typings'
 import { useTagStore } from '@/store'
 import { systemInfo } from '@/utils/systemInfo'
@@ -24,7 +25,7 @@ const tags = ref(tagStore.tags)
 
 onMounted(() => {
   nextTick(() => {
-    uni.createSelectorQuery().select('#TOP_NAVBAR').boundingClientRect((data: UniApp.NodeInfo) => {
+    uni.createSelectorQuery().select('#TOP_NAVBAR').boundingClientRect((data: any) => {
       scrollHeight.value = systemInfo.windowHeight - (data.height + 16) // 16为外层view的padding
     }).exec()
   })
@@ -34,17 +35,17 @@ function handleCreateTap() {
   console.log('handleCreateTap')
 }
 
-function handleSortChange(list: any[]) {
+function handleSortChange(list: ITag[]) {
   // console.log('handleSortChange', list)
   // tags.value = list
 }
 
-function handleChildSortChange(list: any[], parent) {
-  console.log('handleChildSortChange', list, parent)
+function handleChildSortChange(list: ITag[], parent: any) {
+  console.log('handleChildSortChange', list, parent as ITag)
 }
 
-function handleEditItemTap(item) {
-  console.log('handleEditItemTap', item)
+function handleEditItemTap(item: any) {
+  console.log('handleEditItemTap', item as ITag)
 }
 </script>
 

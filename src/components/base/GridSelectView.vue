@@ -45,7 +45,7 @@ watch(() => props.list, (list) => {
   initColumnList(list)
 }, { deep: true })
 
-function initColumnList(list) {
+function initColumnList(list: GridSelectItem[]) {
   const cols = []
   const ls = list ?? []
   // console.log(ls, 'ls')
@@ -56,21 +56,22 @@ function initColumnList(list) {
   columns.value = cols
 }
 
-function handleColumnItemTap(item: any, index: number) {
+function handleColumnItemTap(item: any, index: string | number) {
+  const idx = Number(index)
   childs.value = item.childs
   nextTick(() => {
     uni
       .createSelectorQuery()
       .in(proxy)
-      .select(`#GRID-CHILDS-${index}`)
-      .boundingClientRect((view: UniApp.NodeInfo) => {
+      .select(`#GRID-CHILDS-${idx}`)
+      .boundingClientRect((view: any) => {
         // console.log(view, 'boundingClientRect')
         childHeight.value = view?.height ?? 0
       })
       .exec()
   })
 
-  if (columnIndex.value !== index) {
+  if (columnIndex.value !== idx) {
     expand.value = true
   }
   else {
@@ -79,7 +80,7 @@ function handleColumnItemTap(item: any, index: number) {
   }
 
   selected.value = item
-  columnIndex.value = index
+  columnIndex.value = idx
   emit('change', item)
 }
 
@@ -98,7 +99,7 @@ function handleItemTap(item: any) {
             v-for="item in items" :key="item.id"
             class="my-2"
             :class="[selected?.id === item.id ? 'grid-select-item-selected' : '']"
-            @tap="handleColumnItemTap(item, index as number)"
+            @tap="handleColumnItemTap(item, index)"
           >
             <view v-if="hasIcon" class="grid-select-item-box-has-icon">
               <view :class="[item.childs && item.childs.length > 1 ? 'grid-select-parent-more' : '']">

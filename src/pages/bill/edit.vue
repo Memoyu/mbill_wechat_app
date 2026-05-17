@@ -26,7 +26,7 @@ const currentLedgerId = ref()
 
 const dateTime = ref(Date.now())
 const remark = ref('')
-const tags = ref([])
+const tags = ref<string[]>([])
 const accountId = ref()
 const accountName = ref('虚拟账户-支付宝')
 const address = ref('广东省广州市广州市天河区人民政府(天府路西)')
@@ -51,9 +51,9 @@ onMounted(() => {
 
 function initFixedHeight() {
   nextTick(() => {
-    uni.createSelectorQuery().select('#TOP_NAVBAR').boundingClientRect((top: UniApp.NodeInfo) => {
+    uni.createSelectorQuery().select('#TOP_NAVBAR').boundingClientRect((top: any) => {
       const topHeight = top.height
-      uni.createSelectorQuery().select('#BOTTOM_INPUT').boundingClientRect((bottom: UniApp.NodeInfo) => {
+      uni.createSelectorQuery().select('#BOTTOM_INPUT').boundingClientRect((bottom: any) => {
         categoryPickerHeight.value = systemInfo.windowHeight - (topHeight + bottom.height)
         // console.log(topHeight, bottom.height, categoryPickerHeight.value, 'categoryPickerHeight')
       }).exec()
@@ -101,7 +101,7 @@ function handleTagSelectTap() {
       </view>
     </template>
     <template #action>
-      <view class="mt-4 max-w-max rounded-full bg-gray-200/50 py-1">
+      <view class="mt-4 max-w-max rounded-full bg-gray-200/50 px-3 py-1">
         <mbill-segmented v-model="activeType" :options="typeOptions" />
       </view>
     </template>

@@ -1,7 +1,10 @@
+import type { ITag } from '@/api/types/tag'
 import { defineStore } from 'pinia'
 
 // 初始化状态
-const initState = {
+const initState: {
+  tags: ITag[ ]
+} = {
   tags: [
     {
       tagId: 't1001',

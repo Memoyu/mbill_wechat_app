@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import type { ILedger } from '@/api/types/ledger'
 import type { ActionItem } from '@/typings'
 import { useLedgerStore } from '@/store'
 import { systemInfo } from '@/utils/systemInfo'
@@ -28,7 +29,7 @@ const scrollHeight = ref(300)
 
 onMounted(() => {
   nextTick(() => {
-    uni.createSelectorQuery().select('#TOP_NAVBAR').boundingClientRect((data: UniApp.NodeInfo) => {
+    uni.createSelectorQuery().select('#TOP_NAVBAR').boundingClientRect((data: any) => {
       // console.log(data)
       scrollHeight.value = systemInfo.windowHeight - (data.height + 16) // 16为外层view的padding
     }).exec()
@@ -43,7 +44,7 @@ function handleScanTap() {
   console.log('handleScanTap')
 }
 
-function handleSortChange(list) {
+function handleSortChange(list: ILedger[]) {
   console.log(list, '重新排序')
 }
 </script>

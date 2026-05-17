@@ -57,7 +57,7 @@ function handleCancelClick() {
           </template>
           <view class="custom-value" style="height: 32px">
             <wd-button
-              type="icon"
+              variant="text"
               icon="caret-right"
               custom-class="!text-gray-4"
               size="small"

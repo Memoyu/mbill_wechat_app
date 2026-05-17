@@ -1,28 +1,15 @@
-/* eslint-disable import/no-mutable-exports */
 // 获取屏幕边界到安全区域距离
-let systemInfo
-let safeAreaInsets
-
-// #ifdef MP-WEIXIN
-// 微信小程序使用新的API
-systemInfo = uni.getWindowInfo()
-safeAreaInsets = systemInfo.safeArea
+const systemInfo = uni.getWindowInfo()
+const safeAreaInsets = systemInfo.safeArea
   ? {
       top: systemInfo.safeArea.top,
       right: systemInfo.windowWidth - systemInfo.safeArea.right,
       bottom: systemInfo.windowHeight - systemInfo.safeArea.bottom,
       left: systemInfo.safeArea.left,
     }
-  : null
-// #endif
+  : { top: 0, right: 0, bottom: 0, left: 0 }
 
-// #ifndef MP-WEIXIN
-// 其他平台继续使用uni API
-systemInfo = uni.getSystemInfoSync()
-safeAreaInsets = systemInfo.safeAreaInsets
-// #endif
-
-console.log('systemInfo', systemInfo)
+// console.log('systemInfo', systemInfo)
 // 微信里面打印
 // pixelRatio: 3
 // safeArea: {top: 47, left: 0, right: 390, bottom: 810, width: 390, …}

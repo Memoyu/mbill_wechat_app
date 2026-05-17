@@ -1,12 +1,20 @@
 <script lang="ts" setup>
 import dayjs from 'dayjs'
 
+let isInit = false
 const options = ref()
 const active = ref(0)
 
-onMounted(() => {
-  options.value = getMonths()
+defineExpose({
+  init,
 })
+
+function init() {
+  if (isInit)
+    return
+  isInit = true
+  options.value = getMonths()
+}
 
 function getMonths() {
   const dates = Array.from({ length: 20 }, (_, i) => {
@@ -19,7 +27,7 @@ function getMonths() {
 
 <template>
   <view>
-    <view>
+    <view class="px-2">
       <mbill-segmented v-model="active" :options="options">
         <template #content="{ option }">
           <view class="flex flex-col justify-center rounded-xl bg-indigo-500/40 px-3 py-2 text-white">

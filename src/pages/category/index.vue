@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { ICategory } from '@/api/types/category'
 import type { ActionItem } from '@/typings'
 import { useCategoryStore } from '@/store'
 import { systemInfo } from '@/utils/systemInfo'
@@ -24,7 +25,7 @@ const categories = ref(categoryStore.expends)
 
 onMounted(() => {
   nextTick(() => {
-    uni.createSelectorQuery().select('#TOP_NAVBAR').boundingClientRect((data: UniApp.NodeInfo) => {
+    uni.createSelectorQuery().select('#TOP_NAVBAR').boundingClientRect((data: any) => {
       scrollHeight.value = systemInfo.windowHeight - (data.height + 16) // 16为外层view的padding
     }).exec()
   })
@@ -35,16 +36,16 @@ function handleCreateTap() {
   // categories.value = categoryStore.categories
 }
 
-function handleSortChange(list: any[]) {
+function handleSortChange(list: ICategory[]) {
   console.log('handleSortChange', list)
 }
 
-function handleChildSortChange(list: any[], parent) {
-  console.log('handleChildSortChange', list, parent)
+function handleChildSortChange(list: ICategory[], parent: any) {
+  console.log('handleChildSortChange', list, parent as ICategory)
 }
 
-function handleEditItemTap(item) {
-  console.log('handleEditItemTap', item)
+function handleEditItemTap(item: any) {
+  console.log('handleEditItemTap', item as ICategory)
 }
 </script>
 

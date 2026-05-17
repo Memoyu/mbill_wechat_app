@@ -1,7 +1,11 @@
+import type { ICategory } from '@/api/types/category'
 import { defineStore } from 'pinia'
 
 // 初始化状态
-const initState = {
+const initState: {
+  expends: ICategory[ ]
+  incomes: ICategory[ ]
+} = {
   expends: [{
     categoryId: 'a1231',
     name: '食品餐饮',

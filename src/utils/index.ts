@@ -110,8 +110,8 @@ export function getCurrentPageI18nKey() {
     console.warn('路由不正确')
     return ''
   }
-  console.log(currPage)
-  console.log(currPage.style.navigationBarTitleText)
+  // console.log(currPage)
+ // console.log(currPage.style.navigationBarTitleText)
   return currPage.style?.navigationBarTitleText || ''
 }
 
@@ -306,7 +306,7 @@ export function toFixed(num: number, digit: number = 2): number {
 }
 
 // 删除对象中的属性
-export function omit(obj, args): object {
+export function omit(obj: object, args: string[]): object {
   if (!args)
     return obj
   const newObj = {}
@@ -319,8 +319,8 @@ export function omit(obj, args): object {
   })
 
   keys.forEach((key) => {
-    if (obj[key] !== undefined)
-      newObj[key] = obj[key]
+    if (obj[key as keyof typeof obj] !== undefined)
+      newObj[key as keyof typeof obj] = obj[key as keyof typeof obj]
   })
   return newObj
 }

@@ -122,6 +122,7 @@
     "@dcloudio/uni-mp-xhs": "3.0.0-4070620250821001",
     "@dcloudio/uni-quickapp-webview": "3.0.0-4070620250821001",
     "@qiun/ucharts": "2.5.0-20230101",
+    "@types/lodash": "^4.17.24",
     "@wot-ui/ui": "^2.0.5",
     "abortcontroller-polyfill": "^1.7.8",
     "dayjs": "1.11.10",

@@ -1,60 +1,46 @@
 <script setup lang="ts">
-import { systemInfo } from '@/utils/systemInfo'
-
-const props = withDefaults(defineProps<{
+const props = defineProps<{
   options: string[]
-  width?: number
-  px?: number
-}>(), {
-  px: 12,
-})
+}>()
 
-const active = defineModel<number>()
+const active = defineModel({ default: 0 })
 const { proxy } = getCurrentInstance() as any
 const lineWidth = 32
 
 const lineLeft = ref(0)
 const scrollLeft = ref(0)
-const maxScroll = ref(0)
 const targetScroll = ref(0)
-const optionNodes = ref([])
+const nodes = ref<UniApp.NodeInfo[]>([])
 const segmentWidth = ref(0)
-
-const cpx = computed(() => {
-  return props.px ?? 0
-})
 
 watch(() => active.value, (val) => {
   scrollTo(val)
   calcLineLeft(val)
 })
 
-onMounted(() => {
+watch(() => props.options, (val) => {
   initOptionNode()
-})
+}, { immediate: true, deep: true })
+
 function initOptionNode() {
-  setTimeout(() => {
-    uni.createSelectorQuery().in(proxy).selectAll('.bill-segment-item').boundingClientRect((res: UniApp.NodeInfo[]) => {
-      console.log(res)
-      optionNodes.value = res
+  nextTick(() => {
+    uni.createSelectorQuery().in(proxy).select('#MBILL_SEGMENTED_BOX').boundingClientRect((res: any) => {
+      console.log(res, 'MBILL_SEGMENTED_BOX')
+      segmentWidth.value = res.width
 
-      const totalContentWidth = Math.floor(res.reduce((sum, curr, idx) => {
-        return sum + curr.width + (idx < res.length - 1 ? 10 : 0) // 最后一个不加 gap
-      }, 0))
-      // 没有自定义宽度时，根据选项计算宽度
-      segmentWidth.value = props.width
-        ? props.width
-        : totalContentWidth > systemInfo.windowWidth ? (systemInfo.windowWidth - cpx.value * 2) : totalContentWidth // 不超过屏幕宽度
-      maxScroll.value = Math.max(0, totalContentWidth - segmentWidth.value)
+      uni.createSelectorQuery().in(proxy).selectAll('.bill-segment-item').boundingClientRect((res: any) => {
+        console.log(res)
 
-      calcLineLeft(active.value)
+        nodes.value = res
+        calcLineLeft(active.value)
+      }).exec()
     }).exec()
-  }, 0)
+  })
 }
 
-function handleScroll(e) {
+function handleScroll(event: any) {
   // console.log(e)
-  scrollLeft.value = e.detail.scrollLeft
+  scrollLeft.value = event.detail.scrollLeft
 }
 
 function handelOptionTap(idx: number, op: string) {
@@ -64,41 +50,44 @@ function handelOptionTap(idx: number, op: string) {
 }
 
 function scrollTo(idx: number) {
-  if (!optionNodes.value.length)
+  if (!nodes.value || nodes.value.length < 1)
     return
 
   const segmentCenter = segmentWidth.value / 2
-  const node = optionNodes.value[idx]
+  const node = nodes.value[idx]
 
   // 计算元素中心位置
   let scroll = 0 // 左边 padding
   for (let i = 0; i < idx; i++) {
-    scroll += optionNodes.value[i].width + 10
+    scroll += nodes.value[i].width! + 10
   }
   // 居中滚动
-  scroll = Math.floor((scroll + node.width / 2) - segmentCenter)
+  scroll = Math.floor((scroll + node.width! / 2) - segmentCenter)
   // 边界限制
-  scroll = Math.max(0, Math.min(scroll, maxScroll.value))
+  scroll = Math.max(0, scroll)
 
-  // console.log(scroll, 'scroll')
+  // console.log(scroll, segmentCenter, segmentWidth.value, 'scroll')
   targetScroll.value = scroll
 }
 
 function calcLineLeft(idx: number) {
+  if (!nodes.value || nodes.value.length < 1)
+    return
+
   let offset = 0// 初始化为 px 宽度
   for (let i = 0; i < idx; i++) {
-    offset += optionNodes.value[i].width + 10
+    offset += nodes.value[i].width! + 10
   }
-  const node = optionNodes.value[idx]
-  lineLeft.value = Math.floor(offset + node.width / 2 - lineWidth / 2)
+  const node = nodes.value[idx]
+  lineLeft.value = Math.floor(offset + node.width! / 2 - lineWidth / 2)
 }
 </script>
 
 <template>
-  <view class="flex" :style="{ paddingLeft: `${cpx}px`, paddingRight: `${cpx}px` }">
+  <view id="MBILL_SEGMENTED_BOX" class="flex">
     <scroll-view
       scroll-x :show-scrollbar="false" scroll-with-animation :scroll-left="targetScroll" class="flex-1"
-      :style="{ width: `${segmentWidth}px` }" @scroll="handleScroll"
+      @scroll="handleScroll"
     >
       <view class="relative flex items-center">
         <!-- 选项 -->

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { IAccount } from '@/api/types/account'
 import type { ActionItem } from '@/typings'
 import { useAccountStore } from '@/store'
 import { systemInfo } from '@/utils/systemInfo'
@@ -24,7 +25,7 @@ const accounts = ref(accountStore.accounts)
 
 onMounted(() => {
   nextTick(() => {
-    uni.createSelectorQuery().select('#TOP_NAVBAR').boundingClientRect((data: UniApp.NodeInfo) => {
+    uni.createSelectorQuery().select('#TOP_NAVBAR').boundingClientRect((data: any) => {
       scrollHeight.value = systemInfo.windowHeight - (data.height + 16) // 16为外层view的padding
     }).exec()
   })
@@ -34,17 +35,17 @@ function handleCreateTap() {
   console.log('handleCreateTap')
 }
 
-function handleSortChange(list: any[]) {
+function handleSortChange(list: IAccount[]) {
   // console.log('handleSortChange', list)
   // accounts.value = list
 }
 
-function handleChildSortChange(list: any[], parent) {
-  console.log('handleChildSortChange', list, parent)
+function handleChildSortChange(list: IAccount[], parent: any) {
+  console.log('handleChildSortChange', list, parent as IAccount)
 }
 
-function handleEditItemTap(item) {
-  console.log('handleEditItemTap', item)
+function handleEditItemTap(item: any) {
+  console.log('handleEditItemTap', item as IAccount)
 }
 </script>
 

@@ -2,6 +2,16 @@
 import lodash from 'lodash'
 import { omit, toFixed } from '@/utils'
 
+interface DragSortItem {
+  [key: string]: any
+  x: number
+  y: number
+  drag_id: string
+  width: number
+  height: number
+  disabled: boolean
+}
+
 defineOptions({
   options: {
     addGlobalClass: true,
@@ -28,8 +38,8 @@ const { vibrate } = useVibrate()
 
 const sorting = ref(false)
 const sortChanged = ref(false)
-const showList = ref([])
-const cloneList = ref([])
+const showList = ref<DragSortItem[]>([])
+const cloneList = ref<DragSortItem[]>([])
 const targetId = ref('')
 const currentId = ref('')
 
@@ -63,10 +73,10 @@ onMounted(() => {
 
 function calculateItemSize() {
   setTimeout(() => {
-    uni.createSelectorQuery().in(proxy).select('.dragSortBox').boundingClientRect((res: UniApp.NodeInfo) => {
+    uni.createSelectorQuery().in(proxy).select('.dragSortBox').boundingClientRect((res: any) => {
       if (res) {
         // console.log(res)
-        uni.createSelectorQuery().in(proxy).select('.dragSlotContent').boundingClientRect((cts: UniApp.NodeInfo) => {
+        uni.createSelectorQuery().in(proxy).select('.dragSlotContent').boundingClientRect((cts: any) => {
           console.log(cts, 'dragSlotContent')
           if (cts) {
             itemHeight.value = cts.height
@@ -106,7 +116,7 @@ function updatePosition() {
   areaHeight.value = Math.ceil(showList.value.length / props.column) * (itemHeight.value + props.gap)
 }
 
-function handleDragStart(item) {
+function handleDragStart(item: DragSortItem) {
   currentId.value = item.drag_id
   sorting.value = true
   sortChanged.value = false
@@ -156,8 +166,7 @@ function handleTouchEnd() {
     if (props.hasAdd) {
       endList = endList.slice(0, -1)
     }
-    endList = endList.map(item => omit(item, COM_INTERNAL_ARGS))
-    emit('change', endList)
+    emit('change', endList.map(item => omit(item, COM_INTERNAL_ARGS)))
     sortChanged.value = false
   }
 
@@ -203,7 +212,7 @@ function handleSortChange(e: any) {
 }
 
 // 获取当前的位置
-function getPosition(index, list = cloneList.value) {
+function getPosition(index: number, list = cloneList.value) {
   const h = (index % props.column)
   let x = toFixed(h * itemWidth.value)
   if (x > 0) {
@@ -220,7 +229,7 @@ function getPosition(index, list = cloneList.value) {
   return [x, y]
 }
 
-function getTargetIndex(e) {
+function getTargetIndex(e: any) {
   const list = cloneList.value
   const { x, y } = e.detail
   // x 手指按下拖动，产生的位置，超出了item的宽度，那么就改变下标，包括y轴。
@@ -234,7 +243,7 @@ function getTargetIndex(e) {
 }
 
 // 获取当前项指定drag_id的索引
-function getListIndex(drag_id, list = cloneList.value) {
+function getListIndex(drag_id: string, list = cloneList.value) {
   return list.findIndex(item => item.drag_id === drag_id)
 }
 

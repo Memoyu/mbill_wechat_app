@@ -2,7 +2,10 @@ import { defineStore } from 'pinia'
 import { useLedgerStore } from './ledger'
 
 // 初始化状态
-const initState = {
+const initState: {
+  isAllSelected: boolean
+  selectedLedgers: string[]
+} = {
   isAllSelected: false,
   selectedLedgers: [],
 }

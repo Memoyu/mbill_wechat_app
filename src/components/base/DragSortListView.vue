@@ -3,6 +3,16 @@ import { useTouch } from '@wot-ui/ui/composables/useTouch'
 import lodash from 'lodash'
 import { omit } from '@/utils'
 
+interface DragListItem {
+  [key: string]: any
+  x: number
+  y: number
+  drag_id: string
+  width: number
+  height: number
+  expand: boolean
+}
+
 defineOptions({
   options: {
     addGlobalClass: true,
@@ -25,6 +35,8 @@ const props = withDefaults(defineProps<{
 const emit = defineEmits(['change'])
 const COM_INTERNAL_ARGS = ['x', 'y', 'drag_id', 'height', 'expand']
 
+const { proxy } = getCurrentInstance() as any
+
 const { vibrate } = useVibrate()
 const touch = useTouch()
 
@@ -34,12 +46,12 @@ const areaHeight = ref(400)
 
 const sorting = ref(false)
 const sortChanged = ref(false)
-const showList = ref([])
-const cloneList = ref([])
+const showList = ref<DragListItem[]>([])
+const cloneList = ref<DragListItem[]>([])
 const targetId = ref('')
 const currentId = ref('')
 
-const initHeights = ref({})
+const initHeights: any = {}
 
 const dragDirection = ref<'upward' | 'down'>()
 
@@ -51,20 +63,18 @@ const computedAreaHeight = computed(() => {
   return height
 })
 
-const { proxy } = getCurrentInstance() as any
-
 // 展开/收起当前项
-function setExpand(item) {
+function setExpand(item: DragListItem) {
   item.expand = !(item.expand ?? false)
   setItemHeight(item)
 }
 
-function setItemHeight(item) {
-  uni.createSelectorQuery().in(proxy).selectAll('.dragListSlot').boundingClientRect((res: UniApp.NodeInfo[]) => {
+function setItemHeight(item: DragListItem) {
+  uni.createSelectorQuery().in(proxy).selectAll('.dragListSlot').boundingClientRect((res: any) => {
     // console.log(res)
     if (!res)
       return
-    const index = res.findIndex(r => r.id === `#drag-content-${item.drag_id}`)
+    const index = res.findIndex((r: { id: string }) => r.id === `#drag-content-${item.drag_id}`)
     // console.log(res[index], 'item')
     item.height = item.expand ? res[index].height : initHeights[item.drag_id]
     const i = getListIndex(item.drag_id)
@@ -74,7 +84,7 @@ function setItemHeight(item) {
   }).exec()
 }
 
-function updateExpandPosition(expand) {
+function updateExpandPosition(expand: boolean) {
   // console.log(list)
   cloneList.value.map((item, index) => {
     const y = getPosition(index)
@@ -106,7 +116,7 @@ function updateExpandPosition(expand) {
 }
 
 // 获取当前项的高度
-function getItemHeight(item) {
+function getItemHeight(item: { [x: string]: any, x: number, y: number, drag_id: string, width: number, height: number, expand: boolean }) {
   return item.height
 }
 
@@ -127,13 +137,13 @@ function calculateItemSize() {
     // 获取原始项高度
     (props.expand
       ? uni.createSelectorQuery().in(proxy).selectAll('.dragSlotTitle')
-      : uni.createSelectorQuery().in(proxy).selectAll('.dragSlotContent')).boundingClientRect((res: UniApp.NodeInfo[]) => {
+      : uni.createSelectorQuery().in(proxy).selectAll('.dragSlotContent')).boundingClientRect((res: any) => {
       // console.log(res, 'init height')
       if (res) {
       // 初始赋值选项的最高、最低高度
         for (let i = 0; i < res.length; i++) {
           initHeights[list[i].drag_id] = res[i].height
-          list[i].height = res[i].height
+          list[i].height = res[i].height!
         }
 
         updatePosition()
@@ -177,14 +187,14 @@ function updatePosition() {
   }
 }
 
-function handleTap(item) {
+function handleTap(item: DragListItem) {
   if (!props.expand)
     return
   // console.log('组件展开', item)
   setExpand(item)
 }
 
-function handleDragStart(item) {
+function handleDragStart(item: { drag_id: string }) {
   sorting.value = true
   sortChanged.value = false
   currentId.value = item.drag_id
@@ -276,7 +286,7 @@ function handleSortChange(e: any) {
 }
 
 // 获取当前的位置
-function getPosition(index, list = cloneList.value) {
+function getPosition(index: number, list = cloneList.value) {
   // 通过计算重新算换 偏移单位。
   let y = 0
   // 如果是 单项数据时，不需要通过getItemHeight来排，而是需要根据每个item的高度自动填充
@@ -289,7 +299,7 @@ function getPosition(index, list = cloneList.value) {
   return y
 }
 
-function getTargetIndex(e) {
+function getTargetIndex(e: { detail: { x: any, y: any } }) {
   const list = cloneList.value
   const { x, y } = e.detail
 
@@ -329,7 +339,7 @@ function getTargetIndex(e) {
 }
 
 // 获取当前项指定drag_id的索引
-function getListIndex(drag_id, list = cloneList.value) {
+function getListIndex(drag_id: string, list = cloneList.value) {
   return list.findIndex(item => item.drag_id === drag_id)
 }
 </script>

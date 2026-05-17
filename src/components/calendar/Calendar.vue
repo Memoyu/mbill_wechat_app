@@ -13,7 +13,7 @@ const { proxy } = getCurrentInstance() as any
 
 const dateValue = ref(Date.now())
 const swiperHeight = ref(INIT_HEIGHT)
-const dateList = ref([])
+const dateList = ref<number[]>([])
 const currentIndex = ref(0)
 const oldIndex = ref(0)
 const currentDate = ref()
@@ -51,12 +51,12 @@ function initDateList(baseDate = MAX_DATE) {
   getSwiperItemHeight()
   // console.log('initDateList', swiperList.value, swiperIndex.value)
 }
-function handleDateChange(e) {
+function handleDateChange(e: any) {
   // dateValue.value = e.value
   currentIndex.value = 3
 }
 
-function handleSwiperChange(e) {
+function handleSwiperChange(e: any) {
   // console.log(e, 'change')
   oldIndex.value = currentIndex.value
 
@@ -71,7 +71,7 @@ function handleSwiperChange(e) {
   getSwiperItemHeight()
 }
 
-function handleSwiperAnimationFinish(e) {
+function handleSwiperAnimationFinish(e: any) {
   // console.log(e, currentIndex.value, 'animationfinish')
   // currentIndex.value = oldIndex.value
   tryAddSwiperItem()
@@ -111,7 +111,7 @@ function getSwiperItemHeight() {
       .createSelectorQuery()
       .in(proxy)
       .select(`#calendar-view-${month}`)
-      .boundingClientRect((view: UniApp.NodeInfo) => {
+      .boundingClientRect((view: any) => {
         console.log(view, month, 'boundingClientRect')
         // 输出元素位置信息
         swiperHeight.value = view?.height ?? INIT_HEIGHT
