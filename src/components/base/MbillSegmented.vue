@@ -3,6 +3,7 @@ const props = defineProps<{
   options: string[]
 }>()
 
+const emit = defineEmits(['scrolltolower'])
 const active = defineModel({ default: 0 })
 const { proxy } = getCurrentInstance() as any
 const lineWidth = 32
@@ -88,6 +89,7 @@ function calcLineLeft(idx: number) {
     <scroll-view
       scroll-x :show-scrollbar="false" scroll-with-animation :scroll-left="targetScroll" class="flex-1"
       @scroll="handleScroll"
+      @scrolltolower="emit('scrolltolower')"
     >
       <view class="relative flex items-center">
         <!-- 选项 -->

@@ -39,7 +39,7 @@ function initComponent(cidx: number) {
 <template>
   <draw-background2 />
   <view class="" :style="{ paddingTop: `${Math.max(safeAreaInsets.top, 28)}px` }">
-    <view class="ml-3 mt-2 max-w-max rounded-full bg-gray-200/50 px-3 py-1">
+    <view class="ml-3 mt-2 max-w-max rounded-full bg-gray-200/50 px-4 py-1.5">
       <mbill-segmented v-model="active" :options="options" />
     </view>
 

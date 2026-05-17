@@ -11,12 +11,17 @@ function init() {
   if (isInit)
     return
   isInit = true
-  options.value = getYears()
+  options.value = getYears(new Date().getFullYear(), 20)
 }
 
-function getYears() {
-  const dates = Array.from({ length: 20 }, (_, i) => {
-    return (new Date().getFullYear() + i).toString()
+function handleScrollToLower() {
+  const last = options.value[options.value.length - 1]
+  options.value.push(...getYears(last))
+}
+
+function getYears(year: number, count = 10) {
+  const dates = Array.from({ length: count }, (_, i) => {
+    return (year + i).toString()
   })
   // console.log(dates, '2222')
   return dates
@@ -26,9 +31,9 @@ function getYears() {
 <template>
   <view>
     <view class="px-2">
-      <mbill-segmented v-model="active" :options="options">
+      <mbill-segmented v-model="active" :options="options" @scrolltolower="handleScrollToLower">
         <template #content="{ option }">
-          <view class="flex flex-col justify-center rounded-xl bg-indigo-500/40 px-3 py-2 text-white">
+          <view class="flex flex-col justify-center rounded-xl bg-indigo-500/40 px-3 py-4 text-white">
             <view class="flex items-end">
               <text class="text-base font-semibold">
                 {{ option.value.substring(2) }}
