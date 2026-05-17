@@ -4,13 +4,14 @@ import { systemInfo } from '@/utils/systemInfo'
 const props = withDefaults(defineProps<{
   options: string[]
   width?: number
+  px?: number
 }>(), {
+  px: 12,
 })
 
 const active = defineModel<number>()
 const { proxy } = getCurrentInstance() as any
 const lineWidth = 32
-const px = 12
 
 const lineLeft = ref(0)
 const scrollLeft = ref(0)
@@ -18,6 +19,10 @@ const maxScroll = ref(0)
 const targetScroll = ref(0)
 const optionNodes = ref([])
 const segmentWidth = ref(0)
+
+const cpx = computed(() => {
+  return props.px ?? 0
+})
 
 watch(() => active.value, (val) => {
   scrollTo(val)
@@ -28,24 +33,23 @@ onMounted(() => {
   initOptionNode()
 })
 function initOptionNode() {
-  nextTick(() => {
+  setTimeout(() => {
     uni.createSelectorQuery().in(proxy).selectAll('.bill-segment-item').boundingClientRect((res: UniApp.NodeInfo[]) => {
-      // console.log(res, (res.length - 1) * 10)
+      console.log(res)
       optionNodes.value = res
-      const dpx = px * 2
 
-      const totalContentWidth = res.reduce((sum, curr, idx) => {
+      const totalContentWidth = Math.floor(res.reduce((sum, curr, idx) => {
         return sum + curr.width + (idx < res.length - 1 ? 10 : 0) // 最后一个不加 gap
-      }, dpx)
+      }, 0))
       // 没有自定义宽度时，根据选项计算宽度
       segmentWidth.value = props.width
         ? props.width
-        : totalContentWidth > systemInfo.windowWidth ? (systemInfo.windowWidth - dpx) : totalContentWidth // 不超过屏幕宽度
+        : totalContentWidth > systemInfo.windowWidth ? (systemInfo.windowWidth - cpx.value * 2) : totalContentWidth // 不超过屏幕宽度
       maxScroll.value = Math.max(0, totalContentWidth - segmentWidth.value)
 
       calcLineLeft(active.value)
     }).exec()
-  })
+  }, 0)
 }
 
 function handleScroll(e) {
@@ -67,12 +71,12 @@ function scrollTo(idx: number) {
   const node = optionNodes.value[idx]
 
   // 计算元素中心位置
-  let scroll = px // 左边 padding
+  let scroll = 0 // 左边 padding
   for (let i = 0; i < idx; i++) {
     scroll += optionNodes.value[i].width + 10
   }
   // 居中滚动
-  scroll = (scroll + node.width / 2) - segmentCenter
+  scroll = Math.floor((scroll + node.width / 2) - segmentCenter)
   // 边界限制
   scroll = Math.max(0, Math.min(scroll, maxScroll.value))
 
@@ -81,23 +85,31 @@ function scrollTo(idx: number) {
 }
 
 function calcLineLeft(idx: number) {
-  let offset = px // 初始化为 px 宽度
+  let offset = 0// 初始化为 px 宽度
   for (let i = 0; i < idx; i++) {
     offset += optionNodes.value[i].width + 10
   }
   const node = optionNodes.value[idx]
-  lineLeft.value = offset + (node.width / 2) - lineWidth / 2
+  lineLeft.value = Math.floor(offset + node.width / 2 - lineWidth / 2)
 }
 </script>
 
 <template>
-  <view class="flex" :style="{ width: `${segmentWidth}px` }">
-    <scroll-view scroll-x :show-scrollbar="false" scroll-with-animation :scroll-left="targetScroll" class="flex-1" @scroll="handleScroll">
-      <view class="relative flex items-center px-3">
+  <view class="flex" :style="{ paddingLeft: `${cpx}px`, paddingRight: `${cpx}px` }">
+    <scroll-view
+      scroll-x :show-scrollbar="false" scroll-with-animation :scroll-left="targetScroll" class="flex-1"
+      :style="{ width: `${segmentWidth}px` }" @scroll="handleScroll"
+    >
+      <view class="relative flex items-center">
         <!-- 选项 -->
         <view class="min-w-max flex gap-2.5 whitespace-nowrap">
-          <view v-for="(op, index) in options" :key="index" class="bill-segment-item px-2 py-1" @tap="handelOptionTap(index, op)">
-            {{ op }}
+          <view v-for="(op, index) in options" :key="index" class="bill-segment-item" @tap="handelOptionTap(index, op)">
+            <view v-if="$slots.content">
+              <slot name="content" :option="{ value: op, index }" />
+            </view>
+            <view v-else class="px-2 py-1">
+              {{ op }}
+            </view>
           </view>
         </view>
         <!-- 底部条 -->

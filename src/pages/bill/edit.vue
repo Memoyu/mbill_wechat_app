@@ -101,7 +101,7 @@ function handleTagSelectTap() {
       </view>
     </template>
     <template #action>
-      <view class="mt-4 rounded-full bg-gray-200/50 py-2">
+      <view class="mt-4 max-w-max rounded-full bg-gray-200/50 py-1">
         <mbill-segmented v-model="activeType" :options="typeOptions" />
       </view>
     </template>
