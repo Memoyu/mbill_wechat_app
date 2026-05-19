@@ -1,4 +1,7 @@
 <script lang="ts" setup>
+const props = defineProps<{
+
+}>()
 let isInit = false
 const options = ref()
 const active = ref(0)
@@ -6,7 +9,6 @@ const active = ref(0)
 defineExpose({
   init,
 })
-
 function init() {
   if (isInit)
     return

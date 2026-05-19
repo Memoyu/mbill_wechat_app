@@ -1,3 +1,5 @@
+export const BillOptions = ['支出', '收入']
+
 // 枚举定义
 export enum BillTypeEnum {
   Expend = 0,
