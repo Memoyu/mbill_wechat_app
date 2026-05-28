@@ -7,7 +7,7 @@ const props = defineProps<{
 const emit = defineEmits(['change'])
 const date = defineModel<number>()
 
-const INIT_HEIGHT = 290
+const INIT_HEIGHT = 90
 const MAX_DATE = dayjs(dayjs().format('YYYY-MM-DD')).valueOf()
 const { proxy } = getCurrentInstance() as any
 
@@ -53,7 +53,7 @@ function initDateList(baseDate = MAX_DATE) {
 }
 function handleDateChange(e: any) {
   // dateValue.value = e.value
-  currentIndex.value = 3
+  // currentIndex.value = 3
 }
 
 function handleSwiperChange(e: any) {
@@ -105,18 +105,18 @@ function tryAddSwiperItem() {
 }
 function getSwiperItemHeight() {
   const month = currentDate.value
-  console.log('date', dayjs(month).format('YYYY-MM'))
-  setTimeout(() =>
-    uni
-      .createSelectorQuery()
-      .in(proxy)
-      .select(`#calendar-view-${month}`)
-      .boundingClientRect((view: any) => {
-        console.log(view, month, 'boundingClientRect')
-        // 输出元素位置信息
-        swiperHeight.value = view?.height ?? INIT_HEIGHT
-      })
-      .exec(), 0)
+  // console.log('date', dayjs(month).format('YYYY-MM'))
+  // setTimeout(() =>
+  //   uni
+  //     .createSelectorQuery()
+  //     .in(proxy)
+  //     .select(`#calendar-view-${month}`)
+  //     .boundingClientRect((view: any) => {
+  //       console.log(view, month, 'boundingClientRect')
+  //       // 输出元素位置信息
+  //       swiperHeight.value = view?.height ?? INIT_HEIGHT
+  //     })
+  //     .exec(), 0)
 }
 </script>
 

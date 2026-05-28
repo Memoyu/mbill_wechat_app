@@ -51,7 +51,7 @@ function initComponent(cidx: number) {
     </view>
   </view>
 
-  <view class="mt-3">
+  <view>
     <wd-tabs v-model="active" swipeable animated>
       <wd-tab title="月统计" :name="0">
         <view>

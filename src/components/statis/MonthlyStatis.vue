@@ -17,6 +17,9 @@ const props = defineProps<{
 defineExpose({
   init,
 })
+
+const { proxy } = getCurrentInstance() as any
+
 let isInit = false
 const scrollHeight = ref(0)
 const options = ref()
@@ -48,15 +51,17 @@ function getTopSegmentedHeight() {
       .createSelectorQuery()
       .select('#MAIN_SEGMENTED')
       .boundingClientRect((view: any) => {
+        // console.log(view, 'MAIN_SEGMENTED')
         scrollHeight.value = view?.height ?? 89
 
         uni
           .createSelectorQuery()
+          .in(proxy)
           .select('#MONTHLY_SEGMENTED')
           .boundingClientRect((view: any) => {
-            // console.log(view, 'view')
-            scrollHeight.value = systemInfo.windowHeight - (scrollHeight.value + (view?.height ?? 89))
-            console.log(scrollHeight.value, 'scrollHeight.value')
+            // console.log(scrollHeight.value, view, 'MONTHLY_SEGMENTED')
+            scrollHeight.value = systemInfo.windowHeight - (scrollHeight.value + (view?.height ?? 92))
+            // console.log(scrollHeight.value, systemInfo.windowHeight, view?.height, 'MONTHLY_SEGMENTED1')
           })
           .exec()
       })
@@ -81,7 +86,7 @@ function getMonths(date: Dayjs, count = 10) {
 <template>
   <view
     id="MONTHLY_SEGMENTED"
-    class="z-5 bg-white/70 py-2 backdrop-blur-md"
+    class="z-5 bg-white/70 pb-2 pt-3 backdrop-blur-md"
   >
     <!-- 月份选择器 -->
     <view class="px-2">

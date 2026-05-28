@@ -1,8 +1,13 @@
 <script lang="ts" setup>
+import { systemInfo } from '@/utils/systemInfo'
+
 const props = defineProps<{
 
 }>()
+const { proxy } = getCurrentInstance() as any
+
 let isInit = false
+const scrollHeight = ref(0)
 const options = ref()
 const active = ref(0)
 
@@ -14,6 +19,31 @@ function init() {
     return
   isInit = true
   options.value = getYears(new Date().getFullYear(), 20)
+  getTopSegmentedHeight()
+}
+
+function getTopSegmentedHeight() {
+  nextTick(() => {
+    uni
+      .createSelectorQuery()
+      .select('#MAIN_SEGMENTED')
+      .boundingClientRect((view: any) => {
+        // console.log(view, 'MAIN_SEGMENTED')
+        scrollHeight.value = view?.height ?? 89
+
+        uni
+          .createSelectorQuery()
+          .in(proxy)
+          .select('#ANNUAL_SEGMENTED')
+          .boundingClientRect((view: any) => {
+            // console.log(scrollHeight.value, view, 'ANNUAL_SEGMENTED')
+            scrollHeight.value = systemInfo.windowHeight - (scrollHeight.value + (view?.height ?? 92))
+            // console.log(scrollHeight.value, systemInfo.windowHeight, view?.height, 'ANNUAL_SEGMENTED')
+          })
+          .exec()
+      })
+      .exec()
+  })
 }
 
 function handleScrollToLower() {
@@ -31,7 +61,10 @@ function getYears(year: number, count = 10) {
 </script>
 
 <template>
-  <view>
+  <view
+    id="ANNUAL_SEGMENTED"
+    class="z-5 bg-white/70 pb-2 pt-3 backdrop-blur-md"
+  >
     <view class="px-2">
       <mbill-segmented v-model="active" :options="options" @scrolltolower="handleScrollToLower">
         <template #content="{ option }">
@@ -48,6 +81,10 @@ function getYears(year: number, count = 10) {
       </mbill-segmented>
     </view>
   </view>
+
+  <scroll-view :style="{ height: `${scrollHeight}px` }" scroll-y>
+    <view>内容</view>
+  </scroll-view>
 </template>
 
 <style lang="scss" scoped>
