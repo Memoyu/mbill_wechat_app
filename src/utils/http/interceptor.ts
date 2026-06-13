@@ -33,6 +33,7 @@ const httpInterceptor = {
       // #endif
       // TIPS: 如果需要对接多个后端服务，也可以在这里处理，拼接成所需要的地址
     }
+
     // 1. 请求超时
     options.timeout = 60000 // 60s
     // 2. （可选）添加小程序端请求头标识

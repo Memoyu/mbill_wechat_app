@@ -1,9 +1,13 @@
 <script setup lang="ts">
 import { onHide, onLaunch, onShow } from '@dcloudio/uni-app'
 import { navigateToInterceptor } from '@/router/interceptor'
+import { useTokenStore } from './store'
+
+const tokenStore = useTokenStore()
 
 onLaunch((options) => {
   console.log('App.vue onLaunch', options)
+  tokenStore.wxLogin()
 })
 onShow((options) => {
   console.log('App.vue onShow', options)

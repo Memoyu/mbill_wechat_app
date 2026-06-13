@@ -42,6 +42,7 @@ export const navigateToInterceptor = {
       const baseDir = normalizedCurrentPath.substring(0, normalizedCurrentPath.lastIndexOf('/'))
       path = `${baseDir}/${path}`
     }
+    console.log('路由校验')
 
     // // 处理路由不存在的情况
     // if (path !== '/' && !getAllPages().some(page => page.path === path)) {
