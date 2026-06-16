@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import type { ILedger } from '@/api/types/ledger'
 import dayjs from 'dayjs'
+import { useUserStore } from '@/store'
 import { safeAreaInsets } from '@/utils/systemInfo'
 
 defineOptions({
@@ -16,13 +17,16 @@ definePage({
   },
 })
 
+const userStore = useUserStore()
+
 const date = ref(Date.now())
-const avatarUrl = 'https://wot-ui.cn/assets/panda.jpg'
 const ledgerName = ref('日常账本字符222222233333333')
 const isUserShow = ref(false)
 const isLedgersShow = ref(false)
 const isSettingsShow = ref(false)
 const isDateSelectShow = ref(false)
+
+const user = computed(() => userStore.userInfo)
 
 const dateText = computed(() => {
   return dayjs(date.value).format('YYYY年MM月')
@@ -49,7 +53,7 @@ function handleLedgerChange(item: ILedger) {
 
   <!-- 顶部操作 -->
   <view
-    class="sticky left-0 top-0 z-5 w-screen bg-white/70 backdrop-blur-md"
+    class="sticky left-0 top-0 z-5 w-screen bg-white/70 pb-2 backdrop-blur-md"
     :style="{ paddingTop: `${Math.max(safeAreaInsets.top, 28)}px` }"
   >
     <view class="flex items-center gap-2 px-2">
@@ -61,7 +65,7 @@ function handleLedgerChange(item: ILedger) {
         :hover-stay-time="200"
         @tap="isUserShow = true"
       >
-        <wd-avatar :size="40" :src="avatarUrl" />
+        <wd-avatar :size="40" :src="user.avatar" />
       </view>
 
       <!-- 账本按钮 -->

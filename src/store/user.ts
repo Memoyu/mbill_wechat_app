@@ -1,25 +1,28 @@
-import type { IUserInfoRes } from '@/api/types/login'
+import type { IUserInfo } from '@/api/types/user'
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import {
-  getUserInfo,
-} from '@/api/login'
+  getUser,
+} from '@/api/user'
 
 // 初始化状态
-const userInfoState: IUserInfoRes = {
-  userId: -1,
+const userInfoState: IUserInfo = {
+  userId: '',
   username: '',
   nickname: '',
   avatar: '/static/images/default-avatar.png',
+  roles: [],
+  billDay: 0,
+  billCount: 0,
 }
 
 export const useUserStore = defineStore(
   'user',
   () => {
     // 定义用户信息
-    const userInfo = ref<IUserInfoRes>({ ...userInfoState })
+    const userInfo = ref<IUserInfo>({ ...userInfoState })
     // 设置用户信息
-    const setUserInfo = (val: IUserInfoRes) => {
+    const setUserInfo = (val: IUserInfo) => {
       console.log('设置用户信息', val)
       // 若头像为空 则使用默认头像
       if (!val.avatar) {
@@ -42,7 +45,7 @@ export const useUserStore = defineStore(
      * 获取用户信息
      */
     const fetchUserInfo = async () => {
-      const res = await getUserInfo()
+      const res = await getUser()
       setUserInfo(res)
       return res
     }

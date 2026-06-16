@@ -1,6 +1,6 @@
 export enum ResultEnum {
   // 0和200当做成功都很普遍，这里直接兼容两者（PS：0和200通常都不会当做错误码，但是有的接口会返回0，有的接口会返回200）
-  Success0 = 0, // 成功
+  Success1 = 1, // 成功
   Success200 = 200, // 成功
   Error = 400, // 错误
   Unauthorized = 401, // 未授权

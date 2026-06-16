@@ -147,12 +147,12 @@ function setCanvasStyle() {
   ctx.setFillStyle('#000')
 }
 
-function onTouchStart(event: TouchEvent) {
+function handleTouchStart(event: TouchEvent) {
   touch.touchStart(event)
   active.value = true
 }
 
-function onTouchMove(event: TouchEvent) {
+function handleTouchMove(event: TouchEvent) {
   touch.touchMove(event)
   if (touch.direction.value) {
     active.value = false
@@ -160,7 +160,7 @@ function onTouchMove(event: TouchEvent) {
 }
 
 // 处理 Canvas 点击事件
-function onTouchEnd(event: TouchEvent) {
+function handleTouchEnd(event: TouchEvent) {
   if (!ctx || !active.value)
     return
 
@@ -193,7 +193,7 @@ function onTouchEnd(event: TouchEvent) {
 
 <template>
   <view class="amount-input hide-view-scrollbar">
-    <canvas :id="canvasId" type="2d" :style="canvasStyle" :canvas-id="canvasId" @touchstart="onTouchStart" @touchmove="onTouchMove" @touchend="onTouchEnd" />
+    <canvas :id="canvasId" type="2d" :style="canvasStyle" :canvas-id="canvasId" @touchstart="handleTouchStart" @touchmove="handleTouchMove" @touchend="handleTouchEnd" />
   </view>
 </template>
 

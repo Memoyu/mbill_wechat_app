@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import dayjs from 'dayjs'
+import { systemInfo } from '@/utils/systemInfo'
 
 definePage({
   style: {
@@ -10,11 +11,50 @@ definePage({
 
 const show = ref(false)
 const isDateSelectShow = ref(false)
+const calExpand = ref(true)
 const date = ref(Date.now())
+const navbarHeight = ref(0)
+const calendarHeight = ref(0)
+
+const { proxy } = getCurrentInstance() as any
 
 const dateText = computed(() => {
   return dayjs(date.value).format('YYYY年MM月')
 })
+
+const scrollHeight = computed(() => {
+  return systemInfo.windowHeight - navbarHeight.value - calendarHeight.value
+})
+
+onMounted(() => {
+  getNavbarHeight()
+})
+
+function getNavbarHeight() {
+  nextTick(() => {
+    uni.createSelectorQuery().in(proxy).select('#TOP_NAVBAR').boundingClientRect((nav: any) => {
+      // console.log(nav, 'TOP_NAVBAR')
+      navbarHeight.value = nav?.height ?? 122
+    }).exec()
+  })
+}
+
+function handleCalHeightChange(height: number) {
+  // console.log(height, 'handleCalHeightChange')
+  calendarHeight.value = height + 16
+}
+
+function handleScroll(event: any) {
+  // console.log(event.detail, 'handleScroll')
+
+  if (event.detail.deltaY < -1) {
+    calExpand.value = false
+  }
+}
+
+function handleScrollToUpper() {
+  calExpand.value = true
+}
 
 function handleTodayClick() {
   // 定位到今天
@@ -29,7 +69,7 @@ function handleMonthChange(month: number) {
   <page-meta :page-style="`overflow:${isDateSelectShow ? 'hidden' : 'visible'};`" />
   <draw-background2 />
   <!-- 导航栏 -->
-  <nav-bar>
+  <nav-bar id="TOP_NAVBAR">
     <template #title>
       <view class="w-full flex items-center justify-between">
         <view class="flex items-center" @tap="isDateSelectShow = true">
@@ -74,12 +114,20 @@ function handleMonthChange(month: number) {
     </template>
   </nav-bar>
   <!-- 日历组件 -->
-  <view class="mx-3 mt-3 rounded-3xl bg-white/70 px-3">
-    <calendar v-model="date" @change="handleMonthChange" />
+  <view id="CALENDAR" class="mx-3 rounded-3xl bg-white p-2">
+    <calendar v-model="date" :expand="calExpand" @change="handleMonthChange" @heightchange="handleCalHeightChange" />
   </view>
-  <view class="w-full">
+
+  <scroll-view
+    class="w-full"
+    :style="{ height: `${scrollHeight}px` }"
+    scroll-y
+    :upper-threshold="30"
+    @scroll="handleScroll"
+    @scrolltoupper="handleScrollToUpper"
+  >
     <bill-list-view />
-  </view>
+  </scroll-view>
 
   <!-- 日期选择弹窗 -->
   <date-popup v-model="isDateSelectShow" v-model:date="date" type="year-month" />

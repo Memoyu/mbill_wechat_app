@@ -23,35 +23,47 @@ export type IAuthLoginRes = ISingleTokenRes | IDoubleTokenRes
 /**
  * 用户信息
  */
-export type UserRole = string
 
-export interface IUserInfoRes {
-  userId: number
+export interface IUserInfo {
+  userId: string
+  username: string
+  nickname: string
+  avatar: string
+  email?: string
+  mobile?: string
+  roles?: UserRole[]
+  createTime?: Date
+  billDay: number
+  billCount: number
+}
+
+export interface UserRole {
+  roleId: string
+  name: string
+  type: number
+  description: string
+}
+
+/**
+ * 更新用户信息
+ */
+export interface IUpdateUser {
+  userId: string
   username: string
   nickname: string
   avatar?: string
-  /** 同时支持单角色和多角色，你自行选择一种就行 */
-  role?: UserRole
-  roles?: UserRole[]
-  [key: string]: any // 允许其他扩展字段
+  email?: string
+  mobile?: string
 }
 
 // 认证存储数据结构
 export interface AuthStorage {
   mode: AuthMode
   tokens: ISingleTokenRes | IDoubleTokenRes
-  userInfo?: IUserInfoRes
+  userInfo?: IUserInfo
   loginTime: number // 登录时间戳
 }
 
-/**
- * 获取验证码
- */
-export interface ICaptcha {
-  captchaEnabled: boolean
-  uuid: string
-  image: string
-}
 /**
  * 上传成功的信息
  */
@@ -64,23 +76,6 @@ export interface IUploadSuccessInfo {
   fileType: string
   fileBusinessType: string
   fileSize: number
-}
-/**
- * 更新用户信息
- */
-export interface IUpdateInfo {
-  id: number
-  name: string
-  sex: string
-}
-/**
- * 更新用户信息
- */
-export interface IUpdatePassword {
-  id: number
-  oldPassword: string
-  newPassword: string
-  confirmPassword: string
 }
 
 /**

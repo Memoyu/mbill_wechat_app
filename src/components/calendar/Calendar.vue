@@ -2,17 +2,21 @@
 import dayjs from 'dayjs'
 import { getWeekLabel } from '@/utils/date'
 
-const props = defineProps<{
-}>()
-const emit = defineEmits(['change'])
+const props = withDefaults(defineProps<{
+  expand?: boolean
+}>(), {
+  expand: true,
+})
+const emit = defineEmits(['change', 'heightchange'])
 const date = defineModel<number>()
 
-const INIT_HEIGHT = 90
+const INIT_HEIGHT = 60
 const MAX_DATE = dayjs(dayjs().format('YYYY-MM-DD')).valueOf()
 const { proxy } = getCurrentInstance() as any
 
 const dateValue = ref(Date.now())
 const swiperHeight = ref(INIT_HEIGHT)
+const computedHeight = ref(0)
 const dateList = ref<number[]>([])
 const currentIndex = ref(0)
 const oldIndex = ref(0)
@@ -23,6 +27,15 @@ const weekLabel = computed(() => {
   return (index: number) => {
     return getWeekLabel(index - 1)
   }
+})
+
+watch(() => props.expand, (val) => {
+  console.log(val, 'calendar expand')
+  if (val)
+    swiperHeight.value = computedHeight.value
+  else
+    swiperHeight.value = INIT_HEIGHT
+  emitHeightChange(swiperHeight.value)
 })
 
 watch(() => date.value, (val) => {
@@ -106,17 +119,23 @@ function tryAddSwiperItem() {
 function getSwiperItemHeight() {
   const month = currentDate.value
   // console.log('date', dayjs(month).format('YYYY-MM'))
-  // setTimeout(() =>
-  //   uni
-  //     .createSelectorQuery()
-  //     .in(proxy)
-  //     .select(`#calendar-view-${month}`)
-  //     .boundingClientRect((view: any) => {
-  //       console.log(view, month, 'boundingClientRect')
-  //       // 输出元素位置信息
-  //       swiperHeight.value = view?.height ?? INIT_HEIGHT
-  //     })
-  //     .exec(), 0)
+  setTimeout(() =>
+    uni
+      .createSelectorQuery()
+      .in(proxy)
+      .select(`#calendar-view-${month}`)
+      .boundingClientRect((view: any) => {
+        // console.log(view, month, 'boundingClientRect')
+        // 输出元素位置信息
+        swiperHeight.value = view?.height ?? INIT_HEIGHT
+        computedHeight.value = swiperHeight.value
+        emitHeightChange(swiperHeight.value)
+      })
+      .exec(), 0)
+}
+
+function emitHeightChange(height: number) {
+  emit('heightchange', height + 36) // 36 weeks height
 }
 </script>
 

@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { formatFloat } from '@/utils'
+import dayjs from 'dayjs'
+import { useUserStore } from '@/store'
 
 const show = defineModel<boolean>()
 const actions = [{
@@ -19,16 +20,10 @@ const actions = [{
   icon: 'i-my-icons-tag-manage',
   action: () => { uni.navigateTo({ url: '/pages/tag/index' }) },
 }]
-const days = ref(29200)
-const bills = ref(34445223)
-const user = ref({
-  avatarUrl: 'https://wot-ui.cn/assets/panda.jpg',
-  userId: '2233434',
-  nickname: 'memoyu',
-  email: '<EMAIL>',
-  mobile: '12345678901',
-  createTime: '2021-01-01',
-})
+
+const userStore = useUserStore()
+
+const user = computed(() => userStore.userInfo)
 
 function handleCancelClick() {
   show.value = false
@@ -49,10 +44,10 @@ function handleCancelClick() {
       <!-- 标题栏 -->
       <view class="sticky left-0 right-0 top-0 z-10 flex items-center justify-between border-b border-gray-100 bg-white px-4 py-3">
         <view class="flex items-center">
-          <wd-avatar :size="40" :src="user.avatarUrl || ''" />
+          <wd-avatar :size="40" :src="user.avatar" />
           <view class="ml-3 flex flex-col">
             <text class="text-base font-semibold">{{ user.nickname || '未登录' }}</text>
-            <text class="text-xs text-gray-400 font-bold">已坚持记账{{ formatFloat(days, 0) }}天，共{{ formatFloat(bills, 0) }}条账单</text>
+            <text class="text-xs text-gray-400 font-bold">已坚持记账{{ user.billDay }}天，共{{ user.billCount }}条账单</text>
           </view>
         </view>
       </view>
@@ -62,12 +57,14 @@ function handleCancelClick() {
         <view class="user-block">
           <view class="flex items-center justify-between px-4 py-2">
             <text class="font-semibold">用户信息</text>
-            <wd-icon name="edit" />
+            <view class="flex items-center rounded-full bg-gray-200/40 p-2">
+              <wd-icon name="edit" size="18" />
+            </view>
           </view>
           <wd-cell title="ID" :value="user.userId || '-'" />
           <wd-cell title="邮箱" :value="user.email || '-'" />
           <wd-cell title="手机" :value="user.mobile || '-'" />
-          <wd-cell title="注册" :value="user.createTime || '-'" />
+          <wd-cell title="注册" :value="dayjs(user.createTime).format('YYYY-MM-DD') || '-'" />
         </view>
 
         <view class="user-block">
