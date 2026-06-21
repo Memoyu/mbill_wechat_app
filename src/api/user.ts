@@ -49,6 +49,6 @@ export function getUser() {
 /**
  * 修改用户信息
  */
-export function updateUser(data: IUpdateUser) {
-  return http.post('user/update', data)
+export function updateUser(update: IUpdateUser) {
+  return http.put('user/update', update)
 }

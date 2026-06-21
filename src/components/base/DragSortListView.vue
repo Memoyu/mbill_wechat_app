@@ -50,6 +50,7 @@ const showList = ref<DragListItem[]>([])
 const cloneList = ref<DragListItem[]>([])
 const targetId = ref('')
 const currentId = ref('')
+const animation = ref(false)
 
 const initHeights: any = {}
 
@@ -124,7 +125,7 @@ watch(() => props.list, (newList) => {
   // console.log(newList, 'list change')
   initList(newList)
   calculateItemSize()
-}, { immediate: true })
+}, { immediate: true, deep: true })
 
 watch(() => props.height, (h) => {
   scrollHeight.value = h
@@ -195,6 +196,8 @@ function handleTap(item: DragListItem) {
 }
 
 function handleDragStart(item: { drag_id: string }) {
+  // 控制动画启用，避免重新加载数据时页面动画难看
+  animation.value = true
   sorting.value = true
   sortChanged.value = false
   currentId.value = item.drag_id
@@ -213,6 +216,7 @@ function handleTouchMove(event: TouchEvent) {
 }
 
 function handleTouchEnd() {
+  animation.value = false
   if (!sorting.value || currentId.value === '')
     return
 
@@ -369,7 +373,7 @@ function getListIndex(drag_id: string, list = cloneList.value) {
           transition: `height ${(item.expand ? 0.5 : 0.3)}s ease-in-out`,
         }"
         :class="[currentId === item.drag_id ? 'drag-movable-item--active' : '']"
-        animation
+        :animation="animation"
         :x="item.x"
         :y="item.y"
         direction="vertical"

@@ -38,7 +38,7 @@ defineExpose({
 
     <wd-config-provider :theme="theme" :theme-vars="themeVars" :custom-class="`page-wraper ${theme}`">
       <KuRootView />
-      <wd-toast />
+      <privacy-popup />
       <FgTabbar v-if="isCurrentPageTabbar" />
     </wd-config-provider>
   </view>

@@ -22,19 +22,20 @@ export type IAuthLoginRes = ISingleTokenRes | IDoubleTokenRes
 
 /**
  * 用户信息
- */
-
-export interface IUserInfo {
-  userId: string
-  username: string
-  nickname: string
-  avatar: string
+ */export interface IUserInfo extends IUserBase {
   email?: string
   mobile?: string
   roles?: UserRole[]
   createTime?: Date
   billDay: number
   billCount: number
+}
+
+export interface IUserBase {
+  userId: string
+  username: string
+  nickname: string
+  avatar: string
 }
 
 export interface UserRole {

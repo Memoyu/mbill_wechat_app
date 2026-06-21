@@ -1,6 +1,10 @@
 <script setup lang="ts">
+import { useDialog } from '@wot-ui/ui'
 import dayjs from 'dayjs'
+import { uploadAvatar } from '@/api/common'
 import { useUserStore } from '@/store'
+
+// TODO 待账单数据完成录入，再进行【年数据统计】开发
 
 const show = defineModel<boolean>()
 const actions = [{
@@ -21,12 +25,41 @@ const actions = [{
   action: () => { uni.navigateTo({ url: '/pages/tag/index' }) },
 }]
 
+const dialog = useDialog()
 const userStore = useUserStore()
 
 const user = computed(() => userStore.userInfo)
 
 function handleCancelClick() {
   show.value = false
+}
+
+function handleChooseAvatar(e: any) {
+  if (!e?.detail?.avatarUrl)
+    return
+  const tempPath = e.detail.avatarUrl
+  uploadAvatar(user.value.userId, tempPath).then((url) => {
+    userStore.setUserAvatar(url)
+  })
+}
+
+function handelNicknameInput() {
+  dialog
+    .prompt({
+      title: '修改昵称',
+      inputValue: user.value.nickname,
+      inputValidate: (value) => {
+        value = `${value}`.trim()
+        return value && value.length > 0
+      },
+      inputError: '昵称不能为空',
+    })
+    .then((res) => {
+      // console.log(res.value)
+      if (!res.value)
+        return
+      userStore.setUserNickname(res.value.toString())
+    })
 }
 </script>
 
@@ -44,9 +77,11 @@ function handleCancelClick() {
       <!-- 标题栏 -->
       <view class="sticky left-0 right-0 top-0 z-10 flex items-center justify-between border-b border-gray-100 bg-white px-4 py-3">
         <view class="flex items-center">
-          <wd-avatar :size="40" :src="user.avatar" />
+          <button class="avatar-box" open-type="chooseAvatar" @chooseavatar="handleChooseAvatar">
+            <wd-avatar :size="40" :src="user.avatar" />
+          </button>
           <view class="ml-3 flex flex-col">
-            <text class="text-base font-semibold">{{ user.nickname || '未登录' }}</text>
+            <text class="text-base font-semibold" @tap="handelNicknameInput">{{ user.nickname || '未登录' }}</text>
             <text class="text-xs text-gray-400 font-bold">已坚持记账{{ user.billDay }}天，共{{ user.billCount }}条账单</text>
           </view>
         </view>
@@ -57,14 +92,15 @@ function handleCancelClick() {
         <view class="user-block">
           <view class="flex items-center justify-between px-4 py-2">
             <text class="font-semibold">用户信息</text>
-            <view class="flex items-center rounded-full bg-gray-200/40 p-2">
-              <wd-icon name="edit" size="18" />
-            </view>
           </view>
           <wd-cell title="ID" :value="user.userId || '-'" />
-          <wd-cell title="邮箱" :value="user.email || '-'" />
-          <wd-cell title="手机" :value="user.mobile || '-'" />
           <wd-cell title="注册" :value="dayjs(user.createTime).format('YYYY-MM-DD') || '-'" />
+        </view>
+
+        <view class="user-block">
+          <view class="h-50 text-center">
+            年数据统计
+          </view>
         </view>
 
         <view class="user-block">
@@ -86,6 +122,7 @@ function handleCancelClick() {
       </view>
     </view>
   </wd-popup>
+  <wd-dialog />
 </template>
 
 <style lang="scss" scoped>
@@ -94,5 +131,13 @@ function handleCancelClick() {
   box-shadow:
     0 8px 20px -6px rgba(0, 0, 0, 0.06),
     0 4px 12px -4px rgba(0, 0, 0, 0.03);
+}
+
+.avatar-box {
+  background: transparent;
+  padding: 0;
+  &:after {
+    border: none;
+  }
 }
 </style>

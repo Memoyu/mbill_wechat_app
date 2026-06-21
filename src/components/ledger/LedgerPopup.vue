@@ -37,7 +37,7 @@ const isMultiple = computed(() => {
 })
 
 function handleLedgerItemClick(item: ILedger) {
-  console.log('点击')
+  // console.log('点击')
   let selecteds = ledgerPickerStore.selectedLedgers
   if (props.store) {
     ledgerPickerStore.toggleLedgerSelection(item.ledgerId)
@@ -63,6 +63,7 @@ function handleScanClick() {
     success(res) {
       console.log(`条码类型：${res.scanType}`)
       console.log(`条码内容：${res.result}`)
+      toast.show(`条码内容：${res.result}`)
     },
     fail(e) {
       toast.show(`错误： ${e}`)

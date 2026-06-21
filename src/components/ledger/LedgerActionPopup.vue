@@ -1,8 +1,13 @@
 <script setup lang="ts">
+import type { ILedger } from '@/api/types/ledger'
+import { useDialog } from '@wot-ui/ui'
+
 const props = defineProps<{
-  ledger: any // 账本信息
+  ledger?: ILedger // 账本信息
   more?: boolean // 显示更多操作按钮
 }>()
+
+const emit = defineEmits(['actionTap'])
 
 const defItems = [
   {
@@ -10,6 +15,12 @@ const defItems = [
     text: '编辑账本',
     value: 'edit',
     action: handleEditClick,
+  },
+  {
+    icon: 'i-carbon-color-palette',
+    text: '更换颜色',
+    value: 'color',
+    action: handleChangeColorClick,
   },
   {
     icon: 'i-carbon-share',
@@ -49,16 +60,33 @@ const actionItems = computed(() => {
   return defItems.slice(0, 2)
 })
 
+const title = computed(() => {
+  return props.ledger?.name ?? ''
+})
+
+const ledgerId = computed(() => {
+  return props.ledger?.ledgerId ?? ''
+})
+
+const colorPickerShow = ref(false)
+
 function handleCancelClick() {
   show.value = false
 }
 
 function handleActionClick(item: any) {
   console.log(item)
+  show.value = false
+  item.action()
+  emit('actionTap', item)
 }
 
 function handleEditClick() {
-  console.log('handleEditClick')
+  // console.log('handleEditClick')
+}
+
+function handleChangeColorClick() {
+  colorPickerShow.value = true
 }
 
 function handleShareClick() {
@@ -93,7 +121,7 @@ function handleDeleteClick() {
     <view class="overflow-hidden">
       <!-- 标题栏 -->
       <view class="flex items-center justify-between border-b border-gray-100 px-4 py-3">
-        <text class="line-clamp-1 text-base font-semibold">{{ ledger.name }}</text>
+        <text class="line-clamp-1 text-base font-semibold">{{ title }}</text>
         <view
           class="flex-shrink-0 rounded-full px-3 py-1 text-sm text-gray-400"
           hover-class="bg-gray-50"
@@ -137,6 +165,7 @@ function handleDeleteClick() {
       </view>
     </view>
   </wd-popup>
+  <color-picker-popup v-model="colorPickerShow" :ledger-id="ledgerId" />
 </template>
 
 <style lang="scss" scoped></style>

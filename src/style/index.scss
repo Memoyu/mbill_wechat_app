@@ -15,6 +15,9 @@ page {
 
   // 修改按钮背景色
   // --wot-button-primary-bg-color: green;
+
+  // 图片裁剪组件的z-index
+  --wot-img-cropper-z-index: 9999;
   font-size: 14px;
 
   --mbill-expend-color: #f87171;

@@ -1,70 +1,89 @@
-import type { ILedger } from '@/api/types/ledger'
+import type { ILedger, IUpdateLedger, IUpdateLedgerColor } from '@/api/types/ledger'
 import { defineStore } from 'pinia'
+import {
+  createLedger as fetchCreateLedger,
+  updateLedger as fetchUpdateLedger,
+  updateLedgerColor as fetchUpdateLedgerColor,
+  getLedgerList,
+} from '@/api/ledger'
+import { gradients } from '@/constants/gradients'
+import { useLedgerPickerStore } from './ledgerPicker'
 
 // 初始化状态
 const initState: {
   ledgers: ILedger[]
 } = {
-  ledgers: [{
-    ledgerId: '12323234341',
-    name: '日常账本字符日常账本字符日常账本字符',
-    count: 100,
-    createTime: '2024-06-01 12:00:00',
-  }, {
-    ledgerId: '22323234342',
-    name: '学习账单',
-    count: 50,
-    createTime: '2024-06-02 12:09:00',
-  }, {
-    ledgerId: '32323234343',
-    name: '开店账单1',
-    count: 20,
-    createTime: '2024-06-03 12:16:00',
-  }, {
-    ledgerId: '42323234344',
-    name: '开店账单2',
-    count: 15,
-    createTime: '2024-06-04 12:13:00',
-  }, {
-    ledgerId: '52323234345',
-    name: '开店账单3',
-    count: 10,
-    createTime: '2024-06-05 12:35:00',
-  }, {
-    ledgerId: '62323234346',
-    name: '开店账单4',
-    count: 5,
-    createTime: '2024-06-06 12:55:00',
-  }, {
-    ledgerId: '72323234347',
-    name: '开店账单5',
-    count: 3,
-    createTime: '2024-06-07 12:50:00',
-  }, {
-    ledgerId: '82323234348',
-    name: '开店账单6',
-    count: 2,
-    createTime: '2024-06-08 12:40:00',
-  }, {
-    ledgerId: '92323234349',
-    name: '开店账单7',
-    count: 1,
-    createTime: '2024-06-09 12:30:00',
-  }, {
-    ledgerId: '102323234350',
-    name: '开店账单8',
-    count: 7,
-    createTime: '2024-06-10 12:20:00',
-  }],
+  ledgers: [],
+}
+
+function getRandomColor() {
+  return Math.floor(Math.random() * gradients.length)
 }
 
 export const useLedgerStore = defineStore(
   'ledger',
   () => {
+    const ledgerPickerStore = useLedgerPickerStore()
     const state = reactive({ ...initState })
+
+    const loadLedgers = async () => {
+      state.ledgers = await getLedgerList()
+      // 在没有选中任何账本时，默认选中第一个账本
+      if (state.ledgers && state.ledgers.length > 0 && ledgerPickerStore.selectedLedgers.length < 1)
+        ledgerPickerStore.toggleLedgerSelection(state.ledgers[0].ledgerId)
+    }
+
+    const createLedger = async (name: string, color: number) => {
+      const ledger = await fetchCreateLedger({ name, color })
+      state.ledgers.push(ledger)
+    }
+
+    const updateLedger = async (update: IUpdateLedger) => {
+      await fetchUpdateLedger(update)
+      state.ledgers.forEach((item, index, arr) => {
+        if (item.ledgerId === update.ledgerId) {
+          arr[index].name = update.name
+          arr[index].color = update.color
+        }
+      })
+    }
+
+    // 修改账本颜色
+    const updateLedgerColor = async (ledgers: IUpdateLedgerColor[]) => {
+      for (const { ledgerId, color } of ledgers) {
+        const ledger = state.ledgers.find(l => l.ledgerId === ledgerId)
+        if (ledger) {
+          ledger.color = color
+        }
+      }
+
+      await fetchUpdateLedgerColor(ledgers)
+    }
+
+    // 获取账本颜色
+    const getLedgerColor = (ledgerId: string) => {
+      const ledger = state.ledgers.find(l => l.ledgerId === ledgerId)
+      if (!ledger) {
+        return 0
+      }
+
+      if (ledger.color === undefined) {
+        // 如果没有颜色，随机生成一个并保存
+        const randomColor = getRandomColor()
+        ledger.color = randomColor
+        return randomColor
+      }
+
+      return ledger.color
+    }
 
     return {
       ...toRefs(state),
+      loadLedgers,
+      createLedger,
+      updateLedger,
+      updateLedgerColor,
+      getLedgerColor,
     }
   },
 )

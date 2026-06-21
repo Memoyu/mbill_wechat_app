@@ -47,6 +47,8 @@ const areaHeight = ref(200)
 const itemWidth = ref(80)
 const itemHeight = ref(80)
 
+const animation = ref(false)
+
 const { proxy } = getCurrentInstance() as any
 
 const addIconSize = computed(() => {
@@ -117,6 +119,8 @@ function updatePosition() {
 }
 
 function handleDragStart(item: DragSortItem) {
+  // 控制动画启用，避免重新加载数据时页面动画难看
+  animation.value = true
   currentId.value = item.drag_id
   sorting.value = true
   sortChanged.value = false
@@ -125,6 +129,7 @@ function handleDragStart(item: DragSortItem) {
 }
 
 function handleTouchEnd() {
+  animation.value = false
   if (!sorting.value || currentId.value === '')
     return
 

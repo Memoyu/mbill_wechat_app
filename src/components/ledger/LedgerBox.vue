@@ -9,31 +9,6 @@ const emit = defineEmits(['tap'])
 const actionShow = ref(false)
 const actionTitle = ref('')
 
-// 在 script setup 中添加
-const decorationCache = new Map()
-
-// 修改 getGradientById 函数
-function getGradientById(cardId: string) {
-  // 如果卡盒有指定颜色,则使用指定的颜色
-  if (props.data.color !== undefined) {
-    return gradients[props.data.color]
-  }
-
-  // 对于没有指定颜色的卡盒，使用随机但固定的颜色
-  const cacheKey = `gradient-${cardId}`
-  if (decorationCache.has(cacheKey)) {
-    return decorationCache.get(cacheKey)
-  }
-
-  const len = cardId.length
-  const seed
-    = cardId.charCodeAt(0) + cardId.charCodeAt(Math.floor(len / 2)) + cardId.charCodeAt(len - 1)
-
-  const gradient = gradients[seed % gradients.length]
-  decorationCache.set(cacheKey, gradient)
-  return gradient
-}
-
 function handleActionClick() {
   actionTitle.value = props.data.name
   actionShow.value = true
@@ -60,7 +35,7 @@ function handleActionSelect(panel: string) {
       class="relative overflow-hidden rounded-xl bg-white transition-all duration-200"
     >
       <!-- 账簿封面 -->
-      <view class="aspect-[5/4] bg-gradient-to-br" :style="{ background: getGradientById(data.ledgerId) }">
+      <view class="aspect-[5/4] bg-gradient-to-br" :style="{ background: gradients[props.data.color] }">
         <!-- 装饰元素容器 -->
         <view class="pointer-events-none absolute inset-0">
           <!-- 大圆形装饰 -->
@@ -96,7 +71,7 @@ function handleActionSelect(panel: string) {
                   收入
                 </view>
                 <view class="ml-2 text-emerald font-bold">
-                  2000000
+                  {{ data.income }}
                 </view>
               </view>
 
@@ -105,7 +80,7 @@ function handleActionSelect(panel: string) {
                   支出
                 </view>
                 <view class="ml-2 text-rose font-bold">
-                  2000000
+                  {{ data.expend }}
                 </view>
               </view>
             </view>

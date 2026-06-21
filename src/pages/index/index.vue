@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { ILedger } from '@/api/types/ledger'
 import dayjs from 'dayjs'
-import { useUserStore } from '@/store'
+import { useLedgerPickerStore, useUserStore } from '@/store'
 import { safeAreaInsets } from '@/utils/systemInfo'
 
 defineOptions({
@@ -18,9 +18,10 @@ definePage({
 })
 
 const userStore = useUserStore()
+const ledgerPickerStore = useLedgerPickerStore()
 
 const date = ref(Date.now())
-const ledgerName = ref('日常账本字符222222233333333')
+
 const isUserShow = ref(false)
 const isLedgersShow = ref(false)
 const isSettingsShow = ref(false)
@@ -30,6 +31,10 @@ const user = computed(() => userStore.userInfo)
 
 const dateText = computed(() => {
   return dayjs(date.value).format('YYYY年MM月')
+})
+
+const ledgerName = computed(() => {
+  return ledgerPickerStore.selectedLedgerNames.join('、')
 })
 
 onLoad(() => {
@@ -42,7 +47,7 @@ function handleCalendarClick() {
 }
 
 function handleLedgerChange(item: ILedger) {
-  ledgerName.value = item.name
+
 }
 </script>
 

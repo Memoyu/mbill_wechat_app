@@ -1,8 +1,9 @@
-import type { IUserInfo } from '@/api/types/user'
+import type { IUpdateUser, IUserInfo } from '@/api/types/user'
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import {
   getUser,
+  updateUser,
 } from '@/api/user'
 
 // 初始化状态
@@ -30,11 +31,21 @@ export const useUserStore = defineStore(
       }
       userInfo.value = val
     }
+
+    const updateUserInfo = async (val: IUserInfo) => {
+      await updateUser(val as IUpdateUser)
+    }
+
     const setUserAvatar = (avatar: string) => {
       userInfo.value.avatar = avatar
-      console.log('设置用户头像', avatar)
-      console.log('userInfo', userInfo.value)
+      updateUserInfo(userInfo.value)
     }
+
+    const setUserNickname = (nickname: string) => {
+      userInfo.value.nickname = nickname
+      updateUserInfo(userInfo.value)
+    }
+
     // 删除用户信息
     const clearUserInfo = () => {
       userInfo.value = { ...userInfoState }
@@ -54,8 +65,8 @@ export const useUserStore = defineStore(
       userInfo,
       clearUserInfo,
       fetchUserInfo,
-      setUserInfo,
       setUserAvatar,
+      setUserNickname,
     }
   },
   {
