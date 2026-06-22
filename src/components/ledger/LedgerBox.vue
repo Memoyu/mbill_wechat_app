@@ -89,11 +89,12 @@ function handleActionSelect(panel: string) {
           <!-- 底部内容区域 -->
           <view class="absolute bottom-3 left-3">
             <wd-avatar-group :max-count="3" size="25">
-              <wd-avatar text="明" />
-              <wd-avatar icon="star-on" />
-              <wd-avatar text="A" bg-color="#1E90FF" />
-              <wd-avatar text="B" bg-color="#228B22" />
-              <wd-avatar text="C" bg-color="#DC143C" />
+              <wd-avatar
+                v-for="user in data.users" :key="user.userId"
+                :text="user.nickname.slice(0, 1)"
+                :src="user.avatar"
+                bg-color="#a5b4fc"
+              />
             </wd-avatar-group>
           </view>
         </view>

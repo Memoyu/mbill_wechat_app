@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import type { ILedger } from '@/api/types/ledger'
+import type { IUserBase } from '@/api/types/user'
 import type { ActionItem } from '@/typings'
 import { useDialog } from '@wot-ui/ui'
 import dayjs from 'dayjs'
@@ -40,11 +41,11 @@ const actionShow = ref(false)
 const currentLedger = ref<ILedger>()
 
 const editLedger = ref<{
-  ledgerId?: string
+  isCreate: boolean
   name: string
   color: number
-}>({ name: '', color: 0 })
-const editRandomColor = ref(true)
+  randomColor?: boolean
+}>({ isCreate: true, name: '', color: 0, randomColor: true })
 
 onMounted(() => {
   nextTick(() => {
@@ -55,15 +56,43 @@ onMounted(() => {
   })
 })
 
-function handleLedgerActionClick(ledger: any) {
+function handleLedgerActionTap(ledger: any) {
   currentLedger.value = ledger
   actionShow.value = true
 }
 
+function handleLedgerActionItemTap(action: string) {
+  if (!currentLedger.value)
+    return
+  const ledgerId = currentLedger.value.ledgerId!
+
+  if (action === 'edit') {
+    editLedger.value = {
+      isCreate: false,
+      name: currentLedger.value.name,
+      color: currentLedger.value.color,
+    }
+    editDialog.confirm({ title: currentLedger.value.name })
+      .then(async () => {
+        await ledgerStore.updateLedger({ ledgerId, name: editLedger.value.name, color: editLedger.value.color })
+      })
+      .catch(() => {
+        console.log('点击了取消')
+      })
+  }
+}
+
 function handleCreateTap() {
+  editLedger.value = {
+    isCreate: true,
+    name: '',
+    color: 0,
+    randomColor: true,
+  }
+
   editDialog.confirm({ title: '新增' })
     .then(async () => {
-      const color = editRandomColor.value ? getColorByName(editLedger.value.name) : editLedger.value.color
+      const color = editLedger.value.randomColor ? getColorByName(editLedger.value.name) : editLedger.value.color
       await ledgerStore.createLedger(editLedger.value.name, color)
     })
     .catch(() => {
@@ -105,7 +134,7 @@ function handleSortChange(list: ILedger[]) {
               <view class="ledger-item-box">
                 <view class="ledger-item-content">
                   <text class="line-clamp-1 font-semibold">{{ listItem.name }}</text>
-                  <view class="mt-2 flex items-center text-xs">
+                  <view class="mt-3 flex items-center text-xs">
                     <text>
                       收入
                     </text>
@@ -119,22 +148,22 @@ function handleSortChange(list: ILedger[]) {
                       {{ listItem.expend }}
                     </text>
                   </view>
-                  <view class="mt-2 flex items-center justify-between">
+                  <view class="mt-3 h-25px flex items-center justify-between">
                     <wd-avatar-group :max-count="3" size="25">
-                      <wd-avatar text="明" />
-                      <wd-avatar icon="star-on" />
-                      <wd-avatar text="A" bg-color="#1E90FF" />
-                      <wd-avatar text="B" bg-color="#228B22" />
-                      <wd-avatar text="C" bg-color="#DC143C" />
+                      <wd-avatar
+                        v-for="user in listItem.users" :key="user.userId"
+                        :text="user.nickname.slice(0, 1)"
+                        :src="user.avatar"
+                        bg-color="#a5b4fc"
+                      />
                     </wd-avatar-group>
-
-                    <text class="text-xs">创建于{{ dayjs(listItem.createTime).format('YYYY-MM-DD HH:MM') }}</text>
+                    <text class="text-xs">{{ dayjs(listItem.createTime).format('YYYY-MM-DD HH:MM') }}</text>
                   </view>
                 </view>
                 <view class="ledger-item-more">
                   <view
                     class="h-6 w-6 flex items-center justify-center rounded-full bg-white/40 shadow-[0_4px_8px_rgba(0,0,0,0.04)]"
-                    @tap.stop="handleLedgerActionClick(listItem)"
+                    @tap.stop="handleLedgerActionTap(listItem)"
                   >
                     <wd-icon name="more" />
                   </view>
@@ -152,29 +181,32 @@ function handleSortChange(list: ILedger[]) {
     v-model="actionShow"
     more
     :ledger="currentLedger"
+    @action-tap="handleLedgerActionItemTap"
   />
 
   <!-- 编辑账本 -->
   <wd-dialog selector="ledger-edit-dialog">
     <wd-input v-model="editLedger.name" type="text" placeholder="账簿名称" custom-class="custom-input" />
-    <view class="mt-2">
-      <wd-checkbox v-model="editRandomColor">
-        随机颜色
-      </wd-checkbox>
-    </view>
-    <!-- 颜色网格 -->
-    <view v-if="!editRandomColor" class="grid grid-cols-4 mt-2 gap-4 p-1">
-      <view
-        v-for="(gradient, index) in gradients"
-        :key="index"
-        class="relative aspect-square overflow-hidden rounded-xl shadow-sm transition-all duration-200"
-        :class="[editLedger.color === index ? 'ring-2 ring-indigo-500 ring-offset-2' : '']"
-        :style="{ background: gradient }"
-        hover-class="scale-95 shadow-md"
-        :hover-start-time="0"
-        :hover-stay-time="200"
-        @tap="editLedger.color = index"
-      />
+    <view v-if="editLedger.isCreate">
+      <view class="mt-2">
+        <wd-checkbox v-model="editLedger.randomColor">
+          随机颜色
+        </wd-checkbox>
+      </view>
+      <!-- 颜色网格 -->
+      <view v-if="!editLedger.randomColor" class="grid grid-cols-4 mt-2 gap-4 p-1">
+        <view
+          v-for="(gradient, index) in gradients"
+          :key="index"
+          class="relative aspect-square overflow-hidden rounded-xl shadow-sm transition-all duration-200"
+          :class="[editLedger.color === index ? 'ring-2 ring-indigo-500 ring-offset-2' : '']"
+          :style="{ background: gradient }"
+          hover-class="scale-95 shadow-md"
+          :hover-start-time="0"
+          :hover-stay-time="200"
+          @tap="editLedger.color = index"
+        />
+      </view>
     </view>
   </wd-dialog>
 </template>

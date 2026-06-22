@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { ILedger } from '@/api/types/ledger'
-import { useDialog } from '@wot-ui/ui'
 
 const props = defineProps<{
   ledger?: ILedger // 账本信息
@@ -78,7 +77,7 @@ function handleActionClick(item: any) {
   console.log(item)
   show.value = false
   item.action()
-  emit('actionTap', item)
+  emit('actionTap', item.value)
 }
 
 function handleEditClick() {
