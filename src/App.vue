@@ -9,10 +9,10 @@ const ledgerStore = useLedgerStore()
 onLaunch((options) => {
   // console.log('App.vue onLaunch', options)
   // 微信登录
-  tokenStore.wxLogin()
-
-  // 初始化账本数据
-  ledgerStore.loadLedgers()
+  tokenStore.wxLogin().then(() => {
+    // 初始化账本数据
+    ledgerStore.loadLedgers()
+  })
 })
 onShow((options) => {
   console.log('App.vue onShow', options)

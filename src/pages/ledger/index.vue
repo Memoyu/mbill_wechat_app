@@ -1,9 +1,9 @@
 <script lang="ts" setup>
 import type { ILedger } from '@/api/types/ledger'
-import type { IUserBase } from '@/api/types/user'
 import type { ActionItem } from '@/typings'
 import { useDialog } from '@wot-ui/ui'
 import dayjs from 'dayjs'
+import UQRCode from 'uqrcodejs'
 import { getColorByName, gradients } from '@/constants/gradients'
 import { useLedgerStore } from '@/store'
 import { systemInfo } from '@/utils/systemInfo'
@@ -27,7 +27,9 @@ const navActions: ActionItem[] = [
   },
 ]
 
+const { proxy } = getCurrentInstance() as any
 const editDialog = useDialog('ledger-edit-dialog')
+const shareDialog = useDialog('ledger-share-dialog')
 const ledgerStore = useLedgerStore()
 
 const ledgers = computed(() => {
@@ -39,6 +41,8 @@ const scrollHeight = ref(300)
 
 const actionShow = ref(false)
 const currentLedger = ref<ILedger>()
+const canvasId = ref('qrcodeCnvas')
+const shareQrCode = ref('')
 
 const editLedger = ref<{
   isCreate: boolean
@@ -77,11 +81,59 @@ function handleLedgerActionItemTap(action: string) {
         await ledgerStore.updateLedger({ ledgerId, name: editLedger.value.name, color: editLedger.value.color })
       })
       .catch(() => {
-        console.log('点击了取消')
+        // console.log('点击了取消')
       })
+  }
+  else if (action === 'share') {
+    initQrcode(currentLedger.value.ledgerId)
   }
 }
 
+/**
+ * 初始化二维码
+ * @param content 二维码内容
+ */
+function initQrcode(content: string | number) {
+  // 转换尺寸
+  const size = uni.upx2px(200)
+  // 获取uQRCode实例
+  const qr = new UQRCode()
+  qr.setOptions({
+    // 设置二维码内容
+    data: content,
+    // 设置二维码大小，必须与canvas设置的宽高一致
+    size,
+    // 设置二维码边距
+    margin: uni.upx2px(10),
+  })
+  // 调用制作二维码方法
+  qr.make()
+  // 获取canvas上下文
+  const canvasContext = uni.createCanvasContext(canvasId.value, proxy)
+  // 设置uQRCode实例的canvas上下文
+  qr.canvasContext = canvasContext
+  // 绘制图形
+  qr.draw().then(() => {
+    uni.canvasToTempFilePath(
+      {
+        width: size,
+        height: size,
+        destWidth: size,
+        destHeight: size,
+        canvasId: canvasId.value,
+        success(res) {
+          console.log(res.tempFilePath)
+          shareQrCode.value = res.tempFilePath
+          shareDialog.alert({})
+        },
+        fail(err) {
+          console.log(err)
+        },
+      },
+      proxy, // 这里很关键，不然拿不到canvas实例
+    )
+  })
+}
 function handleCreateTap() {
   editLedger.value = {
     isCreate: true,
@@ -96,7 +148,7 @@ function handleCreateTap() {
       await ledgerStore.createLedger(editLedger.value.name, color)
     })
     .catch(() => {
-      console.log('点击了取消')
+      // console.log('点击了取消')
     })
 }
 
@@ -208,6 +260,13 @@ function handleSortChange(list: ILedger[]) {
         />
       </view>
     </view>
+  </wd-dialog>
+
+  <!-- 共享账本 -->
+  <!-- 隐藏画布（index 放在最下） -->
+  <canvas :id="canvasId" :canvas-id="canvasId" style="position: absolute; top: 0; left: 0; z-index: -99; width: 200px;height: 200px;" />
+  <wd-dialog selector="ledger-share-dialog">
+    <wd-img :width="200" :height="200" :src="shareQrCode" />
   </wd-dialog>
 </template>
 

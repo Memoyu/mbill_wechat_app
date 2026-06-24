@@ -92,7 +92,7 @@ function handleUnifyAll() {
     <view class="overflow-hidden">
       <!-- 标题栏 -->
       <view class="flex items-center justify-between border-b border-gray-100 px-4 py-3">
-        <text class="text-base font-semibold">选择卡盒颜色</text>
+        <text class="text-base font-semibold">选择账本颜色</text>
         <view
           class="rounded-full px-4 py-1.5 text-sm text-gray-400 hover:bg-gray-50"
           :hover-start-time="0"

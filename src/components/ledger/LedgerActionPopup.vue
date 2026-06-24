@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { ILedger } from '@/api/types/ledger'
+import { useDialog } from '@wot-ui/ui'
 
 const props = defineProps<{
   ledger?: ILedger // 账本信息
@@ -7,7 +8,6 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits(['actionTap'])
-
 const defItems = [
   {
     icon: 'i-carbon-edit',
@@ -49,8 +49,9 @@ const defItems = [
     danger: true,
   },
 ]
-
 const show = defineModel<boolean>()
+
+const shareDialog = useDialog('ledger-share-dialog')
 
 const actionItems = computed(() => {
   if (props.more) {
@@ -74,7 +75,7 @@ function handleCancelClick() {
 }
 
 function handleActionClick(item: any) {
-  console.log(item)
+  // console.log(item)
   show.value = false
   item.action()
   emit('actionTap', item.value)
@@ -89,7 +90,7 @@ function handleChangeColorClick() {
 }
 
 function handleShareClick() {
-  console.log('handleShareClick')
+  // console.log('handleShareClick')
 }
 
 function handleMigrateClick() {
