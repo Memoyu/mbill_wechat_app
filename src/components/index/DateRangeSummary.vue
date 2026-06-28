@@ -1,4 +1,12 @@
 <script setup lang="ts">
+defineOptions({
+  options: {
+    addGlobalClass: true,
+    virtualHost: true,
+    styleIsolation: 'shared',
+  },
+})
+
 const opts = {
   color: ['#FAC858', '#EE6666', '#FAC858', '#EE6666', '#73C0DE', '#3CA272', '#FC8452', '#9A60B4', '#ea7ccc'],
   padding: [15, 15, 0, 5],

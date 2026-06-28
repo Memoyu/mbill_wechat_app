@@ -1,9 +1,14 @@
+import type { Dialog } from '@wot-ui/ui/components/wd-dialog/types'
+import type { Toast } from '@wot-ui/ui/components/wd-toast/types'
 import type { ILedger, IUpdateLedger, IUpdateLedgerColor } from '@/api/types/ledger'
 import { defineStore } from 'pinia'
 import {
   createLedger as fetchCreateLedger,
+  joinLedger as fetchJoinLedger,
+  sortLedger as fetchSortLedger,
   updateLedger as fetchUpdateLedger,
   updateLedgerColor as fetchUpdateLedgerColor,
+  getLedger,
   getLedgerList,
 } from '@/api/ledger'
 import { gradients } from '@/constants/gradients'
@@ -25,7 +30,6 @@ export const useLedgerStore = defineStore(
   () => {
     const ledgerPickerStore = useLedgerPickerStore()
     const state = reactive({ ...initState })
-
     const loadLedgers = async () => {
       state.ledgers = await getLedgerList()
       // 在没有选中任何账本时，默认选中第一个账本
@@ -36,6 +40,58 @@ export const useLedgerStore = defineStore(
     const createLedger = async (name: string, color: number) => {
       const ledger = await fetchCreateLedger({ name, color })
       state.ledgers.push(ledger)
+    }
+
+    const joinLedger = (dialog: Dialog, toast: Toast, ledgerId: string) => {
+      getLedger(ledgerId).then((ledger) => {
+        dialog
+          .confirm({
+            title: '确认加入',
+            msg: `你即将加入 ${ledger.creater.nickname} 的[${ledger.name}]账本`,
+            theme: 'text',
+            actionLayout: 'vertical',
+            confirmButtonText: '确认加入',
+            cancelButtonText: '取消',
+            beforeConfirm: () => {
+              toast.loading('加入中...')
+              return new Promise((resolve) => {
+                fetchJoinLedger(ledger.ledgerId).then((res) => {
+                  toast.success('加入成功')
+                  state.ledgers.push(res)
+                  resolve(true)
+                }).catch(() => {
+                  resolve(false)
+                }).finally (() => {
+                  toast.close()
+                })
+              })
+            },
+          })
+          .then(() => {
+            console.log('支付成功')
+          })
+          .catch(() => {
+          })
+      }).catch(() => {
+        toast.error('账本不存在')
+      })
+    }
+
+    /**
+     * 排序账本
+     * @param ledgers
+     */
+    const sortLedger = (ledgers: ILedger[]) => {
+      state.ledgers = ledgers
+      const sorts = ledgers.map((item, index) => {
+        return {
+          ledgerId: item.ledgerId,
+          sort: index,
+        }
+      })
+      fetchSortLedger(sorts).then(() => {
+        // state.ledgers = ledgers
+      })
     }
 
     const updateLedger = async (update: IUpdateLedger) => {
@@ -81,6 +137,8 @@ export const useLedgerStore = defineStore(
       ...toRefs(state),
       loadLedgers,
       createLedger,
+      joinLedger,
+      sortLedger,
       updateLedger,
       updateLedgerColor,
       getLedgerColor,

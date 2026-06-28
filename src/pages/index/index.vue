@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import type { ILedger } from '@/api/types/ledger'
+import { useToast } from '@wot-ui/ui'
 import dayjs from 'dayjs'
 import { useLedgerPickerStore, useUserStore } from '@/store'
 import { safeAreaInsets } from '@/utils/systemInfo'

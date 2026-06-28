@@ -1,6 +1,15 @@
 <script setup lang="ts">
 import type { ILedger } from '@/api/types/ledger'
 import { useDialog } from '@wot-ui/ui'
+import UQRCode from 'uqrcodejs'
+
+defineOptions({
+  options: {
+    addGlobalClass: true,
+    virtualHost: true,
+    styleIsolation: 'shared',
+  },
+})
 
 const props = defineProps<{
   ledger?: ILedger // 账本信息
@@ -50,7 +59,9 @@ const defItems = [
   },
 ]
 const show = defineModel<boolean>()
+const canvasId = ref('qrcodeCnvas')
 
+const { proxy } = getCurrentInstance() as any
 const shareDialog = useDialog('ledger-share-dialog')
 
 const actionItems = computed(() => {
@@ -91,6 +102,7 @@ function handleChangeColorClick() {
 
 function handleShareClick() {
   // console.log('handleShareClick')
+  initQrcode(props.ledger?.ledgerId ?? '')
 }
 
 function handleMigrateClick() {
@@ -103,6 +115,33 @@ function handleHideClick() {
 
 function handleDeleteClick() {
   console.log('handleDeleteClick')
+}
+
+/**
+ * 初始化二维码
+ * @param content 二维码内容
+ */
+function initQrcode(content: string | number) {
+  // 转换尺寸
+  const size = 240
+  // 获取uQRCode实例
+  const qr = new UQRCode()
+  qr.setOptions({
+    // 设置二维码内容
+    data: content,
+    // 设置二维码大小，必须与canvas设置的宽高一致
+    size,
+    // 设置二维码边距
+    margin: uni.upx2px(10),
+  })
+  // 调用制作二维码方法
+  qr.make()
+  // 获取canvas上下文
+  const canvasContext = uni.createCanvasContext(canvasId.value, proxy)
+  // 设置uQRCode实例的canvas上下文
+  qr.canvasContext = canvasContext
+  qr.drawCanvas()
+  shareDialog.alert({})
 }
 </script>
 
@@ -166,6 +205,10 @@ function handleDeleteClick() {
     </view>
   </wd-popup>
   <color-picker-popup v-model="colorPickerShow" :ledger-id="ledgerId" />
+
+  <wd-dialog selector="ledger-share-dialog">
+    <canvas :id="canvasId" :canvas-id="canvasId" style="width: 240px;height: 240px;" />
+  </wd-dialog>
 </template>
 
 <style lang="scss" scoped></style>

@@ -49,14 +49,14 @@ function handleActionSelect(panel: string) {
 
         <view class="absolute inset-0 flex flex-col p-3">
           <!-- 右上角操作按钮 -->
-          <view class="absolute right-3 top-3 z-100">
+          <!-- <view class="absolute right-3 top-3 z-100">
             <view
               class="h-6 w-6 flex items-center justify-center rounded-full bg-white/40 shadow-[0_4px_8px_rgba(0,0,0,0.04)]"
               @tap.stop="handleActionClick"
             >
               <wd-icon name="more" />
             </view>
-          </view>
+          </view> -->
 
           <!-- 账簿内容区域 -->
           <view class="relative h-full flex flex-col overflow-hidden">

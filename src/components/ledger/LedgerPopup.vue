@@ -1,7 +1,15 @@
 <script setup lang="ts">
 import type { ILedger } from '@/api/types/ledger'
-import { useToast } from '@wot-ui/ui'
+import { useDialog, useToast } from '@wot-ui/ui'
 import { useLedgerPickerStore, useLedgerStore } from '@/store'
+
+defineOptions({
+  options: {
+    addGlobalClass: true,
+    virtualHost: true,
+    styleIsolation: 'shared',
+  },
+})
 
 const props = withDefaults(defineProps<{
   value?: string
@@ -14,6 +22,7 @@ const props = withDefaults(defineProps<{
 const emit = defineEmits(['change'])
 const show = defineModel<boolean>()
 
+const dialog = useDialog()
 const toast = useToast()
 const ledgerStore = useLedgerStore()
 const ledgerPickerStore = useLedgerPickerStore()
@@ -58,15 +67,14 @@ function handleAllSelectClick() {
 }
 
 function handleScanClick() {
-  // 扫码加入账本页
   uni.scanCode({
     success(res) {
-      console.log(`条码类型：${res.scanType}`)
-      console.log(`条码内容：${res.result}`)
-      toast.show(`条码内容：${res.result}`)
+      // console.log(`条码类型：${res.scanType}`)
+      // console.log(`条码内容：${res.result}`)
+      ledgerStore.joinLedger(dialog, toast, res.result)
     },
     fail(e) {
-      toast.show(`错误： ${e}`)
+      console.log(`扫码错误：${e}`)
     },
   })
 }

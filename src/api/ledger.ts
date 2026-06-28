@@ -1,4 +1,4 @@
-import type { ICreateLedger, ILedger, IUpdateLedger, IUpdateLedgerColor } from './types/ledger'
+import type { ICreateLedger, ILedger, ILedgerWithCreater, IUpdateLedger, IUpdateLedgerColor, IUpdateLedgerSort } from './types/ledger'
 import { http } from '@/utils/http'
 
 /**
@@ -6,6 +6,20 @@ import { http } from '@/utils/http'
  */
 export function createLedger(create: ICreateLedger) {
   return http.post<ILedger>('ledger/create', create)
+}
+
+/**
+ * 加入账本
+ */
+export function joinLedger(ledgerId: string) {
+  return http.put<ILedger>('ledger/join', { ledgerId })
+}
+
+/**
+ * 排序账本
+ */
+export function sortLedger(sorts: IUpdateLedgerSort[]) {
+  return http.put<ILedger>('ledger/sort', { sorts })
 }
 
 /**
@@ -20,6 +34,13 @@ export function updateLedger(update: IUpdateLedger) {
  */
 export function getLedgerList() {
   return http.get<ILedger[]>('ledger/list')
+}
+
+/**
+ * 获取账本详情
+ */
+export function getLedger(ledgerId: string) {
+  return http.get<ILedgerWithCreater>('ledger/get', { ledgerId })
 }
 
 /**
