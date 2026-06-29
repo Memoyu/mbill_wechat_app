@@ -4,10 +4,11 @@ import type { ILedger, IUpdateLedger, IUpdateLedgerColor } from '@/api/types/led
 import { defineStore } from 'pinia'
 import {
   createLedger as fetchCreateLedger,
+  updateLedger as fetchdaUpteLedger,
+  updateLedgerColor as fetchdaUpteLedgerColor,
+  deleteLedger as fetchDeleteLedger,
   joinLedger as fetchJoinLedger,
   sortLedger as fetchSortLedger,
-  updateLedger as fetchUpdateLedger,
-  updateLedgerColor as fetchUpdateLedgerColor,
   getLedger,
   getLedgerList,
 } from '@/api/ledger'
@@ -30,6 +31,7 @@ export const useLedgerStore = defineStore(
   () => {
     const ledgerPickerStore = useLedgerPickerStore()
     const state = reactive({ ...initState })
+
     const loadLedgers = async () => {
       state.ledgers = await getLedgerList()
       // 在没有选中任何账本时，默认选中第一个账本
@@ -90,12 +92,12 @@ export const useLedgerStore = defineStore(
         }
       })
       fetchSortLedger(sorts).then(() => {
-        // state.ledgers = ledgers
+
       })
     }
 
     const updateLedger = async (update: IUpdateLedger) => {
-      await fetchUpdateLedger(update)
+      await fetchdaUpteLedger(update)
       state.ledgers.forEach((item, index, arr) => {
         if (item.ledgerId === update.ledgerId) {
           arr[index].name = update.name
@@ -113,7 +115,14 @@ export const useLedgerStore = defineStore(
         }
       }
 
-      await fetchUpdateLedgerColor(ledgers)
+      await fetchdaUpteLedgerColor(ledgers)
+    }
+
+    const deleteLedger = (ledgerId: string) => {
+      fetchDeleteLedger(ledgerId).then(() => {
+        const index = state.ledgers.findIndex(l => l.ledgerId === ledgerId)
+        state.ledgers.splice(index, 1)
+      })
     }
 
     // 获取账本颜色
@@ -141,6 +150,7 @@ export const useLedgerStore = defineStore(
       sortLedger,
       updateLedger,
       updateLedgerColor,
+      deleteLedger,
       getLedgerColor,
     }
   },

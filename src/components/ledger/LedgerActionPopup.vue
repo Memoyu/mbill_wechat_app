@@ -2,6 +2,7 @@
 import type { ILedger } from '@/api/types/ledger'
 import { useDialog } from '@wot-ui/ui'
 import UQRCode from 'uqrcodejs'
+import { useLedgerStore } from '@/store'
 
 defineOptions({
   options: {
@@ -63,6 +64,7 @@ const canvasId = ref('qrcodeCnvas')
 
 const { proxy } = getCurrentInstance() as any
 const shareDialog = useDialog('ledger-share-dialog')
+const ledgerStore = useLedgerStore()
 
 const actionItems = computed(() => {
   if (props.more) {
@@ -114,7 +116,9 @@ function handleHideClick() {
 }
 
 function handleDeleteClick() {
-  console.log('handleDeleteClick')
+  // console.log('handleDeleteClick')
+  if (props.ledger)
+    ledgerStore.deleteLedger(props.ledger.ledgerId)
 }
 
 /**

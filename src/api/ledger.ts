@@ -30,6 +30,20 @@ export function updateLedger(update: IUpdateLedger) {
 }
 
 /**
+ * 修改账本颜色
+ */
+export function updateLedgerColor(items: IUpdateLedgerColor[]) {
+  return http.put('ledger/update/color', { items })
+}
+
+/**
+ * 删除账本
+ */
+export function deleteLedger(ledgerId: string) {
+  return http.delete('ledger/delete', { ledgerId })
+}
+
+/**
  * 获取账本列表
  */
 export function getLedgerList() {
@@ -41,11 +55,4 @@ export function getLedgerList() {
  */
 export function getLedger(ledgerId: string) {
   return http.get<ILedgerWithCreater>('ledger/get', { ledgerId })
-}
-
-/**
- * 修改账本颜色
- */
-export function updateLedgerColor(items: IUpdateLedgerColor[]) {
-  return http.put('ledger/update/color', { items })
 }

@@ -122,94 +122,8 @@ function getItemHeight(item: { [x: string]: any, x: number, y: number, drag_id: 
 }
 
 watch(() => props.list, (newList) => {
-  if (!newList || !Array.isArray(newList)) {
-    showList.value = []
-    cloneList.value = []
-    return
-  }
-
-  // 创建新的映射表，用于快速查找
-  const newMap = new Map()
-  newList.forEach((item) => {
-    newMap.set(item[props.keyProp], item)
-  })
-
-  // 处理删除：移除不在newList中的项目
-  const itemsToDelete: any[] = []
-  showList.value.forEach((item, index) => {
-    if (!newMap.has(item[props.keyProp])) {
-      itemsToDelete.unshift(index) // 倒序删除，避免索引变化影响
-    }
-  })
-  itemsToDelete.forEach((index) => {
-    showList.value.splice(index, 1)
-  })
-
-  // 处理新增和更新
-  const processedKeys = new Set()
-
-  // 更新现有项目并标记已处理
-  showList.value.map((item) => {
-    const newItemData = newMap.get(item[props.keyProp])
-    if (newItemData) {
-      processedKeys.add(item[props.keyProp])
-      return { ...item, ...newItemData }
-    }
-    return item
-  })
-
-  // 添加新项目
-  newList.forEach((newItem, index) => {
-    if (!processedKeys.has(newItem[props.keyProp])) {
-      // 插入到正确位置
-      const newItemWithInit = initItem(newItem)
-      showList.value.splice(index, 0, newItemWithInit)
-    }
-  })
-  cloneList.value = lodash.cloneDeep(showList.value)
-  // console.log(newList, 'list change')
-
-  // if (oldList?.length === newList.length) {
-  //   showList.value.map((item) => {
-  //     const n = newList.find(n => n[props.keyProp] === item[props.keyProp])
-  //     item.name = n.name
-  //     return { ...item, ...n }
-  //   })
-  //   console.log('只更新属性')
-  //   return
-  // }
-
-  // const temps = lodash.cloneDeep(newList)
-
-  // const delIndexs: number[] = []
-  // showList.value.map((item, index) => {
-  //   const tempIndex = temps.findIndex(n => n[props.keyProp] === item[props.keyProp])
-  //   if (tempIndex > -1) {
-  //     // 已存在，则更新属性，删除temp
-  //     const temp = temps.splice(tempIndex, 1)
-  //     console.log(tempIndex, '只更新属性')
-  //     return { ...item, ...temp }
-  //   }
-  //   else {
-  //     // 不存在，则删除
-  //     delIndexs.push(index)
-  //     return item
-  //   }
-  // })
-  // // 删除数据
-  // delIndexs.reverse().forEach((index) => {
-  //   showList.value.splice(index, 1)
-  // })
-
-  // // 新增数据
-  // temps.forEach((item) => {
-  //   // console.log(item, 'item')
-  //   showList.value.push(initItem(item))
-  // })
-
-  // cloneList.value = lodash.cloneDeep(showList.value)
-
-  // initList(newList)
+  console.log(newList, 'list change')
+  initList(newList)
   calculateItemSize()
 }, { immediate: true, deep: true })
 
@@ -250,19 +164,21 @@ function initList(list: any[]) {
 
 function initItem(item: any) {
   // console.log(item)
+  const r = Math.floor(Math.random() * 10000)
   return {
     ...item,
     expand: item.expand ?? false,
     y: 0,
     x: 0,
     drag_id: item[props.keyProp],
+    drag_key: `${item[props.keyProp]}_${r}`,
   }
 }
 
 function updatePosition() {
   showList.value.map((item, index) => {
     const y = getPosition(index, showList.value)
-    // console.log(y, 'y')
+    // console.log(item.name, y, 'y')
     item.y = y
     return item
   })
@@ -454,7 +370,7 @@ function getListIndex(drag_id: string, list = cloneList.value) {
     >
       <movable-view
         v-for="item in showList"
-        :key="item.drag_id"
+        :key="item.drag_key"
         class="drag-movable-item"
         :style="{
           height: `${item.height}px`,
