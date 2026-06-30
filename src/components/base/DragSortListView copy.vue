@@ -156,11 +156,11 @@ function calculateItemSize() {
 
 function initList(list: any[]) {
   // console.log(list)
-  // showList.value = list.map((item) => {
-  //   return initItem(item)
-  // })
-  // console.log(showList.value, 'showList')
-  // return
+  showList.value = list.map((item) => {
+    return initItem(item)
+  })
+  console.log(showList.value, 'showList')
+  return
 
   const oldItemMap = new Map(showList.value.map(item => [item.drag_id, item]))
   const newItemIds = new Set(list.map(item => item[props.keyProp]))
@@ -212,7 +212,6 @@ function initList(list: any[]) {
       else {
         showList.value.push(newItem)
       }
-      newItem.sort = i
     }
   }
   console.log(showList.value, 'showList.value')
@@ -231,14 +230,13 @@ function initItem(item: any) {
 
 function updatePosition() {
   showList.value.map((item, index) => {
-    const y = (item.sort) * (item.height + props.gap)
+    const y = getPosition(index, showList.value)
     // console.log(item.name, y, 'y')
     item.y = y
     return item
   })
 
   cloneList.value = lodash.cloneDeep(showList.value)
-  cloneList.value = cloneList.value.sort((a, b) => a.sort - b.sort)
   // console.log(showList.value, cloneList.value, 'initPosition')
 
   const last = showList.value[showList.value.length - 1]

@@ -1,6 +1,7 @@
 import type { Dialog } from '@wot-ui/ui/components/wd-dialog/types'
 import type { Toast } from '@wot-ui/ui/components/wd-toast/types'
 import type { ILedger, IUpdateLedger, IUpdateLedgerColor } from '@/api/types/ledger'
+import lodash from 'lodash'
 import { defineStore } from 'pinia'
 import {
   createLedger as fetchCreateLedger,
@@ -84,8 +85,13 @@ export const useLedgerStore = defineStore(
      * @param ledgers
      */
     const sortLedger = (ledgers: ILedger[]) => {
-      state.ledgers = ledgers
+      // state.ledgers = ledgers
       const sorts = ledgers.map((item, index) => {
+        const ledger = state.ledgers.find(l => l.ledgerId === item.ledgerId)
+        if (ledger) {
+          ledger.sort = index
+        }
+
         return {
           ledgerId: item.ledgerId,
           sort: index,
@@ -97,13 +103,15 @@ export const useLedgerStore = defineStore(
     }
 
     const updateLedger = async (update: IUpdateLedger) => {
-      await fetchdaUpteLedger(update)
-      state.ledgers.forEach((item, index, arr) => {
+      const temp = state.ledgers.map((item) => {
         if (item.ledgerId === update.ledgerId) {
-          arr[index].name = update.name
-          arr[index].color = update.color
+          item.name = update.name
+          item.color = update.color
         }
+        return item
       })
+      state.ledgers = lodash.cloneDeep(temp)
+      await fetchdaUpteLedger(update)
     }
 
     // 修改账本颜色
