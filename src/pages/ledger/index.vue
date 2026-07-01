@@ -78,6 +78,7 @@ function handleLedgerActionItemTap(action: string) {
       beforeConfirm: () => {
         if (checkName(editLedger.value.name))
           return false
+        return true
       },
     }).then(async () => {
       await ledgerStore.updateLedger({ ledgerId, name: editLedger.value.name, color: editLedger.value.color })
@@ -103,6 +104,7 @@ function handleCreateTap() {
     beforeConfirm: () => {
       if (checkName(editLedger.value.name))
         return false
+      return true
     },
   }).then(async () => {
     const color = editLedger.value.randomColor ? getColorByName(editLedger.value.name) : editLedger.value.color

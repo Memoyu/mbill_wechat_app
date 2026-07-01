@@ -170,26 +170,50 @@ function calculateItemSize() {
       if (top) {
         minHeight = top.height!
       }
+
+      // showList.value.map((item) => {
+      //   // 更新列表项坐标数据
+
+      //   return item
+      // })
+
       setTimeout(() => {
-        uni.createSelectorQuery().in(proxy).selectAll('.dragListSlotBox').boundingClientRect((boxs: any) => {
-          if (!boxs)
-            return
-
-          showList.value.map((item) => {
-            const index = boxs.findIndex((r: { id: string }) => r.id === `#drag-content-${item.drag_id}`)
-            item.minHeight = minHeight
-            item.maxHeight = boxs[index].height
+        for (let i = 0; i < showList.value.length; i++) {
+          const item = showList.value[i]
+          item.minHeight = minHeight
+          updateItemMaxHeight(item, () => {
             item.height = getItemHeight(item.drag_id)
-            console.log(item.minHeight, item.maxHeight, item.height, 'item height')
-
-            // 更新列表项坐标数据
             item.y = getPosition(item.drag_id)
-            return item
+            // 47.78125 263.78125 47.78125 0 "item height"
+            updateAreaHeight()
+            console.log(item.minHeight, item.maxHeight, item.height, item.y, 'item height')
           })
-          // console.log(showList.value, sortList.value, 'calculateItemSize')
-          updateAreaHeight()
-        }).exec()
-      }, 0)
+        }
+      }, 1000)
+      // TODO 此处仅用作测试
+
+      // console.log(showList.value, sortList.value, 'calculateItemSize')
+
+      // setTimeout(() => {
+      //   uni.createSelectorQuery().in(proxy).selectAll('.dragListSlotBox').boundingClientRect((boxs: any) => {
+      //     if (!boxs)
+      //       return
+
+      //     showList.value.map((item) => {
+      //       const index = boxs.findIndex((r: { id: string }) => r.id === `#drag-content-${item.drag_id}`)
+      //       item.minHeight = minHeight
+      //       item.maxHeight = boxs[index].height
+      //       item.height = getItemHeight(item.drag_id)
+      //       console.log(item.minHeight, item.maxHeight, item.height, 'item height')
+
+      //       // 更新列表项坐标数据
+      //       item.y = getPosition(item.drag_id)
+      //       return item
+      //     })
+      //     // console.log(showList.value, sortList.value, 'calculateItemSize')
+      //     updateAreaHeight()
+      //   }).exec()
+      // }, 0)
     }).exec()
   }, 0)
 }
@@ -287,16 +311,21 @@ function handleSortChange(e: any) {
 function setExpand(item: DragSortShowItem) {
   item.expand = !(item.expand ?? false)
 
-  // uni.createSelectorQuery().in(proxy).selectAll('.dragListSlot').boundingClientRect((res: any) => {
-  //   // console.log(res)
-  //   if (!res)
-  //     return
-  //   const index = res.findIndex((r: { id: string }) => r.id === `#drag-content-${item.drag_id}`)
-  //   item.maxHeight = res[index].height
-  //   // console.log(res[index], 'item')
-  //   item.height = getItemHeight(item.drag_id)
-  //   updateExpandPosition(item.expand)
-  // }).exec()
+  updateItemMaxHeight(item, () => {
+    // console.log(res[index], 'item')
+    item.height = getItemHeight(item.drag_id)
+    updateExpandPosition(item.expand)
+  })
+}
+
+function updateItemMaxHeight(item: DragSortShowItem, invoke?: () => void) {
+  uni.createSelectorQuery().in(proxy).select(`#dragContent${item.drag_id}`).boundingClientRect((res: any) => {
+    console.log(res, 'updateItemMaxHeight')
+    if (!res)
+      return
+    item.maxHeight = res.height
+    invoke && invoke()
+  }).exec()
 }
 
 /**
@@ -459,7 +488,7 @@ function getListIndex(dragId: string, list = sortList.value) {
         @touchmove="handleTouchMove"
         @touchend.stop="handleTouchEnd"
       >
-        <view :id="`#drag-content-${item.drag_id}`" class="dragListSlotBox">
+        <view :id="`dragContent${item.drag_id}`" class="dragListSlotBox">
           <view class="dragListSlotTitle">
             <slot name="title" :list-item="{ ...item }" />
           </view>

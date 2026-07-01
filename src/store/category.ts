@@ -35,19 +35,20 @@ export const useCategoryStore = defineStore(
       const category = await fetchCreateCategory({ name, icon, type, parentId })
       category.childs = []
       let list = state.expends
-      if (type === BillTypeEnum.Expend) {
-        state.expends.push(category)
-      }
-      else {
-        state.incomes.push(category)
+      if (type === BillTypeEnum.Income) {
         list = state.incomes
       }
       // 添加子分类到指定父类下
       if (parentId) {
         const parent = list.find(item => item.categoryId === parentId)
         if (parent) {
+          parent.childs = parent.childs || []
           parent.childs.push(category)
         }
+      }
+      else {
+        // 添加到根分类下
+        list.push(category)
       }
     }
 

@@ -324,7 +324,7 @@ function getListIndex(dragId: string, list = sortList.value) {
           zIndex: currentId === item.drag_id ? 10 : 1,
         }"
         :class="[currentId === item.drag_id ? 'drag-movable-item--active' : '']"
-        animation
+        :animation="animation"
         :x="item.x"
         :y="item.y"
         direction="all"
