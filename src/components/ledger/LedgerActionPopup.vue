@@ -104,7 +104,7 @@ function handleChangeColorClick() {
 
 function handleShareClick() {
   // console.log('handleShareClick')
-  initQrcode(props.ledger?.ledgerId ?? '')
+  showQrcode(props.ledger?.ledgerId ?? '')
 }
 
 function handleMigrateClick() {
@@ -125,7 +125,7 @@ function handleDeleteClick() {
  * 初始化二维码
  * @param content 二维码内容
  */
-function initQrcode(content: string | number) {
+function showQrcode(content: string | number) {
   // 转换尺寸
   const size = 240
   // 获取uQRCode实例

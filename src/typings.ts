@@ -1,11 +1,20 @@
 export const BillOptions = ['支出', '收入']
 
 // 枚举定义
+
+/**
+ * 账单类型枚举
+ * 0 支出，1 收入
+ */
 export enum BillTypeEnum {
   Expend = 0,
   Income = 1,
 }
 
+/**
+ * 账单方式枚举
+ * 0 手动，1 自动
+ */
 export enum BillWayEnum {
   Manual = 0,
   Auto = 1,

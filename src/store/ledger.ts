@@ -33,6 +33,9 @@ export const useLedgerStore = defineStore(
     const ledgerPickerStore = useLedgerPickerStore()
     const state = reactive({ ...initState })
 
+    /**
+     * 加载账本数据
+     */
     const loadLedgers = async () => {
       state.ledgers = await getLedgerList()
       // 在没有选中任何账本时，默认选中第一个账本
@@ -40,11 +43,20 @@ export const useLedgerStore = defineStore(
         ledgerPickerStore.toggleLedgerSelection(state.ledgers[0].ledgerId)
     }
 
+    /**
+     * 创建账本
+     * @param name 账本名称
+     * @param color 颜色
+     */
     const createLedger = async (name: string, color: number) => {
       const ledger = await fetchCreateLedger({ name, color })
       state.ledgers.push(ledger)
     }
 
+    /**
+     * 加入账本
+     * @param ledgerId 账本id
+     */
     const joinLedger = (dialog: Dialog, toast: Toast, ledgerId: string) => {
       getLedger(ledgerId).then((ledger) => {
         dialog
@@ -55,23 +67,20 @@ export const useLedgerStore = defineStore(
             actionLayout: 'vertical',
             confirmButtonText: '确认加入',
             cancelButtonText: '取消',
-            beforeConfirm: () => {
-              toast.loading('加入中...')
-              return new Promise((resolve) => {
-                fetchJoinLedger(ledger.ledgerId).then((res) => {
-                  toast.success('加入成功')
-                  state.ledgers.push(res)
-                  resolve(true)
-                }).catch(() => {
-                  resolve(false)
-                }).finally (() => {
-                  toast.close()
-                })
-              })
-            },
           })
           .then(() => {
-            console.log('支付成功')
+            toast.loading('加入中...')
+            return new Promise((resolve) => {
+              fetchJoinLedger(ledger.ledgerId).then((res) => {
+                toast.success('加入成功')
+                state.ledgers.push(res)
+                resolve(true)
+              }).catch(() => {
+                resolve(false)
+              }).finally (() => {
+                toast.close()
+              })
+            })
           })
           .catch(() => {
           })
@@ -82,26 +91,24 @@ export const useLedgerStore = defineStore(
 
     /**
      * 排序账本
-     * @param ledgers
+     * @param ledgers 排序后的账本
      */
     const sortLedger = (ledgers: ILedger[]) => {
-      // state.ledgers = ledgers
       const sorts = ledgers.map((item, index) => {
-        const ledger = state.ledgers.find(l => l.ledgerId === item.ledgerId)
-        if (ledger) {
-          ledger.sort = index
-        }
-
         return {
           ledgerId: item.ledgerId,
           sort: index,
         }
       })
       fetchSortLedger(sorts).then(() => {
-
+        state.ledgers = ledgers
       })
     }
 
+    /**
+     * 更新账本
+     * @param update 更新内容
+     */
     const updateLedger = async (update: IUpdateLedger) => {
       const temp = state.ledgers.map((item) => {
         if (item.ledgerId === update.ledgerId) {
@@ -126,6 +133,10 @@ export const useLedgerStore = defineStore(
       await fetchdaUpteLedgerColor(ledgers)
     }
 
+    /**
+     * 删除账本
+     * @param ledgerId 账本id
+     */
     const deleteLedger = (ledgerId: string) => {
       fetchDeleteLedger(ledgerId).then(() => {
         const index = state.ledgers.findIndex(l => l.ledgerId === ledgerId)
@@ -133,7 +144,10 @@ export const useLedgerStore = defineStore(
       })
     }
 
-    // 获取账本颜色
+    /**
+     * 获取账本颜色
+     * @param ledgerId 账本id
+     */
     const getLedgerColor = (ledgerId: string) => {
       const ledger = state.ledgers.find(l => l.ledgerId === ledgerId)
       if (!ledger) {

@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import type { ICategory } from '@/api/types/category'
 import type { ActionItem } from '@/typings'
+import { useDialog, useToast } from '@wot-ui/ui'
 import { useCategoryStore } from '@/store'
+import { BillTypeEnum } from '@/typings'
 import { systemInfo } from '@/utils/systemInfo'
 
 definePage({
@@ -10,8 +12,6 @@ definePage({
     navigationBarTitleText: '分类管理',
   },
 })
-
-const categoryStore = useCategoryStore()
 const actions: ActionItem[] = [
   {
     title: '创建',
@@ -19,9 +19,20 @@ const actions: ActionItem[] = [
     action: handleCreateTap,
   },
 ]
+
+const dialog = useDialog()
+const toast = useToast()
+const categoryStore = useCategoryStore()
+
 const show = ref(false)
 const scrollHeight = ref(300)
-const categories = ref(categoryStore.expends)
+const type = ref(BillTypeEnum.Expend)
+const expends = computed(() => {
+  return categoryStore.expends
+})
+const incomes = computed(() => {
+  return categoryStore.incomes
+})
 
 onMounted(() => {
   nextTick(() => {
@@ -33,7 +44,26 @@ onMounted(() => {
 
 function handleCreateTap() {
   console.log('handleCreateTap')
-  // categories.value = categoryStore.categories
+  dialog
+    .prompt({
+      title: '新增',
+      inputProps: {
+        placeholder: '分类名称',
+      },
+      inputPattern: /.+/,
+      inputError: '输入内容不能为空',
+    })
+    .then((res) => {
+      categoryStore.createCategory(res.value as string, 'icon', type.value).then((res) => {
+        toast.success('创建成功')
+      }).catch((err) => {
+        console.log('err', err)
+        toast.error('创建失败')
+      })
+    })
+    .catch((err) => {
+      console.log(err, 'ee')
+    })
 }
 
 function handleSortChange(list: ICategory[]) {
@@ -42,6 +72,31 @@ function handleSortChange(list: ICategory[]) {
 
 function handleChildSortChange(list: ICategory[], parent: any) {
   console.log('handleChildSortChange', list, parent as ICategory)
+}
+
+function handleChildAdd(parent: any) {
+  parent = parent as ICategory
+  console.log('handleChildAdd', parent)
+  dialog
+    .prompt({
+      title: `${parent.name} 下新增`,
+      inputProps: {
+        placeholder: '分类名称',
+      },
+      inputPattern: /.+/,
+      inputError: '输入内容不能为空',
+    })
+    .then((res) => {
+      categoryStore.createCategory(res.value as string, 'icon', type.value, parent.categoryId).then((res) => {
+        toast.success('创建成功')
+      }).catch((err) => {
+        console.log('err', err)
+        toast.error('创建失败')
+      })
+    })
+    .catch((err) => {
+      console.log(err, 'ee')
+    })
 }
 
 function handleEditItemTap(item: any) {
@@ -55,11 +110,11 @@ function handleEditItemTap(item: any) {
   <nav-bar id="TOP_NAVBAR" :actions="actions" title="分类管理" />
   <view class="w-screen">
     <view class="p-2">
-      <drag-sort-list-view expand :gap="8" :list="categories" key-prop="categoryId" :height="scrollHeight" @change="handleSortChange">
+      <drag-sort-list-view expand :gap="8" :list="expends" key-prop="categoryId" :height="scrollHeight" @change="handleSortChange">
         <template #title="{ listItem }">
           <view class="category-title-box">
             <view class="flex items-center justify-between">
-              <view class="mr-3">
+              <view class="mr-3 w-10">
                 <wd-icon v-if="listItem.expand" name="caret-down" />
                 <wd-icon v-else name="caret-right" />
               </view>
@@ -74,8 +129,12 @@ function handleEditItemTap(item: any) {
           </view>
         </template>
         <template #content="{ listItem }">
-          <view v-if="listItem.childs && listItem.childs.length > 0" class="p-2">
-            <drag-sort-grid-view :gap="8" :column="4" :list="listItem.childs" key-prop="categoryId" @change="list => handleChildSortChange(list, listItem)">
+          <view class="p-2">
+            <drag-sort-grid-view
+              :gap="8" :column="4" :list="listItem.childs" key-prop="categoryId"
+              @change="list => handleChildSortChange(list, listItem)"
+              @add="handleChildAdd(listItem)"
+            >
               <template #content="{ gridItem }">
                 <view class="flex flex-col items-center p-2">
                   <wd-img :width="30" round :height="30" :src="gridItem.icon" />

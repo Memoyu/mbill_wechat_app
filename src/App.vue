@@ -1,17 +1,21 @@
 <script setup lang="ts">
 import { onHide, onLaunch, onShow } from '@dcloudio/uni-app'
 import { navigateToInterceptor } from '@/router/interceptor'
-import { useLedgerStore, useTokenStore } from './store'
+import { useAccountStore, useCategoryStore, useLedgerStore, useTokenStore } from './store'
 
 const tokenStore = useTokenStore()
 const ledgerStore = useLedgerStore()
+const categoryStore = useCategoryStore()
+const accountStore = useAccountStore()
 
 onLaunch((options) => {
   // console.log('App.vue onLaunch', options)
   // 微信登录
   tokenStore.wxLogin().then(() => {
-    // 初始化账本数据
+    // 初始化数据
     ledgerStore.loadLedgers()
+    categoryStore.loadCategories()
+    accountStore.loadAccounts()
   })
 })
 onShow((options) => {

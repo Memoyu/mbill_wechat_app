@@ -73,13 +73,17 @@ function handleLedgerActionItemTap(action: string) {
       name: currentLedger.value.name,
       color: currentLedger.value.color,
     }
-    editDialog.confirm({ title: currentLedger.value.name })
-      .then(async () => {
-        await ledgerStore.updateLedger({ ledgerId, name: editLedger.value.name, color: editLedger.value.color })
-      })
-      .catch(() => {
-        // console.log('点击了取消')
-      })
+    editDialog.confirm({
+      title: currentLedger.value.name,
+      beforeConfirm: () => {
+        if (checkName(editLedger.value.name))
+          return false
+      },
+    }).then(async () => {
+      await ledgerStore.updateLedger({ ledgerId, name: editLedger.value.name, color: editLedger.value.color })
+    }).catch(() => {
+      // console.log('点击了取消')
+    })
   }
 }
 
@@ -94,14 +98,26 @@ function handleCreateTap() {
     randomColor: true,
   }
 
-  editDialog.confirm({ title: '新增' })
-    .then(async () => {
-      const color = editLedger.value.randomColor ? getColorByName(editLedger.value.name) : editLedger.value.color
-      await ledgerStore.createLedger(editLedger.value.name, color)
-    })
-    .catch(() => {
-      // console.log('点击了取消')
-    })
+  editDialog.confirm({
+    title: '新增',
+    beforeConfirm: () => {
+      if (checkName(editLedger.value.name))
+        return false
+    },
+  }).then(async () => {
+    const color = editLedger.value.randomColor ? getColorByName(editLedger.value.name) : editLedger.value.color
+    await ledgerStore.createLedger(editLedger.value.name, color)
+  }).catch(() => {
+    // console.log('点击了取消')
+  })
+}
+
+function checkName(name: string) {
+  if (!name || name.length < 1) {
+    toast.error('账本名称不能为空')
+    return false
+  }
+  return true
 }
 
 /**
@@ -208,7 +224,7 @@ function handleSortChange(list: ILedger[]) {
 
   <!-- 编辑账本 -->
   <wd-dialog selector="ledger-edit-dialog">
-    <wd-input v-model="editLedger.name" type="text" placeholder="账簿名称" custom-class="custom-input" />
+    <wd-input v-model="editLedger.name" type="text" placeholder="账本名称" custom-class="custom-input" />
     <view v-if="editLedger.isCreate">
       <view class="mt-2">
         <wd-checkbox v-model="editLedger.randomColor">

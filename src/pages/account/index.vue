@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { IAccount } from '@/api/types/account'
 import type { ActionItem } from '@/typings'
+import { useDialog, useToast } from '@wot-ui/ui'
 import { useAccountStore } from '@/store'
 import { systemInfo } from '@/utils/systemInfo'
 
@@ -11,7 +12,6 @@ definePage({
   },
 })
 
-const accountStore = useAccountStore()
 const actions: ActionItem[] = [
   {
     title: '创建',
@@ -19,9 +19,14 @@ const actions: ActionItem[] = [
     action: handleCreateTap,
   },
 ]
+
+const dialog = useDialog()
+const toast = useToast()
+const accountStore = useAccountStore()
+
 const show = ref(false)
 const scrollHeight = ref(300)
-const accounts = ref(accountStore.accounts)
+const accounts = computed(() => accountStore.accounts)
 
 onMounted(() => {
   nextTick(() => {
@@ -32,7 +37,22 @@ onMounted(() => {
 })
 
 function handleCreateTap() {
-  console.log('handleCreateTap')
+  // console.log('handleCreateTap')
+  dialog
+    .prompt({
+      title: '新增',
+      inputProps: {
+        placeholder: '分类名称',
+      },
+      // inputPattern: /.+/,
+      // inputError: '输入内容不能为空',
+    })
+    .then((resp) => {
+
+    })
+    .catch(() => {
+      console.log('ee')
+    })
 }
 
 function handleSortChange(list: IAccount[]) {

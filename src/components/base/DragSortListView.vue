@@ -1,15 +1,23 @@
+/**
+ * 拖拽排序列表
+ * showList 作为渲染的数据列表，主要包含坐标、高度、展开状态等展示相关属性
+  * sortList 作为排序后的数据列表，主要用做顺序的基准，更新后不触发渲染
+ */
 <script lang="ts" setup>
 import { useTouch } from '@wot-ui/ui/composables/useTouch'
-import lodash from 'lodash'
 import { omit } from '@/utils'
 
-interface DragListItem {
+interface DragSortBaseItem {
   [key: string]: any
+  drag_id: string
+}
+
+interface DragSortShowItem extends DragSortBaseItem {
   x: number
   y: number
-  drag_id: string
-  width: number
   height: number
+  minHeight: number
+  maxHeight: number
   expand: boolean
 }
 
@@ -35,7 +43,6 @@ const props = withDefaults(defineProps<{
 })
 const emit = defineEmits(['change'])
 const COM_INTERNAL_ARGS = ['x', 'y', 'drag_id', 'height', 'expand']
-
 const { proxy } = getCurrentInstance() as any
 
 const { vibrate } = useVibrate()
@@ -47,8 +54,8 @@ const areaHeight = ref(400)
 
 const sorting = ref(false)
 const sortChanged = ref(false)
-const showList = ref<DragListItem[]>([])
-const cloneList = ref<DragListItem[]>([])
+const showList = ref<DragSortShowItem[]>([])
+const sortList = ref<DragSortBaseItem[]>([])
 const targetId = ref('')
 const currentId = ref('')
 const animation = ref(false)
@@ -65,63 +72,6 @@ const computedAreaHeight = computed(() => {
   return height
 })
 
-// 展开/收起当前项
-function setExpand(item: DragListItem) {
-  item.expand = !(item.expand ?? false)
-  setItemHeight(item)
-}
-
-function setItemHeight(item: DragListItem) {
-  uni.createSelectorQuery().in(proxy).selectAll('.dragListSlot').boundingClientRect((res: any) => {
-    // console.log(res)
-    if (!res)
-      return
-    const index = res.findIndex((r: { id: string }) => r.id === `#drag-content-${item.drag_id}`)
-    // console.log(res[index], 'item')
-    item.height = item.expand ? res[index].height : initHeights[item.drag_id]
-    const i = getListIndex(item.drag_id)
-    cloneList.value[i].height = item.height
-    // console.log(item)
-    updateExpandPosition(item.expand)
-  }).exec()
-}
-
-function updateExpandPosition(expand: boolean) {
-  // console.log(list)
-  cloneList.value.map((item, index) => {
-    const y = getPosition(index)
-    // console.log(y, 'y')
-    item.y = y
-    return item
-  })
-
-  showList.value.map((item) => {
-    const index = getListIndex(item.drag_id)
-    const y = cloneList.value[index].y
-    item.y = y
-    return item
-  })
-
-  // 根据是否展开决定
-  if (expand) {
-    const last = cloneList.value[cloneList.value.length - 1]
-    areaHeight.value = last.y + getItemHeight(last)
-  }
-  else {
-    // 延迟执行，等待收起动画结束，不然动item会卡位置
-    setTimeout(() => {
-      const last = cloneList.value[cloneList.value.length - 1]
-      areaHeight.value = last.y + getItemHeight(last)
-      // console.log('收起')
-    }, 500)
-  }
-}
-
-// 获取当前项的高度
-function getItemHeight(item: { [x: string]: any, x: number, y: number, drag_id: string, width: number, height: number, expand: boolean }) {
-  return item.height
-}
-
 watch(() => props.list, (newList) => {
   // console.log(newList, 'list change')
   initList(newList)
@@ -132,35 +82,18 @@ watch(() => props.height, (h) => {
   scrollHeight.value = h
 })
 
-function calculateItemSize() {
-  // 不加setTimeout算出来的宽度会不准，不明觉厉
-  setTimeout(() => {
-    const list = showList.value;
-    // 获取原始项高度
-    (props.expand
-      ? uni.createSelectorQuery().in(proxy).selectAll('.dragSlotTitle')
-      : uni.createSelectorQuery().in(proxy).selectAll('.dragSlotContent')).boundingClientRect((res: any) => {
-      // console.log(res, 'init height')
-      if (res) {
-      // 初始赋值选项的最高、最低高度
-        for (let i = 0; i < res.length; i++) {
-          initHeights[list[i].drag_id] = res[i].height
-          list[i].height = res[i].height!
-        }
-
-        updatePosition()
-      }
-    }).exec()
-  }, 0)
-}
-
+/**
+ * 初始化列表
+ * 对传入的列表数据与showList做差异更新
+ * @param list 列表数据
+ */
 function initList(list: any[]) {
-  // console.log(list)
-  // showList.value = list.map((item) => {
-  //   return initItem(item)
-  // })
-  // console.log(showList.value, 'showList')
-  // return
+  sortList.value = list.map((item) => {
+    return {
+      ...item,
+      drag_id: item[props.keyProp],
+    } as DragSortBaseItem
+  })
 
   const oldItemMap = new Map(showList.value.map(item => [item.drag_id, item]))
   const newItemIds = new Set(list.map(item => item[props.keyProp]))
@@ -188,74 +121,87 @@ function initList(list: any[]) {
         height: oldItem.height,
         expand: oldItem.expand ?? item.expand ?? false,
       })
-
-      // 确保项目在正确位置
-      if (i < showList.value.length && showList.value[i].drag_id !== dragId) {
-        // 移动到正确位置
-        const currentIndex = showList.value.findIndex(it => it.drag_id === dragId)
-        if (currentIndex !== -1) {
-          const removed = showList.value.splice(currentIndex, 1)[0]
-          showList.value.splice(i, 0, removed)
-        }
-      }
-      else if (i >= showList.value.length) {
-        // 如果数组长度不够，在末尾添加
-        showList.value.push(oldItem)
-      }
+      console.log(oldItem, 'oldItem')
     }
     else {
-      // 添加新项目
-      const newItem = initItem(item)
+      const newItem = initShowItem(item)
       if (i < showList.value.length) {
         showList.value.splice(i, 0, newItem)
       }
       else {
         showList.value.push(newItem)
       }
-      newItem.sort = i
     }
   }
-  console.log(showList.value, 'showList.value')
+  // console.log(showList.value, 'showList.value')
 }
 
-function initItem(item: any) {
+/**
+ * 初始化列表项
+ * @param item 初始化列表项
+ */
+function initShowItem(item: any) {
   // console.log(item)
   return {
     ...item,
-    expand: item.expand ?? false,
     y: 0,
     x: 0,
+    height: 0,
+    minHeight: 0,
+    maxHeight: 0,
     drag_id: item[props.keyProp],
-  }
+    expand: item.expand ?? false,
+  } as DragSortShowItem
 }
 
-function updatePosition() {
-  showList.value.map((item, index) => {
-    const y = (item.sort) * (item.height + props.gap)
-    // console.log(item.name, y, 'y')
-    item.y = y
-    return item
-  })
+/**
+ * 初始化列表项的尺寸
+ */
+function calculateItemSize() {
+  // 不加setTimeout算出来的宽度会不准，不明觉厉
+  setTimeout(() => {
+    let minHeight = 100;
+    // 获取原始项高度
+    (props.expand
+      ? uni.createSelectorQuery().in(proxy).select('.dragListSlotTitle')
+      : uni.createSelectorQuery().in(proxy).select('.dragListSlotContent')).boundingClientRect((top: any) => {
+      // console.log(res, 'init height')
 
-  cloneList.value = lodash.cloneDeep(showList.value)
-  cloneList.value = cloneList.value.sort((a, b) => a.sort - b.sort)
-  // console.log(showList.value, cloneList.value, 'initPosition')
+      if (top) {
+        minHeight = top.height!
+      }
+      setTimeout(() => {
+        uni.createSelectorQuery().in(proxy).selectAll('.dragListSlotBox').boundingClientRect((boxs: any) => {
+          if (!boxs)
+            return
 
-  const last = showList.value[showList.value.length - 1]
-  if (last) {
-  // console.log(last, 'last')
-    areaHeight.value = last.y + getItemHeight(last)
-  }
+          showList.value.map((item) => {
+            const index = boxs.findIndex((r: { id: string }) => r.id === `#drag-content-${item.drag_id}`)
+            item.minHeight = minHeight
+            item.maxHeight = boxs[index].height
+            item.height = getItemHeight(item.drag_id)
+            console.log(item.minHeight, item.maxHeight, item.height, 'item height')
+
+            // 更新列表项坐标数据
+            item.y = getPosition(item.drag_id)
+            return item
+          })
+          // console.log(showList.value, sortList.value, 'calculateItemSize')
+          updateAreaHeight()
+        }).exec()
+      }, 0)
+    }).exec()
+  }, 0)
 }
 
-function handleTap(item: DragListItem) {
+function handleTap(item: DragSortShowItem) {
   if (!props.expand)
     return
   // console.log('组件展开', item)
   setExpand(item)
 }
 
-function handleDragStart(item: { drag_id: string }) {
+function handleDragStart(item: DragSortShowItem) {
   // 控制动画启用，避免重新加载数据时页面动画难看
   animation.value = true
   sorting.value = true
@@ -282,35 +228,9 @@ function handleTouchEnd() {
 
   // console.log('touch end', showList.value)
   sorting.value = false
-  // if (targetId.value !== '' && targetId.value !== currentId.value) {
-  //   cloneList.value.map((item, index) => {
-  //     const y = getPosition(index)
-  //     const i = getListIndex(item.drag_id, showList.value)
-  //     item.y = y
-  //     showList.value[i].y = y
-  //     return item
-  //   })
-  //   console.log('调换', currentId.value, targetId.value, cloneList.value, showList.value)
-  // }
-  // else {
-  //   const cloneIndex = getListIndex(currentId.value)
-  //   const y = getPosition(cloneIndex)
-
-  //   // 获取showList item，加偏移量
-  //   const showIndex = getListIndex(currentId.value, showList.value)
-  //   const item = showList.value[showIndex]
-  //   item.y += 0.001
-
-  //   // DOM 更新循环结束之后执行延迟回调，恢复原位
-  //   nextTick(() => {
-  //     item.y = y
-  //   })
-  //   console.log('偏移', currentId.value, targetId.value, cloneList.value, showList.value)
-  // }
 
   // 获取showList item，加偏移量
-  const cloneIndex = getListIndex(currentId.value)
-  const y = getPosition(cloneIndex)
+  const y = getPosition(currentId.value)
   const showIndex = getListIndex(currentId.value, showList.value)
   const item = showList.value[showIndex]
   item.y += 0.001
@@ -318,16 +238,15 @@ function handleTouchEnd() {
   // DOM 更新循环结束之后执行延迟回调，恢复原位
   nextTick(() => {
     item.y = y
-  })
-
-  // console.log('偏移', currentId.value, targetId.value, cloneList.value, showList.value)
-  setTimeout(() => {
     if (sortChanged.value) {
-      const endList = cloneList.value.map(item => omit(item, COM_INTERNAL_ARGS))
+      const endList = sortList.value.map(item => omit(item, COM_INTERNAL_ARGS))
       emit('change', endList)
       sortChanged.value = false
     }
-  }, 1000)
+  })
+
+  // console.log('偏移', currentId.value, targetId.value, sortList.value, showList.value)
+
   currentId.value = ''
   targetId.value = ''
 }
@@ -342,7 +261,7 @@ function handleSortChange(e: any) {
   // console.log(targetId.value, currentId.value)
   if (targetId.value !== currentId.value && currentId.value !== '' && targetId.value !== '') {
     // console.log(targetIndex.value, 'target')
-    const newList = cloneList.value
+    const newList = sortList.value
     const targetIndex = getListIndex(targetId.value)
     const currentIndex = getListIndex(currentId.value)
     const elementToMove = newList.splice(currentIndex, 1)[0]
@@ -351,10 +270,8 @@ function handleSortChange(e: any) {
     showList.value.forEach((item) => {
       // 当前项通过手动拖动已经到了指定位置，因此需要重新排序其他项的高度
       if (item.drag_id !== elementToMove.drag_id) {
-        // 找到所有项在新数组中的位置
-        const newIndex = getListIndex(item.drag_id, newList)
         // 根据新数组的位置重新置y值
-        item.y = getPosition(newIndex, newList)
+        item.y = getPosition(item.drag_id, newList)
         // console.log(item.y)
       }
     })
@@ -363,30 +280,75 @@ function handleSortChange(e: any) {
   }
 }
 
-// 获取当前的位置
-function getPosition(index: number, list = cloneList.value) {
-  // 通过计算重新算换 偏移单位。
-  let y = 0
-  // 如果是 单项数据时，不需要通过getItemHeight来排，而是需要根据每个item的高度自动填充
-  for (let i = 0; i < list.length; i++) {
-    if (index === i)
-      break
-    y += list[i].height + props.gap
-  }
-  // console.log(y, 'y')
-  return y
+/**
+ * 设置当前项的展开状态
+ * @param item 当前项
+ */
+function setExpand(item: DragSortShowItem) {
+  item.expand = !(item.expand ?? false)
+
+  // uni.createSelectorQuery().in(proxy).selectAll('.dragListSlot').boundingClientRect((res: any) => {
+  //   // console.log(res)
+  //   if (!res)
+  //     return
+  //   const index = res.findIndex((r: { id: string }) => r.id === `#drag-content-${item.drag_id}`)
+  //   item.maxHeight = res[index].height
+  //   // console.log(res[index], 'item')
+  //   item.height = getItemHeight(item.drag_id)
+  //   updateExpandPosition(item.expand)
+  // }).exec()
 }
 
+/**
+ * 更新展开/收起项后所有项的位置
+ * @param expand 是否展开
+ */
+function updateExpandPosition(expand: boolean) {
+  showList.value.map((item) => {
+    item.y = getPosition(item.drag_id)
+    return item
+  })
+
+  // 根据是否展开决定
+  if (expand) {
+    updateAreaHeight()
+  }
+  else {
+    // 延迟执行，等待收起动画结束，不然动item会卡位置
+    setTimeout(() => {
+      updateAreaHeight()
+      // console.log('收起')
+    }, 500)
+  }
+}
+
+/**
+ * 更新可拖动区域的高度
+ */
+function updateAreaHeight() {
+  const last = sortList.value[sortList.value.length - 1]
+  if (last) {
+    const index = showList.value.findIndex(item => item.drag_id === last.drag_id)
+    const showItem = showList.value[index]
+    areaHeight.value = showItem.y + showItem.height
+  }
+  // console.log(last, areaHeight.value, 'areaHeight.value')
+}
+
+/**
+ * 获取与当前拖动项排序互换的目标项
+ * @param e 事件对象
+ * @returns 目标下标
+ */
 function getTargetIndex(e: { detail: { x: any, y: any } }) {
-  const list = cloneList.value
+  const list = sortList.value
   const { x, y } = e.detail
 
   let target = ''
   let currentH = 0
-  const currentIndex = getListIndex(currentId.value)
 
   for (let i = 0; i < list.length; i++) {
-    currentH += getItemHeight(list[i]) + props.gap
+    currentH += getItemHeight(list[i].drag_id) + props.gap
     if (dragDirection.value === 'down') {
       // 往下的情况下 ---- 当前活动的下标的高度( 也就是拖动的底部 )碰到下一个元素时； 赋值下标
       /*
@@ -394,9 +356,9 @@ function getTargetIndex(e: { detail: { x: any, y: any } }) {
           如果到了最后一个时，让下一个触发的高度变成当前拖动到指定位置的高度，避免照成到达了底部后下标位置有差异的问题；
         **/
       const item = list[i + 1]
-      const nextH = item ? getItemHeight(item) / 5 : currentH
+      const nextH = item ? getItemHeight(item.drag_id) / 5 : currentH
       // console.log(y, currentH, nextH, i, 'nextH')
-      if (currentH > (y + getItemHeight(list[currentIndex]) - nextH)) {
+      if (currentH > (y + getItemHeight(currentId.value) - nextH)) {
         target = list[i].drag_id
         break
       }
@@ -404,7 +366,7 @@ function getTargetIndex(e: { detail: { x: any, y: any } }) {
     else {
       // 往上拖拽时 ---- 当前活动的下标( 也就是拖动的顶部 )碰到上一个元素时； 赋值下标
       const item = list[i - 1]
-      const theH = item ? (getItemHeight(item) + props.gap) / 5 : 0 // 下一个下标的5/1；位置触发
+      const theH = item ? (getItemHeight(item.drag_id) + props.gap) / 5 : 0 // 下一个下标的5/1；位置触发
       if (currentH > (y + theH)) {
         target = list[i].drag_id
         break
@@ -416,9 +378,46 @@ function getTargetIndex(e: { detail: { x: any, y: any } }) {
   return target
 }
 
-// 获取当前项指定drag_id的索引
-function getListIndex(drag_id: string, list = cloneList.value) {
-  return list.findIndex(item => item.drag_id === drag_id)
+/**
+ * 获取指定项的坐标数据
+ * @param dragId 当前项的id
+ * @param list 列表
+ * @returns 索引
+ */
+function getPosition(dragId: string, list = sortList.value) {
+  // 先获取id在对应list下的索引
+  const index = getListIndex(dragId)
+  // 通过计算重新算换 偏移单位。
+  let y = 0
+  // 如果是 单项数据时，不需要通过getItemHeight来排，而是需要根据每个item的高度自动填充
+  for (let i = 0; i < list.length; i++) {
+    if (index === i)
+      break
+    y += getItemHeight(list[i].drag_id) + props.gap
+  }
+  // console.log(y, 'y')
+  return y
+}
+
+/**
+ * 获取指定项的高度
+ * @param dragId 当前项的id
+ * @returns 高度
+ */
+function getItemHeight(dragId: string) {
+  const index = showList.value.findIndex(item => item.drag_id === dragId)
+  const item = showList.value[index]
+  return item.expand ? item.maxHeight : item.minHeight
+}
+
+/**
+ * 获取指定项在指定列表中的索引
+ * @param dragId 当前项的id
+ * @param list 列表
+ * @returns 索引
+ */
+function getListIndex(dragId: string, list = sortList.value) {
+  return list.findIndex(item => item.drag_id === dragId)
 }
 </script>
 
@@ -460,11 +459,11 @@ function getListIndex(drag_id: string, list = cloneList.value) {
         @touchmove="handleTouchMove"
         @touchend.stop="handleTouchEnd"
       >
-        <view :id="`#drag-content-${item.drag_id}`" :key="item.drag_id" class="dragListSlot">
-          <view class="dragSlotTitle">
+        <view :id="`#drag-content-${item.drag_id}`" class="dragListSlotBox">
+          <view class="dragListSlotTitle">
             <slot name="title" :list-item="{ ...item }" />
           </view>
-          <view class="dragSlotContent">
+          <view class="dragListSlotContent">
             <slot name="content" :list-item="{ ...item }" />
           </view>
         </view>

@@ -2,13 +2,14 @@
 import lodash from 'lodash'
 import { omit, toFixed } from '@/utils'
 
-interface DragSortItem {
+interface DragSortBaseItem {
   [key: string]: any
+  drag_id: string
+}
+
+interface DragSortShowItem extends DragSortBaseItem {
   x: number
   y: number
-  drag_id: string
-  width: number
-  height: number
   disabled: boolean
 }
 
@@ -32,24 +33,22 @@ const props = withDefaults(defineProps<{
 })
 const emit = defineEmits(['change', 'add'])
 const ADD_DRAG_ID = 'add-item'
-const COM_INTERNAL_ARGS = ['x', 'y', 'drag_id', 'width', 'height', 'disabled']
+const COM_INTERNAL_ARGS = ['x', 'y', 'drag_id', 'disabled']
+const { proxy } = getCurrentInstance() as any
 
 const { vibrate } = useVibrate()
 
 const sorting = ref(false)
 const sortChanged = ref(false)
-const showList = ref<DragSortItem[]>([])
-const cloneList = ref<DragSortItem[]>([])
+const showList = ref<DragSortShowItem[]>([])
+const sortList = ref<DragSortBaseItem[]>([])
 const targetId = ref('')
 const currentId = ref('')
+const animation = ref(false)
 
 const areaHeight = ref(200)
 const itemWidth = ref(80)
 const itemHeight = ref(80)
-
-const animation = ref(false)
-
-const { proxy } = getCurrentInstance() as any
 
 const addIconSize = computed(() => {
   const size = toFixed(Math.min(itemWidth.value, itemHeight.value) * 0.42)
@@ -58,7 +57,17 @@ const addIconSize = computed(() => {
 
 watch(() => props.list, (newList) => {
   const list = lodash.cloneDeep(newList)
+  initList(list)
+  calculateItemSize()
+}, { immediate: true, deep: true })
 
+/**
+ * 初始化列表
+ * 对传入的列表数据与showList做差异更新
+ * @param list 列表数据
+ */
+function initList(list: any[]) {
+  // 添加固定项
   if (props.hasAdd) {
     list.push({
       [props.keyProp]: ADD_DRAG_ID,
@@ -66,59 +75,99 @@ watch(() => props.list, (newList) => {
     })
   }
 
-  initList(list)
-  calculateItemSize()
-}, { immediate: true })
+  sortList.value = list.map((item) => {
+    return {
+      ...item,
+      drag_id: item[props.keyProp],
+    } as DragSortBaseItem
+  })
 
-onMounted(() => {
-})
+  const oldItemMap = new Map(showList.value.map(item => [item.drag_id, item]))
+  const newItemIds = new Set(list.map(item => item[props.keyProp]))
 
+  // 清除不在新列表中的项目
+  for (let i = showList.value.length - 1; i >= 0; i--) {
+    const item = showList.value[i]
+    if (!newItemIds.has(item.drag_id)) {
+      showList.value.splice(i, 1)
+    }
+  }
+
+  // 更新现有项目和添加新项目
+  for (let i = 0; i < list.length; i++) {
+    const item = list[i]
+    const dragId = item[props.keyProp]
+    const oldItem = oldItemMap.get(dragId)
+
+    if (oldItem) {
+      // 更新现有项目的数据，保留内部状态
+      Object.assign(oldItem, item, {
+        drag_id: dragId,
+        x: oldItem.x,
+        y: oldItem.y,
+      })
+    }
+    else {
+      const newItem = initShowItem(item)
+      if (i < showList.value.length) {
+        showList.value.splice(i, 0, newItem)
+      }
+      else {
+        showList.value.push(newItem)
+      }
+    }
+  }
+  // console.log(showList.value, 'showList.value')
+}
+
+/**
+ * 初始化列表项
+ * @param item 初始化列表项
+ */
+function initShowItem(item: any) {
+  // console.log(item)
+  return {
+    ...item,
+    y: 0,
+    x: 0,
+    drag_id: item[props.keyProp],
+  } as DragSortShowItem
+}
+
+/**
+ * 初始化列表项的尺寸
+ */
 function calculateItemSize() {
   setTimeout(() => {
-    uni.createSelectorQuery().in(proxy).select('.dragSortBox').boundingClientRect((res: any) => {
-      if (res) {
-        // console.log(res)
-        uni.createSelectorQuery().in(proxy).select('.dragSlotContent').boundingClientRect((cts: any) => {
-          console.log(cts, 'dragSlotContent')
-          if (cts) {
-            itemHeight.value = cts.height
-          }
+    uni.createSelectorQuery().in(proxy).select('.dragSortBox').boundingClientRect((box: any) => {
+      if (!box)
+        return
+      // console.log(box, 'dragSortBox')
 
-          const w = res.width
-          itemWidth.value = toFixed((w - ((props.column - 1) * props.gap)) / props.column)
-          updatePosition()
-        }).exec()
-      }
+      uni.createSelectorQuery().in(proxy).select('.dragGridSlotContent').boundingClientRect((content: any) => {
+        console.log(content, 'dragGridSlotContent')
+        // 更新项的宽度和高度
+        if (content) {
+          itemHeight.value = content.height
+        }
+        itemWidth.value = toFixed((box.width - ((props.column - 1) * props.gap)) / props.column)
+
+        // 更新列表项坐标数据
+        showList.value.map((item) => {
+          const [x, y] = getPosition(item.drag_id)
+          item.x = x
+          item.y = y
+          return item
+        })
+
+        // 更新可拖动区域的高度
+        areaHeight.value = Math.ceil(showList.value.length / props.column) * (itemHeight.value + props.gap)
+      }).exec()
     }).exec()
   }, 0)
 }
 
-function initList(list: any[]) {
-  showList.value = list.map((item) => {
-    const data = {
-      ...item,
-      y: 0,
-      x: 0,
-      drag_id: item[props.keyProp],
-    }
-    return data
-  })
-  cloneList.value = lodash.cloneDeep(showList.value)
-  // console.log(showList.value, cloneList.value, 'initList')
-}
-
-function updatePosition() {
-  showList.value.map((item, index) => {
-    const [x, y] = getPosition(index, showList.value)
-    item.x = x
-    item.y = y
-    return item
-  })
-  cloneList.value = lodash.cloneDeep(showList.value)
-  areaHeight.value = Math.ceil(showList.value.length / props.column) * (itemHeight.value + props.gap)
-}
-
-function handleDragStart(item: DragSortItem) {
+function handleDragStart(item: DragSortShowItem) {
   // 控制动画启用，避免重新加载数据时页面动画难看
   animation.value = true
   currentId.value = item.drag_id
@@ -135,45 +184,31 @@ function handleTouchEnd() {
 
   // console.log('touch end', showList.value)
   sorting.value = false
-  if (targetId.value !== '' && targetId.value !== currentId.value) {
-    cloneList.value.map((item, index) => {
-      const [x, y] = getPosition(index)
-      const i = getListIndex(item.drag_id, showList.value)
-      item.x = x
-      item.y = y
-      showList.value[i].x = x
-      showList.value[i].y = y
-      return item
-    })
-    // console.log('调换', currentId.value, targetId.value, cloneList.value, showList.value)
-  }
-  else {
-    const cloneIndex = getListIndex(currentId.value)
-    const [x, y] = getPosition(cloneIndex)
 
-    // 获取showList item，加偏移量
-    const showIndex = getListIndex(currentId.value, showList.value)
-    const item = showList.value[showIndex]
-    item.x += 0.001
-    item.y += 0.001
+  const [x, y] = getPosition(currentId.value)
 
-    // DOM 更新循环结束之后执行延迟回调，恢复原位
-    nextTick(() => {
-      item.x = x
-      item.y = y
-    })
-    // console.log('偏移', currentId.value, targetId.value, cloneList.value, showList.value)
-  }
+  // 获取showList item，加偏移量
+  const showIndex = getListIndex(currentId.value, showList.value)
+  const item = showList.value[showIndex]
+  item.x += 0.001
+  item.y += 0.001
 
-  if (sortChanged.value) {
-    let endList = lodash.cloneDeep(cloneList.value)
-    // 去除添加项
-    if (props.hasAdd) {
-      endList = endList.slice(0, -1)
+  // DOM 更新循环结束之后执行延迟回调，恢复原位
+  nextTick(() => {
+    item.x = x
+    item.y = y
+
+    if (sortChanged.value) {
+      let endList = lodash.cloneDeep(sortList.value)
+      // 去除添加项
+      if (props.hasAdd) {
+        endList = endList.slice(0, -1)
+      }
+      emit('change', endList.map(item => omit(item, COM_INTERNAL_ARGS)))
+      sortChanged.value = false
     }
-    emit('change', endList.map(item => omit(item, COM_INTERNAL_ARGS)))
-    sortChanged.value = false
-  }
+  })
+  // console.log('偏移', currentId.value, targetId.value, sortList.value, showList.value)
 
   currentId.value = ''
   targetId.value = ''
@@ -193,7 +228,7 @@ function handleSortChange(e: any) {
     const targetItem = showList.value[targetIndex]
     if (!targetItem.disabled) {
     // console.log(targetIndex.value, 'target')
-      const newList = cloneList.value
+      const newList = sortList.value
       const currentIndex = getListIndex(currentId.value)
       const elementToMove = newList.splice(currentIndex, 1)[0]
       newList.splice(targetIndex, 0, elementToMove)
@@ -201,10 +236,8 @@ function handleSortChange(e: any) {
       showList.value.forEach((item) => {
       // 当前项通过手动拖动已经到了指定位置，因此需要重新排序其他项的高度
         if (item.drag_id !== elementToMove.drag_id) {
-          // 找到所有项在新数组中的位置
-          const newIndex = getListIndex(item.drag_id, newList)
           // 根据新数组的位置重新置y值
-          const [x, y] = getPosition(newIndex, newList)
+          const [x, y] = getPosition(item.drag_id)
           item.x = x
           item.y = y
           // console.log(item.y)
@@ -216,8 +249,18 @@ function handleSortChange(e: any) {
   }
 }
 
-// 获取当前的位置
-function getPosition(index: number, list = cloneList.value) {
+function handleAddItemTap() {
+  emit('add')
+}
+
+/**
+ * 获取指定项的坐标数据
+ * @param dragId 拖动项的id
+ * @returns [x, y]
+ */
+function getPosition(dragId: string) {
+  const index = getListIndex(dragId)
+
   const h = (index % props.column)
   let x = toFixed(h * itemWidth.value)
   if (x > 0) {
@@ -234,8 +277,13 @@ function getPosition(index: number, list = cloneList.value) {
   return [x, y]
 }
 
+/**
+ * 获取与当前拖动项排序互换的目标项
+ * @param e 事件对象
+ * @returns 互换的目标项下标
+ */
 function getTargetIndex(e: any) {
-  const list = cloneList.value
+  const list = sortList.value
   const { x, y } = e.detail
   // x 手指按下拖动，产生的位置，超出了item的宽度，那么就改变下标，包括y轴。
   const currentX = Math.floor((x + itemWidth.value / 2) / itemWidth.value)
@@ -247,13 +295,14 @@ function getTargetIndex(e: any) {
   return list[target].drag_id
 }
 
-// 获取当前项指定drag_id的索引
-function getListIndex(drag_id: string, list = cloneList.value) {
-  return list.findIndex(item => item.drag_id === drag_id)
-}
-
-function handleAddItemTap() {
-  emit('add')
+/**
+ * 获取指定项在指定列表中的索引
+ * @param dragId 当前项的id
+ * @param list 列表
+ * @returns 索引
+ */
+function getListIndex(dragId: string, list = sortList.value) {
+  return list.findIndex(item => item.drag_id === dragId)
 }
 </script>
 
@@ -285,7 +334,7 @@ function handleAddItemTap() {
         @longpress.stop="handleDragStart(item)"
         @touchend.stop="handleTouchEnd"
       >
-        <view v-if="item.drag_id !== ADD_DRAG_ID" class="dragSlotContent">
+        <view v-if="item.drag_id !== ADD_DRAG_ID" class="dragGridSlotContent">
           <slot name="content" :grid-item="{ ...item }" />
         </view>
         <view v-else class="drag-add-item" @tap.stop="handleAddItemTap">
