@@ -22,10 +22,16 @@ export enum BillWayEnum {
 
 // action 参数
 export interface ActionItem {
-  title: string
   icon: string
-  danger?: boolean
+  text: string
+  value?: string
+  type?: 'default' | 'warning' | 'danger'
   action: () => void
+}
+
+export interface ActionGroup {
+  title?: string
+  actions: ActionItem[]
 }
 
 // uni.uploadFile文件上传参数

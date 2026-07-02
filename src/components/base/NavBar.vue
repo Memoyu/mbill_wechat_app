@@ -35,7 +35,7 @@ function back() {
             <view class="mt-3 flex items-center gap-3">
               <view v-for="(item, index) in actions" :key="index" class="nav-bar-action-icon-box" @tap="item.action">
                 <wd-icon :name="item.icon" />
-                <text class="ml-2">{{ item.title }}</text>
+                <text class="ml-2">{{ item.text }}</text>
               </view>
             </view>
           </view>

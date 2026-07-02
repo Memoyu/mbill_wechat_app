@@ -1,8 +1,9 @@
 <script lang="ts" setup>
 import type { ILedger } from '@/api/types/ledger'
-import type { ActionItem } from '@/typings'
+import type { ActionGroup, ActionItem } from '@/typings'
 import { useDialog, useToast } from '@wot-ui/ui'
 import dayjs from 'dayjs'
+import UQRCode from 'uqrcodejs'
 import { getColorByName, gradients } from '@/constants/gradients'
 import { useLedgerStore } from '@/store'
 import { systemInfo } from '@/utils/systemInfo'
@@ -15,20 +16,67 @@ definePage({
 })
 const navActions: ActionItem[] = [
   {
-    title: '创建',
+    text: '创建',
     icon: 'plus',
-    action: handleCreateTap,
+    action: handleCreateAction,
   },
   {
-    title: '加入',
+    text: '加入',
     icon: 'scan',
-    action: handleScanTap,
+    action: handleScanAction,
   },
 ]
+const ledgerActions: ActionGroup[] = [
+  {
+    title: '账本样式',
+    actions: [
+      {
+        icon: 'i-carbon-color-palette',
+        text: '更换颜色',
+        action: handleChangeColorAction,
+      },
+    ],
+  },
+  {
+    title: '账本管理',
+    actions: [
+      {
+        icon: 'i-carbon-edit',
+        text: '编辑账本',
+        action: handleEditAction,
+      },
+      {
+        icon: 'i-carbon-share',
+        text: '共享账本',
+        action: handleShareAction,
+      },
+      {
+        icon: 'i-carbon-arrows-horizontal',
+        text: '账单迁移',
+        action: handleMigrateAction,
+      },
+      // {
+      //   icon: 'view-off',
+      //   text: '隐藏账单',
+      //   type: 'warning',
+      //   action: handleHideAction,
+      // },
+      {
+        icon: 'i-carbon-trash-can',
+        text: '删除账本',
+        type: 'danger',
+        action: handleDeleteAction,
+      },
+    ],
+  },
+]
+const qrcodeCanvasId = 'ledgerQrcodeCnvas'
 
+const { proxy } = getCurrentInstance() as any
 const dialog = useDialog()
 const toast = useToast()
 const editDialog = useDialog('ledger-edit-dialog')
+const shareDialog = useDialog('ledger-share-dialog')
 const ledgerStore = useLedgerStore()
 
 const ledgers = computed(() => {
@@ -39,6 +87,7 @@ const show = ref(false)
 const scrollHeight = ref(300)
 
 const actionShow = ref(false)
+const colorPickerShow = ref(false)
 const currentLedger = ref<ILedger>()
 
 const editLedger = ref<{
@@ -49,6 +98,8 @@ const editLedger = ref<{
 }>({ isCreate: true, name: '', color: 0, randomColor: true })
 
 onMounted(() => {
+  // 进入管理页面重新加载一下数据
+  ledgerStore.loadLedgers()
   nextTick(() => {
     uni.createSelectorQuery().select('#TOP_NAVBAR').boundingClientRect((data: any) => {
       // console.log(data)
@@ -57,41 +108,10 @@ onMounted(() => {
   })
 })
 
-function handleLedgerActionTap(ledger: any) {
-  currentLedger.value = ledger
-  actionShow.value = true
-}
-
-function handleLedgerActionItemTap(action: string) {
-  if (!currentLedger.value)
-    return
-  const ledgerId = currentLedger.value.ledgerId!
-
-  if (action === 'edit') {
-    editLedger.value = {
-      isCreate: false,
-      name: currentLedger.value.name,
-      color: currentLedger.value.color,
-    }
-    editDialog.confirm({
-      title: currentLedger.value.name,
-      beforeConfirm: () => {
-        if (checkName(editLedger.value.name))
-          return false
-        return true
-      },
-    }).then(async () => {
-      await ledgerStore.updateLedger({ ledgerId, name: editLedger.value.name, color: editLedger.value.color })
-    }).catch(() => {
-      // console.log('点击了取消')
-    })
-  }
-}
-
 /**
  * 创建账本
  */
-function handleCreateTap() {
+function handleCreateAction() {
   editLedger.value = {
     isCreate: true,
     name: '',
@@ -125,7 +145,7 @@ function checkName(name: string) {
 /**
  * 扫码加入账本
  */
-function handleScanTap() {
+function handleScanAction() {
   uni.scanCode({
     success(res) {
       // console.log(`条码类型：${res.scanType}`)
@@ -136,6 +156,82 @@ function handleScanTap() {
       console.log(`扫码错误：${e}`)
     },
   })
+}
+
+function handleLedgerActions(ledger: any) {
+  currentLedger.value = ledger
+  actionShow.value = true
+}
+
+function handleChangeColorAction() {
+  colorPickerShow.value = true
+}
+
+function handleEditAction() {
+  if (!currentLedger.value)
+    return
+
+  editLedger.value = {
+    isCreate: false,
+    name: currentLedger.value.name,
+    color: currentLedger.value.color,
+  }
+  editDialog.confirm({
+    title: currentLedger.value.name,
+    beforeConfirm: () => {
+      if (checkName(editLedger.value.name))
+        return false
+      return true
+    },
+  }).then(async () => {
+    await ledgerStore.updateLedger({
+      ledgerId: currentLedger.value.ledgerId,
+      name: editLedger.value.name,
+      color: editLedger.value.color,
+    })
+  }).catch(() => {
+    // console.log('点击了取消')
+  })
+}
+
+function handleShareAction() {
+  if (!currentLedger.value)
+    return
+
+  // 转换尺寸
+  const size = 240
+  // 获取uQRCode实例
+  const qr = new UQRCode()
+  qr.setOptions({
+    // 设置二维码内容
+    data: currentLedger.value.ledgerId,
+    // 设置二维码大小，必须与canvas设置的宽高一致
+    size,
+    // 设置二维码边距
+    margin: uni.upx2px(10),
+  })
+  // 调用制作二维码方法
+  qr.make()
+  // 获取canvas上下文
+  const canvasContext = uni.createCanvasContext(qrcodeCanvasId, proxy)
+  // 设置uQRCode实例的canvas上下文
+  qr.canvasContext = canvasContext
+  qr.drawCanvas()
+  shareDialog.alert({})
+}
+
+function handleMigrateAction() {
+
+}
+
+function handleHideAction() {
+
+}
+
+function handleDeleteAction() {
+  if (!currentLedger.value)
+    return
+  ledgerStore.deleteLedger(currentLedger.value.ledgerId)
 }
 
 /**
@@ -203,7 +299,7 @@ function handleSortChange(list: ILedger[]) {
                 <view class="ledger-item-more">
                   <view
                     class="h-6 w-6 flex items-center justify-center rounded-full bg-white/40 shadow-[0_4px_8px_rgba(0,0,0,0.04)]"
-                    @tap.stop="handleLedgerActionTap(listItem)"
+                    @tap.stop="handleLedgerActions(listItem)"
                   >
                     <wd-icon name="more" />
                   </view>
@@ -215,14 +311,6 @@ function handleSortChange(list: ILedger[]) {
       </drag-sort-list-view>
     </view>
   </view>
-
-  <!-- 更多操作 -->
-  <ledger-action-popup
-    v-model="actionShow"
-    more
-    :ledger="currentLedger"
-    @action-tap="handleLedgerActionItemTap"
-  />
 
   <!-- 编辑账本 -->
   <wd-dialog selector="ledger-edit-dialog">
@@ -248,6 +336,20 @@ function handleSortChange(list: ILedger[]) {
         />
       </view>
     </view>
+  </wd-dialog>
+
+  <!-- 更多操作 -->
+  <action-popup
+    v-model="actionShow"
+    :title="currentLedger?.name || ''"
+    :items="ledgerActions"
+  />
+  <!-- 颜色选择器 -->
+  <color-picker-popup v-model="colorPickerShow" :ledger-id="currentLedger?.ledgerId" />
+
+  <!-- 分享二维码 -->
+  <wd-dialog selector="ledger-share-dialog">
+    <canvas :id="qrcodeCanvasId" :canvas-id="qrcodeCanvasId" style="width: 240px;height: 240px;" />
   </wd-dialog>
 </template>
 

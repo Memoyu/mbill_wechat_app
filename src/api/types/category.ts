@@ -16,3 +16,14 @@ export interface ICreateCategory {
   type: BillTypeEnum
   parentId?: string
 }
+
+export interface IUpdateCategorySort {
+  categoryId: string
+  sort: number
+}
+
+export interface IUpdateCategory {
+  categoryId: string
+  name: string
+  icon: string
+}

@@ -26,10 +26,12 @@ const props = withDefaults(defineProps<{
   gap?: number
   column?: number
   hasAdd?: boolean
+  initHeight?: number
 }>(), {
   gap: 5,
   column: 3,
   hasAdd: true,
+  initHeight: 75,
 })
 const emit = defineEmits(['change', 'add'])
 const ADD_DRAG_ID = 'add-item'
@@ -48,7 +50,7 @@ const animation = ref(false)
 
 const areaHeight = ref(200)
 const itemWidth = ref(80)
-const itemHeight = ref(80)
+const itemHeight = ref(props.initHeight)
 
 const addIconSize = computed(() => {
   const size = toFixed(Math.min(itemWidth.value, itemHeight.value) * 0.42)
@@ -126,11 +128,15 @@ function initList(list: any[]) {
  */
 function initShowItem(item: any) {
   // console.log(item)
+  const dragId = item[props.keyProp]
+  // 避免初始为0, 0 坐标后更新为实际坐标导致的ui闪烁问题
+  const [x, y] = getPosition(dragId)
+  // console.log(x, y, 'x, y')
   return {
     ...item,
-    y: 0,
-    x: 0,
-    drag_id: item[props.keyProp],
+    y,
+    x,
+    drag_id: dragId,
   } as DragSortShowItem
 }
 
@@ -139,13 +145,13 @@ function initShowItem(item: any) {
  */
 function calculateItemSize() {
   setTimeout(() => {
-    uni.createSelectorQuery().in(proxy).select('.dragSortBox').boundingClientRect((box: any) => {
+    uni.createSelectorQuery().in(proxy).select('.dragGridSortBox').boundingClientRect((box: any) => {
       if (!box)
         return
-      // console.log(box, 'dragSortBox')
+      // console.log(box, 'dragGridSortBox')
 
       uni.createSelectorQuery().in(proxy).select('.dragGridSlotContent').boundingClientRect((content: any) => {
-        console.log(content, 'dragGridSlotContent')
+        // console.log(content, 'dragGridSlotContent')
         // 更新项的宽度和高度
         if (content) {
           itemHeight.value = content.height
@@ -307,13 +313,14 @@ function getListIndex(dragId: string, list = sortList.value) {
 </script>
 
 <template>
-  <view class="dragSortBox">
+  <view class="dragGridSortBox">
     <movable-area
       class="drag-movable-area"
       :style="{
         height: `${areaHeight}px`,
       }"
     >
+      <view v-show="sorting" class="drag-grid-overlay" />
       <movable-view
         v-for="item in showList"
         :key="item.drag_id"
@@ -351,15 +358,20 @@ function getListIndex(dragId: string, list = sortList.value) {
   width: 100%;
 }
 
+.drag-grid-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.1);
+  z-index: 9;
+}
+
 .drag-movable-item {
   width: 100%;
   overflow: hidden;
   border-radius: 10px;
-  @apply: bg-gray-300/[0.3] dark:bg-[#292929];
-}
-
-.drag-movable-item--active {
-  @apply: bg-gray-500 dark:bg-[#565657];
 }
 
 .drag-add-item {

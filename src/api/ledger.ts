@@ -19,7 +19,7 @@ export function joinLedger(ledgerId: string) {
  * 排序账本
  */
 export function sortLedger(sorts: IUpdateLedgerSort[]) {
-  return http.put<ILedger>('ledger/sort', { sorts })
+  return http.put('ledger/sort', { sorts })
 }
 
 /**

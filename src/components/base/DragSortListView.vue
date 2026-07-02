@@ -1,10 +1,11 @@
 /**
  * 拖拽排序列表
- * showList 作为渲染的数据列表，主要包含坐标、高度、展开状态等展示相关属性
-  * sortList 作为排序后的数据列表，主要用做顺序的基准，更新后不触发渲染
+ * showList 为渲染的数据列表，主要包含坐标、高度、展开状态等展示相关属性
+ * sortList 为排序后的数据列表，主要用做顺序的基准，更新后不触发渲染
  */
 <script lang="ts" setup>
 import { useTouch } from '@wot-ui/ui/composables/useTouch'
+import { s } from 'node_modules/vite/dist/node/types.d-aGj9QkWt'
 import { omit } from '@/utils'
 
 interface DragSortBaseItem {
@@ -42,7 +43,7 @@ const props = withDefaults(defineProps<{
   safeArea: 0,
 })
 const emit = defineEmits(['change'])
-const COM_INTERNAL_ARGS = ['x', 'y', 'drag_id', 'height', 'expand']
+const COM_INTERNAL_ARGS = ['x', 'y', 'drag_id', 'height', 'minHeight', 'maxHeight', 'expand']
 const { proxy } = getCurrentInstance() as any
 
 const { vibrate } = useVibrate()
@@ -121,7 +122,7 @@ function initList(list: any[]) {
         height: oldItem.height,
         expand: oldItem.expand ?? item.expand ?? false,
       })
-      console.log(oldItem, 'oldItem')
+      // console.log(oldItem, 'oldItem')
     }
     else {
       const newItem = initShowItem(item)
@@ -171,51 +172,25 @@ function calculateItemSize() {
         minHeight = top.height!
       }
 
-      // showList.value.map((item) => {
-      //   // 更新列表项坐标数据
+      showList.value.map((item) => {
+        item.minHeight = minHeight
+        item.height = getItemHeight(item.drag_id)
+        item.y = getPosition(item.drag_id)
+        return item
+      })
 
-      //   return item
-      // })
-
-      setTimeout(() => {
-        for (let i = 0; i < showList.value.length; i++) {
-          const item = showList.value[i]
-          item.minHeight = minHeight
-          updateItemMaxHeight(item, () => {
-            item.height = getItemHeight(item.drag_id)
-            item.y = getPosition(item.drag_id)
-            // 47.78125 263.78125 47.78125 0 "item height"
-            updateAreaHeight()
-            console.log(item.minHeight, item.maxHeight, item.height, item.y, 'item height')
-          })
-        }
-      }, 1000)
-      // TODO 此处仅用作测试
-
-      // console.log(showList.value, sortList.value, 'calculateItemSize')
-
-      // setTimeout(() => {
-      //   uni.createSelectorQuery().in(proxy).selectAll('.dragListSlotBox').boundingClientRect((boxs: any) => {
-      //     if (!boxs)
-      //       return
-
-      //     showList.value.map((item) => {
-      //       const index = boxs.findIndex((r: { id: string }) => r.id === `#drag-content-${item.drag_id}`)
-      //       item.minHeight = minHeight
-      //       item.maxHeight = boxs[index].height
-      //       item.height = getItemHeight(item.drag_id)
-      //       console.log(item.minHeight, item.maxHeight, item.height, 'item height')
-
-      //       // 更新列表项坐标数据
-      //       item.y = getPosition(item.drag_id)
-      //       return item
-      //     })
-      //     // console.log(showList.value, sortList.value, 'calculateItemSize')
-      //     updateAreaHeight()
-      //   }).exec()
-      // }, 0)
+      updateAreaHeight()
     }).exec()
   }, 0)
+
+  // 因为存在展开状态，展开内容会动态变更，需要延迟更新展开的组件的高度
+  if (props.expand) {
+    nextTick(() => {
+      setTimeout(() => {
+        updateAllItemMaxHeight()
+      }, 100)
+    })
+  }
 }
 
 function handleTap(item: DragSortShowItem) {
@@ -320,12 +295,22 @@ function setExpand(item: DragSortShowItem) {
 
 function updateItemMaxHeight(item: DragSortShowItem, invoke?: () => void) {
   uni.createSelectorQuery().in(proxy).select(`#dragContent${item.drag_id}`).boundingClientRect((res: any) => {
-    console.log(res, 'updateItemMaxHeight')
+    // console.log(res, 'updateItemMaxHeight')
     if (!res)
       return
     item.maxHeight = res.height
     invoke && invoke()
   }).exec()
+}
+
+function updateAllItemMaxHeight() {
+  showList.value.forEach((item) => {
+    updateItemMaxHeight(item, () => {
+      item.height = getItemHeight(item.drag_id)
+      item.y = getPosition(item.drag_id)
+      updateAreaHeight()
+    })
+  })
 }
 
 /**
@@ -465,6 +450,7 @@ function getListIndex(dragId: string, list = sortList.value) {
         height: `${computedAreaHeight}px`,
       }"
     >
+      <view v-show="sorting" class="drag-list-overlay" />
       <movable-view
         v-for="item in showList"
         :key="item.drag_id"
@@ -507,14 +493,19 @@ function getListIndex(dragId: string, list = sortList.value) {
   width: 100%;
 }
 
+.drag-list-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.1);
+  z-index: 9;
+}
+
 .drag-movable-item {
   width: 100%;
   overflow: hidden;
   border-radius: 10px;
-  @apply: bg-gray-300/[0.3] dark:bg-[#292929];
-}
-
-.drag-movable-item--active {
-  @apply: bg-gray-200 dark:bg-[#565657];
 }
 </style>

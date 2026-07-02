@@ -110,15 +110,13 @@ export const useLedgerStore = defineStore(
      * @param update 更新内容
      */
     const updateLedger = async (update: IUpdateLedger) => {
-      const temp = state.ledgers.map((item) => {
-        if (item.ledgerId === update.ledgerId) {
-          item.name = update.name
-          item.color = update.color
-        }
-        return item
-      })
-      state.ledgers = lodash.cloneDeep(temp)
       await fetchdaUpteLedger(update)
+      // 更新
+      const ledger = state.ledgers.find(item => item.ledgerId === update.ledgerId)
+      if (ledger) {
+        ledger.name = update.name
+        ledger.color = update.color
+      }
     }
 
     // 修改账本颜色

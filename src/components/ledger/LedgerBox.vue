@@ -6,18 +6,6 @@ const props = defineProps<{
   data: ILedger
 }>()
 const emit = defineEmits(['tap'])
-const actionShow = ref(false)
-const actionTitle = ref('')
-
-function handleActionClick() {
-  actionTitle.value = props.data.name
-  actionShow.value = true
-}
-
-function handleActionSelect(panel: string) {
-  console.log('选择了操作:', panel)
-  actionShow.value = false
-}
 </script>
 
 <template>
@@ -48,19 +36,9 @@ function handleActionSelect(panel: string) {
         </view>
 
         <view class="absolute inset-0 flex flex-col p-3">
-          <!-- 右上角操作按钮 -->
-          <!-- <view class="absolute right-3 top-3 z-100">
-            <view
-              class="h-6 w-6 flex items-center justify-center rounded-full bg-white/40 shadow-[0_4px_8px_rgba(0,0,0,0.04)]"
-              @tap.stop="handleActionClick"
-            >
-              <wd-icon name="more" />
-            </view>
-          </view> -->
-
-          <!-- 账簿内容区域 -->
+          <!-- 账本内容区域 -->
           <view class="relative h-full flex flex-col overflow-hidden">
-            <!-- 账簿名称 -->
+            <!-- 账本名称 -->
             <text class="line-clamp-1 w-85% text-base text-gray-800 font-semibold">
               {{ data.name }}
             </text>
@@ -103,12 +81,6 @@ function handleActionSelect(panel: string) {
 
     <!-- 添加插槽 -->
     <slot name="action" />
-    <!-- 更多操作 -->
-    <ledger-action-popup
-      v-model="actionShow"
-      :ledger="data"
-      @select="handleActionSelect"
-    />
   </view>
 </template>
 
