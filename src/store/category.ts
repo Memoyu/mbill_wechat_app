@@ -114,14 +114,16 @@ export const useCategoryStore = defineStore(
       // 添加子分类到指定父类下
       if (parentId) {
         const parent = list.find(item => item.categoryId === parentId)
+        // console.log(parent, 'parent')
         if (parent) {
-          list = parent.childs
+          list = parent.childs || []
         }
       }
 
       // 更新分类
       const category = list.find(item => item.categoryId === update.categoryId)
       if (category) {
+        // console.log(category, 'category')
         category.name = update.name
         category.icon = update.icon
       }
@@ -130,6 +132,8 @@ export const useCategoryStore = defineStore(
     /**
      * 删除账单分类
      * @param categoryId 账单id
+     * @param type 账单类型
+     * @param parentId 父分类ID
      */
     const deleteCategory = (categoryId: string, type: BillTypeEnum, parentId?: string) => {
       fetchDeleteCategory(categoryId).then(() => {
@@ -141,7 +145,7 @@ export const useCategoryStore = defineStore(
         if (parentId) {
           const parent = list.find(item => item.categoryId === parentId)
           if (parent) {
-            list = parent.childs
+            list = parent.childs || []
           }
         }
 

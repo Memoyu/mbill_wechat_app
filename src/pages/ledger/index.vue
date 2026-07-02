@@ -122,9 +122,7 @@ function handleCreateAction() {
   editDialog.confirm({
     title: '新增',
     beforeConfirm: () => {
-      if (checkName(editLedger.value.name))
-        return false
-      return true
+      return checkName(editLedger.value.name)
     },
   }).then(async () => {
     const color = editLedger.value.randomColor ? getColorByName(editLedger.value.name) : editLedger.value.color
@@ -171,21 +169,20 @@ function handleEditAction() {
   if (!currentLedger.value)
     return
 
+  const { ledgerId, name, color } = currentLedger.value
   editLedger.value = {
     isCreate: false,
-    name: currentLedger.value.name,
-    color: currentLedger.value.color,
+    name,
+    color,
   }
   editDialog.confirm({
-    title: currentLedger.value.name,
+    title: name,
     beforeConfirm: () => {
-      if (checkName(editLedger.value.name))
-        return false
-      return true
+      return checkName(editLedger.value.name)
     },
   }).then(async () => {
     await ledgerStore.updateLedger({
-      ledgerId: currentLedger.value.ledgerId,
+      ledgerId,
       name: editLedger.value.name,
       color: editLedger.value.color,
     })
@@ -322,18 +319,20 @@ function handleSortChange(list: ILedger[]) {
         </wd-checkbox>
       </view>
       <!-- 颜色网格 -->
-      <view v-if="!editLedger.randomColor" class="grid grid-cols-4 mt-2 gap-4 p-1">
-        <view
-          v-for="(gradient, index) in gradients"
-          :key="index"
-          class="relative aspect-square overflow-hidden rounded-xl shadow-sm transition-all duration-200"
-          :class="[editLedger.color === index ? 'ring-2 ring-indigo-500 ring-offset-2' : '']"
-          :style="{ background: gradient }"
-          hover-class="scale-95 shadow-md"
-          :hover-start-time="0"
-          :hover-stay-time="200"
-          @tap="editLedger.color = index"
-        />
+      <view v-if="!editLedger.randomColor" class="mt-2 h-50 overflow-y-auto p-2">
+        <view class="grid grid-cols-4 gap-4">
+          <view
+            v-for="(gradient, index) in gradients"
+            :key="index"
+            class="relative aspect-square overflow-hidden rounded-xl shadow-sm transition-all duration-200"
+            :class="[editLedger.color === index ? 'ring-2 ring-indigo-500 ring-offset-2' : '']"
+            :style="{ background: gradient }"
+            hover-class="scale-95 shadow-md"
+            :hover-start-time="0"
+            :hover-stay-time="200"
+            @tap="editLedger.color = index"
+          />
+        </view>
       </view>
     </view>
   </wd-dialog>
@@ -345,7 +344,7 @@ function handleSortChange(list: ILedger[]) {
     :items="ledgerActions"
   />
   <!-- 颜色选择器 -->
-  <color-picker-popup v-model="colorPickerShow" :ledger-id="currentLedger?.ledgerId" />
+  <color-picker-popup v-model="colorPickerShow" :ledger-id="currentLedger?.ledgerId ?? ''" />
 
   <!-- 分享二维码 -->
   <wd-dialog selector="ledger-share-dialog">

@@ -33,7 +33,7 @@ const props = withDefaults(defineProps<{
   hasAdd: true,
   initHeight: 75,
 })
-const emit = defineEmits(['change', 'add'])
+const emit = defineEmits(['change', 'tap'])
 const ADD_DRAG_ID = 'add-item'
 const COM_INTERNAL_ARGS = ['x', 'y', 'drag_id', 'disabled']
 const { proxy } = getCurrentInstance() as any
@@ -53,7 +53,7 @@ const itemWidth = ref(80)
 const itemHeight = ref(props.initHeight)
 
 const addIconSize = computed(() => {
-  const size = toFixed(Math.min(itemWidth.value, itemHeight.value) * 0.42)
+  const size = toFixed(Math.min(itemWidth.value, itemHeight.value) * 0.38)
   return `${Math.max(size, 20)}px`
 })
 
@@ -255,8 +255,8 @@ function handleSortChange(e: any) {
   }
 }
 
-function handleAddItemTap() {
-  emit('add')
+function handleItemTap(item: any, type?: string) {
+  emit('tap', { item, type })
 }
 
 /**
@@ -341,10 +341,10 @@ function getListIndex(dragId: string, list = sortList.value) {
         @longpress.stop="handleDragStart(item)"
         @touchend.stop="handleTouchEnd"
       >
-        <view v-if="item.drag_id !== ADD_DRAG_ID" class="dragGridSlotContent">
+        <view v-if="item.drag_id !== ADD_DRAG_ID" class="dragGridSlotContent" @tap.stop="handleItemTap(item)">
           <slot name="content" :grid-item="{ ...item }" />
         </view>
-        <view v-else class="drag-add-item" @tap.stop="handleAddItemTap">
+        <view v-else class="drag-add-item" @tap.stop="handleItemTap(item, 'add')">
           <text class="iconfont icon-plus" :style="{ fontSize: addIconSize }" />
         </view>
       </movable-view>

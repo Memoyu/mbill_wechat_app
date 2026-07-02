@@ -2,6 +2,7 @@
 import type { ICategory } from '@/api/types/category'
 import type { ActionGroup, ActionItem } from '@/typings'
 import { useDialog, useToast } from '@wot-ui/ui'
+import { icons } from '@/constants/billIcons'
 import { useCategoryStore } from '@/store'
 import { BillTypeEnum } from '@/typings'
 import { systemInfo } from '@/utils/systemInfo'
@@ -43,6 +44,7 @@ const categoryActions: ActionGroup[] = [
 ]
 
 const dialog = useDialog()
+const editDialog = useDialog('category-edit-dialog')
 const toast = useToast()
 const categoryStore = useCategoryStore()
 
@@ -59,6 +61,11 @@ const incomes = computed(() => {
   return categoryStore.incomes
 })
 
+const editCategory = ref<{
+  name: string
+  icon: string
+}>({ name: '', icon: '' })
+
 onMounted(() => {
   // 进入管理页面重新加载一下数据
   categoryStore.loadCategories()
@@ -70,27 +77,37 @@ onMounted(() => {
 })
 
 function handleCreateAction() {
-  console.log('handleCreateTap')
-  dialog
-    .prompt({
-      title: '新增',
-      inputProps: {
-        placeholder: '分类名称',
-      },
-      inputPattern: /.+/,
-      inputError: '输入内容不能为空',
-    })
-    .then((res) => {
-      categoryStore.createCategory(res.value as string, 'icon', type.value).then((res) => {
-        toast.success('创建成功')
-      }).catch((err) => {
-        console.log('err', err)
-        toast.error('创建失败')
-      })
-    })
-    .catch((err) => {
-      console.log(err, 'ee')
-    })
+  // console.log('handleCreateTap')
+  editCategory.value = {
+    name: '',
+    icon: '',
+  }
+  editDialog.confirm({
+    title: '新增',
+    beforeConfirm: () => {
+      return checkCategory(editCategory.value)
+    },
+  }).then(async () => {
+    const { name, icon } = editCategory.value
+    await categoryStore.createCategory(name, icon, type.value)
+  }).catch(() => {
+    // console.log('点击了取消')
+  })
+}
+
+function checkCategory(data: any) {
+  console.log('checkCategory', data)
+  if (!data.name || data.name.length < 1) {
+    toast.error('分类名称不能为空')
+    return false
+  }
+
+  if (!data.icon || data.icon.length < 1) {
+    toast.error('分类图标不能为空')
+    return false
+  }
+
+  return true
 }
 
 function handleSortChange(list: ICategory[]) {
@@ -103,30 +120,38 @@ function handleChildSortChange(list: ICategory[], parent: any) {
   parent = parent as ICategory
   categoryStore.sortCategory(list, type.value, parent.categoryId)
 }
+function handleChildItemTap(parent: any, data: any) {
+  const { item, type } = data
+  parent = parent as ICategory
+  const child = item as ICategory
 
-function handleChildCreate(parent: any) {
+  if (type === 'add') {
+    handleCreateChild(parent)
+  }
+  else {
+    currentCategory.value = child
+    handleUpdate(parent.categoryId)
+  }
+}
+function handleCreateChild(parent: ICategory) {
   parent = parent as ICategory
   // console.log('handleChildAdd', parent)
-  dialog
-    .prompt({
-      title: `${parent.name} 下新增`,
-      inputProps: {
-        placeholder: '分类名称',
-      },
-      inputPattern: /.+/,
-      inputError: '输入内容不能为空',
-    })
-    .then((res) => {
-      categoryStore.createCategory(res.value as string, 'icon', type.value, parent.categoryId).then((res) => {
-        toast.success('创建成功')
-      }).catch((err) => {
-        console.log('err', err)
-        toast.error('创建失败')
-      })
-    })
-    .catch((err) => {
-      console.log(err, 'ee')
-    })
+  editCategory.value = {
+    name: '',
+    icon: '',
+  }
+
+  editDialog.confirm({
+    title: `${parent.name} 新增子分类`,
+    beforeConfirm: () => {
+      return checkCategory(editCategory.value)
+    },
+  }).then(async () => {
+    const { name, icon } = editCategory.value
+    await categoryStore.createCategory(name, icon, type.value, parent.categoryId)
+  }).catch(() => {
+    // console.log('点击了取消')
+  })
 }
 
 function handleCategoryActions(item: any) {
@@ -136,13 +161,40 @@ function handleCategoryActions(item: any) {
 
 function handleEditAction() {
   // console.log('handleEditAction')
+
+  handleUpdate()
+}
+
+function handleUpdate(parentId?: string) {
+  // console.log('handleEditAction')
+
+  if (!currentCategory.value)
+    return
+  const { categoryId, name, icon } = currentCategory.value
+
+  editCategory.value = {
+    name,
+    icon,
+  }
+
+  editDialog.confirm({
+    title: name,
+    beforeConfirm: () => {
+      return checkCategory(editCategory.value)
+    },
+  }).then(async () => {
+    const { name, icon } = editCategory.value
+    await categoryStore.updateCategory({ categoryId, name, icon }, type.value, parentId)
+  }).catch(() => {
+    // console.log('点击了取消')
+  })
 }
 
 function handleCreateChildAction() {
   // console.log('handleCreateChildAction')
   if (!currentCategory.value)
     return
-  handleChildCreate(currentCategory.value)
+  handleCreateChild(currentCategory.value)
 }
 
 function handleDeleteAction() {
@@ -178,9 +230,6 @@ function handleDeleteAction() {
               >
                 <wd-icon name="more" />
               </view>
-              <!-- <view class="px-2" @tap.stop="handleCategoryActions(listItem)">
-                <wd-icon name="menu" />
-              </view> -->
             </view>
           </view>
         </template>
@@ -193,7 +242,7 @@ function handleDeleteAction() {
               :list="listItem.childs"
               key-prop="categoryId"
               @change="list => handleChildSortChange(list, listItem)"
-              @add="handleChildCreate(listItem)"
+              @tap="data => handleChildItemTap(listItem, data)"
             >
               <template #content="{ gridItem }">
                 <view class="flex flex-col items-center p-2">
@@ -216,6 +265,27 @@ function handleDeleteAction() {
     :title="currentCategory?.name || ''"
     :items="categoryActions"
   />
+
+  <!-- 编辑账本 -->
+  <wd-dialog selector="category-edit-dialog">
+    <wd-input v-model="editCategory.name" type="text" placeholder="账本名称" custom-class="custom-input" />
+
+    <!-- 颜色网格 -->
+    <view class="mt-2 h-50 overflow-y-auto p-2">
+      <view class="grid grid-cols-5 gap-4">
+        <view
+          v-for="icon in icons"
+          :key="icon"
+          class="bill-icons flex content-center justify-center rounded-md p-2 text-center text-6 shadow-sm transition-all duration-200"
+          :class="[editCategory.icon === icon ? 'ring-2 ring-indigo-500 ring-offset-2' : '', icon]"
+          hover-class="scale-95 shadow-md"
+          :hover-start-time="0"
+          :hover-stay-time="200"
+          @tap="editCategory.icon = icon"
+        />
+      </view>
+    </view>
+  </wd-dialog>
 </template>
 
 <style lang="scss" scoped>

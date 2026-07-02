@@ -11,13 +11,13 @@ export function createCategory(create: ICreateCategory) {
  * 更新账单分类
  */
 export function updateCategory(update: IUpdateCategory) {
-  return http.put('category/sort', update)
+  return http.put('category/update', update)
 }
 /**
  * 排序账单分类
  */
 export function sortCategory(sorts: IUpdateCategorySort[]) {
-  return http.put('category/update', { sorts })
+  return http.put('category/sort', { sorts })
 }
 
 /**

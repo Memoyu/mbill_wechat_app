@@ -15,10 +15,21 @@ const props = withDefaults(defineProps<{
   color?: string
   size?: string
   shape?: 'round' | 'square'
+  family?: string
 }>(), {
   color: 'inherit',
   size: '30px',
   shape: 'round',
+  family: 'bill-icons',
+})
+
+const innerIcon = computed(() => {
+  if (props.icon.includes('/')) {
+    return props.icon
+  }
+  else {
+    return `${props.family} ${props.icon}`
+  }
 })
 
 const style = computed(() => {
@@ -51,8 +62,8 @@ const isImage = computed(() => {
 
 <template>
   <view :style="style" class="mbill-icon-box">
-    <image v-if="isImage" mode="aspectFill" :src="icon" :style="style" />
-    <view v-else class="bill-icons" :class="[icon]" :style="style" />
+    <image v-if="isImage" mode="aspectFill" :src="innerIcon" :style="style" />
+    <view v-else :class="[innerIcon]" :style="style" />
   </view>
 </template>
 

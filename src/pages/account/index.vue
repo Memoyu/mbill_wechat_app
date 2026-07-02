@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import type { IAccount } from '@/api/types/account'
-import type { ActionItem } from '@/typings'
+import type { ActionGroup, ActionItem } from '@/typings'
 import { useDialog, useToast } from '@wot-ui/ui'
+import { icons } from '@/constants/billIcons'
 import { useAccountStore } from '@/store'
 import { systemInfo } from '@/utils/systemInfo'
 
@@ -14,21 +15,54 @@ definePage({
 
 const actions: ActionItem[] = [
   {
-    title: '创建',
+    text: '创建',
     icon: 'plus',
-    action: handleCreateTap,
+    action: handleCreateAction,
   },
 ]
 
-const dialog = useDialog()
+const accountActions: ActionGroup[] = [
+  {
+    actions: [
+      {
+        icon: 'i-carbon-edit',
+        text: '编辑账户',
+        action: handleEditAction,
+      },
+      {
+        icon: 'i-carbon-package',
+        text: '新增子账户',
+        action: handleCreateChildAction,
+      },
+      {
+        icon: 'i-carbon-trash-can',
+        text: '删除账户',
+        type: 'danger',
+        action: handleDeleteAction,
+      },
+    ],
+  },
+]
+
+const editDialog = useDialog('account-edit-dialog')
 const toast = useToast()
 const accountStore = useAccountStore()
 
 const show = ref(false)
 const scrollHeight = ref(300)
+const actionShow = ref(false)
+const currentAccount = ref<IAccount>()
+
 const accounts = computed(() => accountStore.accounts)
 
+const editAccount = ref<{
+  name: string
+  icon: string
+}>({ name: '', icon: '' })
+
 onMounted(() => {
+  // 进入管理页面重新加载一下数据
+  accountStore.loadAccounts()
   nextTick(() => {
     uni.createSelectorQuery().select('#TOP_NAVBAR').boundingClientRect((data: any) => {
       scrollHeight.value = systemInfo.windowHeight - (data.height + 16) // 16为外层view的padding
@@ -36,36 +70,132 @@ onMounted(() => {
   })
 })
 
-function handleCreateTap() {
+function handleCreateAction() {
   // console.log('handleCreateTap')
-  dialog
-    .prompt({
-      title: '新增',
-      inputProps: {
-        placeholder: '分类名称',
-      },
-      // inputPattern: /.+/,
-      // inputError: '输入内容不能为空',
-    })
-    .then((resp) => {
+  editAccount.value = {
+    name: '',
+    icon: '',
+  }
+  editDialog.confirm({
+    title: '新增',
+    beforeConfirm: () => {
+      return checkAccount(editAccount.value)
+    },
+  }).then(async () => {
+    const { name, icon } = editAccount.value
+    await accountStore.createAccount(name, icon)
+  }).catch(() => {
+    // console.log('点击了取消')
+  })
+}
 
-    })
-    .catch(() => {
-      console.log('ee')
-    })
+function checkAccount(data: any) {
+  console.log('checkAccount', data)
+  if (!data.name || data.name.length < 1) {
+    toast.error('账户名称不能为空')
+    return false
+  }
+
+  if (!data.icon || data.icon.length < 1) {
+    toast.error('账户图标不能为空')
+    return false
+  }
+
+  return true
 }
 
 function handleSortChange(list: IAccount[]) {
   // console.log('handleSortChange', list)
-  // accounts.value = list
+  accountStore.sortAccount(list)
 }
 
 function handleChildSortChange(list: IAccount[], parent: any) {
-  console.log('handleChildSortChange', list, parent as IAccount)
+  // console.log('handleChildSortChange', list, parent as IAccount)
+  parent = parent as IAccount
+  accountStore.sortAccount(list, parent.accountId)
+}
+function handleChildItemTap(parent: any, data: any) {
+  const { item, type } = data
+  parent = parent as IAccount
+  const child = item as IAccount
+
+  if (type === 'add') {
+    handleCreateChild(parent)
+  }
+  else {
+    currentAccount.value = child
+    handleUpdate(parent.accountId)
+  }
+}
+function handleCreateChild(parent: IAccount) {
+  parent = parent as IAccount
+  // console.log('handleChildAdd', parent)
+  editAccount.value = {
+    name: '',
+    icon: '',
+  }
+
+  editDialog.confirm({
+    title: `${parent.name} 新增子账户`,
+    beforeConfirm: () => {
+      return checkAccount(editAccount.value)
+    },
+  }).then(async () => {
+    const { name, icon } = editAccount.value
+    await accountStore.createAccount(name, icon, parent.accountId)
+  }).catch(() => {
+    // console.log('点击了取消')
+  })
 }
 
-function handleEditItemTap(item: any) {
-  console.log('handleEditItemTap', item as IAccount)
+function handleAccountActions(item: any) {
+  currentAccount.value = item as IAccount
+  actionShow.value = true
+}
+
+function handleEditAction() {
+  // console.log('handleEditAction')
+
+  handleUpdate()
+}
+
+function handleUpdate(parentId?: string) {
+  // console.log('handleEditAction')
+
+  if (!currentAccount.value)
+    return
+  const { accountId, name, icon } = currentAccount.value
+
+  editAccount.value = {
+    name,
+    icon,
+  }
+
+  editDialog.confirm({
+    title: name,
+    beforeConfirm: () => {
+      return checkAccount(editAccount.value)
+    },
+  }).then(async () => {
+    const { name, icon } = editAccount.value
+    await accountStore.updateAccount({ accountId, name, icon }, parentId)
+  }).catch(() => {
+    // console.log('点击了取消')
+  })
+}
+
+function handleCreateChildAction() {
+  // console.log('handleCreateChildAction')
+  if (!currentAccount.value)
+    return
+  handleCreateChild(currentAccount.value)
+}
+
+function handleDeleteAction() {
+  // console.log('handleEditAction')
+  if (!currentAccount.value)
+    return
+  accountStore.deleteAccount(currentAccount.value.accountId, currentAccount.value.parentId)
 }
 </script>
 
@@ -83,23 +213,34 @@ function handleEditItemTap(item: any) {
                 <wd-icon v-if="listItem.expand" name="caret-down" />
                 <wd-icon v-else name="caret-right" />
               </view>
+              <mbill-icon size="20px" :icon="listItem.icon" />
               <view class="flex-1 font-bold">
                 {{ listItem.name }}
               </view>
 
-              <view class="px-2" @tap.stop="handleEditItemTap(listItem)">
-                <wd-icon name="menu" />
+              <view
+                class="h-6 w-6 flex items-center justify-center rounded-full bg-white/40 shadow-[0_4px_8px_rgba(0,0,0,0.04)]"
+                @tap.stop="handleAccountActions(listItem)"
+              >
+                <wd-icon name="more" />
               </view>
             </view>
           </view>
         </template>
         <template #content="{ listItem }">
-          <view v-if="listItem.childs && listItem.childs.length > 0" class="p-2">
-            <drag-sort-grid-view :gap="8" :column="4" :list="listItem.childs" key-prop="accountId" @change="list => handleChildSortChange(list, listItem)">
+          <view class="account-content-box">
+            <drag-sort-grid-view
+              :gap="8"
+              :column="4"
+              :list="listItem.childs"
+              key-prop="accountId"
+              @change="list => handleChildSortChange(list, listItem)"
+              @tap="data => handleChildItemTap(listItem, data)"
+            >
               <template #content="{ gridItem }">
                 <view class="flex flex-col items-center p-2">
-                  <wd-img :width="30" round :height="30" :src="gridItem.icon" />
-                  <view class="account-item-title">
+                  <mbill-icon :icon="gridItem.icon" />
+                  <view class="account-item-title mt-1">
                     {{ gridItem.name }}
                   </view>
                 </view>
@@ -110,16 +251,46 @@ function handleEditItemTap(item: any) {
       </drag-sort-list-view>
     </view>
   </view>
+
+  <!-- 更多操作 -->
+  <action-popup
+    v-model="actionShow"
+    :title="currentAccount?.name || ''"
+    :items="accountActions"
+  />
+
+  <!-- 编辑账本 -->
+  <wd-dialog selector="account-edit-dialog">
+    <wd-input v-model="editAccount.name" type="text" placeholder="账本名称" custom-class="custom-input" />
+
+    <!-- 颜色网格 -->
+    <view class="mt-2 h-50 overflow-y-auto p-2">
+      <view class="grid grid-cols-5 gap-4">
+        <view
+          v-for="icon in icons"
+          :key="icon"
+          class="bill-icons flex content-center justify-center rounded-md p-2 text-center text-6 shadow-sm transition-all duration-200"
+          :class="[editAccount.icon === icon ? 'ring-2 ring-indigo-500 ring-offset-2' : '', icon]"
+          hover-class="scale-95 shadow-md"
+          :hover-start-time="0"
+          :hover-stay-time="200"
+          @tap="editAccount.icon = icon"
+        />
+      </view>
+    </view>
+  </wd-dialog>
 </template>
 
 <style lang="scss" scoped>
 .account-title-box {
-  border-radius: 19px;
   box-sizing: border-box;
-  padding: 0.7rem;
-  // border-bottom: 1px solid #f0f0f0;
+  padding: 0.9rem;
+  @apply bg-indigo-50/60;
 }
 
+.account-content-box {
+  @apply bg-indigo-50/60 p-2;
+}
 .account-item-title {
   font-size: 12px;
 }
