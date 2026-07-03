@@ -85,7 +85,7 @@ function handleCreateAction() {
     inputPattern: /.+/,
     inputError: '输入内容不能为空',
   }).then(async (res) => {
-    await tagStore.createTag(res.value.toString())
+    await tagStore.createTag(res.value!.toString())
   }).catch(() => {
     // console.log('点击了取消')
   })
@@ -150,7 +150,7 @@ function handleEditAction() {
     inputPattern: /.+/,
     inputError: '输入内容不能为空',
   }).then(async (res) => {
-    await tagStore.updateTag({ tagId, name: res.value.toString() }, parentId)
+    await tagStore.updateTag({ tagId, name: res.value!.toString() }, parentId)
   }).catch(() => {
     // console.log('点击了取消')
   })
@@ -179,7 +179,7 @@ function createChildTag(parent: ITag) {
     inputPattern: /.+/,
     inputError: '输入内容不能为空',
   }).then(async (res) => {
-    await tagStore.createTag(res.value.toString(), parent.tagId)
+    await tagStore.createTag(res.value!.toString(), parent.tagId)
   }).catch(() => {
     // console.log('点击了取消')
   })
