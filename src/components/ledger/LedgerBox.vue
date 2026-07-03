@@ -71,7 +71,7 @@ const emit = defineEmits(['tap'])
                 v-for="user in data.users" :key="user.userId"
                 :text="user.nickname.slice(0, 1)"
                 :src="user.avatar"
-                bg-color="#a5b4fc"
+                bg-color="#eef2ff"
               />
             </wd-avatar-group>
           </view>

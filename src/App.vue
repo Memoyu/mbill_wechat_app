@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { onHide, onLaunch, onShow } from '@dcloudio/uni-app'
 import { navigateToInterceptor } from '@/router/interceptor'
-import { useAccountStore, useCategoryStore, useLedgerStore, useTokenStore } from './store'
+import { useAccountStore, useCategoryStore, useLedgerStore, useTagStore, useTokenStore } from './store'
 
 const tokenStore = useTokenStore()
 const ledgerStore = useLedgerStore()
 const categoryStore = useCategoryStore()
 const accountStore = useAccountStore()
+const tagStore = useTagStore()
 
 onLaunch((options) => {
   // console.log('App.vue onLaunch', options)
@@ -16,6 +17,7 @@ onLaunch((options) => {
     ledgerStore.loadLedgers()
     categoryStore.loadCategories()
     accountStore.loadAccounts()
+    tagStore.loadTags()
   })
 })
 onShow((options) => {

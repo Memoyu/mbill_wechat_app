@@ -20,6 +20,11 @@ page {
   // 图片裁剪组件的z-index
   --wot-img-cropper-z-index: 9999;
   --wot-dialog-width: calc(100vw - 40px);
+
+  // 头像
+  --wot-avatar-bg: #eef2ff;
+  --wot-avatar-text-color: #969799;
+
   font-size: 14px;
 
   --mbill-expend-color: #f87171;

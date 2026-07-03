@@ -13,14 +13,13 @@ definePage({
   },
 })
 
-const actions: ActionItem[] = [
+const navActions: ActionItem[] = [
   {
     text: '创建',
     icon: 'plus',
     action: handleCreateAction,
   },
 ]
-
 const accountActions: ActionGroup[] = [
   {
     actions: [
@@ -70,6 +69,9 @@ onMounted(() => {
   })
 })
 
+/**
+ * 新增账户Action触发
+ */
 function handleCreateAction() {
   // console.log('handleCreateTap')
   editAccount.value = {
@@ -89,8 +91,11 @@ function handleCreateAction() {
   })
 }
 
+/**
+ * 账户编辑参数检查
+ */
 function checkAccount(data: any) {
-  console.log('checkAccount', data)
+  // console.log('checkAccount', data)
   if (!data.name || data.name.length < 1) {
     toast.error('账户名称不能为空')
     return false
@@ -104,67 +109,57 @@ function checkAccount(data: any) {
   return true
 }
 
+/**
+ * 账户排序触发
+ */
 function handleSortChange(list: IAccount[]) {
   // console.log('handleSortChange', list)
   accountStore.sortAccount(list)
 }
 
+/**
+ * 账户子项排序触发
+ */
 function handleChildSortChange(list: IAccount[], parent: any) {
   // console.log('handleChildSortChange', list, parent as IAccount)
   parent = parent as IAccount
   accountStore.sortAccount(list, parent.accountId)
 }
+
+/**
+ * 账户项点击
+ */
 function handleChildItemTap(parent: any, data: any) {
   const { item, type } = data
   parent = parent as IAccount
   const child = item as IAccount
 
   if (type === 'add') {
-    handleCreateChild(parent)
+    createChildAccount(parent)
   }
   else {
-    currentAccount.value = child
-    handleUpdate(parent.accountId)
+    // 展示操作面板
+    handleAccountActions(child)
   }
 }
-function handleCreateChild(parent: IAccount) {
-  parent = parent as IAccount
-  // console.log('handleChildAdd', parent)
-  editAccount.value = {
-    name: '',
-    icon: '',
-  }
 
-  editDialog.confirm({
-    title: `${parent.name} 新增子账户`,
-    beforeConfirm: () => {
-      return checkAccount(editAccount.value)
-    },
-  }).then(async () => {
-    const { name, icon } = editAccount.value
-    await accountStore.createAccount(name, icon, parent.accountId)
-  }).catch(() => {
-    // console.log('点击了取消')
-  })
-}
-
+/**
+ * 账户操作面板展示
+ */
 function handleAccountActions(item: any) {
   currentAccount.value = item as IAccount
   actionShow.value = true
 }
 
+/**
+ * 编辑账户Action触发
+ */
 function handleEditAction() {
-  // console.log('handleEditAction')
-
-  handleUpdate()
-}
-
-function handleUpdate(parentId?: string) {
   // console.log('handleEditAction')
 
   if (!currentAccount.value)
     return
-  const { accountId, name, icon } = currentAccount.value
+  const { accountId, name, icon, parentId } = currentAccount.value
 
   editAccount.value = {
     name,
@@ -184,13 +179,42 @@ function handleUpdate(parentId?: string) {
   })
 }
 
+/**
+ * 新增子账户Action触发
+ */
 function handleCreateChildAction() {
   // console.log('handleCreateChildAction')
   if (!currentAccount.value)
     return
-  handleCreateChild(currentAccount.value)
+  createChildAccount(currentAccount.value)
 }
 
+/**
+ * 创建子账户
+ */
+function createChildAccount(parent: IAccount) {
+  // console.log('handleChildAdd', parent)
+  editAccount.value = {
+    name: '',
+    icon: '',
+  }
+
+  editDialog.confirm({
+    title: `${parent.name} 新增子账户`,
+    beforeConfirm: () => {
+      return checkAccount(editAccount.value)
+    },
+  }).then(async () => {
+    const { name, icon } = editAccount.value
+    await accountStore.createAccount(name, icon, parent.accountId)
+  }).catch(() => {
+    // console.log('点击了取消')
+  })
+}
+
+/**
+ * 删除账户Action触发
+ */
 function handleDeleteAction() {
   // console.log('handleEditAction')
   if (!currentAccount.value)
@@ -202,7 +226,7 @@ function handleDeleteAction() {
 <template>
   <page-meta :page-style="`overflow:${show ? 'hidden' : 'visible'};`" />
   <draw-background2 />
-  <nav-bar id="TOP_NAVBAR" :actions="actions" title="账户管理" />
+  <nav-bar id="TOP_NAVBAR" :actions="navActions" title="账户管理" />
   <view class="w-screen">
     <view class="p-2">
       <drag-sort-list-view expand :gap="8" :list="accounts" key-prop="accountId" :height="scrollHeight" @change="handleSortChange">
@@ -214,7 +238,7 @@ function handleDeleteAction() {
                 <wd-icon v-else name="caret-right" />
               </view>
               <mbill-icon size="20px" :icon="listItem.icon" />
-              <view class="flex-1 font-bold">
+              <view class="ml-1 flex-1 font-bold">
                 {{ listItem.name }}
               </view>
 
@@ -232,6 +256,7 @@ function handleDeleteAction() {
             <drag-sort-grid-view
               :gap="8"
               :column="4"
+              :init-height="62"
               :list="listItem.childs"
               key-prop="accountId"
               @change="list => handleChildSortChange(list, listItem)"
@@ -261,9 +286,9 @@ function handleDeleteAction() {
 
   <!-- 编辑账本 -->
   <wd-dialog selector="account-edit-dialog">
-    <wd-input v-model="editAccount.name" type="text" placeholder="账本名称" custom-class="custom-input" />
+    <wd-input v-model="editAccount.name" type="text" placeholder="账户名称" custom-class="custom-input" />
 
-    <!-- 颜色网格 -->
+    <!-- 图标选择 -->
     <view class="mt-2 h-50 overflow-y-auto p-2">
       <view class="grid grid-cols-5 gap-4">
         <view

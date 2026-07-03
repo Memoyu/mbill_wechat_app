@@ -35,7 +35,7 @@ export const useCategoryStore = defineStore(
     /**
      * 创建账单分类
      * @param name 账本名称
-     * @param color 颜色
+     * @param icon 颜色
      * @param type 账单类型
      * @param parentId 父分类ID
      */

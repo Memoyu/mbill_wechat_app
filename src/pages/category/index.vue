@@ -76,11 +76,14 @@ onMounted(() => {
   })
 })
 
+/**
+ * 新增分类Action触发
+ */
 function handleCreateAction() {
   // console.log('handleCreateTap')
   editCategory.value = {
     name: '',
-    icon: '',
+    icon: 'https://oss.memoyu.com/icons/fruits/1.svg',
   }
   editDialog.confirm({
     title: '新增',
@@ -95,6 +98,9 @@ function handleCreateAction() {
   })
 }
 
+/**
+ * 分类编辑参数检查
+ */
 function checkCategory(data: any) {
   console.log('checkCategory', data)
   if (!data.name || data.name.length < 1) {
@@ -110,67 +116,58 @@ function checkCategory(data: any) {
   return true
 }
 
+/**
+ * 分类排序触发
+ */
 function handleSortChange(list: ICategory[]) {
   // console.log('handleSortChange', list)
   categoryStore.sortCategory(list, type.value)
 }
 
+/**
+ * 分类子项排序触发
+ */
 function handleChildSortChange(list: ICategory[], parent: any) {
   // console.log('handleChildSortChange', list, parent as ICategory)
   parent = parent as ICategory
   categoryStore.sortCategory(list, type.value, parent.categoryId)
 }
+
+/**
+ * 分类子项点击
+ */
 function handleChildItemTap(parent: any, data: any) {
   const { item, type } = data
   parent = parent as ICategory
   const child = item as ICategory
 
   if (type === 'add') {
-    handleCreateChild(parent)
+    createChildCategory(parent)
   }
   else {
+    // 展示操作面板
     currentCategory.value = child
-    handleUpdate(parent.categoryId)
+    actionShow.value = true
   }
 }
-function handleCreateChild(parent: ICategory) {
-  parent = parent as ICategory
-  // console.log('handleChildAdd', parent)
-  editCategory.value = {
-    name: '',
-    icon: '',
-  }
 
-  editDialog.confirm({
-    title: `${parent.name} 新增子分类`,
-    beforeConfirm: () => {
-      return checkCategory(editCategory.value)
-    },
-  }).then(async () => {
-    const { name, icon } = editCategory.value
-    await categoryStore.createCategory(name, icon, type.value, parent.categoryId)
-  }).catch(() => {
-    // console.log('点击了取消')
-  })
-}
-
+/**
+ * 分类操作面板展示
+ */
 function handleCategoryActions(item: any) {
   currentCategory.value = item as ICategory
   actionShow.value = true
 }
 
+/**
+ * 编辑分类Action触发
+ */
 function handleEditAction() {
-  // console.log('handleEditAction')
-
-  handleUpdate()
-}
-
-function handleUpdate(parentId?: string) {
   // console.log('handleEditAction')
 
   if (!currentCategory.value)
     return
-  const { categoryId, name, icon } = currentCategory.value
+  const { categoryId, name, icon, parentId } = currentCategory.value
 
   editCategory.value = {
     name,
@@ -190,13 +187,42 @@ function handleUpdate(parentId?: string) {
   })
 }
 
+/**
+ * 新增子分类Action触发
+ */
 function handleCreateChildAction() {
   // console.log('handleCreateChildAction')
   if (!currentCategory.value)
     return
-  handleCreateChild(currentCategory.value)
+  createChildCategory(currentCategory.value)
 }
 
+/**
+ * 创建子分类
+ */
+function createChildCategory(parent: ICategory) {
+  // console.log('createChildCategory', parentId)
+  editCategory.value = {
+    name: '',
+    icon: '',
+  }
+
+  editDialog.confirm({
+    title: `${parent.name} 新增子分类`,
+    beforeConfirm: () => {
+      return checkCategory(editCategory.value)
+    },
+  }).then(async () => {
+    const { name, icon } = editCategory.value
+    await categoryStore.createCategory(name, icon, type.value, parent.categoryId)
+  }).catch(() => {
+    // console.log('点击了取消')
+  })
+}
+
+/**
+ * 删除分类Action触发
+ */
 function handleDeleteAction() {
   // console.log('handleEditAction')
   if (!currentCategory.value)
@@ -268,10 +294,12 @@ function handleDeleteAction() {
 
   <!-- 编辑账本 -->
   <wd-dialog selector="category-edit-dialog">
-    <wd-input v-model="editCategory.name" type="text" placeholder="账本名称" custom-class="custom-input" />
-
-    <!-- 颜色网格 -->
-    <view class="mt-2 h-50 overflow-y-auto p-2">
+    <view class="flex items-center space-x-lg">
+      <wd-avatar :text="editCategory.name.slice(0, 1)" :src="editCategory.icon" />
+      <wd-input v-model="editCategory.name" type="text" placeholder="分类名称" custom-class="custom-input" />
+    </view>
+    <!-- 图标选择 -->
+    <!-- <view class="mt-2 h-50 overflow-y-auto p-2">
       <view class="grid grid-cols-5 gap-4">
         <view
           v-for="icon in icons"
@@ -284,7 +312,7 @@ function handleDeleteAction() {
           @tap="editCategory.icon = icon"
         />
       </view>
-    </view>
+    </view> -->
   </wd-dialog>
 </template>
 

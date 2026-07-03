@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { ITag } from '@/api/types/tag'
-import type { ActionItem } from '@/typings'
+import type { ActionGroup, ActionItem } from '@/typings'
+import { useDialog, useToast } from '@wot-ui/ui'
 import { useTagStore } from '@/store'
 import { systemInfo } from '@/utils/systemInfo'
 
@@ -12,18 +13,54 @@ definePage({
 })
 
 const tagStore = useTagStore()
-const actions: ActionItem[] = [
+const navActions: ActionItem[] = [
   {
-    title: '创建',
+    text: '创建',
     icon: 'plus',
-    action: handleCreateTap,
+    action: handleCreateAction,
   },
 ]
+const tagActions: ActionGroup[] = [
+  {
+    actions: [
+      {
+        icon: 'i-carbon-edit',
+        text: '编辑标签',
+        action: handleEditAction,
+      },
+      {
+        icon: 'i-carbon-package',
+        text: '新增子标签',
+        action: handleCreateChildAction,
+      },
+      {
+        icon: 'i-carbon-trash-can',
+        text: '删除标签',
+        type: 'danger',
+        action: handleDeleteAction,
+      },
+    ],
+  },
+]
+
+const dialog = useDialog()
+const toast = useToast()
+
 const show = ref(false)
 const scrollHeight = ref(300)
-const tags = ref(tagStore.tags)
+
+const actionShow = ref(false)
+const currentTag = ref<ITag>()
+
+const tags = computed(() => tagStore.tags)
+
+const editTag = ref<{
+  name: string
+}>({ name: '' })
 
 onMounted(() => {
+  // 进入管理页面重新加载一下数据
+  tagStore.loadTags()
   nextTick(() => {
     uni.createSelectorQuery().select('#TOP_NAVBAR').boundingClientRect((data: any) => {
       scrollHeight.value = systemInfo.windowHeight - (data.height + 16) // 16为外层view的padding
@@ -31,28 +68,138 @@ onMounted(() => {
   })
 })
 
-function handleCreateTap() {
-  console.log('handleCreateTap')
+/**
+ * 创建标签
+ */
+function handleCreateAction() {
+  // console.log('handleCreateTap')
+  editTag.value = {
+    name: '',
+  }
+  dialog.prompt({
+    title: '新增',
+    inputProps: {
+      placeholder: '标签名称',
+    },
+    inputValue: '',
+    inputPattern: /.+/,
+    inputError: '输入内容不能为空',
+  }).then(async (res) => {
+    await tagStore.createTag(res.value.toString())
+  }).catch(() => {
+    // console.log('点击了取消')
+  })
 }
 
+/**
+ * 标签排序后触发
+ */
 function handleSortChange(list: ITag[]) {
   // console.log('handleSortChange', list)
-  // tags.value = list
+  tagStore.sortTag(list)
 }
 
+/**
+ * 子标签排序后触发
+ */
 function handleChildSortChange(list: ITag[], parent: any) {
-  console.log('handleChildSortChange', list, parent as ITag)
+  // console.log('handleChildSortChange', list, parent as ITag)
+  parent = parent as ITag
+  tagStore.sortTag(list, parent.tagId)
 }
 
-function handleEditItemTap(item: any) {
-  console.log('handleEditItemTap', item as ITag)
+/**
+ * 子标签点击
+ */
+function handleChildItemTap(parent: any, data: any) {
+  const { item, type } = data
+  parent = parent as ITag
+  const child = item as ITag
+
+  if (type === 'add') {
+    // 排序组件新增
+    createChildTag(parent)
+  }
+  else {
+    // 展示操作面板
+    handleTagActions(child)
+  }
+}
+
+/**
+ * 标签更多操作
+ */
+function handleTagActions(item: any) {
+  currentTag.value = item as ITag
+  actionShow.value = true
+}
+
+/**
+ * 编辑标签Action触发
+ */
+function handleEditAction() {
+  // console.log('handleEditAction')
+
+  if (!currentTag.value)
+    return
+  const { tagId, name, parentId } = currentTag.value
+
+  dialog.confirm({
+    title: name,
+    inputValue: name,
+    inputPattern: /.+/,
+    inputError: '输入内容不能为空',
+  }).then(async (res) => {
+    await tagStore.updateTag({ tagId, name: res.value.toString() }, parentId)
+  }).catch(() => {
+    // console.log('点击了取消')
+  })
+}
+
+/**
+ * 创建子标签Action触发
+ */
+function handleCreateChildAction() {
+  // console.log('handleCreateChildAction')
+  if (!currentTag.value)
+    return
+  createChildTag(currentTag.value)
+}
+
+/**
+ * 创建子标签
+ */
+function createChildTag(parent: ITag) {
+  dialog.prompt({
+    title: `${parent.name} 新增子标签`,
+    inputProps: {
+      placeholder: '标签名称',
+    },
+    inputValue: '',
+    inputPattern: /.+/,
+    inputError: '输入内容不能为空',
+  }).then(async (res) => {
+    await tagStore.createTag(res.value.toString(), parent.tagId)
+  }).catch(() => {
+    // console.log('点击了取消')
+  })
+}
+
+/**
+ * 删除标签Action触发
+ */
+function handleDeleteAction() {
+  // console.log('handleEditAction')
+  if (!currentTag.value)
+    return
+  tagStore.deleteTag(currentTag.value.tagId, currentTag.value.parentId)
 }
 </script>
 
 <template>
   <page-meta :page-style="`overflow:${show ? 'hidden' : 'visible'};`" />
   <draw-background2 />
-  <nav-bar id="TOP_NAVBAR" :actions="actions" title="标签管理" />
+  <nav-bar id="TOP_NAVBAR" :actions="navActions" title="标签管理" />
   <view class="w-screen">
     <view class="p-2">
       <drag-sort-list-view expand :gap="8" :list="tags" key-prop="tagId" :height="scrollHeight" @change="handleSortChange">
@@ -67,15 +214,26 @@ function handleEditItemTap(item: any) {
                 {{ listItem.name }}
               </view>
 
-              <view class="px-2" @tap.stop="handleEditItemTap(listItem)">
-                <wd-icon name="menu" />
+              <view
+                class="h-6 w-6 flex items-center justify-center rounded-full bg-white/40 shadow-[0_4px_8px_rgba(0,0,0,0.04)]"
+                @tap.stop="handleTagActions(listItem)"
+              >
+                <wd-icon name="more" />
               </view>
             </view>
           </view>
         </template>
         <template #content="{ listItem }">
-          <view v-if="listItem.childs && listItem.childs.length > 0" class="p-2">
-            <drag-sort-grid-view :gap="8" :column="4" :list="listItem.childs" key-prop="tagId" @change="list => handleChildSortChange(list, listItem)">
+          <view class="tag-content-box">
+            <drag-sort-grid-view
+              :gap="8"
+              :column="4"
+              :init-height="32"
+              :list="listItem.childs"
+              key-prop="tagId"
+              @change="list => handleChildSortChange(list, listItem)"
+              @tap="data => handleChildItemTap(listItem, data)"
+            >
               <template #content="{ gridItem }">
                 <view class="flex items-center justify-center bg-indigo-500/10 px-1.5 py-2" @tap.stop="() => {}">
                   <view class="tag-item-title line-clamp-1 text-nowrap">
@@ -89,14 +247,24 @@ function handleEditItemTap(item: any) {
       </drag-sort-list-view>
     </view>
   </view>
+
+  <!-- 更多操作 -->
+  <action-popup
+    v-model="actionShow"
+    :title="currentTag?.name || ''"
+    :items="tagActions"
+  />
 </template>
 
 <style lang="scss" scoped>
 .tag-title-box {
-  border-radius: 19px;
   box-sizing: border-box;
-  padding: 0.7rem;
-  // border-bottom: 1px solid #f0f0f0;
+  padding: 0.9rem;
+  @apply bg-indigo-50/60;
+}
+
+.tag-content-box {
+  @apply bg-indigo-50/60 p-2;
 }
 
 .tag-item-title {

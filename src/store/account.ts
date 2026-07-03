@@ -31,7 +31,7 @@ export const useAccountStore = defineStore(
     /**
      * 创建账单账户
      * @param name 账本名称
-     * @param color 颜色
+     * @param icon 图标
      * @param parentId 父账户ID
      */
     const createAccount = async (name: string, icon: string, parentId?: string) => {
