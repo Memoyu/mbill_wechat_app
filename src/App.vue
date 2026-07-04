@@ -2,12 +2,14 @@
 import { onHide, onLaunch, onShow } from '@dcloudio/uni-app'
 import { navigateToInterceptor } from '@/router/interceptor'
 import { useAccountStore, useCategoryStore, useLedgerStore, useTagStore, useTokenStore } from './store'
+import { useIconStore } from './store/icon'
 
 const tokenStore = useTokenStore()
 const ledgerStore = useLedgerStore()
 const categoryStore = useCategoryStore()
 const accountStore = useAccountStore()
 const tagStore = useTagStore()
+const iconStore = useIconStore()
 
 onLaunch((options) => {
   // console.log('App.vue onLaunch', options)
@@ -18,6 +20,7 @@ onLaunch((options) => {
     categoryStore.loadCategories()
     accountStore.loadAccounts()
     tagStore.loadTags()
+    iconStore.loadIconCatalogs()
   })
 })
 onShow((options) => {

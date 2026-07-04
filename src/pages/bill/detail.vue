@@ -12,30 +12,30 @@ definePage({
 
 const actions: ActionItem[] = [
   {
-    title: '退款',
+    text: '退款',
     icon: 'redo',
     action: () => {
       console.log('账单退款')
     },
   },
   {
-    title: '编辑',
+    text: '编辑',
     icon: 'pen',
     action: () => {
       console.log('编辑账单')
     },
   },
   {
-    title: '关联账单',
+    text: '关联账单',
     icon: 'link',
     action: () => {
       console.log('关联账单')
     },
   },
   {
-    title: '删除',
+    text: '删除',
     icon: 'delete',
-    danger: true,
+    type: 'danger',
     action: () => {
       console.log('删除账单')
     },

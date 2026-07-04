@@ -2,7 +2,6 @@
 import type { ICategory } from '@/api/types/category'
 import type { ActionGroup, ActionItem } from '@/typings'
 import { useDialog, useToast } from '@wot-ui/ui'
-import { icons } from '@/constants/billIcons'
 import { useCategoryStore } from '@/store'
 import { BillTypeEnum } from '@/typings'
 import { systemInfo } from '@/utils/systemInfo'
@@ -61,6 +60,8 @@ const incomes = computed(() => {
   return categoryStore.incomes
 })
 
+const iconPickerShow = ref(false)
+
 const editCategory = ref<{
   name: string
   icon: string
@@ -81,21 +82,22 @@ onMounted(() => {
  */
 function handleCreateAction() {
   // console.log('handleCreateTap')
-  editCategory.value = {
-    name: '',
-    icon: 'https://oss.memoyu.com/icons/fruits/1.svg',
-  }
-  editDialog.confirm({
-    title: '新增',
-    beforeConfirm: () => {
-      return checkCategory(editCategory.value)
-    },
-  }).then(async () => {
-    const { name, icon } = editCategory.value
-    await categoryStore.createCategory(name, icon, type.value)
-  }).catch(() => {
-    // console.log('点击了取消')
-  })
+  // editCategory.value = {
+  //   name: '',
+  //   icon: 'https://oss.memoyu.com/icons/fruits/1.svg',
+  // }
+  // editDialog.confirm({
+  //   title: '新增',
+  //   beforeConfirm: () => {
+  //     return checkCategory(editCategory.value)
+  //   },
+  // }).then(async () => {
+  //   const { name, icon } = editCategory.value
+  //   await categoryStore.createCategory(name, icon, type.value)
+  // }).catch(() => {
+  //   // console.log('点击了取消')
+  // })
+  iconPickerShow.value = true
 }
 
 /**
@@ -295,7 +297,9 @@ function handleDeleteAction() {
   <!-- 编辑账本 -->
   <wd-dialog selector="category-edit-dialog">
     <view class="flex items-center space-x-lg">
-      <wd-avatar :text="editCategory.name.slice(0, 1)" :src="editCategory.icon" />
+      <view @tap="iconPickerShow = true">
+        <wd-avatar :text="editCategory.name.slice(0, 1)" :src="editCategory.icon" />
+      </view>
       <wd-input v-model="editCategory.name" type="text" placeholder="分类名称" custom-class="custom-input" />
     </view>
     <!-- 图标选择 -->
@@ -314,6 +318,9 @@ function handleDeleteAction() {
       </view>
     </view> -->
   </wd-dialog>
+
+  <!-- 标签选择浮窗 -->
+  <icon-catalog-popup v-model="iconPickerShow" />
 </template>
 
 <style lang="scss" scoped>

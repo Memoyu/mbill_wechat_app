@@ -41,54 +41,54 @@ function showMore() {
           :class="[showMore() ? '' : 'justify-center']"
         >
           <view
-            v-for="(item, index) in actions" :key="index"
+            v-for="(action, index) in actions" :key="index"
             class="w-13 flex flex-col items-center justify-center gap-1.5 rounded-xl px-0.5 py-2"
-            :hover-class="`${item.danger ? 'bg-red-50/80' : 'bg-gray-50/80'} scale-95 origin-center transition-all`"
+            :hover-class="`${action.type === 'danger' ? 'bg-red-50' : action.type === 'warning' ? 'bg-yellow-50' : 'bg-gray-50'} scale-95 origin-center transition-all`"
             :hover-start-time="0"
             :hover-stay-time="200"
-            @tap="item.action()"
+            @tap="action.action()"
           >
             <text
-              v-if="item.icon.startsWith('icon-')" class="text-[17px]"
-              :class="[item.icon, item.danger ? 'text-red-500' : 'text-gray-500']"
+              v-if="action.icon.startsWith('icon-')" class="text-[17px]"
+              :class="[action.icon, action.type === 'danger' ? 'text-red-500' : action.type === 'warning' ? 'text-yellow-500' : 'text-gray-500']"
             />
             <wd-icon
-              v-else :name="item.icon"
-              :custom-class="`item.icon ${item.danger ? 'text-red-500' : 'text-gray-500'}`"
+              v-else :name="action.icon"
+              :custom-class="`${action.type === 'danger' ? 'text-red-500' : action.type === 'warning' ? 'text-yellow-500' : 'text-gray-500'}`"
               size="17px"
             />
             <text
               class="text-[10px] leading-none"
-              :class="[item.danger ? 'text-red-500' : 'text-gray-500']"
+              :class="[action.type === 'danger' ? 'text-red-700' : action.type === 'warning' ? 'text-yellow-700' : 'text-gray-700']"
             >
-              {{ item.title }}
+              {{ action.text }}
             </text>
           </view>
         </view>
         <view v-else class="min-w-max flex items-center gap-2.5 whitespace-nowrap px-2 py-1">
           <view
-            v-for="(item, index) in actions" :key="index"
+            v-for="(action, index) in actions" :key="index"
             class="flex items-center justify-center gap-1.5 rounded-xl px-3 py-2"
-            :class="[item.danger ? 'bg-red-50' : 'bg-gray-50']"
+            :class="[action.type === 'danger' ? 'bg-red-50' : action.type === 'warning' ? 'bg-yellow-50' : 'bg-gray-50']"
             hover-class="opacity-60"
             :hover-start-time="0"
             :hover-stay-time="200"
-            @tap="item.action()"
+            @tap="action.action()"
           >
             <text
-              v-if="item.icon.startsWith('icon-')" class="text-[17px]"
-              :class="[item.icon, item.danger ? 'text-red-500' : 'text-gray-500']"
+              v-if="action.icon.startsWith('icon-')" class="text-[17px]"
+              :class="[action.icon, action.type === 'danger' ? 'text-red-500' : action.type === 'warning' ? 'text-yellow-500' : 'text-gray-500']"
             />
             <wd-icon
-              v-else :name="item.icon"
-              :custom-class="`item.icon ${item.danger ? 'text-red-500' : 'text-gray-500'}`"
+              v-else :name="action.icon"
+              :custom-class="`${action.type === 'danger' ? 'text-red-500' : action.type === 'warning' ? 'text-yellow-500' : 'text-gray-500'}`"
               size="17px"
             />
             <text
               class="text-[10px] leading-none"
-              :class="[item.danger ? 'text-red-500' : 'text-gray-500']"
+              :class="[action.type === 'danger' ? 'text-red-700' : action.type === 'warning' ? 'text-yellow-700' : 'text-gray-700']"
             >
-              {{ item.title }}
+              {{ action.text }}
             </text>
           </view>
         </view>
