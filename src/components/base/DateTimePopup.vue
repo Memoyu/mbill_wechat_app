@@ -31,9 +31,9 @@ function handleDateChange() {
 </script>
 
 <template>
-  <mbill-popup v-model="show">
+  <bottom-popup v-model="show">
     <wd-calendar-view ref="calendarViewRef" v-model="innerDate" type="datetime" hide-second @change="handleDateChange" />
-  </mbill-popup>
+  </bottom-popup>
 </template>
 
 <style lang="scss" scoped>

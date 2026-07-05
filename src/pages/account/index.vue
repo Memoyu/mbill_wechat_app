@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { IAccount } from '@/api/types/account'
+import type { IIcon } from '@/api/types/icon'
 import type { ActionGroup, ActionItem } from '@/typings'
 import { useDialog, useToast } from '@wot-ui/ui'
 import { icons } from '@/constants/billIcons'
@@ -43,11 +44,11 @@ const accountActions: ActionGroup[] = [
   },
 ]
 
-const editDialog = useDialog('account-edit-dialog')
 const toast = useToast()
 const accountStore = useAccountStore()
 
-const show = ref(false)
+const editShow = ref(false)
+const editTitle = ref('创建账户')
 const scrollHeight = ref(300)
 const actionShow = ref(false)
 const currentAccount = ref<IAccount>()
@@ -55,9 +56,12 @@ const currentAccount = ref<IAccount>()
 const accounts = computed(() => accountStore.accounts)
 
 const editAccount = ref<{
+  isCreate: boolean
   name: string
   icon: string
-}>({ name: '', icon: '' })
+  accountId?: string
+  parentId?: string
+}>({ isCreate: true, name: '', icon: '' })
 
 onMounted(() => {
   // 进入管理页面重新加载一下数据
@@ -75,20 +79,15 @@ onMounted(() => {
 function handleCreateAction() {
   // console.log('handleCreateTap')
   editAccount.value = {
+    isCreate: true,
     name: '',
     icon: '',
+    parentId: '',
+    accountId: '',
   }
-  editDialog.confirm({
-    title: '新增',
-    beforeConfirm: () => {
-      return checkAccount(editAccount.value)
-    },
-  }).then(async () => {
-    const { name, icon } = editAccount.value
-    await accountStore.createAccount(name, icon)
-  }).catch(() => {
-    // console.log('点击了取消')
-  })
+  editTitle.value = '创建账户'
+  editAccount.value.isCreate = true
+  editShow.value = true
 }
 
 /**
@@ -98,11 +97,6 @@ function checkAccount(data: any) {
   // console.log('checkAccount', data)
   if (!data.name || data.name.length < 1) {
     toast.error('账户名称不能为空')
-    return false
-  }
-
-  if (!data.icon || data.icon.length < 1) {
-    toast.error('账户图标不能为空')
     return false
   }
 
@@ -139,7 +133,8 @@ function handleChildItemTap(parent: any, data: any) {
   }
   else {
     // 展示操作面板
-    handleAccountActions(child)
+    currentAccount.value = child
+    actionShow.value = true
   }
 }
 
@@ -162,21 +157,14 @@ function handleEditAction() {
   const { accountId, name, icon, parentId } = currentAccount.value
 
   editAccount.value = {
+    isCreate: false,
     name,
     icon,
+    accountId,
+    parentId,
   }
-
-  editDialog.confirm({
-    title: name,
-    beforeConfirm: () => {
-      return checkAccount(editAccount.value)
-    },
-  }).then(async () => {
-    const { name, icon } = editAccount.value
-    await accountStore.updateAccount({ accountId, name, icon }, parentId)
-  }).catch(() => {
-    // console.log('点击了取消')
-  })
+  editTitle.value = name
+  editShow.value = true
 }
 
 /**
@@ -195,21 +183,47 @@ function handleCreateChildAction() {
 function createChildAccount(parent: IAccount) {
   // console.log('handleChildAdd', parent)
   editAccount.value = {
+    isCreate: true,
     name: '',
     icon: '',
+    accountId: '',
+    parentId: parent.accountId,
   }
 
-  editDialog.confirm({
-    title: `${parent.name} 新增子账户`,
-    beforeConfirm: () => {
-      return checkAccount(editAccount.value)
-    },
-  }).then(async () => {
-    const { name, icon } = editAccount.value
-    await accountStore.createAccount(name, icon, parent.accountId)
-  }).catch(() => {
-    // console.log('点击了取消')
-  })
+  editTitle.value = `${parent.name} 新增子账户`
+  editShow.value = true
+}
+
+/**
+ * 分类图标选择
+ */
+function handleIconSelected(icon: IIcon) {
+  editAccount.value.icon = icon.url
+  // console.log('handleIconSelected', icon, editCategory.value)
+}
+
+/**
+ * 创建/编辑分类
+ */
+function handleEditConfirm() {
+  if (!checkAccount(editAccount.value))
+    return
+  const { accountId, name, icon, parentId } = editAccount.value
+
+  if (editAccount.value.isCreate) {
+    accountStore.createAccount(name, icon, parentId)
+  }
+  else {
+    if (!accountId) {
+      toast.error('更新账户ID不能为空')
+      return
+    }
+    accountStore.updateAccount({
+      accountId,
+      name,
+      icon,
+    }, parentId)
+  }
 }
 
 /**
@@ -224,7 +238,7 @@ function handleDeleteAction() {
 </script>
 
 <template>
-  <page-meta :page-style="`overflow:${show ? 'hidden' : 'visible'};`" />
+  <page-meta :page-style="`overflow:${editShow ? 'hidden' : 'visible'};`" />
   <draw-background2 />
   <nav-bar id="TOP_NAVBAR" :actions="navActions" title="账户管理" />
   <view class="w-screen">
@@ -237,7 +251,7 @@ function handleDeleteAction() {
                 <wd-icon v-if="listItem.expand" name="caret-down" />
                 <wd-icon v-else name="caret-right" />
               </view>
-              <mbill-icon size="20px" :icon="listItem.icon" />
+              <bill-icon size="20px" :icon="listItem.icon" :text="listItem.name" />
               <view class="ml-1 flex-1 font-bold">
                 {{ listItem.name }}
               </view>
@@ -264,7 +278,7 @@ function handleDeleteAction() {
             >
               <template #content="{ gridItem }">
                 <view class="flex flex-col items-center p-2">
-                  <mbill-icon :icon="gridItem.icon" />
+                  <bill-icon :icon="gridItem.icon" :text="gridItem.name" />
                   <view class="account-item-title mt-1">
                     {{ gridItem.name }}
                   </view>
@@ -284,26 +298,20 @@ function handleDeleteAction() {
     :items="accountActions"
   />
 
-  <!-- 编辑账本 -->
-  <wd-dialog selector="account-edit-dialog">
-    <wd-input v-model="editAccount.name" type="text" placeholder="账户名称" custom-class="custom-input" />
-
-    <!-- 图标选择 -->
-    <view class="mt-2 h-50 overflow-y-auto p-2">
-      <view class="grid grid-cols-5 gap-4">
-        <view
-          v-for="icon in icons"
-          :key="icon"
-          class="bill-icons flex content-center justify-center rounded-md p-2 text-center text-6 shadow-sm transition-all duration-200"
-          :class="[editAccount.icon === icon ? 'ring-2 ring-indigo-500 ring-offset-2' : '', icon]"
-          hover-class="scale-95 shadow-md"
-          :hover-start-time="0"
-          :hover-stay-time="200"
-          @tap="editAccount.icon = icon"
-        />
+  <!-- 编辑账户 -->
+  <bottom-popup v-model="editShow" :title="editTitle" max-height="h-50vh" confirm-text="确认" :show-cancel="false" @confirm="handleEditConfirm">
+    <template #title>
+      <view class="flex items-center pb-2 pt-4">
+        <!-- <wd-img :width="32" :height="32" :src="editCategory.icon" round :lazy-load="true" :show-error="false" :show-loading="false" /> -->
+        <bill-icon :icon="editAccount.icon" :text="editAccount.name" />
+        <wd-input v-model="editAccount.name" type="text" placeholder="分类名称" custom-class="custom-input" />
       </view>
+    </template>
+
+    <view>
+      <icon-picker @selected="handleIconSelected" />
     </view>
-  </wd-dialog>
+  </bottom-popup>
 </template>
 
 <style lang="scss" scoped>

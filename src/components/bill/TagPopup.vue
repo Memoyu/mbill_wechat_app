@@ -38,11 +38,11 @@ function handleTagItemTap(item: any) {
 </script>
 
 <template>
-  <mbill-popup v-model="show">
+  <bottom-popup v-model="show">
     <view class="tag-items">
       <grid-select-view :has-icon="false" :list="tags" :height="400" @change="handleTagItemTap" />
     </view>
-  </mbill-popup>
+  </bottom-popup>
 </template>
 
 <style lang="scss" scoped>

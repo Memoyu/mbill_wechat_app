@@ -40,11 +40,11 @@ function handleAccountItemTap(item: any) {
 </script>
 
 <template>
-  <mbill-popup v-model="show">
+  <bottom-popup v-model="show">
     <view class="account-items">
       <grid-select-view :list="accounts" :height="400" @change="handleAccountItemTap" />
     </view>
-  </mbill-popup>
+  </bottom-popup>
 </template>
 
 <style lang="scss" scoped>

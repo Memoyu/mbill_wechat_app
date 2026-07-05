@@ -7,5 +7,6 @@ export interface IIcon {
 export interface IIconCatalog {
   code: string
   name: string
+  count: number
   icons: IIcon[]
 }

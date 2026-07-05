@@ -5,7 +5,6 @@
  */
 <script lang="ts" setup>
 import { useTouch } from '@wot-ui/ui/composables/useTouch'
-import { s } from 'node_modules/vite/dist/node/types.d-aGj9QkWt'
 import { omit } from '@/utils'
 
 interface DragSortBaseItem {

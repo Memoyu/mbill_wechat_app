@@ -46,17 +46,20 @@ const tagActions: ActionGroup[] = [
 const dialog = useDialog()
 const toast = useToast()
 
-const show = ref(false)
+const editShow = ref(false)
+const editTitle = ref('新增标签')
 const scrollHeight = ref(300)
-
 const actionShow = ref(false)
 const currentTag = ref<ITag>()
 
 const tags = computed(() => tagStore.tags)
 
 const editTag = ref<{
+  isCreate: boolean
   name: string
-}>({ name: '' })
+  tagId?: string
+  parentId?: string
+}>({ isCreate: true, name: '' })
 
 onMounted(() => {
   // 进入管理页面重新加载一下数据
@@ -74,21 +77,14 @@ onMounted(() => {
 function handleCreateAction() {
   // console.log('handleCreateTap')
   editTag.value = {
+    isCreate: true,
     name: '',
+    parentId: '',
+    tagId: '',
   }
-  dialog.prompt({
-    title: '新增',
-    inputProps: {
-      placeholder: '标签名称',
-    },
-    inputValue: '',
-    inputPattern: /.+/,
-    inputError: '输入内容不能为空',
-  }).then(async (res) => {
-    await tagStore.createTag(res.value!.toString())
-  }).catch(() => {
-    // console.log('点击了取消')
-  })
+  editTitle.value = '创建标签'
+  editTag.value.isCreate = true
+  editShow.value = true
 }
 
 /**
@@ -122,7 +118,8 @@ function handleChildItemTap(parent: any, data: any) {
   }
   else {
     // 展示操作面板
-    handleTagActions(child)
+    currentTag.value = child
+    actionShow.value = true
   }
 }
 
@@ -139,21 +136,18 @@ function handleTagActions(item: any) {
  */
 function handleEditAction() {
   // console.log('handleEditAction')
-
   if (!currentTag.value)
     return
   const { tagId, name, parentId } = currentTag.value
 
-  dialog.confirm({
-    title: name,
-    inputValue: name,
-    inputPattern: /.+/,
-    inputError: '输入内容不能为空',
-  }).then(async (res) => {
-    await tagStore.updateTag({ tagId, name: res.value!.toString() }, parentId)
-  }).catch(() => {
-    // console.log('点击了取消')
-  })
+  editTag.value = {
+    isCreate: false,
+    name,
+    tagId,
+    parentId,
+  }
+  editTitle.value = name
+  editShow.value = true
 }
 
 /**
@@ -170,19 +164,38 @@ function handleCreateChildAction() {
  * 创建子标签
  */
 function createChildTag(parent: ITag) {
-  dialog.prompt({
-    title: `${parent.name} 新增子标签`,
-    inputProps: {
-      placeholder: '标签名称',
-    },
-    inputValue: '',
-    inputPattern: /.+/,
-    inputError: '输入内容不能为空',
-  }).then(async (res) => {
-    await tagStore.createTag(res.value!.toString(), parent.tagId)
-  }).catch(() => {
-    // console.log('点击了取消')
-  })
+  editTag.value = {
+    isCreate: true,
+    name: '',
+    tagId: '',
+    parentId: parent.tagId,
+  }
+
+  editTitle.value = `${parent.name} 新增子标签`
+  editShow.value = true
+}
+
+/**
+ * 创建/编辑标签
+ */
+function handleEditConfirm() {
+  if (!editTag.value.name)
+    return
+  const { tagId, name, parentId } = editTag.value
+
+  if (editTag.value.isCreate) {
+    tagStore.createTag(name, parentId)
+  }
+  else {
+    if (!tagId) {
+      toast.error('更新标签ID不能为空')
+      return
+    }
+    tagStore.updateTag({
+      tagId,
+      name,
+    }, parentId)
+  }
 }
 
 /**
@@ -197,7 +210,7 @@ function handleDeleteAction() {
 </script>
 
 <template>
-  <page-meta :page-style="`overflow:${show ? 'hidden' : 'visible'};`" />
+  <page-meta :page-style="`overflow:${editShow ? 'hidden' : 'visible'};`" />
   <draw-background2 />
   <nav-bar id="TOP_NAVBAR" :actions="navActions" title="标签管理" />
   <view class="w-screen">
@@ -254,6 +267,12 @@ function handleDeleteAction() {
     :title="currentTag?.name || ''"
     :items="tagActions"
   />
+
+  <center-popup v-model="editShow" :title="editTitle" @confirm="handleEditConfirm">
+    <view class="pt-4">
+      <wd-input v-model="editTag.name" type="text" placeholder="分类名称" custom-class="custom-input" />
+    </view>
+  </center-popup>
 </template>
 
 <style lang="scss" scoped>

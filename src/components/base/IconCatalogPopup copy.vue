@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { IIcon, IIconCatalog } from '@/api/types/icon'
+import { getRect } from '@wot-ui/ui/common/util'
 import { useIconStore } from '@/store/icon'
 
 defineOptions({
@@ -20,18 +21,14 @@ const { proxy } = getCurrentInstance() as any
 const iconStore = useIconStore()
 
 const catalogs = ref<IIconCatalog[]>([])
-const active = ref<string[]>([])
+const active = ref(0)
+const scrollTop = ref<number>(0)
+const itemScrollTop = ref<number[]>([])
 const activeIcon = ref('')
 
 watch(() => show.value, (show) => {
-  if (show && iconStore.catalogs.length > 0) {
-    catalogs.value = iconStore.catalogs.map((catalog, index) => {
-      if (index === 0)
-        return { ...catalog, count: catalog.icons.length }
-      return { ...catalog, count: catalog.icons.length, icons: [] }
-    })
-    active.value.push(iconStore.catalogs[0].code)
-  }
+  if (show)
+    catalogs.value = iconStore.catalogs
 })
 
 /**
@@ -48,16 +45,29 @@ function handleIconClick(icon: IIcon) {
   emit('selected', icon)
 }
 
-function handleBeforeExpend(data: any) {
-  const codes = data.value as string[]
-  console.log(codes)
+function handleAfterEnter() {
+  if (itemScrollTop.value && itemScrollTop.value.length > 0) {
+    scrollTop.value = itemScrollTop.value[active.value] || 0
+    return
+  }
+}
 
-  catalogs.value.map((catalog, index) => {
-    if (codes.includes(catalog.code)) {
-      catalog.icons = iconStore.catalogs[index].icons
-    }
-    return catalog
-  })
+function handleSidebarChange({ value }: any) {
+  active.value = value
+  scrollTop.value = itemScrollTop.value[value]
+}
+
+function onSidebarContentScroll(e: any) {
+  const { scrollTop } = e.detail
+  const threshold = 50 // 下一个标题与顶部的距离
+  if (scrollTop < threshold) {
+    active.value = 0
+    return
+  }
+  const index = itemScrollTop.value.findIndex(top => top > scrollTop && top - scrollTop <= threshold)
+  if (index > -1) {
+    active.value = index
+  }
 }
 </script>
 
@@ -67,17 +77,16 @@ function handleBeforeExpend(data: any) {
     position="bottom"
     :close-on-click-modal="true"
     :safe-area-inset-bottom="true"
-    custom-class="rounded-t-3xl relative  h-40vh"
+    custom-class="rounded-t-3xl relative"
     lock-scroll
     lazy-render
     root-portal
     @close="handleCancelClick"
+    @after-enter="handleAfterEnter"
   >
-    <view class="h-full overflow-auto">
+    <view class="overflow-hidden">
       <!-- 标题栏 -->
-      <view
-        class="sticky left-0 right-0 top-0 z-10 flex items-center justify-between border-b border-gray-100 bg-white px-4 py-3"
-      >
+      <view class="flex items-center justify-between border-b border-gray-100 px-4 py-3">
         <text class="line-clamp-1 text-base font-semibold">图标库</text>
         <view
           class="flex-shrink-0 rounded-full px-3 py-1 text-sm text-gray-400"
@@ -91,20 +100,16 @@ function handleBeforeExpend(data: any) {
       </view>
 
       <!-- 图标 -->
-      <view>
-        <wd-collapse v-model="active" @change="handleBeforeExpend">
-          <wd-collapse-item v-for="catalog in catalogs" :key="catalog.code" :title="catalog.name" :name="catalog.code">
-            <template #title="{ expanded }">
-              <view class="flex items-center justify-between">
-                <text class="text-base font-semibold">{{ catalog.name }}</text>
-                <view>
-                  <text class="mr-3">共{{ catalog.count }}个图标</text>
-                  <wd-icon v-if="expanded" name="caret-down" />
-                  <wd-icon v-else name="caret-right" />
-                </view>
-              </view>
-            </template>
-            <view class="grid grid-cols-7 gap-6">
+      <view class="icon-catalog-sidebar">
+        <wd-sidebar v-model="active" @change="handleSidebarChange">
+          <wd-sidebar-item v-for="(catalog, index) in catalogs" :key="catalog.code" :value="index" :label="catalog.name" />
+        </wd-sidebar>
+        <scroll-view class="page-sidebar-demo1__content" scroll-y scroll-with-animation :scroll-top="scrollTop" :throttle="false" @scroll="onSidebarContentScroll">
+          <view v-for="catalog in catalogs" :key="catalog.code" class="catalog-icons-grid">
+            <view class="py-2 text-sm font-semibold">
+              {{ catalog.name }}
+            </view>
+            <view class="grid grid-cols-5 gap-7">
               <view
                 v-for="icon in catalog.icons"
                 :key="icon.path"
@@ -121,13 +126,21 @@ function handleBeforeExpend(data: any) {
                 </view>
               </view>
             </view>
-          </wd-collapse-item>
-        </wd-collapse>
+          </view>
+        </scroll-view>
       </view>
     </view>
   </wd-popup>
 </template>
 
 <style lang="scss" scoped>
+.icon-catalog-sidebar {
+  display: flex;
+  height: calc(100vh - 300px);
 
+  &__content {
+    flex: 1;
+    background: #fff;
+  }
+}
 </style>

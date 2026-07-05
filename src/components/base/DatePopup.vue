@@ -29,9 +29,9 @@ function handleConfirmClick() {
 </script>
 
 <template>
-  <mbill-popup v-model="show">
+  <bottom-popup v-model="show">
     <wd-datetime-picker-view v-model="innerDate" :type="type" @change="handleDateChange" />
-  </mbill-popup>
+  </bottom-popup>
 </template>
 
 <style lang="scss" scoped>

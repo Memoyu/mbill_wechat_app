@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { ICategory } from '@/api/types/category'
+import type { IIcon } from '@/api/types/icon'
 import type { ActionGroup, ActionItem } from '@/typings'
 import { useDialog, useToast } from '@wot-ui/ui'
 import { useCategoryStore } from '@/store'
@@ -43,11 +44,11 @@ const categoryActions: ActionGroup[] = [
 ]
 
 const dialog = useDialog()
-const editDialog = useDialog('category-edit-dialog')
 const toast = useToast()
 const categoryStore = useCategoryStore()
 
-const show = ref(false)
+const editShow = ref(false)
+const editTitle = ref('创建分类')
 const scrollHeight = ref(300)
 const actionShow = ref(false)
 const currentCategory = ref<ICategory>()
@@ -60,12 +61,13 @@ const incomes = computed(() => {
   return categoryStore.incomes
 })
 
-const iconPickerShow = ref(false)
-
 const editCategory = ref<{
+  isCreate: boolean
   name: string
   icon: string
-}>({ name: '', icon: '' })
+  categoryId?: string
+  parentId?: string
+}>({ isCreate: true, name: '', icon: '' })
 
 onMounted(() => {
   // 进入管理页面重新加载一下数据
@@ -81,37 +83,25 @@ onMounted(() => {
  * 新增分类Action触发
  */
 function handleCreateAction() {
-  // console.log('handleCreateTap')
-  // editCategory.value = {
-  //   name: '',
-  //   icon: 'https://oss.memoyu.com/icons/fruits/1.svg',
-  // }
-  // editDialog.confirm({
-  //   title: '新增',
-  //   beforeConfirm: () => {
-  //     return checkCategory(editCategory.value)
-  //   },
-  // }).then(async () => {
-  //   const { name, icon } = editCategory.value
-  //   await categoryStore.createCategory(name, icon, type.value)
-  // }).catch(() => {
-  //   // console.log('点击了取消')
-  // })
-  iconPickerShow.value = true
+  editCategory.value = {
+    isCreate: true,
+    name: '',
+    icon: '',
+    parentId: '',
+    categoryId: '',
+  }
+  editTitle.value = '创建分类'
+  editCategory.value.isCreate = true
+  editShow.value = true
 }
 
 /**
  * 分类编辑参数检查
  */
 function checkCategory(data: any) {
-  console.log('checkCategory', data)
+  // console.log('checkCategory', data)
   if (!data.name || data.name.length < 1) {
     toast.error('分类名称不能为空')
-    return false
-  }
-
-  if (!data.icon || data.icon.length < 1) {
-    toast.error('分类图标不能为空')
     return false
   }
 
@@ -165,28 +155,21 @@ function handleCategoryActions(item: any) {
  * 编辑分类Action触发
  */
 function handleEditAction() {
-  // console.log('handleEditAction')
+  // console.log('handleEditAction', currentCategory.value)
 
   if (!currentCategory.value)
     return
   const { categoryId, name, icon, parentId } = currentCategory.value
 
   editCategory.value = {
+    isCreate: false,
     name,
     icon,
+    categoryId,
+    parentId,
   }
-
-  editDialog.confirm({
-    title: name,
-    beforeConfirm: () => {
-      return checkCategory(editCategory.value)
-    },
-  }).then(async () => {
-    const { name, icon } = editCategory.value
-    await categoryStore.updateCategory({ categoryId, name, icon }, type.value, parentId)
-  }).catch(() => {
-    // console.log('点击了取消')
-  })
+  editTitle.value = name
+  editShow.value = true
 }
 
 /**
@@ -205,21 +188,47 @@ function handleCreateChildAction() {
 function createChildCategory(parent: ICategory) {
   // console.log('createChildCategory', parentId)
   editCategory.value = {
+    isCreate: true,
     name: '',
     icon: '',
+    categoryId: '',
+    parentId: parent.categoryId,
   }
 
-  editDialog.confirm({
-    title: `${parent.name} 新增子分类`,
-    beforeConfirm: () => {
-      return checkCategory(editCategory.value)
-    },
-  }).then(async () => {
-    const { name, icon } = editCategory.value
-    await categoryStore.createCategory(name, icon, type.value, parent.categoryId)
-  }).catch(() => {
-    // console.log('点击了取消')
-  })
+  editTitle.value = `${parent.name} 新增子分类`
+  editShow.value = true
+}
+
+/**
+ * 分类图标选择
+ */
+function handleIconSelected(icon: IIcon) {
+  editCategory.value.icon = icon.url
+  // console.log('handleIconSelected', icon, editCategory.value)
+}
+
+/**
+ * 创建/编辑分类
+ */
+function handleEditConfirm() {
+  if (!checkCategory(editCategory.value))
+    return
+  const { categoryId, name, icon, parentId } = editCategory.value
+
+  if (editCategory.value.isCreate) {
+    categoryStore.createCategory(name, icon, type.value, parentId)
+  }
+  else {
+    if (!categoryId) {
+      toast.error('更新分类ID不能为空')
+      return
+    }
+    categoryStore.updateCategory({
+      categoryId,
+      name,
+      icon,
+    }, type.value, parentId)
+  }
 }
 
 /**
@@ -234,7 +243,7 @@ function handleDeleteAction() {
 </script>
 
 <template>
-  <page-meta :page-style="`overflow:${show ? 'hidden' : 'visible'};`" />
+  <page-meta :page-style="`overflow:${editShow ? 'hidden' : 'visible'};`" />
   <draw-background2 />
   <nav-bar id="TOP_NAVBAR" :actions="navActions" title="分类管理" />
   <view class="w-screen">
@@ -242,12 +251,12 @@ function handleDeleteAction() {
       <drag-sort-list-view expand :gap="8" :list="expends" key-prop="categoryId" :height="scrollHeight" @change="handleSortChange">
         <template #title="{ listItem }">
           <view class="category-title-box">
-            <view class="flex items-center justify-between">
+            <view class="flex items-center justify-center">
               <view class="mr-3">
                 <wd-icon v-if="listItem.expand" name="caret-down" />
                 <wd-icon v-else name="caret-right" />
               </view>
-              <mbill-icon size="20px" :icon="listItem.icon" />
+              <bill-icon size="20px" :icon="listItem.icon" :text="listItem.name" />
               <view class="ml-1 flex-1 font-bold">
                 {{ listItem.name }}
               </view>
@@ -265,7 +274,7 @@ function handleDeleteAction() {
           <view class="category-content-box">
             <drag-sort-grid-view
               :gap="8"
-              :column="4"
+              :column="5"
               :init-height="62"
               :list="listItem.childs"
               key-prop="categoryId"
@@ -274,7 +283,8 @@ function handleDeleteAction() {
             >
               <template #content="{ gridItem }">
                 <view class="flex flex-col items-center p-2">
-                  <mbill-icon :icon="gridItem.icon" />
+                  <!-- <wd-img :width="32" :height="32" :src="gridItem.icon" round :lazy-load="true" :show-error="false" :show-loading="false" /> -->
+                  <bill-icon :icon="gridItem.icon" :text="gridItem.name" />
                   <view class="category-item-title mt-1">
                     {{ gridItem.name }}
                   </view>
@@ -294,33 +304,22 @@ function handleDeleteAction() {
     :items="categoryActions"
   />
 
-  <!-- 编辑账本 -->
-  <wd-dialog selector="category-edit-dialog">
-    <view class="flex items-center space-x-lg">
-      <view @tap="iconPickerShow = true">
-        <wd-avatar :text="editCategory.name.slice(0, 1)" :src="editCategory.icon" />
+  <!-- 编辑分类 -->
+  <bottom-popup v-model="editShow" :title="editTitle" max-height="h-50vh" confirm-text="确认" :show-cancel="false" @confirm="handleEditConfirm">
+    <template #title>
+      <view class="flex items-center pb-2 pt-4">
+        <!-- <wd-img :width="32" :height="32" :src="editCategory.icon" round :lazy-load="true" :show-error="false" :show-loading="false" /> -->
+        <bill-icon :icon="editCategory.icon" :text="editCategory.name" />
+        <wd-input v-model="editCategory.name" type="text" placeholder="分类名称" custom-class="custom-input" />
       </view>
-      <wd-input v-model="editCategory.name" type="text" placeholder="分类名称" custom-class="custom-input" />
-    </view>
-    <!-- 图标选择 -->
-    <!-- <view class="mt-2 h-50 overflow-y-auto p-2">
-      <view class="grid grid-cols-5 gap-4">
-        <view
-          v-for="icon in icons"
-          :key="icon"
-          class="bill-icons flex content-center justify-center rounded-md p-2 text-center text-6 shadow-sm transition-all duration-200"
-          :class="[editCategory.icon === icon ? 'ring-2 ring-indigo-500 ring-offset-2' : '', icon]"
-          hover-class="scale-95 shadow-md"
-          :hover-start-time="0"
-          :hover-stay-time="200"
-          @tap="editCategory.icon = icon"
-        />
-      </view>
-    </view> -->
-  </wd-dialog>
+    </template>
 
-  <!-- 标签选择浮窗 -->
-  <icon-catalog-popup v-model="iconPickerShow" />
+    <view>
+      <icon-picker
+        @selected="handleIconSelected"
+      />
+    </view>
+  </bottom-popup>
 </template>
 
 <style lang="scss" scoped>
