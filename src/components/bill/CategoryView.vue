@@ -1,15 +1,16 @@
 <script setup lang="ts">
+import type { GridSelectItem } from './GridPickerView/GridPickerView.vue'
 import { useCategoryStore } from '@/store'
 
 const props = defineProps<{
   type: number
   height: number
+  selectId: string
 }>()
 
-const { proxy } = getCurrentInstance() as any
 const categoryStore = useCategoryStore()
 
-const categories = ref()
+const categories = ref<GridSelectItem[]>([])
 
 onMounted(() => {
   initSelectItem()
@@ -29,7 +30,7 @@ function initSelectItem() {
           icon: c.icon,
         }
       }),
-    }
+    } as GridSelectItem
   })
 }
 
@@ -40,7 +41,7 @@ function handleCategoryItemTap(item: any) {
 
 <template>
   <view>
-    <grid-select-view :list="categories" :height="height" @change="handleCategoryItemTap" />
+    <grid-picker-view :select-id="selectId" :list="categories" :height="height" @change="handleCategoryItemTap" />
   </view>
 </template>
 

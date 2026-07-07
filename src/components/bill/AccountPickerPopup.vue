@@ -40,9 +40,9 @@ function handleAccountItemTap(item: any) {
 </script>
 
 <template>
-  <bottom-popup v-model="show">
+  <bottom-popup v-model="show" title="选择账户">
     <view class="account-items">
-      <grid-select-view :list="accounts" :height="400" @change="handleAccountItemTap" />
+      <grid-picker-view :list="accounts" :height="400" @change="handleAccountItemTap" />
     </view>
   </bottom-popup>
 </template>

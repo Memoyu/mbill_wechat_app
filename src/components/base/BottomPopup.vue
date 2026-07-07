@@ -10,7 +10,11 @@ const props = withDefaults(defineProps<{
   confirmText: '完成',
   cancelText: '取消',
 })
-const emit = defineEmits(['confirm', 'cancel'])
+const emit = defineEmits<{
+  (e: 'beforeConfirm', done: (pass: boolean) => void): void
+  (e: 'confirm'): void
+  (e: 'cancel'): void
+}>()
 const show = defineModel<boolean>()
 
 function handleCancel() {
@@ -19,8 +23,13 @@ function handleCancel() {
 }
 
 function handleConfirm() {
-  emit('confirm')
-  show.value = false
+  emit('beforeConfirm', (pass) => {
+    if (!pass)
+      return
+
+    emit('confirm')
+    show.value = false
+  })
 }
 </script>
 

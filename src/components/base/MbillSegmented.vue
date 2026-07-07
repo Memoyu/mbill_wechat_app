@@ -26,12 +26,11 @@ watch(() => props.options, (val) => {
 function initOptionNode() {
   nextTick(() => {
     uni.createSelectorQuery().in(proxy).select('#MBILL_SEGMENTED_BOX').boundingClientRect((res: any) => {
-      console.log(res, 'MBILL_SEGMENTED_BOX')
+      // console.log(res, 'MBILL_SEGMENTED_BOX')
       segmentWidth.value = res.width
 
       uni.createSelectorQuery().in(proxy).selectAll('.bill-segment-item').boundingClientRect((res: any) => {
-        console.log(res)
-
+        // console.log(res)
         nodes.value = res
         calcLineLeft(active.value)
       }).exec()

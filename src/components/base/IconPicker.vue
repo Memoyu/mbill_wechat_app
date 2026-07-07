@@ -38,7 +38,7 @@ function handleIconClick(icon: IIcon) {
 
 function handleBeforeExpend(data: any) {
   const codes = data.value as string[]
-  console.log(codes)
+  // console.log(codes)
 
   catalogs.value.map((catalog, index) => {
     if (codes.includes(catalog.code)) {

@@ -30,16 +30,17 @@ function back() {
           <slot v-else name="title" />
         </view>
         <!-- 操作按钮 -->
-        <view>
-          <view v-if="actions && actions.length > 0">
-            <view class="mt-3 flex items-center gap-3">
+        <view class="flex items-center justify-between space-x-2">
+          <slot name="prefix-action" />
+          <view>
+            <view class="mt-3 flex items-center space-x-2">
               <view v-for="(item, index) in actions" :key="index" class="nav-bar-action-icon-box" @tap="item.action">
                 <wd-icon :name="item.icon" />
                 <text class="ml-2">{{ item.text }}</text>
               </view>
             </view>
           </view>
-          <slot v-else name="action" />
+          <slot name="suffix-action" />
         </view>
       </view>
     </view>

@@ -175,26 +175,31 @@ function createChildTag(parent: ITag) {
   editShow.value = true
 }
 
+function handleEditCheck(done: (close: boolean) => void) {
+  const { isCreate, tagId, name } = editTag.value
+  if (!name) {
+    toast.error('标签名称不能为空')
+    return done (false)
+  }
+
+  if (!isCreate && !tagId) {
+    toast.error('标签ID不能为空')
+    return done (false)
+  }
+
+  return done (true)
+}
+
 /**
  * 创建/编辑标签
  */
-function handleEditConfirm() {
-  if (!editTag.value.name)
-    return
-  const { tagId, name, parentId } = editTag.value
-
-  if (editTag.value.isCreate) {
-    tagStore.createTag(name, parentId)
+async function handleEditConfirm() {
+  const { isCreate, tagId, name, parentId } = editTag.value
+  if (isCreate) {
+    await tagStore.createTag(name, parentId)
   }
   else {
-    if (!tagId) {
-      toast.error('更新标签ID不能为空')
-      return
-    }
-    tagStore.updateTag({
-      tagId,
-      name,
-    }, parentId)
+    await tagStore.updateTag({ tagId, name }, parentId)
   }
 }
 
@@ -248,7 +253,7 @@ function handleDeleteAction() {
               @tap="data => handleChildItemTap(listItem, data)"
             >
               <template #content="{ gridItem }">
-                <view class="flex items-center justify-center bg-indigo-500/10 px-1.5 py-2" @tap.stop="() => {}">
+                <view class="flex items-center justify-center bg-indigo-500/10 px-1.5 py-2">
                   <view class="tag-item-title line-clamp-1 text-nowrap">
                     {{ gridItem.name }}
                   </view>
@@ -268,8 +273,8 @@ function handleDeleteAction() {
     :items="tagActions"
   />
 
-  <center-popup v-model="editShow" :title="editTitle" @confirm="handleEditConfirm">
-    <view class="pt-4">
+  <center-popup v-model="editShow" :title="editTitle" @confirm="handleEditConfirm" @before-confirm="handleEditCheck">
+    <view class="px-4 pt-4">
       <wd-input v-model="editTag.name" type="text" placeholder="分类名称" custom-class="custom-input" />
     </view>
   </center-popup>

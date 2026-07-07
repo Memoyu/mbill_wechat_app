@@ -99,11 +99,35 @@ export const useTokenStore = defineStore(
      * 登录成功后处理逻辑
      * @param tokenInfo 登录返回的token信息
      */
-    async function _postLogin(tokenInfo: IAuthLoginRes) {
+    async function afterLogin(tokenInfo: IAuthLoginRes) {
       setTokenInfo(tokenInfo)
       const userStore = useUserStore()
       await userStore.fetchUserInfo()
     }
+
+    /**
+     * 检查是否有登录信息（不考虑token是否过期）
+     */
+    const hasLoginInfo = computed(() => {
+      if (!tokenInfo.value) {
+        return false
+      }
+      if (isDoubleTokenMode) {
+        return isDoubleTokenRes(tokenInfo.value) && !!tokenInfo.value.accessToken
+      }
+      else {
+        return isSingleTokenRes(tokenInfo.value) && !!tokenInfo.value.token
+      }
+    })
+
+    /**
+     * 检查是否已登录且token有效
+     * 建议这样使用tokenStore.updateNowTime().hasLogin
+     */
+    const hasValidLogin = computed(() => {
+      console.log('hasValidLogin', hasLoginInfo.value, !isTokenExpired.value)
+      return hasLoginInfo.value && !isTokenExpired.value
+    })
 
     /**
      * 微信登录
@@ -113,16 +137,19 @@ export const useTokenStore = defineStore(
      */
     const wxLogin = async () => {
       try {
+        if (hasValidLogin.value)
+          return
+
         // 获取微信小程序登录的code
         const code = await getWxCode()
         console.log('微信登录-code: ', code)
         const res = await fetchWxLogin(code)
         console.log('微信登录-res: ', res)
-        await _postLogin(res)
-        uni.showToast({
-          title: '登录成功',
-          icon: 'success',
-        })
+        await afterLogin(res)
+        // uni.showToast({
+        //   title: '登录成功',
+        //   icon: 'success',
+        // })
         return res
       }
       catch (error) {
@@ -213,30 +240,6 @@ export const useTokenStore = defineStore(
       else {
         return isDoubleTokenRes(tokenInfo.value) ? tokenInfo.value.accessToken : ''
       }
-    })
-
-    /**
-     * 检查是否有登录信息（不考虑token是否过期）
-     */
-    const hasLoginInfo = computed(() => {
-      if (!tokenInfo.value) {
-        return false
-      }
-      if (isDoubleTokenMode) {
-        return isDoubleTokenRes(tokenInfo.value) && !!tokenInfo.value.accessToken
-      }
-      else {
-        return isSingleTokenRes(tokenInfo.value) && !!tokenInfo.value.token
-      }
-    })
-
-    /**
-     * 检查是否已登录且token有效
-     * 建议这样使用tokenStore.updateNowTime().hasLogin
-     */
-    const hasValidLogin = computed(() => {
-      console.log('hasValidLogin', hasLoginInfo.value, !isTokenExpired.value)
-      return hasLoginInfo.value && !isTokenExpired.value
     })
 
     /**

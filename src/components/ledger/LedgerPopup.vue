@@ -13,11 +13,9 @@ defineOptions({
 
 const props = withDefaults(defineProps<{
   value?: string
-  store?: boolean
-  type?: 'multiple' | 'single'
+  single?: boolean
 }>(), {
-  store: true,
-  type: 'multiple',
+  single: false,
 })
 const emit = defineEmits(['change'])
 const show = defineModel<boolean>()
@@ -41,21 +39,16 @@ const isAllSelected = computed(() => {
   return ledgerPickerStore.isAllSelected
 })
 
-const isMultiple = computed(() => {
-  return props.type === 'multiple'
-})
-
 function handleLedgerItemClick(item: ILedger) {
   // console.log('点击')
-  let selecteds = ledgerPickerStore.selectedLedgers
-  if (props.store) {
-    ledgerPickerStore.toggleLedgerSelection(item.ledgerId)
+  if (props.single) {
+    currentLedgerId.value = item.ledgerId
+    emit('change', item)
   }
   else {
-    currentLedgerId.value = item.ledgerId
-    selecteds = [item.ledgerId]
+    ledgerPickerStore.toggleLedgerSelection(item.ledgerId)
+    emit('change', ledgerPickerStore.selectedLedgers)
   }
-  emit('change', selecteds)
 }
 
 function handleCancelClick() {
@@ -85,6 +78,15 @@ function handleManageClick() {
     url: '/pages/ledger/index',
   })
 }
+
+function isSelected(ledger: ILedger) {
+  if (props.single) {
+    return currentLedgerId.value === ledger.ledgerId
+  }
+  else {
+    return ledgerPickerStore.isLedgerSelected(ledger.ledgerId)
+  }
+}
 </script>
 
 <template>
@@ -106,7 +108,7 @@ function handleManageClick() {
         <text class="text-base font-semibold">账本</text>
 
         <view class="flex items-center space-x-4">
-          <view v-if="isMultiple" class="title-icon-box" @tap="handleAllSelectClick">
+          <view v-if="!single" class="title-icon-box" @tap="handleAllSelectClick">
             <wd-icon v-if="isAllSelected" name="close" />
             <wd-icon v-else name="check" />
             <text class="ml-2">{{ isAllSelected ? '取消全选' : '全选' }}</text>
@@ -126,34 +128,16 @@ function handleManageClick() {
             <!-- 选中效果遮罩 -->
             <template #action>
               <view
-                v-if="store"
                 class="absolute inset-0 z-10 rounded-2xl transition-all duration-200"
                 :class="[
-                  ledgerPickerStore.isLedgerSelected(leg.ledgerId)
+                  isSelected(leg)
                     ? 'bg-indigo-500/10 ring-2 ring-indigo-500'
                     : 'bg-transparent',
                 ]"
               >
                 <!-- 选中状态的 check 图标 -->
                 <view
-                  v-if="ledgerPickerStore.isLedgerSelected(leg.ledgerId)"
-                  class="absolute bottom-3 right-3 h-5 w-5 flex animate-fade-in animate-duration-200 items-center justify-center rounded-full bg-indigo-500 shadow-sm"
-                >
-                  <text class="iconfont icon-check text-xs text-white" />
-                </view>
-              </view>
-              <view
-                v-else
-                class="absolute inset-0 z-10 rounded-2xl transition-all duration-200"
-                :class="[
-                  leg.ledgerId === currentLedgerId
-                    ? 'bg-indigo-500/10 ring-2 ring-indigo-500'
-                    : 'bg-transparent',
-                ]"
-              >
-                <!-- 选中状态的 check 图标 -->
-                <view
-                  v-if="leg.ledgerId === currentLedgerId"
+                  v-if="isSelected(leg)"
                   class="absolute bottom-3 right-3 h-5 w-5 flex animate-fade-in animate-duration-200 items-center justify-center rounded-full bg-indigo-500 shadow-sm"
                 >
                   <text class="iconfont icon-check text-xs text-white" />

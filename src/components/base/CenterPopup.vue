@@ -4,17 +4,26 @@ const props = defineProps<{
   danger?: boolean
 }>()
 
-const emit = defineEmits(['confirm', 'cancel'])
+const emit = defineEmits<{
+  (e: 'beforeConfirm', done: (pass: boolean) => void): void
+  (e: 'confirm'): void
+  (e: 'cancel'): void
+}>()
 const show = defineModel<boolean>()
-
-function handleConfirm() {
-  emit('confirm')
-  show.value = false
-}
 
 function handleCancel() {
   emit('cancel')
   show.value = false
+}
+
+function handleConfirm() {
+  emit('beforeConfirm', (pass) => {
+    if (!pass)
+      return
+
+    emit('confirm')
+    show.value = false
+  })
 }
 </script>
 

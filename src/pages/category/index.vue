@@ -3,6 +3,7 @@ import type { ICategory } from '@/api/types/category'
 import type { IIcon } from '@/api/types/icon'
 import type { ActionGroup, ActionItem } from '@/typings'
 import { useDialog, useToast } from '@wot-ui/ui'
+import { c } from 'node_modules/vite/dist/node/types.d-aGj9QkWt'
 import { useCategoryStore } from '@/store'
 import { BillTypeEnum } from '@/typings'
 import { systemInfo } from '@/utils/systemInfo'
@@ -13,6 +14,7 @@ definePage({
     navigationBarTitleText: '分类管理',
   },
 })
+const typeActions = ['支出', '收入']
 const navActions: ActionItem[] = [
   {
     text: '创建',
@@ -52,14 +54,10 @@ const editTitle = ref('创建分类')
 const scrollHeight = ref(300)
 const actionShow = ref(false)
 const currentCategory = ref<ICategory>()
+const expendsRef = ref()
+const incomesRef = ref()
 
 const type = ref(BillTypeEnum.Expend)
-const expends = computed(() => {
-  return categoryStore.expends
-})
-const incomes = computed(() => {
-  return categoryStore.incomes
-})
 
 const editCategory = ref<{
   isCreate: boolean
@@ -69,6 +67,10 @@ const editCategory = ref<{
   parentId?: string
 }>({ isCreate: true, name: '', icon: '' })
 
+watch(() => type.value, (val) => {
+  initCategoryComponent()
+})
+
 onMounted(() => {
   // 进入管理页面重新加载一下数据
   categoryStore.loadCategories()
@@ -77,7 +79,17 @@ onMounted(() => {
       scrollHeight.value = systemInfo.windowHeight - (data.height + 16) // 16为外层view的padding
     }).exec()
   })
+  initCategoryComponent()
 })
+
+function initCategoryComponent() {
+  if (type.value === BillTypeEnum.Expend) {
+    expendsRef.value.init()
+  }
+  else {
+    incomesRef.value.init()
+  }
+}
 
 /**
  * 新增分类Action触发
@@ -119,20 +131,16 @@ function handleSortChange(list: ICategory[]) {
 /**
  * 分类子项排序触发
  */
-function handleChildSortChange(list: ICategory[], parent: any) {
+function handleChildSortChange(list: ICategory[], parent: ICategory) {
   // console.log('handleChildSortChange', list, parent as ICategory)
-  parent = parent as ICategory
   categoryStore.sortCategory(list, type.value, parent.categoryId)
 }
 
 /**
  * 分类子项点击
  */
-function handleChildItemTap(parent: any, data: any) {
-  const { item, type } = data
-  parent = parent as ICategory
-  const child = item as ICategory
-
+function handleChildItemTap(type: string, parent: ICategory, child: ICategory) {
+  // console.log(type, parent, child, 'category handleChildItemTap')
   if (type === 'add') {
     createChildCategory(parent)
   }
@@ -146,8 +154,8 @@ function handleChildItemTap(parent: any, data: any) {
 /**
  * 分类操作面板展示
  */
-function handleCategoryActions(item: any) {
-  currentCategory.value = item as ICategory
+function handleCategoryActions(category: ICategory) {
+  currentCategory.value = category
   actionShow.value = true
 }
 
@@ -208,26 +216,32 @@ function handleIconSelected(icon: IIcon) {
 }
 
 /**
+ * 分类编辑检查
+ */
+function handleEditCheck(done: (close: boolean) => void) {
+  const { isCreate, categoryId } = editCategory.value
+
+  if (!checkCategory(editCategory.value))
+    return done(false)
+  if (!isCreate && !categoryId) {
+    toast.error('分类ID不能为空')
+    return done(false)
+  }
+
+  return done(true)
+}
+
+/**
  * 创建/编辑分类
  */
-function handleEditConfirm() {
-  if (!checkCategory(editCategory.value))
-    return
-  const { categoryId, name, icon, parentId } = editCategory.value
+async function handleEditConfirm() {
+  const { isCreate, categoryId, name, icon, parentId } = editCategory.value
 
-  if (editCategory.value.isCreate) {
-    categoryStore.createCategory(name, icon, type.value, parentId)
+  if (isCreate) {
+    await categoryStore.createCategory(name, icon, type.value, parentId)
   }
   else {
-    if (!categoryId) {
-      toast.error('更新分类ID不能为空')
-      return
-    }
-    categoryStore.updateCategory({
-      categoryId,
-      name,
-      icon,
-    }, type.value, parentId)
+    await categoryStore.updateCategory({ categoryId, name, icon }, type.value, parentId)
   }
 }
 
@@ -245,55 +259,40 @@ function handleDeleteAction() {
 <template>
   <page-meta :page-style="`overflow:${editShow ? 'hidden' : 'visible'};`" />
   <draw-background2 />
-  <nav-bar id="TOP_NAVBAR" :actions="navActions" title="分类管理" />
+  <nav-bar id="TOP_NAVBAR" :actions="navActions" title="分类管理">
+    <template #prefix-action>
+      <view class="mt-4 max-w-max rounded-full bg-gray-200/50 px-3 py-1">
+        <mbill-segmented v-model="type" :options="typeActions" />
+      </view>
+    </template>
+  </nav-bar>
   <view class="w-screen">
     <view class="p-2">
-      <drag-sort-list-view expand :gap="8" :list="expends" key-prop="categoryId" :height="scrollHeight" @change="handleSortChange">
-        <template #title="{ listItem }">
-          <view class="category-title-box">
-            <view class="flex items-center justify-center">
-              <view class="mr-3">
-                <wd-icon v-if="listItem.expand" name="caret-down" />
-                <wd-icon v-else name="caret-right" />
-              </view>
-              <bill-icon size="20px" :icon="listItem.icon" :text="listItem.name" />
-              <view class="ml-1 flex-1 font-bold">
-                {{ listItem.name }}
-              </view>
+      <wd-tabs v-model="type" animated>
+        <wd-tab key="expend" title="支出" :name="BillTypeEnum.Expend">
+          <category-drag-sort-view
+            ref="expendsRef"
+            :type="BillTypeEnum.Expend"
+            :scroll-height="scrollHeight"
+            @actions="handleCategoryActions"
+            @sort-change="handleSortChange"
+            @child-sort-change="handleChildSortChange"
+            @child-tap="handleChildItemTap"
+          />
+        </wd-tab>
 
-              <view
-                class="h-6 w-6 flex items-center justify-center rounded-full bg-white/40 shadow-[0_4px_8px_rgba(0,0,0,0.04)]"
-                @tap.stop="handleCategoryActions(listItem)"
-              >
-                <wd-icon name="more" />
-              </view>
-            </view>
-          </view>
-        </template>
-        <template #content="{ listItem }">
-          <view class="category-content-box">
-            <drag-sort-grid-view
-              :gap="8"
-              :column="5"
-              :init-height="62"
-              :list="listItem.childs"
-              key-prop="categoryId"
-              @change="list => handleChildSortChange(list, listItem)"
-              @tap="data => handleChildItemTap(listItem, data)"
-            >
-              <template #content="{ gridItem }">
-                <view class="flex flex-col items-center p-2">
-                  <!-- <wd-img :width="32" :height="32" :src="gridItem.icon" round :lazy-load="true" :show-error="false" :show-loading="false" /> -->
-                  <bill-icon :icon="gridItem.icon" :text="gridItem.name" />
-                  <view class="category-item-title mt-1">
-                    {{ gridItem.name }}
-                  </view>
-                </view>
-              </template>
-            </drag-sort-grid-view>
-          </view>
-        </template>
-      </drag-sort-list-view>
+        <wd-tab key="income" title="收入" :name="BillTypeEnum.Income">
+          <category-drag-sort-view
+            ref="incomesRef"
+            :type="BillTypeEnum.Income"
+            :scroll-height="scrollHeight"
+            @actions="handleCategoryActions"
+            @sort-change="handleSortChange"
+            @child-sort-change="handleChildSortChange"
+            @child-tap="handleChildItemTap"
+          />
+        </wd-tab>
+      </wd-tabs>
     </view>
   </view>
 
@@ -305,7 +304,7 @@ function handleDeleteAction() {
   />
 
   <!-- 编辑分类 -->
-  <bottom-popup v-model="editShow" :title="editTitle" max-height="h-50vh" confirm-text="确认" :show-cancel="false" @confirm="handleEditConfirm">
+  <bottom-popup v-model="editShow" :title="editTitle" max-height="h-50vh" confirm-text="确认" show-cancel @confirm="handleEditConfirm" @before-confirm="handleEditCheck">
     <template #title>
       <view class="flex items-center pb-2 pt-4">
         <!-- <wd-img :width="32" :height="32" :src="editCategory.icon" round :lazy-load="true" :show-error="false" :show-loading="false" /> -->
@@ -323,17 +322,11 @@ function handleDeleteAction() {
 </template>
 
 <style lang="scss" scoped>
-.category-title-box {
-  box-sizing: border-box;
-  padding: 0.9rem;
-  @apply bg-indigo-50/60;
+// 自定义tabs，隐藏nav
+:deep(.wd-tabs) {
+  background: none;
 }
-
-.category-content-box {
-  @apply bg-indigo-50/60 p-2;
-}
-
-.category-item-title {
-  font-size: 12px;
+:deep(.wd-tabs__nav) {
+  display: none;
 }
 </style>

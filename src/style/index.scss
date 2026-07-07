@@ -1,5 +1,4 @@
 @import './iconfont.css';
-@import './billiconfont.css';
 
 .test {
   // 可以通过 @apply 多个样式封装整体样式
@@ -32,7 +31,7 @@ page {
 }
 
 .nav-bar-action-icon-box {
-  @apply: flex items-center justify-center rounded-full bg-gray-50 p-2 px-4;
+  @apply: flex items-center justify-center rounded-full bg-gray-200/50 p-2 px-4;
 }
 
 .hide-view-scrollbar::-webkit-scrollbar {

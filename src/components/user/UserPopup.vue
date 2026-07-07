@@ -114,11 +114,12 @@ function handelNicknameInput() {
           </wd-grid>
         </view>
 
-        <view class="user-block">
+        <!-- 暂不支持退出登录 -->
+        <!-- <view class="user-block">
           <wd-button type="danger" custom-class="custom-shadow">
             退出登录
           </wd-button>
-        </view>
+        </view> -->
       </view>
     </view>
   </wd-popup>

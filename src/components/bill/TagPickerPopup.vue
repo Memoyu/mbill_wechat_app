@@ -38,9 +38,9 @@ function handleTagItemTap(item: any) {
 </script>
 
 <template>
-  <bottom-popup v-model="show">
+  <bottom-popup v-model="show" title="选择标签">
     <view class="tag-items">
-      <grid-select-view :has-icon="false" :list="tags" :height="400" @change="handleTagItemTap" />
+      <!--  -->
     </view>
   </bottom-popup>
 </template>

@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import type { ILedger } from '@/api/types/ledger'
 import dayjs from 'dayjs'
 import { useLedgerStore } from '@/store'
 import { getDateFormat } from '@/utils/date'
@@ -24,6 +25,7 @@ const activeType = ref(0)
 const currentLedger = ref()
 const currentLedgerId = ref()
 
+const categoryId = ref('13159366956548101')
 const dateTime = ref(Date.now())
 const remark = ref('')
 const tags = ref<string[]>([])
@@ -44,7 +46,7 @@ watch(() => tags.value, (newTags, oldTags) => {
 })
 
 onMounted(() => {
-  currentLedger.value = ledgerStore.ledgers[0]
+  currentLedger.value = ledgerStore.ledgers[4]
   currentLedgerId.value = currentLedger.value.ledgerId
   initFixedHeight()
 })
@@ -66,10 +68,8 @@ function handlePressKeyboard(key: any, value: string) {
 
 }
 
-function handleLedgerChange(ledger: any) {
-  if (!ledger || ledger.length < 1)
-    return
-  currentLedger.value = ledger[0]
+function handleLedgerChange(ledger: ILedger) {
+  currentLedger.value = ledger
 }
 
 function handleDateTimeChange(dateTime: any) {
@@ -100,7 +100,7 @@ function handleTagSelectTap() {
         </view>
       </view>
     </template>
-    <template #action>
+    <template #prefix-action>
       <view class="mt-4 max-w-max rounded-full bg-gray-200/50 px-3 py-1">
         <mbill-segmented v-model="activeType" :options="typeOptions" />
       </view>
@@ -113,7 +113,7 @@ function handleTagSelectTap() {
       :indicator="false" :autoplay="false" :height="categoryPickerHeight"
     >
       <template #default="{ item }">
-        <category-view :type="item === '0' ? 0 : 1" :height="categoryPickerHeight" />
+        <category-view :select-id="categoryId" :type="item === '0' ? 0 : 1" :height="categoryPickerHeight" />
       </template>
     </wd-swiper>
   </view>
@@ -170,13 +170,13 @@ function handleTagSelectTap() {
   </view>
 
   <!-- 账本弹窗 -->
-  <ledger-popup v-model="isLedgersShow" v-model:value="currentLedgerId" type="single" :store="false" @change="handleLedgerChange" />
+  <ledger-popup v-model="isLedgersShow" v-model:value="currentLedgerId" single @change="handleLedgerChange" />
   <!-- 日期弹窗 -->
   <date-time-popup v-model="isDateTimeShow" v-model:date="dateTime" @change="handleDateTimeChange" />
   <!-- 账户弹窗 -->
-  <account-popup v-model="isAccountShow" v-model:account="accountId" />
+  <account-picker-popup v-model="isAccountShow" v-model:account="accountId" />
   <!-- 标签弹窗 -->
-  <tag-popup v-model="isTagShow" v-model:tags="tags" />
+  <tag-picker-popup v-model="isTagShow" v-model:tags="tags" />
 </template>
 
 <style lang="scss" scoped>

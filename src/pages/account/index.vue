@@ -203,26 +203,32 @@ function handleIconSelected(icon: IIcon) {
 }
 
 /**
+ * 账户编辑检查
+ */
+function handleEditCheck(done: (close: boolean) => void) {
+  const { isCreate, accountId } = editAccount.value
+
+  if (!checkAccount(editAccount.value))
+    return done(false)
+  if (!isCreate && !accountId) {
+    toast.error('账户ID不能为空')
+    return done(false)
+  }
+
+  return done(true)
+}
+
+/**
  * 创建/编辑分类
  */
-function handleEditConfirm() {
-  if (!checkAccount(editAccount.value))
-    return
-  const { accountId, name, icon, parentId } = editAccount.value
+async function handleEditConfirm() {
+  const { isCreate, accountId, name, icon, parentId } = editAccount.value
 
-  if (editAccount.value.isCreate) {
-    accountStore.createAccount(name, icon, parentId)
+  if (isCreate) {
+    await accountStore.createAccount(name, icon, parentId)
   }
   else {
-    if (!accountId) {
-      toast.error('更新账户ID不能为空')
-      return
-    }
-    accountStore.updateAccount({
-      accountId,
-      name,
-      icon,
-    }, parentId)
+    await accountStore.updateAccount({ accountId, name, icon }, parentId)
   }
 }
 
@@ -251,7 +257,7 @@ function handleDeleteAction() {
                 <wd-icon v-if="listItem.expand" name="caret-down" />
                 <wd-icon v-else name="caret-right" />
               </view>
-              <bill-icon size="20px" :icon="listItem.icon" :text="listItem.name" />
+              <bill-icon size="22px" :icon="listItem.icon" :text="listItem.name" />
               <view class="ml-1 flex-1 font-bold">
                 {{ listItem.name }}
               </view>
@@ -269,7 +275,7 @@ function handleDeleteAction() {
           <view class="account-content-box">
             <drag-sort-grid-view
               :gap="8"
-              :column="4"
+              :column="5"
               :init-height="62"
               :list="listItem.childs"
               key-prop="accountId"
@@ -279,7 +285,7 @@ function handleDeleteAction() {
               <template #content="{ gridItem }">
                 <view class="flex flex-col items-center p-2">
                   <bill-icon :icon="gridItem.icon" :text="gridItem.name" />
-                  <view class="account-item-title mt-1">
+                  <view class="account-item-title line-clamp-1 mt-1 mt-1 text-nowrap">
                     {{ gridItem.name }}
                   </view>
                 </view>
@@ -299,7 +305,7 @@ function handleDeleteAction() {
   />
 
   <!-- 编辑账户 -->
-  <bottom-popup v-model="editShow" :title="editTitle" max-height="h-50vh" confirm-text="确认" :show-cancel="false" @confirm="handleEditConfirm">
+  <bottom-popup v-model="editShow" :title="editTitle" max-height="h-50vh" confirm-text="确认" show-cancel @confirm="handleEditConfirm" @before-confirm="handleEditCheck">
     <template #title>
       <view class="flex items-center pb-2 pt-4">
         <!-- <wd-img :width="32" :height="32" :src="editCategory.icon" round :lazy-load="true" :show-error="false" :show-loading="false" /> -->
