@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import type { ILedger } from '@/api/types/ledger'
+import type { ITag } from '@/api/types/tag'
 import dayjs from 'dayjs'
 import { useLedgerStore } from '@/store'
 import { getDateFormat } from '@/utils/date'
@@ -28,7 +29,7 @@ const currentLedgerId = ref()
 const categoryId = ref('13159366956548101')
 const dateTime = ref(Date.now())
 const remark = ref('')
-const tags = ref<string[]>([])
+const tags = ref<ITag[]>([])
 const accountId = ref()
 const accountName = ref('虚拟账户-支付宝')
 const address = ref('广东省广州市广州市天河区人民政府(天府路西)')
@@ -37,6 +38,9 @@ const ledgerStore = useLedgerStore()
 
 const showAddress = computed(() => {
   return address.value.length > 12 ? `···${address.value.substring(address.value.length - 12)}` : address.value
+})
+const tagIds = computed(() => {
+  return tags.value.map(tag => tag.tagId)
 })
 
 watch(() => tags.value, (newTags, oldTags) => {
@@ -77,12 +81,9 @@ function handleDateTimeChange(dateTime: any) {
   dateTime.value = dateTime
 }
 
-function handleTagSelectTap() {
-  if (tags.value.length > 0) {
-    tags.value = []
-    return
-  }
-  tags.value = ['服装鞋帽', '美妆护肤', '数码电子', '日用百货', '图书文具', '母婴用品', '宠物用品']
+function handleTagSelectedChange(items: ITag[]) {
+  console.log(items, 'tags')
+  tags.value = items
 }
 </script>
 
@@ -113,7 +114,7 @@ function handleTagSelectTap() {
       :indicator="false" :autoplay="false" :height="categoryPickerHeight"
     >
       <template #default="{ item }">
-        <category-view :select-id="categoryId" :type="item === '0' ? 0 : 1" :height="categoryPickerHeight" />
+        <category-view v-model="categoryId" :type="item === '0' ? 0 : 1" :height="categoryPickerHeight" />
       </template>
     </wd-swiper>
   </view>
@@ -121,8 +122,8 @@ function handleTagSelectTap() {
   <view id="BOTTOM_INPUT" class="absolute bottom-0 left-0 right-0">
     <!-- 标签 -->
     <view v-if="tags && tags.length > 0" class="hide-view-scrollbar flex overflow-x-auto px-2 py-1 space-x-2">
-      <view v-for="tag in tags" :key="tag" class="flex-shrink-0 rounded-full bg-indigo-300/40 px-2 py-1 text-xs">
-        {{ tag }}
+      <view v-for="tag in tags" :key="tag.tagId" class="flex-shrink-0 rounded-full bg-indigo-300/40 px-2 py-1 text-xs">
+        {{ tag.name }}
       </view>
     </view>
     <!-- 账单属性 -->
@@ -176,7 +177,7 @@ function handleTagSelectTap() {
   <!-- 账户弹窗 -->
   <account-picker-popup v-model="isAccountShow" v-model:account="accountId" />
   <!-- 标签弹窗 -->
-  <tag-picker-popup v-model="isTagShow" v-model:tags="tags" />
+  <tag-picker-popup v-model="isTagShow" :tags="tagIds" @change="handleTagSelectedChange" />
 </template>
 
 <style lang="scss" scoped>

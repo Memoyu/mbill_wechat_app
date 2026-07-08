@@ -1,14 +1,22 @@
 <script setup lang="ts">
 import type { GridSelectItem } from './GridPickerView.vue'
 
+defineOptions({
+  options: {
+    addGlobalClass: true,
+    virtualHost: true,
+    styleIsolation: 'shared',
+  },
+})
+
 const props = defineProps<{
   item: GridSelectItem
-  selected: string
+  selectedId: string
 }>()
 const emit = defineEmits(['change'])
 
 const isSelected = computed(() => {
-  return props.selected === props.item.id
+  return props.selectedId === props.item.id
 })
 
 const hasChilds = computed(() => {
@@ -18,8 +26,8 @@ const hasChilds = computed(() => {
 
 <template>
   <view :class="[isSelected ? 'grid-select-item-selected' : '']">
-    <view class="grid-select-item-box-has-icon">
-      <view :class="[hasChilds ? 'grid-select-parent-more' : '']">
+    <view class="grid-select-item-box">
+      <view :class="[hasChilds ? 'grid-select-item-has-more' : '']">
         <bill-icon :icon="item.icon" :text="item.name" />
       </view>
       <view class="grid-select-item-title">
@@ -30,7 +38,11 @@ const hasChilds = computed(() => {
 </template>
 
 <style lang="scss" scoped>
-.grid-select-parent-more {
+.grid-select-item-box {
+  @apply: flex flex-col items-center py-2;
+}
+
+.grid-select-item-has-more {
   position: relative;
   &:before {
     content: '';
@@ -45,14 +57,6 @@ const hasChilds = computed(() => {
     border: 3px solid white;
     @apply: bg-indigo-300;
   }
-}
-
-.grid-select-item-box {
-  @apply: font-bold rounded-lg py-3 px-2 bg-indigo-300/20;
-}
-
-.grid-select-item-box-has-icon {
-  @apply: flex flex-col items-center py-2;
 }
 
 .grid-select-item-title {

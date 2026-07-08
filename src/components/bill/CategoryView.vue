@@ -1,16 +1,24 @@
 <script setup lang="ts">
-import type { GridSelectItem } from './GridPickerView/GridPickerView.vue'
+import type { GridSelectData, GridSelectItem } from './GridPickerView/GridPickerView.vue'
 import { useCategoryStore } from '@/store'
+
+defineOptions({
+  options: {
+    addGlobalClass: true,
+    virtualHost: true,
+    styleIsolation: 'shared',
+  },
+})
 
 const props = defineProps<{
   type: number
   height: number
-  selectId: string
 }>()
+const model = defineModel<string>()
 
 const categoryStore = useCategoryStore()
 
-const categories = ref<GridSelectItem[]>([])
+const categoryData = ref<GridSelectData>()
 
 onMounted(() => {
   initSelectItem()
@@ -18,7 +26,14 @@ onMounted(() => {
 
 function initSelectItem() {
   const cs = props.type === 0 ? categoryStore.expends : categoryStore.incomes
-  categories.value = cs.map((a) => {
+  const tops = cs[0].childs.map((a) => {
+    return {
+      id: a.categoryId,
+      name: a.name,
+      icon: a.icon,
+    } as GridSelectItem
+  })
+  const categories = cs.map((a) => {
     return {
       id: a.categoryId,
       name: a.name,
@@ -32,16 +47,20 @@ function initSelectItem() {
       }),
     } as GridSelectItem
   })
+  categoryData.value = {
+    list: categories,
+    tops,
+  }
 }
 
 function handleCategoryItemTap(item: any) {
-  console.log('选中分类', item)
+  console.log('选中分类', item, model.value)
 }
 </script>
 
 <template>
   <view>
-    <grid-picker-view :select-id="selectId" :list="categories" :height="height" @change="handleCategoryItemTap" />
+    <grid-picker-view v-model="model" :data="categoryData" :height="height" @change="handleCategoryItemTap" />
   </view>
 </template>
 

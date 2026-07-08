@@ -1,6 +1,11 @@
 <script setup lang="ts">
 import { objToStyle } from '@/utils'
 
+export interface GridSelectData {
+  list: GridSelectItem[]
+  tops?: GridSelectItem[]
+}
+
 export interface GridSelectItem {
   id: string
   name: string
@@ -8,23 +13,41 @@ export interface GridSelectItem {
   childs: GridSelectItem[]
 }
 
+defineOptions({
+  options: {
+    addGlobalClass: true,
+    virtualHost: true,
+    styleIsolation: 'shared',
+  },
+})
+
 const props = withDefaults(defineProps<{
-  list: GridSelectItem[]
+  data: GridSelectData
   height: number
   column?: number
-  selectId?: string
 }>(), {
   column: 5,
 })
 const emit = defineEmits(['change'])
+const model = defineModel<string>()
+defineExpose({
+  // 对外提供初始化选中项方法，主要用于popup类型组件使用（弹窗完成后再初始化）
+  initSelected,
+})
+
+// 数据项映射：id -> { ridx, pid }
+const itemMaps = {}
 
 const { proxy } = getCurrentInstance() as any
 const scrollHeight = ref(props.height)
 const rows = ref<GridSelectItem[][]>([])
-const rowIndex = ref(0)
+const rowIndex = ref(-1)
 const childs = ref()
 const childHeight = ref(0)
-const selected = ref()
+
+const innerTops = ref<GridSelectItem[]>([])
+
+const selectedId = ref()
 
 const itemsBoxStyle = computed(() => {
   const style = {
@@ -35,69 +58,109 @@ const itemsBoxStyle = computed(() => {
   return `${objToStyle(style)}`
 })
 
+const hasTop = computed(() => {
+  return innerTops.value && innerTops.value.length > 0
+})
+
 watch(() => props.height, (nh) => {
   scrollHeight.value = nh
 })
 
-watch(() => props.list, (list) => {
-  initRowList(list)
+watch(() => props.data, (data) => {
+  initSelectData(data)
 }, { deep: true })
 
-function initRowList(list: GridSelectItem[]) {
+function initSelectData(data: GridSelectData) {
   // console.log(list, 'list')
-  const rs: GridSelectItem[][] = []
-  const ls = list ?? []
+  // 初始化常用项
+  innerTops.value = data.tops
 
-  for (let i = 0; i < ls.length; i += props.column) {
-    const ritems = ls.slice(i, i + props.column)
-    rs.push(ritems)
+  const rs: GridSelectItem[][] = []
+  const list = data.list ?? []
+  let ridx = 0
+  // 构建行列数据，以及选中项
+  for (let i = 0; i < list.length; i += props.column) {
+    const ris = list.slice(i, i + props.column)
+    ris.forEach((ri) => {
+      itemMaps[ri.id] = { ridx, pid: ri.id }
+      ri.childs.forEach((ric) => {
+        itemMaps[ric.id] = { ridx, pid: ri.id }
+      })
+    })
+    ridx++
+    rs.push(ris)
   }
   rows.value = rs
 
-  let index = 0
-  let parent
-  let cs
-  rs.forEach((items, idx) => {
-    items.forEach((item) => {
-      if (item.id === props.selectId) {
-        index = idx
-        parent = item
-        cs = item.childs
-      }
-      item.childs.forEach((child) => {
-        if (child.id === props.selectId) {
-          index = idx
-          parent = child
-          cs = item.childs
-        }
-      })
-    })
-  })
-
-  console.log(index, parent, 'rowIndex')
-
-  if (parent) {
-    childs.value = cs
-    handleItemTap(parent, index)
-  }
+  initSelected(model.value)
 }
 
-function handleItemTap(item: GridSelectItem, rowIdx: any) {
-  if (item.childs && item.childs.length > 0) {
-    childs.value = item.childs
+/**
+ * 初始化选中项
+ * @param sid 选中项id
+ */
+function initSelected(sid: string) {
+  // console.log(itemMaps, 'itemMaps')
+  const map = itemMaps[sid]
+
+  const list = props.data.list
+  let parent
+  let ridx = 0
+  // 默认选中项为空
+  if (!map) {
+    // 有常用，则选中常用第一个
+    if (hasTop.value) {
+      selectedId.value = innerTops.value[0].id
+      return
+    }
+    else {
+      // 默认选中lsit第一个
+      parent = list[0]
+      sid = parent.id
+    }
+  }
+  else {
+    ridx = map.ridx
+    const pid = map.pid
+    parent = list.find(item => item.id === pid)
   }
 
-  // 获取子项集合高度
-  calcChildHeight(rowIdx)
-  // 展开状态改变
-  rowIndex.value = rowIdx
+  console.log(map, ridx, parent, 'init selected')
 
+  selectedId.value = sid
+  childs.value = parent.childs
+  rowIndex.value = ridx
+  calcChildHeight(ridx)
+}
+
+function handleCommonItemTap(item: GridSelectItem) {
+  // 收起展开内容
+  rowIndex.value = -1
   selectedItem(item)
-  emit('change', item)
+}
+
+function handleItemTap(item: GridSelectItem, rowIdx: number) {
+  if (item.childs && item.childs.length > 0) {
+    childs.value = item.childs
+    // 获取子项集合高度
+    calcChildHeight(rowIdx)
+  }
+  else {
+    // 收起展开内容
+    rowIdx = -1
+  }
+  rowIndex.value = rowIdx
+  selectedItem(item)
+}
+
+function handleChildItemTap(item: GridSelectItem) {
+  selectedItem(item)
 }
 
 function selectedItem(item: GridSelectItem) {
-  selected.value = item.id
+  selectedId.value = item.id
+  model.value = selectedId.value
+  emit('change', item)
 }
 
 /**
@@ -121,6 +184,25 @@ function getChildContentHeight(rowIdx: number) {
 <template>
   <scroll-view scroll-y :style="{ height: `${scrollHeight}px` }">
     <view class="p-2">
+      <!-- 常用项 -->
+      <view v-if="hasTop">
+        <view class="font-semibold">
+          常用
+        </view>
+        <view :style="itemsBoxStyle">
+          <view
+            v-for="top in innerTops" :key="`common-${top.id}`"
+            class="my-2"
+            @tap="handleCommonItemTap(top)"
+          >
+            <picker-item :item="top" :selected-id="selectedId" />
+          </view>
+        </view>
+        <view class="mt-3 font-semibold">
+          全部
+        </view>
+      </view>
+      <!-- 列表项 -->
       <view v-for="(items, rowIdx) in rows" :key="rowIdx" class="flex flex-col">
         <view :style="itemsBoxStyle">
           <view
@@ -128,7 +210,7 @@ function getChildContentHeight(rowIdx: number) {
             class="my-2"
             @tap="handleItemTap(item, rowIdx)"
           >
-            <picker-item :item="item" :selected="selected" />
+            <picker-item :item="item" :selected-id="selectedId" />
           </view>
         </view>
 
@@ -140,10 +222,9 @@ function getChildContentHeight(rowIdx: number) {
             <view :style="itemsBoxStyle">
               <view
                 v-for="child in childs" :key="child.id"
-                :class="[selected.id === child.id ? 'grid-select-item-selected' : '']"
-                @tap="handleItemTap(child, rowIdx)"
+                @tap="handleChildItemTap(child)"
               >
-                <picker-item :item="child" :selected="selected" />
+                <picker-item :item="child" :selected-id="selectedId" />
               </view>
             </view>
           </view>

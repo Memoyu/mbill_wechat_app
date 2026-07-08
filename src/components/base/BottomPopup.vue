@@ -11,6 +11,7 @@ const props = withDefaults(defineProps<{
   cancelText: '取消',
 })
 const emit = defineEmits<{
+  (e: 'after-enter'): void
   (e: 'beforeConfirm', done: (pass: boolean) => void): void
   (e: 'confirm'): void
   (e: 'cancel'): void
@@ -44,6 +45,7 @@ function handleConfirm() {
     lazy-render
     :custom-class="`rounded-t-3xl relative ${maxHeight}`"
     @close="() => show = false"
+    @after-enter="emit('after-enter')"
   >
     <view class="h-full overflow-auto">
       <view

@@ -1,24 +1,37 @@
 <script setup lang="ts">
 import { useAccountStore } from '@/store'
 
+defineOptions({
+  options: {
+    addGlobalClass: true,
+    virtualHost: true,
+    styleIsolation: 'shared',
+  },
+})
+
 const props = withDefaults(defineProps<{
   account?: string
 }>(), {
 })
 const show = defineModel<boolean>()
+const account = defineModel<string>('account')
 
 const accountStore = useAccountStore()
 
-const accounts = ref()
+const accountData = ref()
+const AccountPickerRef = ref()
 
-watch(() => show.value, (val) => {
-  if (val) {
-    initSelectItem()
-  }
+// watch(() => show.value, (val) => {
+//   if (val) {
+//     initSelectItem()
+//   }
+// })
+onMounted(() => {
+  initSelectItem()
 })
 
 function initSelectItem() {
-  accounts.value = accountStore.accounts.map((a) => {
+  const accounts = accountStore.accounts.map((a) => {
     return {
       id: a.accountId,
       name: a.name,
@@ -32,6 +45,15 @@ function initSelectItem() {
       }),
     }
   })
+  accountData.value = {
+    list: accounts,
+    tops: [],
+  }
+}
+
+function handleAfterEnter() {
+  console.log('handleAfterEnter')
+  AccountPickerRef.value.initSelected(account.value)
 }
 
 function handleAccountItemTap(item: any) {
@@ -40,9 +62,9 @@ function handleAccountItemTap(item: any) {
 </script>
 
 <template>
-  <bottom-popup v-model="show" title="选择账户">
+  <bottom-popup v-model="show" title="选择账户" @after-enter="handleAfterEnter">
     <view class="account-items">
-      <grid-picker-view :list="accounts" :height="400" @change="handleAccountItemTap" />
+      <grid-picker-view ref="AccountPickerRef" :data="accountData" :height="400" @change="handleAccountItemTap" />
     </view>
   </bottom-popup>
 </template>

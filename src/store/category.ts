@@ -11,8 +11,8 @@ import { BillTypeEnum } from '@/typings'
 
 // 初始化状态
 const initState: {
-  expends: ICategory[ ]
-  incomes: ICategory[ ]
+  expends: ICategory[]
+  incomes: ICategory[]
 } = {
   expends: [],
   incomes: [],
