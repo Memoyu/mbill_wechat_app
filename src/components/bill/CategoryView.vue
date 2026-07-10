@@ -14,7 +14,7 @@ const props = defineProps<{
   type: number
   height: number
 }>()
-const model = defineModel<string>()
+const selected = defineModel<string>()
 
 const categoryStore = useCategoryStore()
 
@@ -54,13 +54,14 @@ function initSelectItem() {
 }
 
 function handleCategoryItemTap(item: any) {
-  console.log('选中分类', item, model.value)
+  const { id, account, parent } = item
+  console.log('选中分类', item, selected.value)
 }
 </script>
 
 <template>
   <view>
-    <grid-picker-view v-model="model" :data="categoryData" :height="height" @change="handleCategoryItemTap" />
+    <grid-picker-view v-model="selected" :data="categoryData" :height="height" @change="handleCategoryItemTap" />
   </view>
 </template>
 

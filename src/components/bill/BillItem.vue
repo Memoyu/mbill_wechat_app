@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import type { BillRes } from '@/api/types/bill'
+import type { IBill } from '@/api/types/bill'
 import dayjs from 'dayjs'
 import { formatFloat } from '@/utils'
 
 const props = defineProps<{
-  bill: BillRes
+  bill: IBill
 }>()
 
 const categoryText = computed(() => {

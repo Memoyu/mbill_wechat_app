@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import type { IAccount } from '@/api/types/account'
+import type { IBill } from '@/api/types/bill'
 import type { ILedger } from '@/api/types/ledger'
 import type { ITag } from '@/api/types/tag'
 import dayjs from 'dayjs'
@@ -13,6 +15,8 @@ definePage({
   },
 })
 
+const ledgerStore = useLedgerStore()
+
 const typeOptions = ['支出', '收入']
 const amountValue = ref('')
 const tempCursor = ref(amountValue.value.length)
@@ -26,18 +30,26 @@ const activeType = ref(0)
 const currentLedger = ref()
 const currentLedgerId = ref()
 
+const bill = ref<IBill>({
+  billId: '',
+  type: 0,
+  category: { categoryId: '', name: '', icon: '' },
+  account: { accountId: '', name: '账户选择', icon: '' },
+  amount: 0,
+  date: new Date(),
+  remark: '',
+  tags: [],
+  address: '',
+})
+
 const categoryId = ref('13159366956548101')
 const dateTime = ref(Date.now())
 const remark = ref('')
 const tags = ref<ITag[]>([])
-const accountId = ref()
-const accountName = ref('虚拟账户-支付宝')
-const address = ref('广东省广州市广州市天河区人民政府(天府路西)')
-
-const ledgerStore = useLedgerStore()
 
 const showAddress = computed(() => {
-  return address.value.length > 12 ? `···${address.value.substring(address.value.length - 12)}` : address.value
+  const address = bill.value.address
+  return address.length > 12 ? `···${address.substring(address.length - 12)}` : address
 })
 const tagIds = computed(() => {
   return tags.value.map(tag => tag.tagId)
@@ -50,7 +62,7 @@ watch(() => tags.value, (newTags, oldTags) => {
 })
 
 onMounted(() => {
-  currentLedger.value = ledgerStore.ledgers[4]
+  currentLedger.value = ledgerStore.ledgers[0]
   currentLedgerId.value = currentLedger.value.ledgerId
   initFixedHeight()
 })
@@ -84,6 +96,18 @@ function handleDateTimeChange(dateTime: any) {
 function handleTagSelectedChange(items: ITag[]) {
   console.log(items, 'tags')
   tags.value = items
+}
+
+function handleAccountSelectedChange(item: any) {
+  console.log(item, 'handleAccountSelectedChange')
+  const { account, parent } = item
+  bill.value.account.accountId = account.id
+  bill.value.account.icon = account.icon
+  bill.value.account.name = account.name
+  if (!parent) {
+    bill.value.account.parent.accountId = parent.id
+    bill.value.account.parent.name = parent.name
+  }
 }
 </script>
 
@@ -135,8 +159,8 @@ function handleTagSelectedChange(items: ITag[]) {
       </view>
       <view class="bill-attr-box-item" @tap="isAccountShow = true">
         <!-- 账户 -->
-        <wd-img :width="22" round :height="22" src="https://wot-ui.cn/assets/panda.jpg" />
-        <text class="ml-1">{{ accountName }}</text>
+        <bill-icon size="22px" :icon="bill.account.icon" :text="bill.account.name" />
+        <text class="ml-1">{{ bill.account.parent ? `${bill.account.parent.name}-${bill.account.name}` : bill.account.name }}</text>
       </view>
       <view class="bill-attr-box-item" @tap="isTagShow = true">
         <!-- 标签 -->
@@ -175,7 +199,7 @@ function handleTagSelectedChange(items: ITag[]) {
   <!-- 日期弹窗 -->
   <date-time-popup v-model="isDateTimeShow" v-model:date="dateTime" @change="handleDateTimeChange" />
   <!-- 账户弹窗 -->
-  <account-picker-popup v-model="isAccountShow" v-model:account="accountId" />
+  <account-picker-popup v-model="isAccountShow" :account="bill.account.accountId" @change="handleAccountSelectedChange" />
   <!-- 标签弹窗 -->
   <tag-picker-popup v-model="isTagShow" :tags="tagIds" @change="handleTagSelectedChange" />
 </template>

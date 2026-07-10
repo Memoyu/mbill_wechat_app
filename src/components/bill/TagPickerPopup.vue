@@ -23,6 +23,9 @@ function isSelected(item: ITag) {
 function handleTagItemTap(item: ITag) {
   selectedIds.value = isSelected(item) ? selectedIds.value.filter(sid => sid !== item.tagId) : [...selectedIds.value, item.tagId]
   // console.log('标签选中', selectedIds.value, item)
+}
+
+function handleConfirm(check: (pass: boolean) => void) {
   const ts = []
   for (let i = 0; i < tagGroups.value.length; i++) {
     const tagGroup = tagGroups.value[i]
@@ -34,11 +37,12 @@ function handleTagItemTap(item: ITag) {
     }
   }
   emit('change', ts)
+  check(true)
 }
 </script>
 
 <template>
-  <bottom-popup v-model="show" title="选择标签">
+  <bottom-popup v-model="show" title="选择标签" @confirm="handleConfirm">
     <view class="p-2">
       <view v-for="tagGroup in tagGroups" :key="tagGroup.tagId" class="mb-4">
         <view class="pb-2 font-semibold">

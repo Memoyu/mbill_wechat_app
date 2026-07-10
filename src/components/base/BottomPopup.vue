@@ -1,7 +1,6 @@
 <script setup lang="ts">
 const props = withDefaults(defineProps<{
   title?: string
-  maxHeight?: string
   showCancel?: boolean
   confirmText?: string
   cancelText?: string
@@ -12,8 +11,7 @@ const props = withDefaults(defineProps<{
 })
 const emit = defineEmits<{
   (e: 'after-enter'): void
-  (e: 'beforeConfirm', done: (pass: boolean) => void): void
-  (e: 'confirm'): void
+  (e: 'confirm', check: (pass: boolean) => void): void
   (e: 'cancel'): void
 }>()
 const show = defineModel<boolean>()
@@ -24,11 +22,10 @@ function handleCancel() {
 }
 
 function handleConfirm() {
-  emit('beforeConfirm', (pass) => {
+  emit('confirm', (pass) => {
     if (!pass)
       return
 
-    emit('confirm')
     show.value = false
   })
 }
@@ -43,7 +40,7 @@ function handleConfirm() {
     :safe-area-inset-bottom="true"
     root-portal
     lazy-render
-    :custom-class="`rounded-t-3xl relative ${maxHeight}`"
+    custom-class="rounded-t-3xl relative h-60vh"
     @close="() => show = false"
     @after-enter="emit('after-enter')"
   >

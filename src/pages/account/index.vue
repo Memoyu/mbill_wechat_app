@@ -203,26 +203,17 @@ function handleIconSelected(icon: IIcon) {
 }
 
 /**
- * 账户编辑检查
- */
-function handleEditCheck(done: (close: boolean) => void) {
-  const { isCreate, accountId } = editAccount.value
-
-  if (!checkAccount(editAccount.value))
-    return done(false)
-  if (!isCreate && !accountId) {
-    toast.error('账户ID不能为空')
-    return done(false)
-  }
-
-  return done(true)
-}
-
-/**
  * 创建/编辑分类
  */
-async function handleEditConfirm() {
+async function handleEditConfirm(check: (close: boolean) => void) {
   const { isCreate, accountId, name, icon, parentId } = editAccount.value
+
+  if (!checkAccount(editAccount.value))
+    return check(false)
+  if (!isCreate && !accountId) {
+    toast.error('账户ID不能为空')
+    return check(false)
+  }
 
   if (isCreate) {
     await accountStore.createAccount(name, icon, parentId)
@@ -230,6 +221,8 @@ async function handleEditConfirm() {
   else {
     await accountStore.updateAccount({ accountId, name, icon }, parentId)
   }
+
+  return check(true)
 }
 
 /**
@@ -305,7 +298,7 @@ function handleDeleteAction() {
   />
 
   <!-- 编辑账户 -->
-  <bottom-popup v-model="editShow" :title="editTitle" max-height="h-50vh" confirm-text="确认" show-cancel @confirm="handleEditConfirm" @before-confirm="handleEditCheck">
+  <bottom-popup v-model="editShow" :title="editTitle" confirm-text="确认" show-cancel @confirm="handleEditConfirm">
     <template #title>
       <view class="flex items-center pb-2 pt-4">
         <!-- <wd-img :width="32" :height="32" :src="editCategory.icon" round :lazy-load="true" :show-error="false" :show-loading="false" /> -->

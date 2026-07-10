@@ -4,14 +4,14 @@ export interface BillGroupRes {
   date: string
   income: number
   expend: number
-  bills: BillRes[]
+  bills: IBill[]
 }
 
-export interface BillRes {
+export interface IBill {
   billId: string
   type: BillTypeEnum
-  category: BillCategoryRes
-  account: BillAccountRes
+  category: IBillCategory
+  account: IBillAccount
   amount: number
   date: Date
   remark?: string
@@ -19,14 +19,16 @@ export interface BillRes {
   address?: string
 }
 
-export interface BillCategoryRes {
+export interface IBillCategory {
   categoryId: string
   name: string
-  icon?: string
+  icon: string
+  parent?: IBillCategory
 }
 
-export interface BillAccountRes {
+export interface IBillAccount {
   accountId: string
   name: string
   icon: string
+  parent?: IBillAccount
 }

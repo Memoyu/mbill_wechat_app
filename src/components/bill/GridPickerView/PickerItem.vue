@@ -11,12 +11,12 @@ defineOptions({
 
 const props = defineProps<{
   item: GridSelectItem
-  selectedId: string
+  selected: string
 }>()
 const emit = defineEmits(['change'])
 
 const isSelected = computed(() => {
-  return props.selectedId === props.item.id
+  return props.selected === props.item.id
 })
 
 const hasChilds = computed(() => {

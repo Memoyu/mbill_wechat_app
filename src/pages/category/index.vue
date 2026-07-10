@@ -216,26 +216,17 @@ function handleIconSelected(icon: IIcon) {
 }
 
 /**
- * 分类编辑检查
- */
-function handleEditCheck(done: (close: boolean) => void) {
-  const { isCreate, categoryId } = editCategory.value
-
-  if (!checkCategory(editCategory.value))
-    return done(false)
-  if (!isCreate && !categoryId) {
-    toast.error('分类ID不能为空')
-    return done(false)
-  }
-
-  return done(true)
-}
-
-/**
  * 创建/编辑分类
  */
-async function handleEditConfirm() {
+async function handleEditConfirm(check: (close: boolean) => void) {
   const { isCreate, categoryId, name, icon, parentId } = editCategory.value
+
+  if (!checkCategory(editCategory.value))
+    return check(false)
+  if (!isCreate && !categoryId) {
+    toast.error('分类ID不能为空')
+    return check(false)
+  }
 
   if (isCreate) {
     await categoryStore.createCategory(name, icon, type.value, parentId)
@@ -243,6 +234,8 @@ async function handleEditConfirm() {
   else {
     await categoryStore.updateCategory({ categoryId, name, icon }, type.value, parentId)
   }
+
+  return check(true)
 }
 
 /**
@@ -304,7 +297,7 @@ function handleDeleteAction() {
   />
 
   <!-- 编辑分类 -->
-  <bottom-popup v-model="editShow" :title="editTitle" max-height="h-50vh" confirm-text="确认" show-cancel @confirm="handleEditConfirm" @before-confirm="handleEditCheck">
+  <bottom-popup v-model="editShow" :title="editTitle" confirm-text="确认" show-cancel @confirm="handleEditConfirm">
     <template #title>
       <view class="flex items-center pb-2 pt-4">
         <!-- <wd-img :width="32" :height="32" :src="editCategory.icon" round :lazy-load="true" :show-error="false" :show-loading="false" /> -->
