@@ -26,7 +26,6 @@ export interface ICreateLedger {
 export interface IUpdateLedger {
   ledgerId: string
   name: string
-  color: number
 }
 
 export interface IUpdateLedgerColor {

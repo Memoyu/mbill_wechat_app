@@ -5,9 +5,6 @@ const show = defineModel<boolean>()
 
 const settingsStore = useSettingsStore()
 
-const version = ref(settingsStore.version)
-const dark = ref(false)
-
 function handleCancelClick() {
   show.value = false
 }
@@ -29,7 +26,7 @@ function handleCancelClick() {
         <text class="text-base font-semibold">设置</text>
       </view>
 
-      <wd-cell-group border>
+      <wd-cell-group border title="主题外观">
         <!-- 深色模式 -->
         <wd-cell center>
           <template #title>
@@ -41,7 +38,65 @@ function handleCancelClick() {
             </view>
           </template>
           <view class="custom-value" style="height: 32px">
-            <wd-switch v-model="dark" size="20px" />
+            <wd-switch v-model="settingsStore.dark" size="20px" />
+          </view>
+        </wd-cell>
+      </wd-cell-group>
+
+      <wd-cell-group border>
+        <template #title>
+          <view>
+            <view>位置信息</view>
+            <view class="text-[#868a9c] font-normal">
+              启用时，将获取位置信息，点击允许获取即可
+            </view>
+          </view>
+        </template>
+
+        <!-- 天气 -->
+        <wd-cell center>
+          <template #title>
+            <view class="cell-title">
+              <view class="iconfont icon-weather cell-title-icon" />
+              <view class="text-sm">
+                天气
+              </view>
+            </view>
+          </template>
+          <view class="custom-value" style="height: 32px">
+            <wd-switch v-model="settingsStore.weather" size="20px" />
+          </view>
+        </wd-cell>
+
+        <!-- 账单地址 -->
+        <wd-cell center label="启用后将自动填充账单地址">
+          <template #title>
+            <view class="cell-title">
+              <view class="iconfont icon-address cell-title-icon" />
+              <view class="text-sm">
+                账单地址
+              </view>
+            </view>
+          </template>
+          <view class="custom-value" style="height: 32px">
+            <wd-switch v-model="settingsStore.address" size="20px" />
+          </view>
+        </wd-cell>
+      </wd-cell-group>
+
+      <wd-cell-group border title="其他">
+        <!-- 震动反馈 -->
+        <wd-cell center>
+          <template #title>
+            <view class="cell-title">
+              <view class="iconfont icon-vibration cell-title-icon" />
+              <view class="text-sm">
+                震动反馈
+              </view>
+            </view>
+          </template>
+          <view class="custom-value" style="height: 32px">
+            <wd-switch v-model="settingsStore.vibration" size="20px" />
           </view>
         </wd-cell>
 
@@ -69,7 +124,7 @@ function handleCancelClick() {
 
       <!-- 版本号 -->
       <view class="flex items-center justify-center py-6">
-        <text class="text-xs text-gray-400">版本号 {{ version }}</text>
+        <text class="text-xs text-gray-400">版本号 {{ settingsStore.version }}</text>
       </view>
     </view>
   </wd-popup>
@@ -80,6 +135,6 @@ function handleCancelClick() {
   @apply: flex items-center gap-2;
 }
 .cell-title-icon {
-  @apply: text-20px text-gray-700 font-semibold;
+  @apply: text-18px text-gray-700 font-semibold;
 }
 </style>

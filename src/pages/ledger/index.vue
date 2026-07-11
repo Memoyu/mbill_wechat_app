@@ -75,7 +75,7 @@ const qrcodeCanvasId = 'ledgerQrcodeCnvas'
 const { proxy } = getCurrentInstance() as any
 const dialog = useDialog()
 const toast = useToast()
-const editDialog = useDialog('ledger-edit-dialog')
+
 const shareDialog = useDialog('ledger-share-dialog')
 const ledgerStore = useLedgerStore()
 
@@ -83,7 +83,8 @@ const ledgers = computed(() => {
   return ledgerStore.ledgers
 })
 
-const show = ref(false)
+const editShow = ref(false)
+const editTitle = ref('新增账本')
 const scrollHeight = ref(300)
 
 const actionShow = ref(false)
@@ -94,6 +95,7 @@ const editLedger = ref<{
   isCreate: boolean
   name: string
   color: number
+  ledgerId?: string
   randomColor?: boolean
 }>({ isCreate: true, name: '', color: 0, randomColor: true })
 
@@ -119,25 +121,9 @@ function handleCreateAction() {
     randomColor: true,
   }
 
-  editDialog.confirm({
-    title: '新增',
-    beforeConfirm: () => {
-      return checkName(editLedger.value.name)
-    },
-  }).then(async () => {
-    const color = editLedger.value.randomColor ? getColorByName(editLedger.value.name) : editLedger.value.color
-    await ledgerStore.createLedger(editLedger.value.name, color)
-  }).catch(() => {
-    // console.log('点击了取消')
-  })
-}
-
-function checkName(name: string) {
-  if (!name || name.length < 1) {
-    toast.error('账本名称不能为空')
-    return false
-  }
-  return true
+  editTitle.value = '创建账本'
+  editLedger.value.isCreate = true
+  editShow.value = true
 }
 
 /**
@@ -174,21 +160,37 @@ function handleEditAction() {
     isCreate: false,
     name,
     color,
+    ledgerId,
   }
-  editDialog.confirm({
-    title: name,
-    beforeConfirm: () => {
-      return checkName(editLedger.value.name)
-    },
-  }).then(async () => {
+
+  editTitle.value = name
+  editShow.value = true
+}
+
+async function handleEditConfirm(check: (close: boolean) => void) {
+  const { isCreate, ledgerId, name, color, randomColor } = editLedger.value
+
+  if (!name) {
+    toast.error('账本名称不能为空')
+    return check (false)
+  }
+
+  if (isCreate) {
+    const color = randomColor ? getColorByName(editLedger.value.name) : editLedger.value.color
+    await ledgerStore.createLedger(editLedger.value.name, color)
+  }
+  else {
+    if (!ledgerId) {
+      toast.error('账本ID不能为空')
+      return check(false)
+    }
     await ledgerStore.updateLedger({
       ledgerId,
-      name: editLedger.value.name,
-      color: editLedger.value.color,
+      name,
     })
-  }).catch(() => {
-    // console.log('点击了取消')
-  })
+  }
+
+  return check (true)
 }
 
 function handleShareAction() {
@@ -243,7 +245,7 @@ function handleSortChange(list: ILedger[]) {
 </script>
 
 <template>
-  <page-meta :page-style="`overflow:${show ? 'hidden' : 'visible'};`" />
+  <page-meta :page-style="`overflow:${editShow ? 'hidden' : 'visible'};`" />
   <draw-background2 />
   <nav-bar id="TOP_NAVBAR" :actions="navActions" title="账本管理" />
   <view class="w-screen">
@@ -271,13 +273,13 @@ function handleSortChange(list: ILedger[]) {
                     <text>
                       收入
                     </text>
-                    <text class="ml-2 text-emerald font-bold">
+                    <text class="ml-2 text-[var(--mbill-income-color)] font-bold">
                       {{ listItem.income }}
                     </text>
                     <text class="ml-4">
                       支出
                     </text>
-                    <text class="ml-2 text-rose font-bold">
+                    <text class="ml-2 text-[var(--mbill-expend-color)] font-bold">
                       {{ listItem.expend }}
                     </text>
                   </view>
@@ -310,32 +312,34 @@ function handleSortChange(list: ILedger[]) {
   </view>
 
   <!-- 编辑账本 -->
-  <wd-dialog selector="ledger-edit-dialog">
-    <wd-input v-model="editLedger.name" type="text" placeholder="账本名称" custom-class="custom-input" />
-    <view v-if="editLedger.isCreate">
-      <view class="mt-2">
-        <wd-checkbox v-model="editLedger.randomColor">
-          随机颜色
-        </wd-checkbox>
-      </view>
-      <!-- 颜色网格 -->
-      <view v-if="!editLedger.randomColor" class="mt-2 h-50 overflow-y-auto p-2">
-        <view class="grid grid-cols-4 gap-4">
-          <view
-            v-for="(gradient, index) in gradients"
-            :key="index"
-            class="relative aspect-square overflow-hidden rounded-xl shadow-sm transition-all duration-200"
-            :class="[editLedger.color === index ? 'ring-2 ring-indigo-500 ring-offset-2' : '']"
-            :style="{ background: gradient }"
-            hover-class="scale-95 shadow-md"
-            :hover-start-time="0"
-            :hover-stay-time="200"
-            @tap="editLedger.color = index"
-          />
+  <center-popup v-model="editShow" :title="editTitle" @confirm="handleEditConfirm">
+    <view class="px-4 pt-4">
+      <wd-input v-model="editLedger.name" type="text" placeholder="账本名称" />
+      <view v-if="editLedger.isCreate">
+        <view class="mt-2">
+          <wd-checkbox v-model="editLedger.randomColor">
+            随机颜色
+          </wd-checkbox>
+        </view>
+        <!-- 颜色网格 -->
+        <view v-if="!editLedger.randomColor" class="mt-2 h-50 overflow-y-auto p-2">
+          <view class="grid grid-cols-4 gap-4">
+            <view
+              v-for="(gradient, index) in gradients"
+              :key="index"
+              class="relative aspect-square overflow-hidden rounded-xl shadow-sm transition-all duration-200"
+              :class="[editLedger.color === index ? 'ring-2 ring-indigo-500 ring-offset-2' : '']"
+              :style="{ background: gradient }"
+              hover-class="scale-95 shadow-md"
+              :hover-start-time="0"
+              :hover-stay-time="200"
+              @tap="editLedger.color = index"
+            />
+          </view>
         </view>
       </view>
     </view>
-  </wd-dialog>
+  </center-popup>
 
   <!-- 更多操作 -->
   <action-popup
@@ -376,8 +380,5 @@ function handleSortChange(list: ILedger[]) {
   flex-shrink: 0;
   color: #999;
   padding: 0 0.9rem;
-}
-.custom-input {
-  @apply bg-[#f7f8fa];
 }
 </style>

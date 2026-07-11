@@ -1,6 +1,14 @@
 <script setup lang="ts">
 import type { ActionItem } from '@/typings'
 
+defineOptions({
+  options: {
+    addGlobalClass: true,
+    virtualHost: true,
+    styleIsolation: 'shared',
+  },
+})
+
 const props = withDefaults(defineProps<{
   actions: ActionItem[]
   direction?: 'horizontal' | 'vertical'

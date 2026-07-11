@@ -51,6 +51,6 @@ const isImage = computed(() => {
 
 <style lang="scss" scoped>
 .category-icon-box {
-  @apply flex justify-center items-center;
+  @apply shrink-0 flex justify-center items-center;
 }
 </style>

@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import dayjs from 'dayjs'
+
 const props = withDefaults(defineProps<{
   date: number
 }>(), {
@@ -7,6 +9,7 @@ const props = withDefaults(defineProps<{
 const emit = defineEmits(['change', 'update:date'])
 const show = defineModel<boolean>()
 const innerDate = ref(Date.now())
+const defaultTime = ref()
 const calendarViewRef = ref()
 
 watch(() => show.value, (val) => {
@@ -20,19 +23,26 @@ watch(() => show.value, (val) => {
 watch(() => props.date, (val) => {
   if (val) {
     innerDate.value = val
+    defaultTime.value = dayjs(val).format('HH:mm:ss')
+    // console.log(val, defaultTime.value)
   }
-})
+}, { immediate: true })
 
 function handleDateChange() {
   emit('change', { value: innerDate.value })
+}
+
+function handleConfirm(check: (pass: boolean) => void) {
+  // console.log('handleConfirm', innerDate.value)
   emit('update:date', innerDate.value)
   show.value = false
+  check(true)
 }
 </script>
 
 <template>
-  <bottom-popup v-model="show">
-    <wd-calendar-view ref="calendarViewRef" v-model="innerDate" type="datetime" hide-second @change="handleDateChange" />
+  <bottom-popup v-model="show" @confirm="handleConfirm">
+    <wd-calendar-view ref="calendarViewRef" v-model="innerDate" :default-time="defaultTime" type="datetime" hide-second @change="handleDateChange" />
   </bottom-popup>
 </template>
 

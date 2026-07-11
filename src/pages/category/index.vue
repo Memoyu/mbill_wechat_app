@@ -223,15 +223,15 @@ async function handleEditConfirm(check: (close: boolean) => void) {
 
   if (!checkCategory(editCategory.value))
     return check(false)
-  if (!isCreate && !categoryId) {
-    toast.error('分类ID不能为空')
-    return check(false)
-  }
 
   if (isCreate) {
     await categoryStore.createCategory(name, icon, type.value, parentId)
   }
   else {
+    if (!categoryId) {
+      toast.error('分类ID不能为空')
+      return check(false)
+    }
     await categoryStore.updateCategory({ categoryId, name, icon }, type.value, parentId)
   }
 
@@ -302,7 +302,7 @@ function handleDeleteAction() {
       <view class="flex items-center pb-2 pt-4">
         <!-- <wd-img :width="32" :height="32" :src="editCategory.icon" round :lazy-load="true" :show-error="false" :show-loading="false" /> -->
         <bill-icon :icon="editCategory.icon" :text="editCategory.name" />
-        <wd-input v-model="editCategory.name" type="text" placeholder="分类名称" custom-class="custom-input" />
+        <wd-input v-model="editCategory.name" custom-class="ml-2 w-full" type="text" placeholder="分类名称" />
       </view>
     </template>
 

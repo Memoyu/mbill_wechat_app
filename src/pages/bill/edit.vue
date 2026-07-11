@@ -3,8 +3,10 @@ import type { IAccount } from '@/api/types/account'
 import type { IBill } from '@/api/types/bill'
 import type { ILedger } from '@/api/types/ledger'
 import type { ITag } from '@/api/types/tag'
+import { useToast } from '@wot-ui/ui'
 import dayjs from 'dayjs'
-import { useLedgerStore } from '@/store'
+import { getAddressInfo } from '@/api/aggregation'
+import { useLedgerStore, useSettingsStore } from '@/store'
 import { getDateFormat } from '@/utils/date'
 import { systemInfo } from '@/utils/systemInfo'
 
@@ -15,16 +17,19 @@ definePage({
   },
 })
 
+const toast = useToast()
 const ledgerStore = useLedgerStore()
+const settingsStore = useSettingsStore()
 
 const typeOptions = ['支出', '收入']
 const amountValue = ref('')
 const tempCursor = ref(amountValue.value.length)
 
-const isLedgersShow = ref(false)
-const isDateTimeShow = ref(false)
-const isAccountShow = ref(false)
-const isTagShow = ref(false)
+const showLedgers = ref(false)
+const showDateTime = ref(false)
+const showAccounts = ref(false)
+const showTags = ref(false)
+const showAddressEdit = ref(false)
 const categoryPickerHeight = ref(0)
 const activeType = ref(0)
 const currentLedger = ref()
@@ -39,7 +44,7 @@ const bill = ref<IBill>({
   date: new Date(),
   remark: '',
   tags: [],
-  address: '',
+  address: '地址',
 })
 
 const categoryId = ref('13159366956548101')
@@ -48,7 +53,7 @@ const remark = ref('')
 const tags = ref<ITag[]>([])
 
 const showAddress = computed(() => {
-  const address = bill.value.address
+  const address = bill.value.address || ''
   return address.length > 12 ? `···${address.substring(address.length - 12)}` : address
 })
 const tagIds = computed(() => {
@@ -65,6 +70,8 @@ onMounted(() => {
   currentLedger.value = ledgerStore.ledgers[0]
   currentLedgerId.value = currentLedger.value.ledgerId
   initFixedHeight()
+
+  initAddress()
 })
 
 function initFixedHeight() {
@@ -79,6 +86,64 @@ function initFixedHeight() {
   })
 }
 
+function initAddress() {
+  if (!settingsStore.address)
+    return
+  getAddress()
+}
+
+/**
+ * 获取地址信息
+ */
+function getAddress() {
+  uni.getLocation({
+    type: 'gcj02', // 返回可以用于wx.openLocation的经纬度
+    success: (res: any) => {
+      console.log(res, 'res')
+      // bill.value.address = res.address
+      getAddressInfo(res.longitude, res.latitude).then((res) => {
+        bill.value.address = res.address
+      })
+    },
+    fail: (err) => {
+      console.log(err, 'err')
+      wx.showModal({
+        title: '温馨提示',
+        content: '获取位置失败，需要授权获取地理位置',
+        confirmText: '前往设置',
+        cancelText: '取消',
+        success: (res) => {
+          if (res.confirm) {
+            wx.openSetting({
+              success: (res) => {
+                // console.log(res);
+                if (res.authSetting[
+                  'scope.userLocation']) {
+                  // 重新获取地址
+                  getAddress()
+                }
+                else {
+                  toast.error('授权失败，请检查设置！')
+                }
+              },
+            })
+          }
+          else {
+            toast.error('用户取消了授权地理位置')
+          }
+        },
+        fail: (err) => {
+          console.log(err, 'err')
+        },
+      })
+    },
+  })
+}
+
+function handleAddressEdit() {
+
+}
+
 function handlePressKeyboard(key: any, value: string) {
   // console.log(key, value)
 
@@ -88,38 +153,39 @@ function handleLedgerChange(ledger: ILedger) {
   currentLedger.value = ledger
 }
 
-function handleDateTimeChange(dateTime: any) {
-  console.log(dateTime, 'select date time')
-  dateTime.value = dateTime
-}
-
-function handleTagSelectedChange(items: ITag[]) {
+function handleTagSelectConfirm(items: ITag[]) {
   console.log(items, 'tags')
   tags.value = items
 }
 
-function handleAccountSelectedChange(item: any) {
+function handleAccountSelectConfirm(item: any) {
   console.log(item, 'handleAccountSelectedChange')
   const { account, parent } = item
+  if (!account)
+    return
+
   bill.value.account.accountId = account.id
   bill.value.account.icon = account.icon
   bill.value.account.name = account.name
-  if (!parent) {
-    bill.value.account.parent.accountId = parent.id
-    bill.value.account.parent.name = parent.name
+  if (parent) {
+    bill.value.account.parent = {
+      accountId: parent.id,
+      name: parent.name,
+      icon: parent.icon,
+    }
   }
 }
 </script>
 
 <template>
-  <page-meta :page-style="`overflow:${isLedgersShow || isDateTimeShow || isAccountShow || isTagShow ? 'hidden' : 'visible'};`" />
+  <!-- <page-meta :page-style="`overflow:${showLedgers || showDateTime || showAccounts || showTags ? 'hidden' : 'visible'};`" /> -->
   <draw-background1 />
   <!-- 导航栏 -->
   <nav-bar id="TOP_NAVBAR">
     <template #title>
       <view class="w-full flex justify-between">
         <!-- 账本按钮 -->
-        <view class="flex items-center" @tap="isLedgersShow = true">
+        <view class="flex items-center" @tap="showLedgers = true">
           <wd-icon class="flex-shrink-0" name="caret-down" />
           <text class="line-clamp-1 ml-2">{{ currentLedger?.name }}</text>
         </view>
@@ -146,28 +212,28 @@ function handleAccountSelectedChange(item: any) {
   <view id="BOTTOM_INPUT" class="absolute bottom-0 left-0 right-0">
     <!-- 标签 -->
     <view v-if="tags && tags.length > 0" class="hide-view-scrollbar flex overflow-x-auto px-2 py-1 space-x-2">
-      <view v-for="tag in tags" :key="tag.tagId" class="flex-shrink-0 rounded-full bg-indigo-300/40 px-2 py-1 text-xs">
+      <view v-for="tag in tags" :key="tag.tagId" class="flex-shrink-0 rounded-full bg-indigo-300/40 px-2 py-1 text-xs" @tap="showTags = true">
         {{ tag.name }}
       </view>
     </view>
     <!-- 账单属性 -->
     <view class="bill-attr-box hide-view-scrollbar">
-      <view class="bill-attr-box-item" @tap="isDateTimeShow = true">
+      <view class="bill-attr-box-item" @tap="showDateTime = true">
         <!-- 日期 -->
         <wd-icon name="calendar-line" size="20px" />
-        <text class="ml-1">{{ `${getDateFormat(dateTime)} ${dayjs(dateTime).format('HH:MM')}` }}</text>
+        <text class="ml-1">{{ `${getDateFormat(dateTime)} ${dayjs(dateTime).format('HH:mm')}` }}</text>
       </view>
-      <view class="bill-attr-box-item" @tap="isAccountShow = true">
+      <view class="bill-attr-box-item" @tap="showAccounts = true">
         <!-- 账户 -->
         <bill-icon size="22px" :icon="bill.account.icon" :text="bill.account.name" />
         <text class="ml-1">{{ bill.account.parent ? `${bill.account.parent.name}-${bill.account.name}` : bill.account.name }}</text>
       </view>
-      <view class="bill-attr-box-item" @tap="isTagShow = true">
+      <view class="bill-attr-box-item" @tap="showTags = true">
         <!-- 标签 -->
         <wd-icon name="tag" size="20px" />
         <text class="ml-1">标签</text>
       </view>
-      <view class="bill-attr-box-item" @tap="isTagShow = true">
+      <view class="bill-attr-box-item" @tap="showAddressEdit = true">
         <!-- 地点 -->
         <wd-icon name="location" size="20px" />
         <text class="ml-1">{{ showAddress }}</text>
@@ -195,13 +261,19 @@ function handleAccountSelectedChange(item: any) {
   </view>
 
   <!-- 账本弹窗 -->
-  <ledger-popup v-model="isLedgersShow" v-model:value="currentLedgerId" single @change="handleLedgerChange" />
+  <ledger-popup v-model="showLedgers" v-model:value="currentLedgerId" single @change="handleLedgerChange" />
   <!-- 日期弹窗 -->
-  <date-time-popup v-model="isDateTimeShow" v-model:date="dateTime" @change="handleDateTimeChange" />
+  <date-time-popup v-model="showDateTime" v-model:date="dateTime" />
   <!-- 账户弹窗 -->
-  <account-picker-popup v-model="isAccountShow" :account="bill.account.accountId" @change="handleAccountSelectedChange" />
+  <account-picker-popup v-model="showAccounts" :account="bill.account.accountId" @confirm="handleAccountSelectConfirm" />
   <!-- 标签弹窗 -->
-  <tag-picker-popup v-model="isTagShow" :tags="tagIds" @change="handleTagSelectedChange" />
+  <tag-picker-popup v-model="showTags" :tags="tagIds" @confirm="handleTagSelectConfirm" />
+  <!-- 地点弹窗 -->
+  <center-popup v-model="showAddressEdit" title="地点">
+    <view class="px-4 pt-4">
+      <wd-input v-model="bill.address" type="text" placeholder="地址" />
+    </view>
+  </center-popup>
 </template>
 
 <style lang="scss" scoped>

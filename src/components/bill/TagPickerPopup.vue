@@ -6,7 +6,7 @@ const props = withDefaults(defineProps<{
   tags: string[]
 }>(), {
 })
-const emit = defineEmits(['change'])
+const emit = defineEmits(['confirm'])
 const show = defineModel<boolean>()
 const tagStore = useTagStore()
 
@@ -26,17 +26,16 @@ function handleTagItemTap(item: ITag) {
 }
 
 function handleConfirm(check: (pass: boolean) => void) {
-  const ts = []
-  for (let i = 0; i < tagGroups.value.length; i++) {
-    const tagGroup = tagGroups.value[i]
-    for (let j = 0; j < tagGroup.childs.length; j++) {
-      const tag = tagGroup.childs[j]
+  const ts: ITag[] = []
+  tagGroups.value.forEach((tagGroup) => {
+    (tagGroup.childs || []).forEach((tag) => {
       if (isSelected(tag)) {
         ts.push(tag)
       }
-    }
-  }
-  emit('change', ts)
+    })
+  })
+
+  emit('confirm', ts)
   check(true)
 }
 </script>

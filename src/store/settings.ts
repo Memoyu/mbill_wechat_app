@@ -2,10 +2,16 @@ import { defineStore } from 'pinia'
 
 interface State {
   vibration: boolean
+  dark: boolean
+  weather: boolean
+  address: boolean
 }
 
 const initState: State = {
   vibration: true,
+  dark: false,
+  weather: false,
+  address: false,
 }
 
 // 配置

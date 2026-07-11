@@ -115,7 +115,6 @@ export const useLedgerStore = defineStore(
       const ledger = state.ledgers.find(item => item.ledgerId === update.ledgerId)
       if (ledger) {
         ledger.name = update.name
-        ledger.color = update.color
       }
     }
 

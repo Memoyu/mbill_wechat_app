@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { IAccount } from '@/api/types/account'
 import { useAccountStore } from '@/store'
 
 defineOptions({
@@ -13,20 +12,17 @@ defineOptions({
 const props = defineProps<{
   account: string
 }>()
-const emit = defineEmits(['change'])
+const emit = defineEmits(['confirm'])
 const show = defineModel<boolean>()
 
 const accountStore = useAccountStore()
 
 const accountData = ref()
 const AccountPickerRef = ref()
-const currentId = ref()
-const currentAccount = ref()
-const currentParent = ref()
+const account = ref()
+const parent = ref()
 
-watch(() => props.account, (val) => {
-  currentId.value = val
-})
+const accountId = computed(() => props.account)
 
 onMounted(() => {
   initSelectItem()
@@ -55,19 +51,17 @@ function initSelectItem() {
 
 function handleAfterEnter() {
   // console.log('handleAfterEnter')
-  AccountPickerRef.value.initSelected(currentId.value)
+  AccountPickerRef.value.initSelected(accountId.value)
 }
 
 function handleAccountItemTap(item: any) {
   console.log('账户选中', item)
-  const { id, account, parent } = item
-  currentId.value = id
-  currentAccount.value = account
-  currentParent.value = parent
+  account.value = item.select
+  parent.value = item.parent
 }
 
 function handleConfirm(check: (pass: boolean) => void) {
-  emit('change', { id: currentId.value, account: currentAccount.value, parent: currentParent.value })
+  emit('confirm', { account: account.value, parent: parent.value })
   check(true)
 }
 </script>
@@ -75,7 +69,7 @@ function handleConfirm(check: (pass: boolean) => void) {
 <template>
   <bottom-popup v-model="show" title="选择账户" @after-enter="handleAfterEnter" @confirm="handleConfirm">
     <view class="account-items">
-      <grid-picker-view ref="AccountPickerRef" v-model="currentId" :data="accountData" :height="400" @change="handleAccountItemTap" />
+      <grid-picker-view ref="AccountPickerRef" v-model="accountId" :data="accountData" :height="400" @change="handleAccountItemTap" />
     </view>
   </bottom-popup>
 </template>

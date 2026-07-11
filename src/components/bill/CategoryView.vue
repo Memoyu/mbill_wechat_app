@@ -18,15 +18,15 @@ const selected = defineModel<string>()
 
 const categoryStore = useCategoryStore()
 
-const categoryData = ref<GridSelectData>()
+const categoryData = ref<GridSelectData>({ tops: [], list: [] })
 
 onMounted(() => {
   initSelectItem()
 })
 
 function initSelectItem() {
-  const cs = props.type === 0 ? categoryStore.expends : categoryStore.incomes
-  const tops = cs[0].childs.map((a) => {
+  const cs = (props.type === 0 ? categoryStore.expends : categoryStore.incomes) || []
+  const tops = (cs[0]?.childs || []).map((a) => {
     return {
       id: a.categoryId,
       name: a.name,
@@ -54,7 +54,7 @@ function initSelectItem() {
 }
 
 function handleCategoryItemTap(item: any) {
-  const { id, account, parent } = item
+  const { id, select, parent } = item
   console.log('选中分类', item, selected.value)
 }
 </script>

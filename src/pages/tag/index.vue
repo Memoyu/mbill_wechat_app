@@ -175,32 +175,29 @@ function createChildTag(parent: ITag) {
   editShow.value = true
 }
 
-function handleEditCheck(done: (close: boolean) => void) {
-  const { isCreate, tagId, name } = editTag.value
-  if (!name) {
-    toast.error('标签名称不能为空')
-    return done (false)
-  }
-
-  if (!isCreate && !tagId) {
-    toast.error('标签ID不能为空')
-    return done (false)
-  }
-
-  return done (true)
-}
-
 /**
  * 创建/编辑标签
  */
-async function handleEditConfirm() {
+async function handleEditConfirm(check: (close: boolean) => void) {
   const { isCreate, tagId, name, parentId } = editTag.value
+
+  if (!name) {
+    toast.error('标签名称不能为空')
+    return check (false)
+  }
+
   if (isCreate) {
     await tagStore.createTag(name, parentId)
   }
   else {
+    if (!tagId) {
+      toast.error('标签ID不能为空')
+      return check(false)
+    }
     await tagStore.updateTag({ tagId, name }, parentId)
   }
+
+  return check (true)
 }
 
 /**
@@ -273,9 +270,10 @@ function handleDeleteAction() {
     :items="tagActions"
   />
 
-  <center-popup v-model="editShow" :title="editTitle" @confirm="handleEditConfirm" @before-confirm="handleEditCheck">
+  <!-- 编辑标签 -->
+  <center-popup v-model="editShow" :title="editTitle" @confirm="handleEditConfirm">
     <view class="px-4 pt-4">
-      <wd-input v-model="editTag.name" type="text" placeholder="分类名称" custom-class="custom-input" />
+      <wd-input v-model="editTag.name" type="text" placeholder="标签名称" />
     </view>
   </center-popup>
 </template>

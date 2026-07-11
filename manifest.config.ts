@@ -134,6 +134,12 @@ export default defineManifestConfig({
     // __usePrivacyCheck__: true,
     darkmode: true,
     themeLocation: 'theme.json',
+    requiredPrivateInfos: ['getLocation'],
+    permission: {
+      'scope.userLocation': {
+        desc: '获取用户位置',
+      },
+    },
   },
   'uniStatistics': {
     enable: false,

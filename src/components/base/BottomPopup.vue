@@ -1,4 +1,12 @@
 <script setup lang="ts">
+defineOptions({
+  options: {
+    addGlobalClass: true,
+    virtualHost: true,
+    styleIsolation: 'shared',
+  },
+})
+
 const props = withDefaults(defineProps<{
   title?: string
   showCancel?: boolean
@@ -38,7 +46,6 @@ function handleConfirm() {
     :hide-when-close="false"
     :close-on-click-modal="true"
     :safe-area-inset-bottom="true"
-    root-portal
     lazy-render
     custom-class="rounded-t-3xl relative h-60vh"
     @close="() => show = false"

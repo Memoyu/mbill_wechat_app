@@ -36,7 +36,7 @@ defineExpose({
 })
 
 // 数据项映射：id -> { ridx, item, parent }
-const itemMaps = {}
+const itemMaps: any = {}
 
 const { proxy } = getCurrentInstance() as any
 const scrollHeight = ref(props.height)
@@ -47,7 +47,8 @@ const childHeight = ref(0)
 
 const innerTops = ref<GridSelectItem[]>([])
 const currentId = ref()
-const currentParent = ref()
+const topId = ref()
+const parentId = ref()
 
 const itemsBoxStyle = computed(() => {
   const style = {
@@ -73,7 +74,7 @@ watch(() => props.data, (data) => {
 function initSelectData(data: GridSelectData) {
   // console.log(list, 'list')
   // 初始化常用项
-  innerTops.value = data.tops
+  innerTops.value = data.tops || []
 
   const rs: GridSelectItem[][] = []
   const list = data.list ?? []
@@ -92,7 +93,7 @@ function initSelectData(data: GridSelectData) {
   }
   rows.value = rs
 
-  initSelected(selected.value)
+  initSelected(selected.value || '')
 }
 
 /**
@@ -107,7 +108,10 @@ function initSelected(sid: string) {
       sid = innerTops.value[0].id
     }
     else {
-      sid = props.data.list[0].id
+      const list = props.data.list
+      if (!list.length)
+        return
+      sid = list[0].id
     }
   }
 
@@ -120,18 +124,15 @@ function initSelected(sid: string) {
 
   // 初始化选中项
   const { ridx, item, parent } = map
-  currentParent.value = parent
   childs.value = parent.childs
   rowIndex.value = ridx
   calcChildHeight(ridx)
-  selectedItem(item)
+  const isTop = hasTop.value && innerTops.value.findIndex(t => t.id === sid) > -1
+  selectedItem(item, isTop)
 }
 
-function handleCommonItemTap(item: GridSelectItem) {
-  // 收起展开内容
-  rowIndex.value = -1
-  currentParent.value = undefined
-  selectedItem(item)
+function handleTopItemTap(item: GridSelectItem) {
+  selectedItem(item, true)
 }
 
 function handleRowItemTap(item: GridSelectItem, rowIdx: number) {
@@ -145,7 +146,6 @@ function handleRowItemTap(item: GridSelectItem, rowIdx: number) {
     rowIdx = -1
   }
 
-  currentParent.value = item
   rowIndex.value = rowIdx
   selectedItem(item)
 }
@@ -154,10 +154,23 @@ function handleChildItemTap(item: GridSelectItem) {
   selectedItem(item)
 }
 
-function selectedItem(item: GridSelectItem) {
-  currentId.value = item.id
-  selected.value = item.id
-  emit('change', { id: item.id, account: item, parent: currentParent.value })
+function selectedItem(select: GridSelectItem, isTop = false) {
+  selected.value = select.id
+  const { parent } = itemMaps[select.id]
+
+  // 为常用项时，则不选中父项
+  if (isTop) {
+    topId.value = select.id
+    rowIndex.value = -1
+    parentId.value = undefined
+  }
+  else {
+    currentId.value = select.id
+    topId.value = undefined
+    parentId.value = parent.id
+  }
+
+  emit('change', { id: select.id, select, parent })
 }
 
 /**
@@ -188,11 +201,11 @@ function getChildContentHeight(rowIdx: number) {
         </view>
         <view :style="itemsBoxStyle">
           <view
-            v-for="top in innerTops" :key="`common-${top.id}`"
+            v-for="top in innerTops" :key="`top-${top.id}`"
             class="my-2"
-            @tap="handleCommonItemTap(top)"
+            @tap="handleTopItemTap(top)"
           >
-            <picker-item :item="top" :selected="currentId" />
+            <picker-item :item="top" :selected="topId" />
           </view>
         </view>
         <view class="mt-3 font-semibold">
@@ -207,7 +220,7 @@ function getChildContentHeight(rowIdx: number) {
             class="my-2"
             @tap="handleRowItemTap(item, rowIdx)"
           >
-            <picker-item :item="item" :selected="currentParent?.id" />
+            <picker-item :item="item" :selected="parentId" />
           </view>
         </view>
 

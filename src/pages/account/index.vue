@@ -210,15 +210,15 @@ async function handleEditConfirm(check: (close: boolean) => void) {
 
   if (!checkAccount(editAccount.value))
     return check(false)
-  if (!isCreate && !accountId) {
-    toast.error('账户ID不能为空')
-    return check(false)
-  }
 
   if (isCreate) {
     await accountStore.createAccount(name, icon, parentId)
   }
   else {
+    if (!accountId) {
+      toast.error('账户ID不能为空')
+      return check(false)
+    }
     await accountStore.updateAccount({ accountId, name, icon }, parentId)
   }
 
@@ -303,7 +303,7 @@ function handleDeleteAction() {
       <view class="flex items-center pb-2 pt-4">
         <!-- <wd-img :width="32" :height="32" :src="editCategory.icon" round :lazy-load="true" :show-error="false" :show-loading="false" /> -->
         <bill-icon :icon="editAccount.icon" :text="editAccount.name" />
-        <wd-input v-model="editAccount.name" type="text" placeholder="分类名称" custom-class="custom-input" />
+        <wd-input v-model="editAccount.name" custom-class="ml-2 w-full" type="text" placeholder="账户名称" />
       </view>
     </template>
 
