@@ -120,7 +120,7 @@ function initSelected(sid: string) {
   if (!map)
     return
 
-  console.log(map, 'init selected')
+  // console.log(map, 'init selected')
 
   // 初始化选中项
   const { ridx, item, parent } = map
@@ -180,7 +180,7 @@ function selectedItem(select: GridSelectItem, isTop = false) {
 function calcChildHeight(rowIdx: any) {
   nextTick(() => {
     uni.createSelectorQuery().in(proxy).select(`#GRID-CHILDS-${rowIdx}`).boundingClientRect((view: any) => {
-      console.log(view, 'boundingClientRect')
+      // console.log(view, 'boundingClientRect')
       childHeight.value = view?.height ?? 0
     }).exec()
   })

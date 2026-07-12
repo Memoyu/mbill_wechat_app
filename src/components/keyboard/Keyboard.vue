@@ -69,7 +69,11 @@ function handleKeyPress(key: string | number) {
     // console.log(value)
 
     const newValue = value.slice(0, props.cursor - 1) + value.slice(props.cursor)
-    emit('update:cursor', props.cursor - 1)
+    let cursor = props.cursor
+    if (cursor > 0) {
+      cursor = props.cursor - 1
+    }
+    emit('update:cursor', cursor)
     input.value = newValue
   }
   else {
@@ -78,7 +82,15 @@ function handleKeyPress(key: string | number) {
     input.value = newValue
   }
 
+  // console.log(props.cursor, 'props.cursor')
   emit('press', key, input.value)
+}
+
+function handleDelLongPress() {
+  console.log('长按删除')
+  input.value = ''
+  emit('update:cursor', 0)
+  // emit('press', key, input.value)
 }
 </script>
 
@@ -89,7 +101,7 @@ function handleKeyPress(key: string | number) {
         <key-item v-for="value in keys" :key="value.key" :value="value" @press="handleKeyPress" />
       </view>
       <view class="keyboard-sidebar">
-        <key-item :key="delKey.key" :value="delKey" @press="handleKeyPress" />
+        <key-item :key="delKey.key" :value="delKey" @press="handleKeyPress" @long-press="handleDelLongPress" />
         <view class="keyboard-op-keys">
           <key-item v-for="value in opKeys" :key="value.key" small :value="value" @press="handleKeyPress" />
         </view>

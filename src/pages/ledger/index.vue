@@ -75,8 +75,6 @@ const qrcodeCanvasId = 'ledgerQrcodeCnvas'
 const { proxy } = getCurrentInstance() as any
 const dialog = useDialog()
 const toast = useToast()
-
-const shareDialog = useDialog('ledger-share-dialog')
 const ledgerStore = useLedgerStore()
 
 const ledgers = computed(() => {
@@ -84,6 +82,7 @@ const ledgers = computed(() => {
 })
 
 const editShow = ref(false)
+const shareShow = ref(false)
 const editTitle = ref('新增账本')
 const scrollHeight = ref(300)
 
@@ -216,7 +215,7 @@ function handleShareAction() {
   // 设置uQRCode实例的canvas上下文
   qr.canvasContext = canvasContext
   qr.drawCanvas()
-  shareDialog.alert({})
+  shareShow.value = true
 }
 
 function handleMigrateAction() {
@@ -351,9 +350,11 @@ function handleSortChange(list: ILedger[]) {
   <color-picker-popup v-model="colorPickerShow" :ledger-id="currentLedger?.ledgerId ?? ''" />
 
   <!-- 分享二维码 -->
-  <wd-dialog selector="ledger-share-dialog">
-    <canvas :id="qrcodeCanvasId" :canvas-id="qrcodeCanvasId" style="width: 240px;height: 240px;" />
-  </wd-dialog>
+  <center-popup v-model="shareShow" title="扫码加入" :show-cancel="false" @confirm="check => check(true)">
+    <view class="mt-2 flex items-center justify-center">
+      <canvas :id="qrcodeCanvasId" :canvas-id="qrcodeCanvasId" style="width: 240px;height: 240px;" />
+    </view>
+  </center-popup>
 </template>
 
 <style lang="scss" scoped>

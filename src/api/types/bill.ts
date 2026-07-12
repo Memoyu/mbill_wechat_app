@@ -1,6 +1,33 @@
 import type { BillTypeEnum } from '@/typings'
 
-export interface BillGroupRes {
+export interface ICreateBill {
+  type: BillTypeEnum
+  ledgerId: string
+  categoryId: string
+  accountId: string
+  amount: number
+  date: string
+  remark?: string
+  location?: string
+  address?: string
+  tagIds?: string []
+}
+
+export interface IUpdateBill {
+  billId: string
+  type: BillTypeEnum
+  ledgerId: string
+  categoryId: string
+  accountId: string
+  amount: number
+  date: string
+  remark?: string
+  location?: string
+  address?: string
+  tagIds?: string []
+}
+
+export interface IBillDateGroup {
   date: string
   income: number
   expend: number
@@ -8,15 +35,21 @@ export interface BillGroupRes {
 }
 
 export interface IBill {
-  billId: string
+  billId?: string
   type: BillTypeEnum
+  ledger: IBillLedger
   category: IBillCategory
   account: IBillAccount
   amount: number
-  date: Date
+  date: string
   remark?: string
-  tags: string []
+  tags: IBillTag []
   address?: string
+}
+
+export interface IBillLedger {
+  ledgerId: string
+  name: string
 }
 
 export interface IBillCategory {
@@ -31,4 +64,9 @@ export interface IBillAccount {
   name: string
   icon: string
   parent?: IBillAccount
+}
+
+export interface IBillTag {
+  tagId: string
+  name: string
 }

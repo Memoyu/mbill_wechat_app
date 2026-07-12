@@ -7,12 +7,14 @@ import { http } from '@/utils/http'
 export function createCategory(create: ICreateCategory) {
   return http.post<ICategory>('category/create', create)
 }
+
 /**
  * 更新账单分类
  */
 export function updateCategory(update: IUpdateCategory) {
   return http.put('category/update', update)
 }
+
 /**
  * 排序账单分类
  */

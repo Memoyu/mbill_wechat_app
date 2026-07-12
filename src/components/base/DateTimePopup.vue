@@ -6,7 +6,7 @@ const props = withDefaults(defineProps<{
 }>(), {
 
 })
-const emit = defineEmits(['change', 'update:date'])
+const emit = defineEmits(['confirm', 'update:date'])
 const show = defineModel<boolean>()
 const innerDate = ref(Date.now())
 const defaultTime = ref()
@@ -23,18 +23,19 @@ watch(() => show.value, (val) => {
 watch(() => props.date, (val) => {
   if (val) {
     innerDate.value = val
-    defaultTime.value = dayjs(val).format('HH:mm:ss')
+    defaultTime.value = dayjs(val).format('HH:mm:00')
     // console.log(val, defaultTime.value)
   }
 }, { immediate: true })
 
 function handleDateChange() {
-  emit('change', { value: innerDate.value })
+
 }
 
 function handleConfirm(check: (pass: boolean) => void) {
   // console.log('handleConfirm', innerDate.value)
   emit('update:date', innerDate.value)
+  emit('confirm', innerDate.value)
   show.value = false
   check(true)
 }

@@ -14,6 +14,7 @@ const props = defineProps<{
   type: number
   height: number
 }>()
+const emit = defineEmits(['change'])
 const selected = defineModel<string>()
 
 const categoryStore = useCategoryStore()
@@ -54,8 +55,9 @@ function initSelectItem() {
 }
 
 function handleCategoryItemTap(item: any) {
-  const { id, select, parent } = item
+  const { select, parent } = item
   console.log('选中分类', item, selected.value)
+  emit('change', { select, parent })
 }
 </script>
 

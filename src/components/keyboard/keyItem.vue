@@ -50,7 +50,13 @@ function handleTouchEnd() {
 </script>
 
 <template>
-  <view class="keyboard-key-box" :class="[small ? 'keyboard-key-box-small' : '']" @touchstart="handleTouchStart" @touchmove="handleTouchMove" @touchend="handleTouchEnd">
+  <view
+    class="keyboard-key-box"
+    :class="[small ? 'keyboard-key-box-small' : '']"
+    @touchstart="handleTouchStart"
+    @touchmove="handleTouchMove"
+    @touchend="handleTouchEnd"
+  >
     <view :class="keyClass">
       <template v-if="value.icon">
         <wd-icon custom-class="keyboard-key-icon" :name="value.icon" :size="`${(value.key === 'delete' ? 22 : 17)}px`" />

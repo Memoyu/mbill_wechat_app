@@ -126,6 +126,7 @@
     "@wot-ui/ui": "^2.0.5",
     "abortcontroller-polyfill": "^1.7.8",
     "dayjs": "1.11.10",
+    "decimal.js": "^10.6.0",
     "pinia": "2.0.36",
     "pinia-plugin-persistedstate": "3.2.1",
     "uqrcodejs": "^4.0.7",
