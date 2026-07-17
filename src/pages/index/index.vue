@@ -2,7 +2,7 @@
 import type { ILedger } from '@/api/types/ledger'
 import { useToast } from '@wot-ui/ui'
 import dayjs from 'dayjs'
-import { useLedgerPickerStore, useUserStore } from '@/store'
+import { useBillStore, useLedgerPickerStore, useUserStore } from '@/store'
 import { safeAreaInsets } from '@/utils/systemInfo'
 
 defineOptions({
@@ -20,6 +20,7 @@ definePage({
 
 const userStore = useUserStore()
 const ledgerPickerStore = useLedgerPickerStore()
+const billStore = useBillStore()
 
 const date = ref(Date.now())
 
@@ -38,7 +39,16 @@ const ledgerName = computed(() => {
   return ledgerPickerStore.selectedLedgerNames.join('、')
 })
 
+watch (() => ledgerPickerStore.selectedLedgers, (ledgers) => {
+  billStore.loadIndexBills({
+    ledgerIds: ledgers,
+    beginDate: dayjs().add(-30, 'day').format('YYYY-MM-DD'),
+    endDate: dayjs().format('YYYY-MM-DD'),
+  })
+}, { immediate: true, deep: true })
+
 onLoad(() => {
+
 })
 
 function handleCalendarClick() {

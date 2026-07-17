@@ -57,7 +57,7 @@ function initSelectItem() {
 function handleCategoryItemTap(item: any) {
   const { select, parent } = item
   console.log('选中分类', item, selected.value)
-  emit('change', { select, parent })
+  emit('change', { type: props.type, select, parent })
 }
 </script>
 

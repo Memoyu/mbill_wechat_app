@@ -14,8 +14,8 @@ const categorySrc = computed(() => {
   return props.bill.category.icon ? props.bill.category.icon : ''
 })
 
-const amountColor = computed(() => {
-  return props.bill.type === 0 ? 'rgb(251 113 133)' : 'rgb(52 211 153)'
+const amountClass = computed(() => {
+  return props.bill.type === 0 ? 'text-[var(--mbill-expend-color)]' : 'text-[var(--mbill-income-color)]'
 })
 
 function handleBillTap() {
@@ -34,7 +34,7 @@ function handleBillTap() {
         <wd-avatar :text="categoryText" :src="categorySrc" size="30" />
         <text class="ml-2">{{ bill.category.name }}</text>
       </view>
-      <text class="font-bold" :style="{ color: amountColor }">{{ formatFloat(bill.amount) }}</text>
+      <text class="font-bold" :class="[amountClass]">{{ formatFloat(bill.amount) }}</text>
     </view>
 
     <!-- 账单内容 -->
@@ -49,8 +49,8 @@ function handleBillTap() {
         <text class="line-clamp-1 ml-2">{{ bill.address }}</text>
       </view>
       <view v-if="bill.tags && bill.tags.length > 0" class="hide-view-scrollbar mt-2 flex overflow-x-auto space-x-2">
-        <view v-for="tag in bill.tags" :key="tag" class="flex-shrink-0 rounded-full bg-indigo-300/40 px-2 py-1 text-xs">
-          {{ tag }}
+        <view v-for="tag in bill.tags" :key="tag.tagId" class="flex-shrink-0 rounded-full bg-indigo-300/40 px-2 py-1 text-xs">
+          {{ tag.name }}
         </view>
       </view>
     </view>

@@ -27,11 +27,20 @@ export interface IUpdateBill {
   tagIds?: string []
 }
 
+export interface IBillPageQuery {
+  beginDate: string
+  endDate: string
+  ledgerIds: string[]
+  type?: BillTypeEnum
+  categoryId?: string
+  accountId?: string
+}
+
 export interface IBillDateGroup {
   date: string
   income: number
   expend: number
-  bills: IBill[]
+  items: IBill[]
 }
 
 export interface IBill {

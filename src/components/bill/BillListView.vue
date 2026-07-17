@@ -1,9 +1,13 @@
 <script setup lang="ts">
-import type { IBillDateGroup } from '@/api/types/bill'
+import { useBillStore } from '@/store'
 import { formatFloat } from '@/utils'
 import { getDateFormat, getWeekday } from '@/utils/date'
 
-const billGroups = ref<IBillDateGroup[]>([])
+const billStore = useBillStore()
+
+const billGroups = computed(() => {
+  return billStore.bills
+})
 </script>
 
 <template>
@@ -23,7 +27,7 @@ const billGroups = ref<IBillDateGroup[]>([])
             <text>
               收入
             </text>
-            <text class="ml-1 text-emerald">
+            <text class="ml-1 text-[var(--mbill-income-color)]">
               {{ formatFloat(g.income) }}
             </text>
           </view>
@@ -32,14 +36,14 @@ const billGroups = ref<IBillDateGroup[]>([])
             <text>
               支出
             </text>
-            <text class="ml-1 text-rose">
+            <text class="ml-1 text-[var(--mbill-expend-color)]">
               {{ formatFloat(g.expend) }}
             </text>
           </view>
         </view>
       </view>
       <view class="mt-2 rounded-lg bg-gray-100/60 px-3">
-        <view v-for="b in g.bills" :key="b.billId" class="py-3">
+        <view v-for="b in g.items" :key="b.billId" class="py-3">
           <bill-item :bill="b" />
         </view>
       </view>

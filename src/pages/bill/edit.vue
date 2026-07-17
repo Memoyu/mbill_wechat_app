@@ -311,14 +311,14 @@ function handleEditComplete(keep: boolean = false) {
     return toast.error('请输入正确的金额')
 
   if (isCreate.value) {
-    billStore.createBill(edit).then(() => {
+    billStore.createBill(edit, location.value).then(() => {
       if (!keep) {
         uni.navigateBack()
       }
     })
   }
   else {
-    billStore.createBill(edit).then(() => {
+    billStore.createBill(edit, location.value).then(() => {
       if (!keep) {
         uni.navigateBack()
       }
@@ -340,7 +340,11 @@ function handleDateTimeConfirm(datetime: number) {
 }
 
 function handleCategoryChange(item: any) {
-  const { select, parent } = item
+  const { type, select, parent } = item
+
+  if (type !== bill.value.type)
+    return
+
   bill.value.category = {
     categoryId: select.id,
     name: select.name,
@@ -351,6 +355,11 @@ function handleCategoryChange(item: any) {
       icon: parent.icon,
     },
   }
+}
+
+function handleAddressEditShow() {
+  addressInput.value = bill.value.address
+  showAddressEdit.value = true
 }
 
 function handleAddressEditConfirm(check: any) {
@@ -443,7 +452,7 @@ function handleAccountSelectConfirm(item: any) {
         <wd-icon name="tag" size="20px" />
         <text class="ml-1">标签</text>
       </view>
-      <view class="bill-attr-box-item" @tap="showAddressEdit = true">
+      <view class="bill-attr-box-item" @tap="handleAddressEditShow">
         <!-- 地点 -->
         <wd-icon name="location" size="20px" />
         <text class="address-truncate-start">{{ bill.address || '地址' }}</text>

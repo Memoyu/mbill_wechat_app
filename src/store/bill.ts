@@ -1,4 +1,4 @@
-import type { IBill, IBillDateGroup, ICreateBill, IUpdateBill } from '@/api/types/bill'
+import type { IBill, IBillDateGroup, IBillPageQuery, ICreateBill, IUpdateBill } from '@/api/types/bill'
 import { defineStore } from 'pinia'
 import {
   createBill as fetchCreateBill,
@@ -19,8 +19,9 @@ export const useBillStore = defineStore(
   () => {
     const state = reactive({ ...initState })
 
-    const loadIndexBills = async () => {
-      state.bills = await getBillDateGroup()
+    const loadIndexBills = async (query: IBillPageQuery) => {
+      const res = await getBillDateGroup(query)
+      state.bills = res.items
     }
 
     const createBill = async (create: IBill, location?: string) => {

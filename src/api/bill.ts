@@ -1,4 +1,5 @@
-import type { IBill, IBillDateGroup, ICreateBill, IUpdateBill } from './types/bill'
+import type { IBill, IBillDateGroup, IBillPageQuery, ICreateBill, IUpdateBill } from './types/bill'
+import type { PageResult } from './types/common'
 import { http } from '@/utils/http'
 
 /**
@@ -25,6 +26,6 @@ export function deleteBill(billId: string) {
 /**
  * 获取账单按日期分组列表
  */
-export function getBillDateGroup() {
-  return http.get<IBillDateGroup[]>('bill/page/group/date')
+export function getBillDateGroup(query: IBillPageQuery) {
+  return http.get<PageResult<IBillDateGroup>>('bill/page/group/date', query)
 }

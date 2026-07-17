@@ -44,18 +44,20 @@ function handleConfirm(check: (pass: boolean) => void) {
   <bottom-popup v-model="show" title="选择标签" @confirm="handleConfirm">
     <view class="p-2">
       <view v-for="tagGroup in tagGroups" :key="tagGroup.tagId" class="mb-4">
-        <view class="pb-2 font-semibold">
-          {{ tagGroup.name }}
-        </view>
-        <view class="flex flex-wrap gap-2">
-          <view
-            v-for="tag in tagGroup.childs" :key="tag.tagId"
-            class="tag-picker-item-box"
-            :class="[isSelected(tag) ? 'ring-2 ring-indigo-500 ring-offset-1' : '']"
-            @tap="handleTagItemTap(tag)"
-          >
-            <view class="tag-picker-item-title">
-              {{ tag.name }}
+        <view v-if="tagGroup.childs && tagGroup.childs.length > 0">
+          <view class="pb-2 font-semibold">
+            {{ tagGroup.name }}
+          </view>
+          <view class="flex flex-wrap gap-2">
+            <view
+              v-for="tag in tagGroup.childs" :key="tag.tagId"
+              class="tag-picker-item-box"
+              :class="[isSelected(tag) ? 'ring-2 ring-indigo-500 ring-offset-1' : '']"
+              @tap="handleTagItemTap(tag)"
+            >
+              <view class="tag-picker-item-title">
+                {{ tag.name }}
+              </view>
             </view>
           </view>
         </view>
