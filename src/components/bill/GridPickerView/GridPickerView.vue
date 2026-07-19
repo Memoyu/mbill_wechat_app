@@ -69,10 +69,12 @@ watch(() => props.height, (nh) => {
 
 watch(() => props.data, (data) => {
   initSelectData(data)
-}, { deep: true })
+}, { immediate: true, deep: true })
 
 function initSelectData(data: GridSelectData) {
   // console.log(list, 'list')
+  if (!data)
+    return
   // 初始化常用项
   innerTops.value = data.tops || []
 
@@ -102,7 +104,7 @@ function initSelectData(data: GridSelectData) {
  */
 function initSelected(sid: string) {
   // console.log(itemMaps, 'itemMaps')
-  let map = itemMaps[sid]
+  const map = itemMaps[sid]
   if (!map) {
     if (hasTop.value) {
       sid = innerTops.value[0].id
@@ -115,29 +117,45 @@ function initSelected(sid: string) {
     }
   }
 
-  // console.log(sid, 'init sid')
-  map = itemMaps[sid]
+  // console.log(map, 'init selected')
+  // 初始化选中项
+  const isTop = hasTop.value && innerTops.value.findIndex(t => t.id === sid) > -1
+  selectedItem(sid, isTop)
+}
+
+/**
+ * 常用项点击
+ * @param item 常用项
+ */
+function handleTopItemTap(item: GridSelectItem) {
+  selectedItem(item.id, true)
+}
+
+/**
+ * 列表项点击
+ * @param item 列表项
+ */
+function handleListItemTap(item: GridSelectItem) {
+  // console.log(item, rowIdx, 'selected item')
+  selectedItem(item.id)
+}
+
+/**
+ * 选中项处理
+ * @param id 选中项id
+ * @param isTop 是否常用项
+ */
+function selectedItem(id: string, isTop = false) {
+  const map = itemMaps[id]
   if (!map)
     return
 
-  // console.log(map, 'init selected')
+  selected.value = id
+  const { item, parent } = map
+  let rowIdx = map.ridx
 
-  // 初始化选中项
-  const { ridx, item, parent } = map
-  childs.value = parent.childs
-  rowIndex.value = ridx
-  calcChildHeight(ridx)
-  const isTop = hasTop.value && innerTops.value.findIndex(t => t.id === sid) > -1
-  selectedItem(item, isTop)
-}
-
-function handleTopItemTap(item: GridSelectItem) {
-  selectedItem(item, true)
-}
-
-function handleRowItemTap(item: GridSelectItem, rowIdx: number) {
-  if (item.childs && item.childs.length > 0) {
-    childs.value = item.childs
+  if (parent.childs && parent.childs.length > 0) {
+    childs.value = parent.childs
     // 获取子项集合高度
     calcChildHeight(rowIdx)
   }
@@ -146,31 +164,20 @@ function handleRowItemTap(item: GridSelectItem, rowIdx: number) {
     rowIdx = -1
   }
 
-  rowIndex.value = rowIdx
-  selectedItem(item)
-}
-
-function handleChildItemTap(item: GridSelectItem) {
-  selectedItem(item)
-}
-
-function selectedItem(select: GridSelectItem, isTop = false) {
-  selected.value = select.id
-  const { parent } = itemMaps[select.id]
-
   // 为常用项时，则不选中父项
   if (isTop) {
-    topId.value = select.id
-    rowIndex.value = -1
+    rowIdx = -1
+    topId.value = id
     parentId.value = undefined
   }
   else {
-    currentId.value = select.id
+    currentId.value = id
     topId.value = undefined
     parentId.value = parent.id
   }
+  rowIndex.value = rowIdx
 
-  emit('change', { id: select.id, select, parent })
+  emit('change', { id, select: item, parent })
 }
 
 /**
@@ -178,12 +185,12 @@ function selectedItem(select: GridSelectItem, isTop = false) {
  * @param rowIdx column index
  */
 function calcChildHeight(rowIdx: any) {
-  nextTick(() => {
+  setTimeout(() => {
     uni.createSelectorQuery().in(proxy).select(`#GRID-CHILDS-${rowIdx}`).boundingClientRect((view: any) => {
-      // console.log(view, 'boundingClientRect')
+      console.log(view, 'boundingClientRect')
       childHeight.value = view?.height ?? 0
     }).exec()
-  })
+  }, 0)
 }
 
 function getChildContentHeight(rowIdx: number) {
@@ -218,7 +225,7 @@ function getChildContentHeight(rowIdx: number) {
           <view
             v-for="item in items" :key="item.id"
             class="my-2"
-            @tap="handleRowItemTap(item, rowIdx)"
+            @tap="handleListItemTap(item)"
           >
             <picker-item :item="item" :selected="parentId" />
           </view>
@@ -232,7 +239,7 @@ function getChildContentHeight(rowIdx: number) {
             <view :style="itemsBoxStyle">
               <view
                 v-for="child in childs" :key="child.id"
-                @tap="handleChildItemTap(child)"
+                @tap="handleListItemTap(child)"
               >
                 <picker-item :item="child" :selected="currentId" />
               </view>

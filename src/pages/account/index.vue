@@ -250,7 +250,7 @@ function handleDeleteAction() {
                 <wd-icon v-if="listItem.expand" name="caret-down" />
                 <wd-icon v-else name="caret-right" />
               </view>
-              <bill-icon size="22px" :icon="listItem.icon" :text="listItem.name" />
+              <bill-icon size="22" :icon="listItem.icon" :text="listItem.name" />
               <view class="ml-1 flex-1 font-bold">
                 {{ listItem.name }}
               </view>

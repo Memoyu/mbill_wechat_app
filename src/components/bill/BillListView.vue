@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useBillStore } from '@/store'
 import { formatFloat } from '@/utils'
+import { getBillColor } from '@/utils/bill'
 import { getDateFormat, getWeekday } from '@/utils/date'
 
 const billStore = useBillStore()
@@ -27,7 +28,7 @@ const billGroups = computed(() => {
             <text>
               收入
             </text>
-            <text class="ml-1 text-[var(--mbill-income-color)]">
+            <text class="ml-1" :style="{ color: getBillColor(1) }">
               {{ formatFloat(g.income) }}
             </text>
           </view>
@@ -36,7 +37,7 @@ const billGroups = computed(() => {
             <text>
               支出
             </text>
-            <text class="ml-1 text-[var(--mbill-expend-color)]">
+            <text class="ml-1" :style="{ color: getBillColor(0) }">
               {{ formatFloat(g.expend) }}
             </text>
           </view>

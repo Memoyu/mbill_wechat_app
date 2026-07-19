@@ -291,7 +291,7 @@ function handleSortChange(list: ILedger[]) {
                         bg-color="#a5b4fc"
                       />
                     </wd-avatar-group>
-                    <text class="text-xs">{{ dayjs(listItem.createTime).format('YYYY-MM-DD HH:MM') }}</text>
+                    <text class="text-xs">{{ dayjs(listItem.createTime).format('YYYY-MM-DD HH:mm') }}</text>
                   </view>
                 </view>
                 <view class="ledger-item-more">

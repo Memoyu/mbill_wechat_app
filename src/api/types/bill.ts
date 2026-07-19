@@ -27,6 +27,33 @@ export interface IUpdateBill {
   tagIds?: string []
 }
 
+export interface IEditBill {
+  billId?: string
+  type: BillTypeEnum
+  ledger: IBillLedger
+  category: IBillCategory
+  account: IBillAccount
+  amount: number
+  date: string
+  remark?: string
+  tags?: IBillTag []
+  address?: string
+  createTime?: Date
+}
+
+export interface IRefunBill {
+  billId: string
+  accountId: string
+  amount: number
+  date: string
+  remark?: string
+}
+
+export interface IRelationBill {
+  billId: string
+  relationIds: string []
+}
+
 export interface IBillPageQuery {
   beginDate: string
   endDate: string
@@ -40,20 +67,26 @@ export interface IBillDateGroup {
   date: string
   income: number
   expend: number
-  items: IBill[]
+  items: IBillPageItem[]
+}
+
+export interface IBillPageItem extends IBill {
+
 }
 
 export interface IBill {
-  billId?: string
+  billId: string
   type: BillTypeEnum
   ledger: IBillLedger
   category: IBillCategory
   account: IBillAccount
   amount: number
+  refundAmount: number
   date: string
-  remark?: string
+  remark: string
   tags: IBillTag []
-  address?: string
+  address: string
+  createTime: Date
 }
 
 export interface IBillLedger {
@@ -65,17 +98,21 @@ export interface IBillCategory {
   categoryId: string
   name: string
   icon: string
-  parent?: IBillCategory
 }
 
 export interface IBillAccount {
   accountId: string
   name: string
   icon: string
-  parent?: IBillAccount
 }
 
 export interface IBillTag {
   tagId: string
   name: string
+}
+
+export interface IRelatedBill {
+  income: number
+  expend: number
+  items: IBill[]
 }

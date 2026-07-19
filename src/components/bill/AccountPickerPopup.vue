@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { GridSelectData, GridSelectItem } from './GridPickerView/GridPickerView.vue'
 import { useAccountStore } from '@/store'
 
 defineOptions({
@@ -17,7 +18,7 @@ const show = defineModel<boolean>()
 
 const accountStore = useAccountStore()
 
-const accountData = ref()
+const accountData = ref<GridSelectData>({ list: [], tops: [] })
 const AccountPickerRef = ref()
 const account = ref()
 const parent = ref()
@@ -39,7 +40,7 @@ function initSelectItem() {
           id: c.accountId,
           name: c.name,
           icon: c.icon,
-        }
+        } as GridSelectItem
       }),
     }
   })

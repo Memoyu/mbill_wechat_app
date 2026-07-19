@@ -1,11 +1,10 @@
 <script lang="ts" setup>
-import type { IBill } from '@/api/types/bill'
+import type { IBillAccount, IBillCategory, IEditBill } from '@/api/types/bill'
 import type { ILedger } from '@/api/types/ledger'
 import type { ITag } from '@/api/types/tag'
 import { useToast } from '@wot-ui/ui'
 import dayjs from 'dayjs'
 import Decimal from 'decimal.js'
-import { c } from 'node_modules/vite/dist/node/types.d-aGj9QkWt'
 import { getAddressInfo } from '@/api/aggregation'
 import { useBillStore, useLedgerStore, useSettingsStore } from '@/store'
 import { getDateFormat } from '@/utils/date'
@@ -35,10 +34,9 @@ const showAddressEdit = ref(false)
 const addressInput = ref()
 const location = ref()
 const categoryPickerHeight = ref(0)
-const activeType = ref(0)
 
 const billId = ref('')
-const bill = ref<IBill>({
+const bill = ref<IEditBill>({
   type: 0,
   ledger: { ledgerId: '', name: '账单选择' },
   category: { categoryId: '', name: '', icon: '' },
@@ -46,7 +44,7 @@ const bill = ref<IBill>({
   amount: 0,
   date: dayjs().format(),
   remark: '',
-  tags: [],
+  tags: [] as ITag[],
   address: '',
 })
 
@@ -55,9 +53,7 @@ const billDate = ref(dayjs().valueOf())
 const isCreate = ref(true)
 
 watch(() => bill.value.tags, (newTags, oldTags) => {
-  if (oldTags.length < 1 || newTags.length < 1) {
-    initFixedHeight()
-  }
+  initFixedHeight()
 })
 
 onLoad((options: any) => {
@@ -345,15 +341,14 @@ function handleCategoryChange(item: any) {
   if (type !== bill.value.type)
     return
 
+  let name = select.name
+  if (select.id !== parent.id) {
+    name = `${parent.name}-${name}`
+  }
   bill.value.category = {
     categoryId: select.id,
-    name: select.name,
+    name,
     icon: select.icon,
-    parent: {
-      categoryId: parent.id,
-      name: parent.name,
-      icon: parent.icon,
-    },
   }
 }
 
@@ -383,15 +378,14 @@ function handleAccountSelectConfirm(item: any) {
   if (!account)
     return
 
+  let name = account.name
+  if (account.id !== parent.id) {
+    name = `${parent.name}-${name}`
+  }
   bill.value.account = {
     accountId: account.id,
-    name: account.name,
+    name,
     icon: account.icon,
-    parent: {
-      accountId: parent.id,
-      name: parent.name,
-      icon: parent.icon,
-    },
   }
 }
 </script>
@@ -412,21 +406,13 @@ function handleAccountSelectConfirm(item: any) {
     </template>
     <template #prefix-action>
       <view class="mt-4 max-w-max rounded-full bg-gray-200/50 px-3 py-1">
-        <mbill-segmented v-model="activeType" :options="typeOptions" />
+        <mbill-segmented v-model="bill.type" :options="typeOptions" />
       </view>
     </template>
   </nav-bar>
+
   <!-- 账单分类 -->
-  <view class="">
-    <wd-swiper
-      v-model:current="activeType" :list="['0', '1']"
-      :indicator="false" :autoplay="false" :height="categoryPickerHeight"
-    >
-      <template #default="{ item }">
-        <category-view v-model="bill.category.categoryId" :type="item === '0' ? 0 : 1" :height="categoryPickerHeight" @change="handleCategoryChange" />
-      </template>
-    </wd-swiper>
-  </view>
+  <category-view v-model="bill.category.categoryId" v-model:type="bill.type" :height="categoryPickerHeight" @change="handleCategoryChange" />
 
   <view id="BOTTOM_INPUT" class="absolute bottom-0 left-0 right-0">
     <!-- 标签 -->
@@ -435,6 +421,7 @@ function handleAccountSelectConfirm(item: any) {
         {{ tag.name }}
       </view>
     </view>
+
     <!-- 账单属性 -->
     <view class="bill-attr-box hide-view-scrollbar">
       <view class="bill-attr-box-item" @tap="showDateTime = true">
@@ -444,8 +431,8 @@ function handleAccountSelectConfirm(item: any) {
       </view>
       <view class="bill-attr-box-item" @tap="showAccounts = true">
         <!-- 账户 -->
-        <bill-icon size="22px" :icon="bill.account.icon" :text="bill.account.name" />
-        <text class="ml-1">{{ bill.account.parent ? `${bill.account.parent.name}-${bill.account.name}` : bill.account.name }}</text>
+        <bill-icon size="22" :icon="bill.account.icon" :text="bill.account.name" />
+        <text class="ml-1">{{ bill.account.name }}</text>
       </view>
       <view class="bill-attr-box-item" @tap="showTags = true">
         <!-- 标签 -->
@@ -458,6 +445,7 @@ function handleAccountSelectConfirm(item: any) {
         <text class="address-truncate-start">{{ bill.address || '地址' }}</text>
       </view>
     </view>
+
     <!-- 账单总额、备注 -->
     <view class="flex items-center justify-between px-2 py-1 space-x-xl">
       <view class="w-full shrink-1">
@@ -486,7 +474,7 @@ function handleAccountSelectConfirm(item: any) {
   <!-- 账户弹窗 -->
   <account-picker-popup v-model="showAccounts" :account="bill.account.accountId" @confirm="handleAccountSelectConfirm" />
   <!-- 标签弹窗 -->
-  <tag-picker-popup v-model="showTags" :tags="bill.tags.map(t => t.tagId)" @confirm="handleTagSelectConfirm" />
+  <tag-picker-popup v-model="showTags" :tags="(bill.tags || []).map(t => t.tagId)" @confirm="handleTagSelectConfirm" />
   <!-- 地点弹窗 -->
   <center-popup v-model="showAddressEdit" title="地址" @confirm="handleAddressEditConfirm">
     <view class="px-4 pt-4">
