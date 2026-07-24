@@ -12,6 +12,7 @@ const props = withDefaults(defineProps<{
   showCancel?: boolean
   confirmText?: string
   cancelText?: string
+  height?: number
 }>(), {
   showCancel: false,
   confirmText: '完成',
@@ -47,7 +48,7 @@ function handleConfirm() {
     :close-on-click-modal="true"
     :safe-area-inset-bottom="true"
     lazy-render
-    custom-class="rounded-t-3xl relative h-60vh"
+    :custom-class="`rounded-t-3xl relative ${(height ? `h-${height}vh` : 'h-60vh')}`"
     @close="() => show = false"
     @after-enter="emit('after-enter')"
   >

@@ -71,6 +71,10 @@ watch(() => props.data, (data) => {
   initSelectData(data)
 }, { immediate: true, deep: true })
 
+watch(() => selected.value, (val) => {
+  initSelected(val)
+}, { immediate: true, deep: true })
+
 function initSelectData(data: GridSelectData) {
   // console.log(list, 'list')
   if (!data)
@@ -120,7 +124,7 @@ function initSelected(sid: string) {
   // console.log(map, 'init selected')
   // 初始化选中项
   const isTop = hasTop.value && innerTops.value.findIndex(t => t.id === sid) > -1
-  selectedItem(sid, isTop)
+  selectedItem(sid, false, isTop)
 }
 
 /**
@@ -143,9 +147,10 @@ function handleListItemTap(item: GridSelectItem) {
 /**
  * 选中项处理
  * @param id 选中项id
+ * @param isEmit 是否触发emit
  * @param isTop 是否常用项
  */
-function selectedItem(id: string, isTop = false) {
+function selectedItem(id: string, isEmit = true, isTop = false) {
   const map = itemMaps[id]
   if (!map)
     return
@@ -177,7 +182,7 @@ function selectedItem(id: string, isTop = false) {
   }
   rowIndex.value = rowIdx
 
-  emit('change', { id, select: item, parent })
+  isEmit && emit('change', { id, select: item, parent })
 }
 
 /**

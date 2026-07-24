@@ -42,6 +42,7 @@ export interface IEditBill {
 }
 
 export interface IRefunBill {
+  refundId?: string
   billId: string
   accountId: string
   amount: number

@@ -78,8 +78,8 @@ function handleTabChange(change: any) {
 }
 
 function handleCategoryItemTap(item: any) {
+  // console.log('选中分类', item)
   const { select, parent } = item
-  console.log('选中分类', item, selected.value)
   emit('change', { type: type.value, select, parent })
 }
 </script>

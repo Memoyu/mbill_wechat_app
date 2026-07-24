@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { IBill, IRelatedBill } from '@/api/types/bill'
+import type { IBill, IRefunBill, IRelatedBill } from '@/api/types/bill'
 import type { ActionItem } from '@/typings'
 import dayjs from 'dayjs'
 import { getBill, getRelatedBill } from '@/api/bill'
@@ -12,19 +12,22 @@ definePage({
   },
 })
 
+const showRefund = ref(false)
+
 const actions: ActionItem[] = [
-  {
-    text: '退款',
-    icon: 'redo',
-    action: () => {
-      console.log('账单退款')
-    },
-  },
   {
     text: '编辑',
     icon: 'pen',
     action: () => {
       console.log('编辑账单')
+    },
+  },
+  {
+    text: '退款',
+    icon: 'redo',
+    action: () => {
+      // console.log('账单退款')
+      showRefund.value = true
     },
   },
   {
@@ -58,17 +61,27 @@ const bill = ref<IBill>({
   address: '',
   createTime: dayjs().toDate(),
 })
-
 const relatedBill = ref<IRelatedBill>({
   expend: 0,
   income: 0,
   items: [],
+})
+const refund = ref<IRefunBill>({
+  billId: '',
+  accountId: '',
+  amount: 0,
+  date: dayjs().format(),
+  remark: '',
 })
 
 onLoad((options: any) => {
   console.log('账单id', options.id)
   getBill(options.id).then((res) => {
     bill.value = res
+    refund.value.billId = res.billId
+    refund.value.accountId = res.account.accountId
+    refund.value.amount = res.amount
+
     getRelatedBill(options.id).then((res) => {
       relatedBill.value = res
     })
@@ -223,6 +236,9 @@ onLoad((options: any) => {
   <view class="h-100px" />
   <!-- 底部操作栏 -->
   <bottom-action :actions="actions" />
+
+  <!-- 退款弹窗 -->
+  <refund-popup v-model="showRefund" :refund="refund" />
 </template>
 
 <style lang="scss" scoped>

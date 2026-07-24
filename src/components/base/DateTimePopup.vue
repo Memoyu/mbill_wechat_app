@@ -42,7 +42,7 @@ function handleConfirm(check: (pass: boolean) => void) {
 </script>
 
 <template>
-  <bottom-popup v-model="show" @confirm="handleConfirm">
+  <bottom-popup v-model="show" :height="50" @confirm="handleConfirm">
     <wd-calendar-view ref="calendarViewRef" v-model="innerDate" :default-time="defaultTime" type="datetime" hide-second @change="handleDateChange" />
   </bottom-popup>
 </template>
