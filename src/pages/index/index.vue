@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import type { ILedger } from '@/api/types/ledger'
-import { useToast } from '@wot-ui/ui'
 import dayjs from 'dayjs'
 import { useBillStore, useLedgerPickerStore, useUserStore } from '@/store'
 import { safeAreaInsets } from '@/utils/systemInfo'
@@ -36,7 +35,8 @@ const dateText = computed(() => {
 })
 
 const ledgerName = computed(() => {
-  return ledgerPickerStore.selectedLedgerNames.join('、')
+  // console.log(ledgerPickerStore.selectedLedgerNames)
+  return ledgerPickerStore.selectedLedgerNames.join(', ')
 })
 
 watch (() => ledgerPickerStore.selectedLedgers, (ledgers) => {
@@ -86,14 +86,14 @@ function handleLedgerChange(item: ILedger) {
 
       <!-- 账本按钮 -->
       <view
-        class="sticky-item ledger-sticky-item p-2 px-3"
+        class="sticky-item p-2 px-3"
         hover-class="sticky-item-hover"
         :hover-start-time="0"
         :hover-stay-time="200"
         @tap="isLedgersShow = true"
       >
         <wd-icon class="flex-shrink-0 text-sm" name="caret-down" />
-        <text class="line-clamp-1 text-xs">{{ ledgerName }}</text>
+        <text class="max-w-[80px] truncate text-xs">{{ ledgerName }}</text>
       </view>
       <!-- 设置按钮 -->
       <view
@@ -160,9 +160,5 @@ function handleLedgerChange(item: ILedger) {
 }
 .sticky-item-hover {
   @apply: bg-gray-200/80 !scale-97 transform-origin-center;
-}
-
-.ledger-sticky-item {
-  width: calc(80% - 190px);
 }
 </style>

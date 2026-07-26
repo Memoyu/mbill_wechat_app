@@ -13,7 +13,7 @@ const isActive = computed(() => {
 </script>
 
 <template>
-  <view class="flex items-center justify-center px-3 py-1.5 transition-colors">
+  <view class="flex items-center justify-center px-3 py-2 transition-colors">
     <!-- <view class="tabbar-item-text text-sm">
       {{ item.text }}
     </view> -->

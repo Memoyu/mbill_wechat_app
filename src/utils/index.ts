@@ -134,6 +134,16 @@ export const isDoubleTokenMode = import.meta.env.VITE_AUTH_MODE === 'double'
 export const HOME_PAGE = `/${(pages as PageMetaDatum[]).find(page => page.type === 'home')?.path || (pages as PageMetaDatum[])[0].path}`
 
 /**
+ * 获取当前页面路径
+ * @returns 当前页面路径
+ */
+export function getCurrentPath() {
+  const pages = getCurrentPages()
+  const currentPage = pages[pages.length - 1]
+  return currentPage.route || ''
+}
+
+/**
  * 检查给定值是否为数组。
  * @param {any} value 要检查的值
  * @returns {boolean} 如果是数组则返回 true，否则返回 false

@@ -43,8 +43,8 @@ const billGroups = computed(() => {
           </view>
         </view>
       </view>
-      <view class="mt-2 rounded-lg bg-gray-100/60 px-3">
-        <view v-for="b in g.items" :key="b.billId" class="py-3">
+      <view class="list-item-box mt-2 rounded-lg">
+        <view v-for="b in g.items" :key="b.billId">
           <bill-item :bill="b" />
         </view>
       </view>

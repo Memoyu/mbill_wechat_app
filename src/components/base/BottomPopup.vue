@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { ActionItem } from '@/typings'
+
 defineOptions({
   options: {
     addGlobalClass: true,
@@ -9,21 +11,30 @@ defineOptions({
 
 const props = withDefaults(defineProps<{
   title?: string
+  showBtn?: boolean
   showCancel?: boolean
   confirmText?: string
   cancelText?: string
   height?: number
+  actions?: ActionItem[]
 }>(), {
+  showBtn: true,
   showCancel: false,
   confirmText: '完成',
   cancelText: '取消',
 })
 const emit = defineEmits<{
   (e: 'after-enter'): void
-  (e: 'confirm', check: (pass: boolean) => void): void
+  (e: 'confirm'): void
   (e: 'cancel'): void
 }>()
 const show = defineModel<boolean>()
+
+const innerActions = ref<ActionItem[]>([])
+
+watch(() => props.actions, (val) => {
+  innerActions.value = val ?? []
+})
 
 function handleCancel() {
   emit('cancel')
@@ -31,12 +42,7 @@ function handleCancel() {
 }
 
 function handleConfirm() {
-  emit('confirm', (pass) => {
-    if (!pass)
-      return
-
-    show.value = false
-  })
+  emit('confirm')
 }
 </script>
 
@@ -48,7 +54,8 @@ function handleConfirm() {
     :close-on-click-modal="true"
     :safe-area-inset-bottom="true"
     lazy-render
-    :custom-class="`rounded-t-3xl relative ${(height ? `h-${height}vh` : 'h-60vh')}`"
+    :custom-class="`rounded-t-3xl relative ${(height ? `h-${height}vh` : '')}`"
+    custom-style="max-height: 60vh;"
     @close="() => show = false"
     @after-enter="emit('after-enter')"
   >
@@ -60,7 +67,20 @@ function handleConfirm() {
           <text class="line-clamp-1 text-base font-semibold">
             {{ title }}
           </text>
-          <view class="flex items-center space-x-6">
+          <view v-if="showBtn" class="flex items-center space-x-4">
+            <!-- 自定义按钮 -->
+            <view
+              v-for="(action, index) in innerActions" :key="index"
+              class="bottom-popup-action-btn text-gray-400"
+              :class="[action.type === 'danger' ? 'text-red-500' : action.type === 'warning' ? 'text-yellow-500' : 'text-gray-500']"
+              :hover-class="action.type === 'danger' ? 'bg-red-50' : action.type === 'warning' ? 'bg-yellow-50' : 'bg-gray-50'"
+              :hover-start-time="0"
+              :hover-stay-time="200"
+              @tap="action.action && action.action()"
+            >
+              {{ action.text }}
+            </view>
+
             <!-- 取消按钮 -->
             <view
               v-if="showCancel"
@@ -93,6 +113,6 @@ function handleConfirm() {
 
 <style lang="scss" scoped>
 .bottom-popup-action-btn {
-  @apply flex-shrink-0 rounded-full px-3 py-1 text-base;
+  @apply rounded-full px-3 py-1 text-base;
 }
 </style>

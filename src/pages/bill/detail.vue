@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { IBill, IRefunBill, IRelatedBill } from '@/api/types/bill'
+import type { IBill, IRelatedBill } from '@/api/types/bill'
 import type { ActionItem } from '@/typings'
 import dayjs from 'dayjs'
 import { getBill, getRelatedBill } from '@/api/bill'
@@ -13,40 +13,7 @@ definePage({
 })
 
 const showRefund = ref(false)
-
-const actions: ActionItem[] = [
-  {
-    text: '编辑',
-    icon: 'pen',
-    action: () => {
-      console.log('编辑账单')
-    },
-  },
-  {
-    text: '退款',
-    icon: 'redo',
-    action: () => {
-      // console.log('账单退款')
-      showRefund.value = true
-    },
-  },
-  {
-    text: '关联账单',
-    icon: 'link',
-    action: () => {
-      console.log('关联账单')
-    },
-  },
-  {
-    text: '删除',
-    icon: 'delete',
-    type: 'danger',
-    action: () => {
-      console.log('删除账单')
-    },
-  },
-]
-
+const showRelation = ref(false)
 const bill = ref<IBill>({
   billId: '',
   type: 0,
@@ -66,30 +33,66 @@ const relatedBill = ref<IRelatedBill>({
   income: 0,
   items: [],
 })
-const refund = ref<IRefunBill>({
-  billId: '',
-  accountId: '',
-  amount: 0,
-  date: dayjs().format(),
-  remark: '',
-})
+
+const actions: ActionItem[] = [
+  {
+    text: '编辑',
+    icon: 'pen',
+    action: () => {
+      console.log('编辑账单')
+    },
+  },
+  {
+    text: '退款',
+    icon: 'redo',
+    action: () => {
+      // console.log('账单退款')
+      // 退款弹窗
+      showRefund.value = true
+    },
+  },
+  {
+    text: '关联账单',
+    icon: 'link',
+    action: () => {
+      // console.log('关联账单')
+      // 关联账单弹窗
+      showRelation.value = true
+    },
+  },
+  {
+    text: '删除',
+    icon: 'delete',
+    type: 'danger',
+    action: () => {
+      console.log('删除账单')
+    },
+  },
+]
 
 onLoad((options: any) => {
-  console.log('账单id', options.id)
+  // console.log('账单id', options.id)
   getBill(options.id).then((res) => {
     bill.value = res
-    refund.value.billId = res.billId
-    refund.value.accountId = res.account.accountId
-    refund.value.amount = res.amount
 
     getRelatedBill(options.id).then((res) => {
       relatedBill.value = res
     })
   })
 })
+
+function handleChangeRefund(diff: number) {
+  // 退款金额减少
+  bill.value.refundAmount -= diff
+  // 账单金额增加
+  bill.value.amount += diff
+
+  // TODO 通知列表金额变动
+}
 </script>
 
 <template>
+  <page-meta :page-style="`overflow:${showRefund || showRelation ? 'hidden' : 'visible'};`" />
   <draw-background2 />
   <nav-bar id="TOP_NAVBAR" title="账单详情" />
 
@@ -238,7 +241,10 @@ onLoad((options: any) => {
   <bottom-action :actions="actions" />
 
   <!-- 退款弹窗 -->
-  <refund-popup v-model="showRefund" :refund="refund" />
+  <refund-popup v-model="showRefund" :bill="bill" @change-refund="handleChangeRefund" />
+
+  <!-- 关联账单弹窗 -->
+  <relation-popup v-model="showRelation" :bill="bill" />
 </template>
 
 <style lang="scss" scoped>

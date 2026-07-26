@@ -25,7 +25,7 @@ function handleTagItemTap(item: ITag) {
   // console.log('标签选中', selectedIds.value, item)
 }
 
-function handleConfirm(check: (pass: boolean) => void) {
+function handleConfirm() {
   const ts: ITag[] = []
   tagGroups.value.forEach((tagGroup) => {
     (tagGroup.childs || []).forEach((tag) => {
@@ -36,7 +36,7 @@ function handleConfirm(check: (pass: boolean) => void) {
   })
 
   emit('confirm', ts)
-  check(true)
+  show.value = false
 }
 </script>
 

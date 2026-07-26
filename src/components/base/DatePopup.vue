@@ -18,10 +18,9 @@ watch(() => props.date, (val) => {
 })
 
 function handleDateChange() {
-
 }
 
-function handleConfirmClick() {
+function handleConfirm() {
   emit('change', { value: innerDate.value })
   emit('update:date', innerDate.value)
   show.value = false
@@ -29,7 +28,7 @@ function handleConfirmClick() {
 </script>
 
 <template>
-  <bottom-popup v-model="show">
+  <bottom-popup v-model="show" @confirm="handleConfirm">
     <wd-datetime-picker-view v-model="innerDate" :type="type" @change="handleDateChange" />
   </bottom-popup>
 </template>

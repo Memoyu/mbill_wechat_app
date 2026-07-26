@@ -357,9 +357,9 @@ function handleAddressEditShow() {
   showAddressEdit.value = true
 }
 
-function handleAddressEditConfirm(check: any) {
+function handleAddressEditConfirm() {
   bill.value.address = addressInput.value
-  check(true)
+  showAddressEdit.value = false
 }
 
 function handleTagSelectConfirm(items: ITag[]) {
@@ -477,9 +477,7 @@ function handleAccountSelectConfirm(item: any) {
   <tag-picker-popup v-model="showTags" :tags="(bill.tags || []).map(t => t.tagId)" @confirm="handleTagSelectConfirm" />
   <!-- 地点弹窗 -->
   <center-popup v-model="showAddressEdit" title="地址" @confirm="handleAddressEditConfirm">
-    <view class="px-4 pt-4">
-      <wd-input v-model="addressInput" type="text" placeholder="地址" />
-    </view>
+    <wd-input v-model="addressInput" type="text" placeholder="地址" />
   </center-popup>
 </template>
 

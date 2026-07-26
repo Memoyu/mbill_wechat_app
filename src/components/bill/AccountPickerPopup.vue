@@ -23,9 +23,9 @@ function handleAfterEnter() {
   accountId.value = props.account
 }
 
-function handleConfirm(check: (pass: boolean) => void) {
+function handleConfirm() {
   emit('confirm', { account: accountItem.value.select, parent: accountItem.value.parent })
-  check(true)
+  show.value = false
 }
 </script>
 

@@ -9,10 +9,12 @@ defineOptions({
 
 const props = withDefaults(defineProps<{
   title: string
+  showBtn?: boolean
   showCancel?: boolean
   confirmText?: string
   cancelText?: string
 }>(), {
+  showBtn: true,
   showCancel: true,
   confirmText: '完成',
   cancelText: '取消',
@@ -20,7 +22,7 @@ const props = withDefaults(defineProps<{
 
 const emit = defineEmits<{
   (e: 'after-enter'): void
-  (e: 'confirm', check: (pass: boolean) => void): void
+  (e: 'confirm'): void
   (e: 'cancel'): void
 }>()
 const show = defineModel<boolean>()
@@ -31,53 +33,55 @@ function handleCancel() {
 }
 
 function handleConfirm() {
-  emit('confirm', (pass) => {
-    if (!pass)
-      return
-
-    show.value = false
-  })
+  emit('confirm')
 }
 </script>
 
 <template>
   <wd-popup
+    v-model="show"
     lock-scroll
-    custom-class="rounded-3xl w-90vw overflow-hidden"
     position="center"
-    :model-value="modelValue"
     transition="fade-up"
+    custom-class="relative rounded-3xl w-90vw"
+    custom-style="max-height: 70vh;"
     @close="show = false"
     @after-enter="emit('after-enter')"
   >
-    <view v-if="modelValue" class="flex flex-col overflow-hidden">
-      <!-- 标题 -->
-      <view class="px-6 pt-6 text-center">
-        <text class="text-lg text-gray-800 font-semibold">{{ title }}</text>
+    <view class="h-full px-3">
+      <view class="sticky left-0 right-0 top-0 z-10 bg-white py-3">
+        <!-- 标题 -->
+        <view class="text-center">
+          <text class="line-clamp-1 text-base font-semibold">{{ title }}</text>
+        </view>
       </view>
 
       <!-- 内容插槽 -->
-      <slot />
+      <view>
+        <slot />
+      </view>
 
       <!-- 按钮组 -->
-      <view class="mt-4 flex">
-        <view
-          v-if="showCancel"
-          class="flex-1 border-t border-gray-100 py-4 text-center text-base text-gray-600 transition-colors hover:bg-gray-50"
-          :hover-start-time="0"
-          :hover-stay-time="200"
-          @tap="handleCancel()"
-        >
-          {{ cancelText }}
-        </view>
-        <view v-if="showCancel" class="w-[1px] bg-gray-100" />
-        <view
-          class="flex-1 border-t border-gray-100 py-4 text-center text-base text-indigo-500 font-medium transition-colors"
-          :hover-start-time="0"
-          :hover-stay-time="200"
-          @tap="handleConfirm()"
-        >
-          {{ confirmText }}
+      <view class="sticky bottom-0 left-0 right-0 z-10 bg-white">
+        <view v-if="showBtn" class="mt-3 flex">
+          <view
+            v-if="showCancel"
+            class="flex-1 border-t border-gray-100 py-4 text-center text-base text-gray-600 transition-colors hover:bg-gray-50"
+            :hover-start-time="0"
+            :hover-stay-time="200"
+            @tap="handleCancel()"
+          >
+            {{ cancelText }}
+          </view>
+          <view v-if="showCancel" class="w-[1px] bg-gray-100" />
+          <view
+            class="flex-1 border-t border-gray-100 py-4 text-center text-base text-indigo-500 font-medium transition-colors"
+            :hover-start-time="0"
+            :hover-stay-time="200"
+            @tap="handleConfirm()"
+          >
+            {{ confirmText }}
+          </view>
         </view>
       </view>
     </view>

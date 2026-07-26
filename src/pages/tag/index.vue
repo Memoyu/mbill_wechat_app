@@ -178,12 +178,12 @@ function createChildTag(parent: ITag) {
 /**
  * 创建/编辑标签
  */
-async function handleEditConfirm(check: (close: boolean) => void) {
+async function handleEditConfirm() {
   const { isCreate, tagId, name, parentId } = editTag.value
 
   if (!name) {
     toast.error('标签名称不能为空')
-    return check (false)
+    return
   }
 
   if (isCreate) {
@@ -192,12 +192,12 @@ async function handleEditConfirm(check: (close: boolean) => void) {
   else {
     if (!tagId) {
       toast.error('标签ID不能为空')
-      return check(false)
+      return
     }
     await tagStore.updateTag({ tagId, name }, parentId)
   }
 
-  return check (true)
+  editShow.value = false
 }
 
 /**
@@ -272,9 +272,7 @@ function handleDeleteAction() {
 
   <!-- 编辑标签 -->
   <center-popup v-model="editShow" :title="editTitle" @confirm="handleEditConfirm">
-    <view class="px-4 pt-4">
-      <wd-input v-model="editTag.name" type="text" placeholder="标签名称" />
-    </view>
+    <wd-input v-model="editTag.name" type="text" placeholder="标签名称" />
   </center-popup>
 </template>
 

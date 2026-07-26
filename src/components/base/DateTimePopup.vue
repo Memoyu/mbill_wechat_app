@@ -32,12 +32,11 @@ function handleDateChange() {
 
 }
 
-function handleConfirm(check: (pass: boolean) => void) {
+function handleConfirm() {
   // console.log('handleConfirm', innerDate.value)
   emit('update:date', innerDate.value)
   emit('confirm', innerDate.value)
   show.value = false
-  check(true)
 }
 </script>
 

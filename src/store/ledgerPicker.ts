@@ -52,12 +52,11 @@ export const useLedgerPickerStore = defineStore(
 
     function updateSelectedLedgerNames() {
       state.selectedLedgerNames = []
-      for (const id of state.selectedLedgers) {
-        const ledger = ledgerStore.ledgers.find(l => l.ledgerId === id)
-        if (ledger) {
+      ledgerStore.ledgers.forEach((ledger) => {
+        if (state.selectedLedgers.includes(ledger.ledgerId)) {
           state.selectedLedgerNames.push(ledger.name)
         }
-      }
+      })
     }
 
     return {

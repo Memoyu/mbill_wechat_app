@@ -166,12 +166,12 @@ function handleEditAction() {
   editShow.value = true
 }
 
-async function handleEditConfirm(check: (close: boolean) => void) {
+async function handleEditConfirm() {
   const { isCreate, ledgerId, name, color, randomColor } = editLedger.value
 
   if (!name) {
     toast.error('账本名称不能为空')
-    return check (false)
+    return
   }
 
   if (isCreate) {
@@ -181,7 +181,7 @@ async function handleEditConfirm(check: (close: boolean) => void) {
   else {
     if (!ledgerId) {
       toast.error('账本ID不能为空')
-      return check(false)
+      return
     }
     await ledgerStore.updateLedger({
       ledgerId,
@@ -189,7 +189,7 @@ async function handleEditConfirm(check: (close: boolean) => void) {
     })
   }
 
-  return check (true)
+  editShow.value = false
 }
 
 function handleShareAction() {
@@ -312,29 +312,27 @@ function handleSortChange(list: ILedger[]) {
 
   <!-- 编辑账本 -->
   <center-popup v-model="editShow" :title="editTitle" @confirm="handleEditConfirm">
-    <view class="px-4 pt-4">
-      <wd-input v-model="editLedger.name" type="text" placeholder="账本名称" />
-      <view v-if="editLedger.isCreate">
-        <view class="mt-2">
-          <wd-checkbox v-model="editLedger.randomColor">
-            随机颜色
-          </wd-checkbox>
-        </view>
-        <!-- 颜色网格 -->
-        <view v-if="!editLedger.randomColor" class="mt-2 h-50 overflow-y-auto p-2">
-          <view class="grid grid-cols-4 gap-4">
-            <view
-              v-for="(gradient, index) in gradients"
-              :key="index"
-              class="relative aspect-square overflow-hidden rounded-xl shadow-sm transition-all duration-200"
-              :class="[editLedger.color === index ? 'ring-2 ring-indigo-500 ring-offset-2' : '']"
-              :style="{ background: gradient }"
-              hover-class="scale-95 shadow-md"
-              :hover-start-time="0"
-              :hover-stay-time="200"
-              @tap="editLedger.color = index"
-            />
-          </view>
+    <wd-input v-model="editLedger.name" type="text" placeholder="账本名称" />
+    <view v-if="editLedger.isCreate">
+      <view class="mt-2">
+        <wd-checkbox v-model="editLedger.randomColor">
+          随机颜色
+        </wd-checkbox>
+      </view>
+      <!-- 颜色网格 -->
+      <view v-if="!editLedger.randomColor" class="mt-2 h-50 overflow-y-auto p-2">
+        <view class="grid grid-cols-4 gap-4">
+          <view
+            v-for="(gradient, index) in gradients"
+            :key="index"
+            class="relative aspect-square overflow-hidden rounded-xl shadow-sm transition-all duration-200"
+            :class="[editLedger.color === index ? 'ring-2 ring-indigo-500 ring-offset-2' : '']"
+            :style="{ background: gradient }"
+            hover-class="scale-95 shadow-md"
+            :hover-start-time="0"
+            :hover-stay-time="200"
+            @tap="editLedger.color = index"
+          />
         </view>
       </view>
     </view>
@@ -350,8 +348,8 @@ function handleSortChange(list: ILedger[]) {
   <color-picker-popup v-model="colorPickerShow" :ledger-id="currentLedger?.ledgerId ?? ''" />
 
   <!-- 分享二维码 -->
-  <center-popup v-model="shareShow" title="扫码加入" :show-cancel="false" @confirm="check => check(true)">
-    <view class="mt-2 flex items-center justify-center">
+  <center-popup v-model="shareShow" title="扫码加入" :show-btn="false">
+    <view class="mb-7 flex items-center justify-center">
       <canvas :id="qrcodeCanvasId" :canvas-id="qrcodeCanvasId" style="width: 240px;height: 240px;" />
     </view>
   </center-popup>

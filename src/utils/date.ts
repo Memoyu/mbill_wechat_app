@@ -76,10 +76,10 @@ export function getDateFormat(date: string | number | Date): string {
     return '昨天'
   }
   else if (inputDate.isSame(year, 'year')) {
-    return inputDate.format('MM-DD')
+    return inputDate.format('MM月DD日')
   }
   else {
-    return inputDate.format('YYYY-MM-DD')
+    return inputDate.format('YYYY年MM月DD日')
   }
 }
 

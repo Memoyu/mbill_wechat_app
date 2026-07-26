@@ -1,4 +1,4 @@
-import type { IBill, IBillDateGroup, IBillPageQuery, ICreateBill, IRefunBill, IRelatedBill, IRelationBill, IUpdateBill } from './types/bill'
+import type { IBill, IBillDateGroup, IBillPageQuery, ICreateBill, IEditRefundBill, IRefundBill, IRelatedBill, IRelationBill, IUpdateBill } from './types/bill'
 import type { PageResult } from './types/common'
 import { http } from '@/utils/http'
 
@@ -14,20 +14,6 @@ export function createBill(create: ICreateBill) {
  */
 export function updateBill(update: IUpdateBill) {
   return http.put('bill/update', update)
-}
-
-/**
- * 账单退款
- */
-export function refundBill(refund: IRefunBill) {
-  return http.put('bill/refund', refund)
-}
-
-/**
- * 关联账单
- */
-export function relationBill(relation: IRelationBill) {
-  return http.put('bill/relation', relation)
 }
 
 /**
@@ -52,8 +38,50 @@ export function getBill(billId: string) {
 }
 
 /**
+ * 关联账单
+ */
+export function relationBill(relation: IRelationBill) {
+  return http.put('bill/relation', relation)
+}
+
+/**
  * 获取账单关联账单列表
  */
 export function getRelatedBill(billId: string) {
   return http.get<IRelatedBill>('bill/related', { billId })
+}
+
+/**
+ * 创建账单退款
+ */
+export function createRefundBill(refund: IEditRefundBill) {
+  return http.post<IRefundBill>('bill/refund/create', refund)
+}
+
+/**
+ * 更新账单退款
+ */
+export function updateRefundBill(refund: IEditRefundBill) {
+  return http.put<IRefundBill>('bill/refund/update', refund)
+}
+
+/**
+ * 删除账单
+ */
+export function deleteRefundBill(refundId: string) {
+  return http.delete('bill/refund/delete', { refundId })
+}
+
+/**
+ * 获取账单详情
+ */
+export function getRefundBill(refundId: string) {
+  return http.get<IRefundBill>('bill/refund/get', { refundId })
+}
+
+/**
+ * 获取账单详情
+ */
+export function getRefundBillList(billId: string) {
+  return http.get<IRefundBill[]>('bill/refund/list', { billId })
 }

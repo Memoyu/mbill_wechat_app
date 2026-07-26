@@ -218,11 +218,11 @@ function handleIconSelected(icon: IIcon) {
 /**
  * 创建/编辑分类
  */
-async function handleEditConfirm(check: (close: boolean) => void) {
+async function handleEditConfirm() {
   const { isCreate, categoryId, name, icon, parentId } = editCategory.value
 
   if (!checkCategory(editCategory.value))
-    return check(false)
+    return
 
   if (isCreate) {
     await categoryStore.createCategory(name, icon, type.value, parentId)
@@ -230,12 +230,12 @@ async function handleEditConfirm(check: (close: boolean) => void) {
   else {
     if (!categoryId) {
       toast.error('分类ID不能为空')
-      return check(false)
+      return
     }
     await categoryStore.updateCategory({ categoryId, name, icon }, type.value, parentId)
   }
 
-  return check(true)
+  editShow.value = false
 }
 
 /**

@@ -205,11 +205,11 @@ function handleIconSelected(icon: IIcon) {
 /**
  * 创建/编辑分类
  */
-async function handleEditConfirm(check: (close: boolean) => void) {
+async function handleEditConfirm() {
   const { isCreate, accountId, name, icon, parentId } = editAccount.value
 
   if (!checkAccount(editAccount.value))
-    return check(false)
+    return
 
   if (isCreate) {
     await accountStore.createAccount(name, icon, parentId)
@@ -217,12 +217,12 @@ async function handleEditConfirm(check: (close: boolean) => void) {
   else {
     if (!accountId) {
       toast.error('账户ID不能为空')
-      return check(false)
+      return
     }
     await accountStore.updateAccount({ accountId, name, icon }, parentId)
   }
 
-  return check(true)
+  editShow.value = false
 }
 
 /**

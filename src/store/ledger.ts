@@ -64,7 +64,6 @@ export const useLedgerStore = defineStore(
             title: '确认加入',
             msg: `你即将加入 ${ledger.creater.nickname} 的[${ledger.name}]账本`,
             theme: 'text',
-            actionLayout: 'vertical',
             confirmButtonText: '确认加入',
             cancelButtonText: '取消',
           })

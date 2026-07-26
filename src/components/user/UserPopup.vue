@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { useDialog } from '@wot-ui/ui'
 import dayjs from 'dayjs'
 import { uploadAvatar } from '@/api/common'
 import { useUserStore } from '@/store'
@@ -25,8 +24,10 @@ const actions = [{
   action: () => { uni.navigateTo({ url: '/pages/tag/index' }) },
 }]
 
-const dialog = useDialog()
 const userStore = useUserStore()
+
+const editShow = ref(false)
+const nickname = ref()
 
 const user = computed(() => userStore.userInfo)
 
@@ -44,22 +45,13 @@ function handleChooseAvatar(e: any) {
 }
 
 function handelNicknameInput() {
-  dialog
-    .prompt({
-      title: '修改昵称',
-      inputValue: user.value.nickname,
-      inputValidate: (value) => {
-        value = `${value}`.trim()
-        return value && value.length > 0
-      },
-      inputError: '昵称不能为空',
-    })
-    .then((res) => {
-      // console.log(res.value)
-      if (!res.value)
-        return
-      userStore.setUserNickname(res.value.toString())
-    })
+  nickname.value = user.value.nickname
+  editShow.value = true
+}
+
+function handleEditConfirm() {
+  userStore.setUserNickname(nickname.value)
+  editShow.value = false
 }
 </script>
 
@@ -123,7 +115,11 @@ function handelNicknameInput() {
       </view>
     </view>
   </wd-popup>
-  <wd-dialog />
+
+  <!-- 编辑标签 -->
+  <center-popup v-model="editShow" title="修改昵称" @confirm="handleEditConfirm">
+    <wd-input v-model="nickname" type="text" placeholder="用户昵称" />
+  </center-popup>
 </template>
 
 <style lang="scss" scoped>

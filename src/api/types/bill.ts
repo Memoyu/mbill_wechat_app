@@ -41,15 +41,6 @@ export interface IEditBill {
   createTime?: Date
 }
 
-export interface IRefunBill {
-  refundId?: string
-  billId: string
-  accountId: string
-  amount: number
-  date: string
-  remark?: string
-}
-
 export interface IRelationBill {
   billId: string
   relationIds: string []
@@ -116,4 +107,23 @@ export interface IRelatedBill {
   income: number
   expend: number
   items: IBill[]
+}
+
+export interface IEditRefundBill {
+  refundId?: string
+  billId: string
+  accountId: string
+  amount: number
+  date: string
+  remark?: string
+}
+
+export interface IRefundBill {
+  refundId: string
+  billId: string
+  account: IBillAccount
+  amount: number
+  amountBefore: number
+  date: string
+  remark?: string
 }
