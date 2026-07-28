@@ -18,8 +18,6 @@ definePage({
 })
 
 const userStore = useUserStore()
-const ledgerPickerStore = useLedgerPickerStore()
-const billStore = useBillStore()
 
 const date = ref(Date.now())
 
@@ -34,19 +32,6 @@ const dateText = computed(() => {
   return dayjs(date.value).format('YYYY年MM月')
 })
 
-const ledgerName = computed(() => {
-  // console.log(ledgerPickerStore.selectedLedgerNames)
-  return ledgerPickerStore.selectedLedgerNames.join(', ')
-})
-
-watch (() => ledgerPickerStore.selectedLedgers, (ledgers) => {
-  billStore.loadIndexBills({
-    ledgerIds: ledgers,
-    beginDate: dayjs().add(-30, 'day').format('YYYY-MM-DD'),
-    endDate: dayjs().format('YYYY-MM-DD'),
-  })
-}, { immediate: true, deep: true })
-
 onLoad(() => {
 
 })
@@ -55,10 +40,6 @@ function handleCalendarClick() {
   uni.navigateTo({
     url: '/pages/calendar/index',
   })
-}
-
-function handleLedgerChange(item: ILedger) {
-
 }
 </script>
 
@@ -85,7 +66,7 @@ function handleLedgerChange(item: ILedger) {
       </view>
 
       <!-- 账本按钮 -->
-      <view
+      <!-- <view
         class="sticky-item p-2 px-3"
         hover-class="sticky-item-hover"
         :hover-start-time="0"
@@ -94,7 +75,7 @@ function handleLedgerChange(item: ILedger) {
       >
         <wd-icon class="flex-shrink-0 text-sm" name="caret-down" />
         <text class="max-w-[80px] truncate text-xs">{{ ledgerName }}</text>
-      </view>
+      </view> -->
       <!-- 设置按钮 -->
       <view
         class="sticky-item p-2 px-3"
@@ -146,8 +127,7 @@ function handleLedgerChange(item: ILedger) {
 
   <!-- 日期选择弹窗 -->
   <date-popup v-model="isDateSelectShow" v-model:date="date" type="year-month" />
-  <!-- 账本弹窗 -->
-  <ledger-popup v-model="isLedgersShow" @change="handleLedgerChange" />
+
   <!-- 用户弹窗 -->
   <user-popup v-model="isUserShow" />
   <!-- 设置弹窗 -->

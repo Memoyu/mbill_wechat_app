@@ -43,9 +43,6 @@ defineExpose({
       <!-- <global-loading /> -->
       <global-toast />
       <global-dialog />
-
-      <privacy-popup />
-      <FgTabbar v-if="isCurrentPageTabbar" />
     </wd-config-provider>
   </view>
 </template>
