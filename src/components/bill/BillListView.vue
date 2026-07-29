@@ -6,14 +6,14 @@ import { getDateFormat, getWeekday } from '@/utils/date'
 
 const billStore = useBillStore()
 
-const billGroups = computed(() => {
+const billGroup = computed(() => {
   return billStore.bills
 })
 </script>
 
 <template>
   <view class="p-3">
-    <view v-for="g in billGroups" :key="g.date" class="mt-5">
+    <view v-for="g in billGroup" :key="g.date" class="mt-5">
       <view class="flex items-center justify-between">
         <view class="flex">
           <view class="font-bold">
@@ -43,7 +43,7 @@ const billGroups = computed(() => {
           </view>
         </view>
       </view>
-      <view class="list-item-box mt-2 rounded-lg">
+      <view class="mt-2 list-item-box rounded-lg">
         <view v-for="b in g.items" :key="b.billId">
           <bill-item :bill="b" />
         </view>

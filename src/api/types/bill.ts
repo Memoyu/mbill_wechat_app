@@ -81,6 +81,22 @@ export interface IBill {
   createTime: Date
 }
 
+export interface ISelectBillGroup {
+  date: string
+  items: ISelectBill[]
+}
+
+export interface ISelectBill {
+  billId: string
+  type: BillTypeEnum
+  category: string
+  account: string
+  amount: number
+  date: string
+  remark: string
+  tags: IBillTag []
+}
+
 export interface IBillLedger {
   ledgerId: string
   name: string
