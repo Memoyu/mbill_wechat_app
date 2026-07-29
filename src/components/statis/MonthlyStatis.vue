@@ -236,8 +236,6 @@ function getMonths(date: Dayjs, count = 10) {
         </view>
       </view>
     </view>
-    <!-- 底部安全区(因为没有使用layout) -->
-    <wd-gap height="calc(32px + var(--wot-tabbar-height, 50px))" />
   </scroll-view>
 </template>
 

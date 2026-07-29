@@ -1,7 +1,6 @@
 <script lang="ts" setup>
-import type { ILedger } from '@/api/types/ledger'
 import dayjs from 'dayjs'
-import { useBillStore, useLedgerPickerStore, useUserStore } from '@/store'
+import { useUserStore } from '@/store'
 import { safeAreaInsets } from '@/utils/systemInfo'
 
 defineOptions({
@@ -65,21 +64,10 @@ function handleCalendarClick() {
         <wd-avatar :size="40" :src="user.avatar" />
       </view>
 
-      <!-- 账本按钮 -->
-      <!-- <view
-        class="sticky-item p-2 px-3"
-        hover-class="sticky-item-hover"
-        :hover-start-time="0"
-        :hover-stay-time="200"
-        @tap="isLedgersShow = true"
-      >
-        <wd-icon class="flex-shrink-0 text-sm" name="caret-down" />
-        <text class="max-w-[80px] truncate text-xs">{{ ledgerName }}</text>
-      </view> -->
       <!-- 设置按钮 -->
       <view
         class="sticky-item p-2 px-3"
-        hover-class="bg-gray-200/80 !scale-97 transform-origin-center"
+        hover-class="bg-gray-50 !scale-97 transform-origin-center"
         :hover-start-time="0"
         :hover-stay-time="200"
         @tap="isSettingsShow = true"
@@ -87,13 +75,24 @@ function handleCalendarClick() {
         <text class="i-carbon-settings text-sm" />
         <text class="whitespace-nowrap text-xs">设置</text>
       </view>
+
+      <!-- 天气信息 -->
+      <view
+        class="sticky-item p-2 px-3"
+        hover-class="bg-gray-50 !scale-97 transform-origin-center"
+        :hover-start-time="0"
+        :hover-stay-time="200"
+      >
+        <text class="iconfont icon-qing text-sm" />
+        <text class="whitespace-nowrap text-xs">晴</text>
+      </view>
     </view>
   </view>
 
   <!-- 日期栏 -->
   <view class="mt-3 w-screen">
     <view class="flex justify-between px-5">
-      <view class="flex items-center" @tap="() => isDateSelectShow = true">
+      <view class="flex items-center" @tap="isDateSelectShow = true">
         <view class="mr-1 font-bold">
           {{ dateText }}
         </view>
@@ -122,11 +121,17 @@ function handleCalendarClick() {
     <bill-list-view />
   </view>
 
+  <!-- 底部导航栏 -->
+  <bottom-nav-bar @show-ledgers="isLedgersShow = true" />
+
   <!-- 底部安全区(因为没有使用layout) -->
   <wd-gap height="calc(32px + var(--wot-tabbar-height, 50px))" />
 
   <!-- 日期选择弹窗 -->
   <date-popup v-model="isDateSelectShow" v-model:date="date" type="year-month" />
+
+  <!-- 账本弹窗 -->
+  <ledger-popup v-model="isLedgersShow" />
 
   <!-- 用户弹窗 -->
   <user-popup v-model="isUserShow" />

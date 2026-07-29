@@ -39,17 +39,14 @@ function initComponent(cidx: number) {
 
 <template>
   <draw-background2 />
-  <view
-    id="MAIN_SEGMENTED"
-    class="sticky left-0 top-0 z-5 w-screen bg-white/70 backdrop-blur-md"
-    :style="{ paddingTop: `${Math.max(safeAreaInsets.top, 28)}px` }"
-  >
-    <view class="ml-3 mt-3">
-      <view class="max-w-max rounded-full bg-gray-200/50 px-4 py-1.5">
+  <!-- 导航栏 -->
+  <nav-bar id="TOP_NAVBAR" title="数据统计">
+    <template #prefix-action>
+      <view class="mt-4 max-w-max rounded-full bg-gray-200/50 px-3 py-1">
         <mbill-segmented v-model="active" :options="options" />
       </view>
-    </view>
-  </view>
+    </template>
+  </nav-bar>
 
   <view>
     <wd-tabs v-model="active" swipeable animated>
