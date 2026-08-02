@@ -25,12 +25,14 @@ const isAllSelected = ref()
 const innerSelecteds = ref<string[]>([])
 
 watch(() => selecteds.value, (newValue) => {
-  innerSelecteds.value = lodash.cloneDeep(newValue)
+  if (newValue)
+    innerSelecteds.value = lodash.cloneDeep(newValue)
 }, { immediate: true, deep: true })
 
 watch(() => visible.value, (newValue) => {
+  // 重置选中项
   if (newValue)
-    innerSelecteds.value = lodash.cloneDeep(selecteds.value)
+    innerSelecteds.value = lodash.cloneDeep(selecteds.value ?? [])
 }, { immediate: true })
 
 function handleAfterEnter() {
@@ -117,7 +119,7 @@ function handleLedgerClick(ledger: ILedger) {
                 <!-- 选中状态的 check 图标 -->
                 <view
                   v-if="isSelected(ledger)"
-                  class="absolute bottom-3 right-3 h-5 w-5 flex animate-fade-in animate-duration-200 items-center justify-center rounded-full bg-indigo-500 shadow-sm"
+                  class="absolute bottom-1/2 right-3 h-5 w-5 flex translate-y-1/2 animate-fade-in animate-duration-200 items-center justify-center rounded-full bg-indigo-500 shadow-sm"
                 >
                   <text class="iconfont icon-check text-xs text-white" />
                 </view>

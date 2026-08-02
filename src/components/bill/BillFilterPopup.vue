@@ -1,5 +1,8 @@
 <script setup lang="ts">
+import type { IAccount } from '@/api/types/account'
+import type { ICategory } from '@/api/types/category'
 import type { ILedger } from '@/api/types/ledger'
+import type { ITag } from '@/api/types/tag'
 import type { ActionItem } from '@/typings'
 import dayjs from 'dayjs'
 
@@ -24,7 +27,7 @@ const filter = ref<{
   ledgers?: string[]
   categories?: string[]
   accounts?: string[]
-  tags?: string[]
+  tags?: ITag[]
 }>({
   type: '',
   dateType: '',
@@ -117,6 +120,23 @@ function handleLedgerConfirm(ledgers: ILedger[]) {
   // console.log(filter.value.ledgers)
   showLedgerPicker.value = false
   ledgerName.value = ledgers.map(ledger => ledger.name).join(', ')
+}
+
+function handleCategoryConfirm(categories: ICategory[]) {
+  // console.log(filter.value.ledgers)
+  showCategoryPicker.value = false
+  // categoryName.value = ledgers.map(ledger => ledger.name).join(', ')
+}
+
+function handleAccountConfirm(accounts: IAccount[]) {
+  // console.log(filter.value.ledgers)
+  showAccountPicker.value = false
+  // accountName.value = ledgers.map(ledger => ledger.name).join(', ')
+}
+function handleTagConfirm(tags: ITag[]) {
+  // console.log(filter.value.ledgers)
+  showTagPicker.value = false
+  tagName.value = tags.map(t => t.name).join(', ')
 }
 </script>
 
@@ -217,12 +237,16 @@ function handleLedgerConfirm(ledgers: ILedger[]) {
   <wd-datetime-picker v-model="pickerDate" v-model:visible="showDatePicker" type="date" @confirm="handleDatePickerConfirm" />
 
   <!-- 账本选择器 -->
-  <ledger-picker-popup v-model="filter.ledgers" v-model:visible="showLedgerPicker" @confirm="handleLedgerConfirm" />
+  <ledger-list-picker v-model="filter.ledgers" v-model:visible="showLedgerPicker" @confirm="handleLedgerConfirm" />
 
   <!-- 分类选择器 -->
+  <category-list-picker v-model="filter.categories" v-model:visible="showCategoryPicker" @confirm="handleCategoryConfirm" />
 
   <!-- 账户选择器 -->
-  <!-- <account-picker-popup v-model="filter.accounts" v-model:visible="showAccountPicker" /> -->
+  <account-list-picker v-model="filter.accounts" v-model:visible="showAccountPicker" @confirm="handleAccountConfirm" />
+
+  <!-- 账户选择器 -->
+  <tag-list-picker v-model="filter.tags" v-model:visible="showTagPicker" @confirm="handleTagConfirm" />
 </template>
 
 <style lang="scss" scoped>

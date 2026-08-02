@@ -128,10 +128,10 @@ function handleCalendarClick() {
   <wd-gap height="calc(32px + var(--wot-tabbar-height, 50px))" />
 
   <!-- 日期选择弹窗 -->
-  <date-popup v-model="isDateSelectShow" v-model:date="date" type="year-month" />
+  <date-picker v-model="isDateSelectShow" v-model:date="date" type="year-month" />
 
   <!-- 账本弹窗 -->
-  <ledger-popup v-model="isLedgersShow" />
+  <ledger-picker v-model="isLedgersShow" />
 
   <!-- 用户弹窗 -->
   <user-popup v-model="isUserShow" />

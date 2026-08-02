@@ -364,12 +364,8 @@ function handleAddressEditConfirm() {
 
 function handleTagSelectConfirm(items: ITag[]) {
   // console.log(items, 'tags')
-  bill.value.tags = items.map((t) => {
-    return {
-      tagId: t.tagId,
-      name: t.name,
-    }
-  })
+  showTags.value = false
+  bill.value.tags = items
 }
 
 function handleAccountSelectConfirm(item: any) {
@@ -468,13 +464,13 @@ function handleAccountSelectConfirm(item: any) {
   </view>
 
   <!-- 账本弹窗 -->
-  <ledger-popup v-model="showLedgers" v-model:value="bill.ledger.ledgerId" single @change="handleLedgerChange" />
+  <ledger-picker v-model="showLedgers" v-model:value="bill.ledger.ledgerId" single @change="handleLedgerChange" />
   <!-- 日期弹窗 -->
-  <date-time-popup v-model="showDateTime" v-model:date="billDate" @confirm="handleDateTimeConfirm" />
+  <date-time-picker v-model="showDateTime" v-model:date="billDate" @confirm="handleDateTimeConfirm" />
   <!-- 账户弹窗 -->
-  <account-picker-popup v-model="showAccounts" :account="bill.account.accountId" @confirm="handleAccountSelectConfirm" />
+  <account-picker v-model="showAccounts" :account="bill.account.accountId" @confirm="handleAccountSelectConfirm" />
   <!-- 标签弹窗 -->
-  <tag-picker-popup v-model="showTags" :tags="(bill.tags || []).map(t => t.tagId)" @confirm="handleTagSelectConfirm" />
+  <tag-list-picker v-model="bill.tags" v-model:visible="showTags" @confirm="handleTagSelectConfirm" />
   <!-- 地点弹窗 -->
   <center-popup v-model="showAddressEdit" title="地址" @confirm="handleAddressEditConfirm">
     <view class="px-3">

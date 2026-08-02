@@ -221,7 +221,7 @@ function updateRefundList(dto: IRefundBill) {
   </bottom-popup>
 
   <!-- 日期弹窗 -->
-  <date-time-popup v-model="showDateTime" v-model:date="date" />
+  <date-time-picker v-model="showDateTime" v-model:date="date" />
 </template>
 
 <style lang="scss" scoped>

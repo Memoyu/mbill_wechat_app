@@ -13,6 +13,7 @@ const props = defineProps<{
   item: GridSelectItem
   selected: string
   height: number
+  expand?: boolean
 }>()
 const emit = defineEmits(['change'])
 
@@ -26,8 +27,8 @@ const hasChilds = computed(() => {
 </script>
 
 <template>
-  <view class="relative" :style="{ height }">
-    <view class="grid-select-item-box">
+  <view class="relative flex items-center justify-center" :style="{ height: `${height}px` }">
+    <view class="flex flex-col items-center">
       <view :class="[hasChilds ? 'grid-select-item-has-more' : '']">
         <bill-icon :icon="item.icon" :text="item.name" />
       </view>
@@ -39,11 +40,7 @@ const hasChilds = computed(() => {
     <!-- 选中遮罩层 -->
     <view
       class="absolute inset-0 z-10 overflow-hidden rounded-md transition-all duration-200"
-      :class="[
-        isSelected
-          ? 'bg-indigo-500/10 ring-2 ring-indigo-500'
-          : 'bg-transparent',
-      ]"
+      :class="[isSelected ? 'bg-indigo-500/10 ring-2 ring-indigo-500' : 'bg-transparent']"
     >
       <!-- 选中状态的 check 图标 -->
       <view
@@ -53,14 +50,17 @@ const hasChilds = computed(() => {
         <text class="iconfont icon-check pb-0.5 pr-1 text-xs text-white" />
       </view>
     </view>
+
+    <!-- 父项展开下标 -->
+    <wd-icon
+      v-if="expand && hasChilds"
+      name="caret-down" :size="23"
+      custom-class="text-indigo-500 absolute bottom-0 left-1/2 z-10 flex translate-y-full items-center justify-center -translate-x-1/2"
+    />
   </view>
 </template>
 
 <style lang="scss" scoped>
-.grid-select-item-box {
-  @apply: flex flex-col items-center py-2;
-}
-
 .grid-select-item-has-more {
   position: relative;
   &:before {
@@ -81,9 +81,5 @@ const hasChilds = computed(() => {
 .grid-select-item-title {
   font-size: 12px;
   @apply: line-clamp-1 text-nowrap text-center;
-}
-
-.grid-select-item-selected {
-  @apply: rounded-lg bg-indigo-300/30;
 }
 </style>

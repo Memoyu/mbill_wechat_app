@@ -130,7 +130,7 @@ function handleMonthChange(month: number) {
   </scroll-view>
 
   <!-- 日期选择弹窗 -->
-  <date-popup v-model="isDateSelectShow" v-model:date="date" type="year-month" />
+  <date-picker v-model="isDateSelectShow" v-model:date="date" type="year-month" />
 </template>
 
 <style lang="scss" scoped>

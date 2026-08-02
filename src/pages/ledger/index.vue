@@ -347,7 +347,7 @@ function handleSortChange(list: ILedger[]) {
     :items="ledgerActions"
   />
   <!-- 颜色选择器 -->
-  <color-picker-popup v-model="colorPickerShow" :ledger-id="currentLedger?.ledgerId ?? ''" />
+  <color-picker v-model="colorPickerShow" :ledger-id="currentLedger?.ledgerId ?? ''" />
 
   <!-- 分享二维码 -->
   <center-popup v-model="shareShow" title="扫码加入" :show-btn="false">

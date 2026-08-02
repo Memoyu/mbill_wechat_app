@@ -57,7 +57,7 @@ function handleAccountItemTap(item: any) {
 </script>
 
 <template>
-  <grid-picker-view v-model="selected" :data="accountData" :height="height" @change="handleAccountItemTap" />
+  <grid-picker-view v-model="selected" :data="accountData" :scroll-height="height" @change="handleAccountItemTap" />
 </template>
 
 <style lang="scss" scoped>

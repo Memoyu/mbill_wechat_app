@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { objToStyle } from '@/utils'
-
 export interface GridSelectData {
   list: GridSelectItem[]
   tops?: GridSelectItem[]
@@ -23,18 +21,15 @@ defineOptions({
 
 const props = withDefaults(defineProps<{
   data: GridSelectData
-  height: number
+  height?: number
   scrollHeight?: number
   column?: number
 }>(), {
   column: 5,
+  height: 68,
 })
 const emit = defineEmits(['change'])
 const selected = defineModel<string>()
-defineExpose({
-  // 对外提供初始化选中项方法，主要用于popup类型组件使用（弹窗完成后再初始化）
-  initSelected,
-})
 
 // 数据项映射：id -> { ridx, item, parent }
 const itemMaps: any = {}
@@ -46,17 +41,16 @@ const rowIndex = ref(-1)
 const childs = ref()
 
 const innerTops = ref<GridSelectItem[]>([])
-const currentId = ref()
 const topId = ref()
-const parentId = ref()
+const currentId = ref()
+const currentParentId = ref()
 
 const itemsBoxStyle = computed(() => {
-  const style = {
+  return {
     display: 'grid',
     gap: '8px',
     gridTemplateColumns: `repeat(${props.column}, minmax(0, 1fr))`,
   }
-  return `${objToStyle(style)}`
 })
 
 const hasTop = computed(() => {
@@ -68,7 +62,8 @@ watch(() => props.height, (nh) => {
 }, { immediate: true })
 
 watch(() => props.scrollHeight, (nh) => {
-  scrollHeight.value = nh
+  if (nh)
+    scrollHeight.value = nh
 }, { immediate: true })
 
 watch(() => props.data, (data) => {
@@ -76,11 +71,12 @@ watch(() => props.data, (data) => {
 }, { immediate: true, deep: true })
 
 watch(() => selected.value, (val) => {
-  initSelected(val)
+  if (val)
+    initSelected(val)
 }, { immediate: true, deep: true })
 
 function initSelectData(data: GridSelectData) {
-  // console.log(list, 'list')
+  console.log(data, 'data')
   if (!data)
     return
   // 初始化常用项
@@ -175,12 +171,12 @@ function selectedItem(id: string, isEmit = true, isTop = false) {
   if (isTop) {
     rowIdx = -1
     topId.value = id
-    parentId.value = undefined
+    currentParentId.value = undefined
   }
   else {
     currentId.value = id
     topId.value = undefined
-    parentId.value = parent.id
+    currentParentId.value = parent.id
   }
   rowIndex.value = rowIdx
 
@@ -188,30 +184,32 @@ function selectedItem(id: string, isEmit = true, isTop = false) {
 }
 
 function getChildContentHeight(rowIdx: number) {
-  const itemH = itmeHeight.value + 8 * 2 // 上下间8px间距
   const row = Math.ceil(childs.value.length / props.column)
-  console.log(row, row * itemH, 'row')
-  return rowIndex.value === rowIdx && childs.value && childs.value.length > 0 ? `${row * itemH}px` : '0px'
+  let height = row * itmeHeight.value + 16 // 16 为padding(p-2)
+  height = height + ((row - 1) * 8) // 加上行间隔
+  // console.log(row, height, 'row')
+  return rowIndex.value === rowIdx && childs.value && childs.value.length > 0 ? `${height}px` : '0px'
 }
 </script>
 
 <template>
   <scroll-view scroll-y :style="{ height: `${scrollHeight}px` }">
-    <view class="p-2 space-y-3">
+    <view class="p-2">
       <!-- 常用项 -->
       <view v-if="hasTop">
-        <view class="font-semibold">
+        <view class="pb-2 font-semibold">
           常用
         </view>
         <view :style="itemsBoxStyle">
           <view
             v-for="top in innerTops" :key="`top-${top.id}`"
+
             @tap="handleTopItemTap(top)"
           >
             <picker-item :height="itmeHeight" :item="top" :selected="topId" />
           </view>
         </view>
-        <view class="mt-3 font-semibold">
+        <view class="mt-3 pb-2 font-semibold">
           全部
         </view>
       </view>
@@ -223,7 +221,7 @@ function getChildContentHeight(rowIdx: number) {
               v-for="item in items" :key="item.id"
               @tap="handleListItemTap(item)"
             >
-              <picker-item :height="itmeHeight" :item="item" :selected="parentId" />
+              <picker-item :height="itmeHeight" :expand="item.id === currentParentId" :item="item" :selected="currentId" />
             </view>
           </view>
 
@@ -231,14 +229,12 @@ function getChildContentHeight(rowIdx: number) {
             class="grid-select-childs-box rounded-lg bg-gray-200"
             :style="{ height: getChildContentHeight(rowIdx) }"
           >
-            <view :id="`GRID-CHILDS-${rowIdx}`" class="p-2" :style="{ display: rowIndex === rowIdx ? '' : 'none' }">
-              <view :style="itemsBoxStyle">
-                <view
-                  v-for="child in childs" :key="child.id"
-                  @tap="handleListItemTap(child)"
-                >
-                  <picker-item :height="itmeHeight" :item="child" :selected="currentId" />
-                </view>
+            <view class="p-2" :style="{ ...itemsBoxStyle, display: rowIndex === rowIdx ? '' : 'none' }">
+              <view
+                v-for="child in childs" :key="child.id"
+                @tap="handleListItemTap(child)"
+              >
+                <picker-item :height="itmeHeight" :item="child" :selected="currentId" />
               </view>
             </view>
           </view>

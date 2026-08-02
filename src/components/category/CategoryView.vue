@@ -21,6 +21,8 @@ const categoryStore = useCategoryStore()
 
 const initTypes: number[] = []
 
+const selectedExpend = ref('')
+const selectedIncome = ref('')
 const expends = ref<GridSelectData>({ tops: [], list: [] })
 const incomes = ref<GridSelectData>({ tops: [], list: [] })
 
@@ -29,6 +31,7 @@ onMounted(() => {
 })
 
 watch(() => type.value, (t) => {
+  console.log('分类选择', t)
   if (t === undefined)
     return
 
@@ -72,6 +75,16 @@ watch(() => type.value, (t) => {
   initTypes.push(t)
 }, { immediate: true })
 
+watch(() => selected.value, (s) => {
+  if (!s)
+    return
+
+  if (type.value === 0)
+    selectedExpend.value = s
+  else
+    selectedIncome.value = s
+})
+
 function handleTabChange(change: any) {
   const { index } = change
   type.value = index
@@ -88,11 +101,11 @@ function handleCategoryItemTap(item: any) {
   <view>
     <wd-tabs v-model="type" animated swipeable @change="handleTabChange">
       <wd-tab key="expend">
-        <grid-picker-view v-model="selected" :data="expends" :height="80" :scroll-height="height" @change="handleCategoryItemTap" />
+        <grid-picker-view v-model="selectedExpend" :data="expends" :scroll-height="height" @change="handleCategoryItemTap" />
       </wd-tab>
 
       <wd-tab key="income">
-        <grid-picker-view v-model="selected" :data="incomes" :height="80" :scroll-height="height" @change="handleCategoryItemTap" />
+        <grid-picker-view v-model="selectedIncome" :data="incomes" :scroll-height="height" @change="handleCategoryItemTap" />
       </wd-tab>
     </wd-tabs>
   </view>
