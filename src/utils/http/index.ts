@@ -3,7 +3,6 @@ import type { CustomRequestOptions, IResponse } from '@/utils/http/types'
 import { nextTick } from 'vue'
 import { useTokenStore } from '@/store/token'
 import { isDoubleTokenMode } from '@/utils'
-import { toLoginPage } from '@/utils/toLoginPage'
 import { ResultEnum } from './enum'
 
 // 刷新 token 状态管理
@@ -32,7 +31,6 @@ export function http<T>(options: CustomRequestOptions) {
           if (!isDoubleTokenMode) {
             // 未启用双token策略，清理用户信息，跳转到登录页
             tokenStore.logout()
-            toLoginPage()
             return reject(res)
           }
 
@@ -78,10 +76,6 @@ export function http<T>(options: CustomRequestOptions) {
               })
               // 清除用户信息
               await tokenStore.logout()
-              // 跳转到登录页
-              setTimeout(() => {
-                toLoginPage()
-              }, 2000)
             }
             finally {
               // 不管刷新 token 成功与否，都清空任务队列

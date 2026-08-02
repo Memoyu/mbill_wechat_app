@@ -272,7 +272,9 @@ function handleDeleteAction() {
 
   <!-- 编辑标签 -->
   <center-popup v-model="editShow" :title="editTitle" @confirm="handleEditConfirm">
-    <wd-input v-model="editTag.name" type="text" placeholder="标签名称" />
+    <view class="px-3">
+      <wd-input v-model="editTag.name" type="text" placeholder="标签名称" />
+    </view>
   </center-popup>
 </template>
 

@@ -477,7 +477,9 @@ function handleAccountSelectConfirm(item: any) {
   <tag-picker-popup v-model="showTags" :tags="(bill.tags || []).map(t => t.tagId)" @confirm="handleTagSelectConfirm" />
   <!-- 地点弹窗 -->
   <center-popup v-model="showAddressEdit" title="地址" @confirm="handleAddressEditConfirm">
-    <wd-input v-model="addressInput" type="text" placeholder="地址" />
+    <view class="px-3">
+      <wd-input v-model="addressInput" type="text" placeholder="地址" />
+    </view>
   </center-popup>
 </template>
 

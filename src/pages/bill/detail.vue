@@ -13,7 +13,7 @@ definePage({
 })
 
 const showRefund = ref(false)
-const showRelation = ref(false)
+const showBillSelect = ref(false)
 const bill = ref<IBill>({
   billId: '',
   type: 0,
@@ -56,8 +56,8 @@ const actions: ActionItem[] = [
     icon: 'link',
     action: () => {
       // console.log('关联账单')
-      // 关联账单弹窗
-      showRelation.value = true
+      // 账单选择弹窗
+      showBillSelect.value = true
     },
   },
   {
@@ -92,7 +92,7 @@ function handleChangeRefund(diff: number) {
 </script>
 
 <template>
-  <page-meta :page-style="`overflow:${showRefund || showRelation ? 'hidden' : 'visible'};`" />
+  <page-meta :page-style="`overflow:${showRefund || showBillSelect ? 'hidden' : 'visible'};`" />
   <draw-background2 />
   <nav-bar id="TOP_NAVBAR" title="账单详情" />
 
@@ -244,7 +244,7 @@ function handleChangeRefund(diff: number) {
   <refund-popup v-model="showRefund" :bill="bill" @change-refund="handleChangeRefund" />
 
   <!-- 关联账单弹窗 -->
-  <relation-popup v-model="showRelation" :bill="bill" />
+  <bill-select-popup v-model="showBillSelect" :bill="bill" />
 </template>
 
 <style lang="scss" scoped>

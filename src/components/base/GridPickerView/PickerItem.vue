@@ -12,6 +12,7 @@ defineOptions({
 const props = defineProps<{
   item: GridSelectItem
   selected: string
+  height: number
 }>()
 const emit = defineEmits(['change'])
 
@@ -25,13 +26,31 @@ const hasChilds = computed(() => {
 </script>
 
 <template>
-  <view :class="[isSelected ? 'grid-select-item-selected' : '']">
+  <view class="relative" :style="{ height }">
     <view class="grid-select-item-box">
       <view :class="[hasChilds ? 'grid-select-item-has-more' : '']">
         <bill-icon :icon="item.icon" :text="item.name" />
       </view>
       <view class="grid-select-item-title">
         {{ item.name }}
+      </view>
+    </view>
+
+    <!-- 选中遮罩层 -->
+    <view
+      class="absolute inset-0 z-10 overflow-hidden rounded-md transition-all duration-200"
+      :class="[
+        isSelected
+          ? 'bg-indigo-500/10 ring-2 ring-indigo-500'
+          : 'bg-transparent',
+      ]"
+    >
+      <!-- 选中状态的 check 图标 -->
+      <view
+        v-if="isSelected"
+        class="absolute h-7 w-7 flex animate-fade-in animate-duration-200 items-end justify-end rounded-full bg-indigo-500 shadow-sm -left-2.5 -top-2.5"
+      >
+        <text class="iconfont icon-check pb-0.5 pr-1 text-xs text-white" />
       </view>
     </view>
   </view>

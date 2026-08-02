@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { GridSelectData, GridSelectItem } from './GridPickerView/GridPickerView.vue'
+import type { GridSelectData, GridSelectItem } from '../base/GridPickerView/GridPickerView.vue'
 import { useAccountStore } from '@/store'
 
 defineOptions({

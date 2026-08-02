@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import type { IBill, ISelectBillGroup } from '@/api/types/bill'
+import type { ILedger } from '@/api/types/ledger'
+import type { ActionItem } from '@/typings'
 import dayjs from 'dayjs'
+import { useLedgerStore } from '@/store'
 import { formatFloat } from '@/utils'
 import { getBillColor } from '@/utils/bill'
 import { getDateFormat, getWeekday } from '@/utils/date'
@@ -19,51 +22,13 @@ const props = defineProps<{
 const emit = defineEmits([''])
 const show = defineModel<boolean>()
 
-const dateOptions = ref([
-  {
-    label: '全部时间',
-    value: '',
-  },
-  {
-    label: '最近一周',
-    value: '7',
-  },
-  {
-    label: '最近一个月',
-    value: '30',
-  },
-  {
-    label: '最近三个月',
-    value: '90',
-  },
-  {
-    label: '自定义',
-    value: '-1',
-  },
-])
-const ledgerOptions = ref([])
-const accountOptions = ref([])
-const categoryOptions = ref([])
-
-const date = ref('')
-const ledgerId = ref('')
-const accountId = ref('')
-const categoryId = ref('')
+const showFilter = ref(false)
 const search = ref('')
-
 const selectedIds = ref<string[]>([])
 const billGroup = ref<ISelectBillGroup[]>([])
 
-function handleDateChange() {
-}
-
-function handleLedgerChange() {
-}
-
-function handleAccountChange() {
-}
-
-function handleCategoryChange() {
+function handleAfterEnter() {
+  // console.log('handleAfterEnter')
 }
 
 function handleConfirm() {
@@ -77,13 +42,21 @@ function handleSearch() {
 function handleBillItem() {
   console.log('handleBillItem')
 }
+
+function handleConfirmFilter(filter: any) {
+  console.log('handleConfirmFilter')
+}
 </script>
 
 <template>
-  <!-- 退款列表 -->
-  <center-popup v-model="show" title="关联账单" @confirm="handleConfirm">
-    <view>
-      <wd-search v-model="search" variant="filled" placeholder="账单关键字" cancel-text="搜索" @cancel="handleSearch" />
+  <!-- 账单列表 -->
+  <center-popup v-model="show" title="关联账单" @confirm="handleConfirm" @after-enter="handleAfterEnter">
+    <wd-search v-model="search" variant="filled" placeholder="账单关键字" cancel-txt="搜索" @cancel="handleSearch">
+      <template #input-suffix>
+        <wd-icon name="filter" size="20px" @tap="showFilter = true" />
+      </template>
+    </wd-search>
+    <view class="px-3">
       <scroll-view scroll-y class="min-h-[40vh]">
         <view v-for="g in billGroup" :key="g.date" class="mt-5">
           <view class="flex items-center justify-between">
@@ -139,8 +112,13 @@ function handleBillItem() {
       </scroll-view>
     </view>
   </center-popup>
+
+  <!-- 筛选弹窗 -->
+  <bill-filter-popup v-model="showFilter" @confirm="handleConfirmFilter" />
 </template>
 
 <style lang="scss" scoped>
-
+.filter-content-title {
+  @apply font-bold pb-2;
+}
 </style>

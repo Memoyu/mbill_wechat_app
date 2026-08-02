@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { GridSelectData, GridSelectItem } from './GridPickerView/GridPickerView.vue'
+import type { GridSelectData, GridSelectItem } from '../base/GridPickerView/GridPickerView.vue'
 import { useCategoryStore } from '@/store'
 
 defineOptions({
@@ -88,11 +88,11 @@ function handleCategoryItemTap(item: any) {
   <view>
     <wd-tabs v-model="type" animated swipeable @change="handleTabChange">
       <wd-tab key="expend">
-        <grid-picker-view v-model="selected" :data="expends" :height="height" @change="handleCategoryItemTap" />
+        <grid-picker-view v-model="selected" :data="expends" :height="80" :scroll-height="height" @change="handleCategoryItemTap" />
       </wd-tab>
 
       <wd-tab key="income">
-        <grid-picker-view v-model="selected" :data="incomes" :height="height" @change="handleCategoryItemTap" />
+        <grid-picker-view v-model="selected" :data="incomes" :height="80" :scroll-height="height" @change="handleCategoryItemTap" />
       </wd-tab>
     </wd-tabs>
   </view>

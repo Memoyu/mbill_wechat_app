@@ -174,7 +174,7 @@ function updateRefundList(dto: IRefundBill) {
 <template>
   <!-- 退款列表 -->
   <center-popup v-model="show" title="退款" confirm-text="新增退款" :show-cancel="false" @confirm="handleAddRefund">
-    <view class="min-h-[50vh] flex flex-col pb-2 space-y-2">
+    <view class="min-h-[50vh] flex flex-col px-3 pb-2 space-y-2">
       <view v-for="item in refundList" :key="item.refundId" class="flex flex-col list-item-box space-y-3" @tap="handleRefundItemTap(item)">
         <view class="flex items-center justify-between font-semibold">
           <text>退款到：{{ item.account.name }}</text>

@@ -48,7 +48,7 @@ function handleConfirm() {
     @close="show = false"
     @after-enter="emit('after-enter')"
   >
-    <view class="h-full px-3">
+    <view class="h-full">
       <view class="sticky left-0 right-0 top-0 z-10 bg-white py-3">
         <!-- 标题 -->
         <view class="text-center">

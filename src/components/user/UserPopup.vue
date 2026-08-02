@@ -118,7 +118,9 @@ function handleEditConfirm() {
 
   <!-- 编辑标签 -->
   <center-popup v-model="editShow" title="修改昵称" @confirm="handleEditConfirm">
-    <wd-input v-model="nickname" type="text" placeholder="用户昵称" />
+    <view class="px-3">
+      <wd-input v-model="nickname" type="text" placeholder="用户昵称" />
+    </view>
   </center-popup>
 </template>
 
