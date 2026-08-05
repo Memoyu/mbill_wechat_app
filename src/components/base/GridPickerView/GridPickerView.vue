@@ -206,7 +206,7 @@ function getChildContentHeight(rowIdx: number) {
 
             @tap="handleTopItemTap(top)"
           >
-            <picker-item :height="itmeHeight" :item="top" :selected="topId" />
+            <grid-picker-view-item :height="itmeHeight" :item="top" :selected="topId" />
           </view>
         </view>
         <view class="mt-3 pb-2 font-semibold">
@@ -221,7 +221,7 @@ function getChildContentHeight(rowIdx: number) {
               v-for="item in items" :key="item.id"
               @tap="handleListItemTap(item)"
             >
-              <picker-item :height="itmeHeight" :expand="item.id === currentParentId" :item="item" :selected="currentId" />
+              <grid-picker-view-item :height="itmeHeight" :expand="item.id === currentParentId" :item="item" :selected="currentId" />
             </view>
           </view>
 
@@ -234,7 +234,7 @@ function getChildContentHeight(rowIdx: number) {
                 v-for="child in childs" :key="child.id"
                 @tap="handleListItemTap(child)"
               >
-                <picker-item :height="itmeHeight" :item="child" :selected="currentId" />
+                <grid-picker-view-item :height="itmeHeight" :item="child" :selected="currentId" />
               </view>
             </view>
           </view>

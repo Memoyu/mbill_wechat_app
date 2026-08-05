@@ -51,7 +51,7 @@ const bill = ref<IEditBill>({
 const billDate = ref(dayjs().valueOf())
 
 const isCreate = ref(true)
-
+const tagIds = ref<string[]>([])
 watch(() => bill.value.tags, (newTags, oldTags) => {
   initFixedHeight()
 })
@@ -82,6 +82,7 @@ function initBill() {
   }
   else {
     // 接口加载bill数据bill.value.ledger = ledgerStore.ledgers[0]
+    // 赋值tagIds
   }
 }
 function initFixedHeight() {
@@ -470,7 +471,7 @@ function handleAccountSelectConfirm(item: any) {
   <!-- 账户弹窗 -->
   <account-picker v-model="showAccounts" :account="bill.account.accountId" @confirm="handleAccountSelectConfirm" />
   <!-- 标签弹窗 -->
-  <tag-list-picker v-model="bill.tags" v-model:visible="showTags" @confirm="handleTagSelectConfirm" />
+  <tag-list-picker v-model="tagIds" v-model:visible="showTags" @confirm="handleTagSelectConfirm" />
   <!-- 地点弹窗 -->
   <center-popup v-model="showAddressEdit" title="地址" @confirm="handleAddressEditConfirm">
     <view class="px-3">

@@ -102,14 +102,22 @@ function handleAccountClick(account: IAccount) {
                 <view
                   class="relative flex items-center gap-3 py-3"
                 >
-                  <view class="flex flex-1 items-center justify-between gap-3">
-                    <view class="flex items-center">
-                      <wd-checkbox :model-value="isSelected(account)" @tap.stop="handleAccountClick(account)" />
-                      <view class="ml-3">
+                  <view class="flex flex-1 items-center justify-between gap-3 px-2">
+                    <view class="relative flex items-center rounded-md bg-indigo-500/10 px-2 py-1" @tap.stop="handleAccountClick(account)">
+                      <view>
                         <bill-icon size="23" :icon="account.icon" :text="account.name" />
                       </view>
-                      <view class="trunacte ml-1 flex-1 text-sm">
+                      <view class="ml-1 flex-1 truncate text-sm">
                         {{ account.name }}
+                      </view>
+                      <view
+                        class="absolute inset-0 z-10 overflow-hidden rounded-md transition-all duration-200"
+                        :class="[isSelected(account) ? 'bg-indigo-500/10 ring-2 ring-indigo-500' : 'bg-transparent']"
+                      >
+                        <view
+                          v-if=" isSelected(account)"
+                          class="absolute h-5 w-5 flex animate-fade-in animate-duration-200 items-end justify-end rounded-full bg-indigo-500 shadow-sm -left-2 -top-2"
+                        />
                       </view>
                     </view>
                     <view v-if="hasChilds(account)">
@@ -122,18 +130,18 @@ function handleAccountClick(account: IAccount) {
 
               <view
                 v-if="hasChilds(account)"
-                class="flex flex-wrap gap-3 rounded-2xl bg-[var(--wot-input-bg)] p-2"
+                class="flex flex-wrap gap-3 rounded-md bg-[var(--wot-input-bg)] p-3"
               >
                 <view
                   v-for="child in account.childs" :key="child.accountId"
-                  class="relative rounded-2xl px-2 py-1"
+                  class="relative rounded-md bg-indigo-500/10 px-2 py-1"
                   @tap="handleAccountClick(child)"
                 >
                   <view class="max-w-[100px] flex items-center">
                     <view>
                       <bill-icon size="23" :icon="child.icon" :text="child.name" />
                     </view>
-                    <view class="trunacte ml-1 flex-1 text-sm">
+                    <view class="ml-1 flex-1 truncate text-sm">
                       {{ child.name }}
                     </view>
                   </view>

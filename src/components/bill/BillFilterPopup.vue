@@ -27,7 +27,7 @@ const filter = ref<{
   ledgers?: string[]
   categories?: string[]
   accounts?: string[]
-  tags?: ITag[]
+  tags?: string[]
 }>({
   type: '',
   dateType: '',
