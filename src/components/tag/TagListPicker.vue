@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { ITag } from '@/api/types/tag'
+import lodash from 'lodash'
 import { useTagStore } from '@/store'
 
 defineOptions({
@@ -22,12 +23,20 @@ const tags = computed(() => tagStore.tags)
 
 const tagPickerRef = ref()
 const isAllSelected = ref()
+const innerSelecteds = ref<string[]>([])
+
+watch(() => selecteds.value, (newValue) => {
+  if (newValue)
+    innerSelecteds.value = lodash.cloneDeep(newValue ?? [])
+}, { immediate: true, deep: true })
 
 watch(() => visible.value, (newValue) => {
   // 默认全部展开
-  if (newValue)
+  if (newValue) {
     tagPickerRef.value?.toggleAll(true)
-}, { deep: true })
+    innerSelecteds.value = lodash.cloneDeep(selecteds.value ?? [])
+  }
+})
 
 function handleAfterEnter() {
   // console.log('handleAfterEnter')
@@ -37,20 +46,21 @@ function handleConfirm() {
   const selectTags: ITag[] = []
   tags.value.forEach((t) => {
     if (isSelected(t)) {
-      selectTags.push(t)
+      selectTags.push({ ...t })
     }
     t.childs?.forEach((ct) => {
       if (isSelected(ct)) {
-        selectTags.push(ct)
+        selectTags.push({ ...ct, name: `${t.name}-${ct.name}` })
       }
     })
   })
+  selecteds.value = innerSelecteds.value
   emit('confirm', selectTags)
 }
 
 function isSelected(tag: ITag) {
-  // console.log(selecteds.value, 'selecteds.value')
-  return selecteds.value.includes(tag.tagId) || false
+  // console.log(innerSelecteds.value, 'innerSelecteds.value')
+  return innerSelecteds.value.includes(tag.tagId) || false
 }
 
 function handleChange(selecteds: string[]) {
@@ -82,12 +92,10 @@ function handleAllSelectClick() {
     <view class="px-2">
       <list-picker-view
         ref="tagPickerRef"
-        v-model="selecteds"
+        v-model="innerSelecteds"
         :list="tags"
+        :shoe-icon="false"
         value-key="tagId"
-        label-key="name"
-        icon-key="icon"
-        children-key="childs"
         custom-class="h-[50vh]"
         @change="handleChange"
       />

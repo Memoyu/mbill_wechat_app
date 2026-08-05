@@ -9,27 +9,30 @@ defineOptions({
 
 const props = withDefaults(defineProps<{
   item: any
+  shoeIcon?: boolean
   valueKey?: string
   labelKey?: string
   iconKey?: string
 }>(), {
+  shoeIcon: true,
   valueKey: 'id',
   labelKey: 'name',
   iconKey: 'icon',
 })
 const emit = defineEmits(['tap'])
-const selecteds = defineModel<string[]>()
+const selecteds = defineModel<string[]>({ default: [] })
+
 const isSelected = computed(() => {
   return selecteds.value.includes(props.item[props.valueKey]) || false
 })
 </script>
 
 <template>
-  <view class="relative flex items-center rounded-md bg-indigo-500/10 px-2 py-1" @tap.stop="emit('tap', item)">
-    <view>
+  <view class="relative flex items-center rounded-md bg-indigo-500/10 px-3 py-2" @tap.stop="emit('tap', item)">
+    <view v-if="shoeIcon" class="mr-1">
       <bill-icon size="23" :icon="item[iconKey]" :text="item[labelKey]" />
     </view>
-    <view class="ml-1 flex-1 truncate text-sm">
+    <view class="flex-1 truncate text-sm">
       {{ item[labelKey] }}
     </view>
     <view

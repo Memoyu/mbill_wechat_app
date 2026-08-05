@@ -413,36 +413,61 @@ function handleAccountSelectConfirm(item: any) {
 
   <view id="BOTTOM_INPUT" class="absolute bottom-0 left-0 right-0">
     <!-- 标签 -->
-    <view v-if="bill.tags && bill.tags.length > 0" class="hide-view-scrollbar flex overflow-x-auto px-2 py-1 space-x-2">
-      <view v-for="tag in bill.tags" :key="tag.tagId" class="flex-shrink-0 rounded-full bg-indigo-300/40 px-2 py-1 text-xs" @tap="showTags = true">
-        {{ tag.name }}
-      </view>
+    <view v-if="bill.tags && bill.tags.length > 0" class="relative">
+      <scroll-view scroll-x enhanced :show-scrollbar="false" class="relative mr-2 flex-1" :bounces="false">
+        <view class="min-w-max flex items-center gap-2.5 whitespace-nowrap px-4">
+          <view v-for="tag in bill.tags" :key="tag.tagId" class="flex-shrink-0 rounded-full bg-indigo-300/40 px-2 py-1 text-xs" @tap="showTags = true">
+            {{ tag.name }}
+          </view>
+        </view>
+      </scroll-view>
+      <!-- 添加渐变遮罩 -->
+      <view
+        class="pointer-events-none absolute bottom-0 left-0 top-0 w-5 transition-opacity duration-200"
+        :style="{ background: 'linear-gradient(to left, rgba(250, 250, 250, 0) 0%, rgba(250, 250, 250, 0.95) 40%, rgba(250, 250, 250, 1) 100%)' }"
+      />
+      <view
+        class="pointer-events-none absolute bottom-0 right-0 top-0 w-5 transition-opacity duration-200"
+        :style="{ background: 'linear-gradient(to right, rgba(250, 250, 250, 0) 0%, rgba(250, 250, 250, 0.95) 40%, rgba(250, 250, 250, 1) 100%)' }"
+      />
     </view>
 
     <!-- 账单属性 -->
-    <view class="bill-attr-box hide-view-scrollbar">
-      <view class="bill-attr-box-item" @tap="showDateTime = true">
-        <!-- 日期 -->
-        <wd-icon name="calendar-line" size="20px" />
-        <text class="ml-1">{{ `${getDateFormat(billDate)} ${dayjs(billDate).format('HH:mm')}` }}</text>
-      </view>
-      <view class="bill-attr-box-item" @tap="showAccounts = true">
-        <!-- 账户 -->
-        <bill-icon size="22" :icon="bill.account.icon" :text="bill.account.name" />
-        <text class="ml-1">{{ bill.account.name }}</text>
-      </view>
-      <view class="bill-attr-box-item" @tap="showTags = true">
-        <!-- 标签 -->
-        <wd-icon name="tag" size="20px" />
-        <text class="ml-1">标签</text>
-      </view>
-      <view class="bill-attr-box-item" @tap="handleAddressEditShow">
-        <!-- 地点 -->
-        <wd-icon name="location" size="20px" />
-        <text class="address-truncate-start">{{ bill.address || '地址' }}</text>
-      </view>
+    <view class="relative">
+      <scroll-view scroll-x enhanced :show-scrollbar="false" :bounces="false">
+        <view class="bill-attr-box min-w-max">
+          <view class="bill-attr-box-item" @tap="showDateTime = true">
+            <!-- 日期 -->
+            <wd-icon name="calendar-line" size="20px" />
+            <text class="ml-1">{{ `${getDateFormat(billDate)} ${dayjs(billDate).format('HH:mm')}` }}</text>
+          </view>
+          <view class="bill-attr-box-item" @tap="showAccounts = true">
+            <!-- 账户 -->
+            <bill-icon size="22" :icon="bill.account.icon" :text="bill.account.name" />
+            <text class="ml-1">{{ bill.account.name }}</text>
+          </view>
+          <view class="bill-attr-box-item" @tap="showTags = true">
+            <!-- 标签 -->
+            <wd-icon name="tag" size="20px" />
+            <text class="ml-1">标签</text>
+          </view>
+          <view class="bill-attr-box-item" @tap="handleAddressEditShow">
+            <!-- 地点 -->
+            <wd-icon name="location" size="20px" />
+            <text class="address-truncate-start">{{ bill.address || '地址' }}</text>
+          </view>
+        </view>
+      </scroll-view>
+      <!-- 添加渐变遮罩 -->
+      <view
+        class="pointer-events-none absolute bottom-0 left-0 top-0 w-5 transition-opacity duration-200"
+        :style="{ background: 'linear-gradient(to left, rgba(250, 250, 250, 0) 0%, rgba(250, 250, 250, 0.95) 40%, rgba(250, 250, 250, 1) 100%)' }"
+      />
+      <view
+        class="pointer-events-none absolute bottom-0 right-0 top-0 w-5 transition-opacity duration-200"
+        :style="{ background: 'linear-gradient(to right, rgba(250, 250, 250, 0) 0%, rgba(250, 250, 250, 0.95) 40%, rgba(250, 250, 250, 1) 100%)' }"
+      />
     </view>
-
     <!-- 账单总额、备注 -->
     <view class="flex items-center justify-between px-2 py-1 space-x-xl">
       <view class="w-full shrink-1">
@@ -482,8 +507,7 @@ function handleAccountSelectConfirm(item: any) {
 
 <style lang="scss" scoped>
 .bill-attr-box {
-  white-space: nowrap;
-  @apply: flex items-center px-2 py-1 gap-2 overflow-x-auto;
+  @apply: flex items-center px-4 py-1 gap-2 whitespace-nowrap;
   &-item {
     @apply: flex items-center justify-center py-1.5 px-2.5 bg-indigo-200/40 rounded-full;
   }

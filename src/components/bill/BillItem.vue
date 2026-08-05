@@ -28,7 +28,7 @@ function handleBillTap() {
       <text class="font-bold" :style="{ color: getBillColor(bill.type) }">{{ formatFloat(bill.amount) }}</text>
     </view>
 
-    <view class="ml-9 flex flex-col text-xs text-gray-500 space-y-1">
+    <view class="ml-9 flex flex-col text-xs text-gray-500 space-y-2">
       <!-- 账户 -->
       <view class="flex items-center justify-between">
         <text>{{ bill.account.name }}</text>
@@ -53,10 +53,23 @@ function handleBillTap() {
       </view>
 
       <!-- 标签 -->
-      <view v-if="bill.tags && bill.tags.length > 0" class="hide-view-scrollbar mt-2 flex overflow-x-auto space-x-2">
-        <view v-for="tag in bill.tags" :key="tag.tagId" class="flex-shrink-0 rounded-full bg-indigo-300/40 px-2 py-1 text-xs">
-          {{ tag.name }}
-        </view>
+      <view v-if="bill.tags && bill.tags.length > 0" class="relative">
+        <scroll-view scroll-x enhanced :show-scrollbar="false" class="relative flex-1" :bounces="false">
+          <view class="min-w-max flex items-center gap-2.5 whitespace-nowrap px-3">
+            <view v-for="tag in bill.tags" :key="tag.tagId" class="flex-shrink-0 rounded-full bg-indigo-300/40 px-2 py-1 text-xs">
+              {{ tag.name }}
+            </view>
+          </view>
+        </scroll-view>
+        <!-- 添加渐变遮罩 -->
+        <view
+          class="pointer-events-none absolute bottom-0 left-0 top-0 w-5 transition-opacity duration-200"
+          :style="{ background: 'linear-gradient(to left, rgba(243, 244, 246, 0) 0%, rgba(243, 244, 246, 0.95) 40%, rgba(243, 244, 246, 1) 100%)' }"
+        />
+        <view
+          class="pointer-events-none absolute bottom-0 right-0 top-0 w-5 transition-opacity duration-200"
+          :style="{ background: 'linear-gradient(to right, rgba(243, 244, 246, 0) 0%, rgba(243, 244, 246, 0.95) 40%, rgba(243, 244, 246, 1) 100%)' }"
+        />
       </view>
     </view>
   </view>

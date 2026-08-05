@@ -140,24 +140,57 @@ function handleChangeRefund(diff: number) {
 
         <view v-if="bill.address && bill.address.length > 0" class="bill-bottom-box-item">
           <text class="bill-bottom-box-item-title">地点</text>
-          <view class="hide-view-scrollbar flex overflow-x-auto">
-            <text class="whitespace-nowrap font-bold">{{ bill.address }}</text>
+          <view class="relative overflow-hidden">
+            <view class="hide-view-scrollbar flex overflow-x-auto px-3 space-x-2">
+              <text class="whitespace-nowrap font-bold">{{ bill.address }}</text>
+            </view>
+            <!-- 添加渐变遮罩 -->
+            <view
+              class="pointer-events-none absolute bottom-0 left-0 top-0 w-4 transition-opacity duration-200"
+              :style="{ background: 'linear-gradient(to left, rgba(243, 244, 246, 0) 0%, rgba(243, 244, 246, 0.95) 40%, rgba(243, 244, 246, 1) 100%)' }"
+            />
+            <view
+              class="pointer-events-none absolute bottom-0 right-0 top-0 w-4 transition-opacity duration-200"
+              :style="{ background: 'linear-gradient(to right, rgba(243, 244, 246, 0) 0%, rgba(243, 244, 246, 0.95) 40%, rgba(243, 244, 246, 1) 100%)' }"
+            />
           </view>
         </view>
 
         <view v-if="bill.remark && bill.remark.length > 0" class="bill-bottom-box-item">
           <text class="bill-bottom-box-item-title">备注</text>
-          <view class="hide-view-scrollbar flex overflow-x-auto">
-            <text class="whitespace-nowrap font-bold"> {{ bill.remark }} </text>
+          <view class="relative overflow-hidden">
+            <view class="hide-view-scrollbar flex overflow-x-auto px-3 space-x-2">
+              <text class="whitespace-nowrap font-bold"> {{ bill.remark }} </text>
+            </view>
+            <!-- 添加渐变遮罩 -->
+            <view
+              class="pointer-events-none absolute bottom-0 left-0 top-0 w-4 transition-opacity duration-200"
+              :style="{ background: 'linear-gradient(to left, rgba(243, 244, 246, 0) 0%, rgba(243, 244, 246, 0.95) 40%, rgba(243, 244, 246, 1) 100%)' }"
+            />
+            <view
+              class="pointer-events-none absolute bottom-0 right-0 top-0 w-4 transition-opacity duration-200"
+              :style="{ background: 'linear-gradient(to right, rgba(243, 244, 246, 0) 0%, rgba(243, 244, 246, 0.95) 40%, rgba(243, 244, 246, 1) 100%)' }"
+            />
           </view>
         </view>
 
         <view v-if="bill.tags && bill.tags.length > 0" class="bill-bottom-box-item">
           <text class="bill-bottom-box-item-title">标签</text>
-          <view class="hide-view-scrollbar flex overflow-x-auto space-x-2">
-            <view v-for="tag in bill.tags" :key="tag.tagId" class="flex-shrink-0 rounded-full bg-indigo-300/40 px-2 py-1 text-xs">
-              {{ tag.name }}
+          <view class="relative overflow-hidden">
+            <view class="hide-view-scrollbar flex overflow-x-auto px-3 space-x-2">
+              <view v-for="tag in bill.tags" :key="tag.tagId" class="flex-shrink-0 rounded-full bg-indigo-300/40 px-2 py-1 text-xs">
+                {{ tag.name }}
+              </view>
             </view>
+            <!-- 添加渐变遮罩 -->
+            <view
+              class="pointer-events-none absolute bottom-0 left-0 top-0 w-4 transition-opacity duration-200"
+              :style="{ background: 'linear-gradient(to left, rgba(243, 244, 246, 0) 0%, rgba(243, 244, 246, 0.95) 40%, rgba(243, 244, 246, 1) 100%)' }"
+            />
+            <view
+              class="pointer-events-none absolute bottom-0 right-0 top-0 w-4 transition-opacity duration-200"
+              :style="{ background: 'linear-gradient(to right, rgba(243, 244, 246, 0) 0%, rgba(243, 244, 246, 0.95) 40%, rgba(243, 244, 246, 1) 100%)' }"
+            />
           </view>
         </view>
 

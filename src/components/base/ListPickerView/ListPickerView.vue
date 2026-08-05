@@ -9,6 +9,7 @@ defineOptions({
 
 const props = withDefaults(defineProps<{
   list: any[]
+  shoeIcon?: boolean
   valueKey?: string
   labelKey?: string
   iconKey?: string
@@ -16,6 +17,7 @@ const props = withDefaults(defineProps<{
   customClass?: string
   expandeds?: string[]
 }>(), {
+  shoeIcon: true,
   valueKey: 'id',
   labelKey: 'name',
   iconKey: 'icon',
@@ -31,7 +33,7 @@ defineExpose({
 })
 
 const collapseRef = ref()
-const innerExpandeds = ref([])
+const innerExpandeds = ref<string[]>([])
 
 watch(() => props.expandeds, (val) => {
   innerExpandeds.value = val ?? []
@@ -66,7 +68,7 @@ function handleAccountClick(item: any) {
 }
 
 function isSelected(item: any) {
-  return selecteds.value.some(t => t[props.valueKey] === item[props.valueKey]) || false
+  return selecteds.value.includes(item[props.valueKey]) || false
 }
 
 function hasChilds(item: any) {
@@ -86,6 +88,7 @@ function hasChilds(item: any) {
               <view class="flex flex-1 items-center justify-between gap-3 px-2">
                 <list-picker-view-item
                   v-model="selecteds"
+                  :shoe-icon="shoeIcon"
                   :item="item"
                   :value-key="valueKey"
                   :label-key="labelKey"
@@ -107,6 +110,7 @@ function hasChilds(item: any) {
             <list-picker-view-item
               v-for="child in item[props.childrenKey]" :key="child[props.valueKey]"
               v-model="selecteds"
+              :shoe-icon="shoeIcon"
               :item="child"
               :value-key="valueKey"
               :label-key="labelKey"

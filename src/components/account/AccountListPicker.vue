@@ -15,67 +15,60 @@ const props = defineProps<{
 
 }>()
 const emit = defineEmits(['confirm'])
-const selecteds = defineModel<string[]>()
+const selecteds = defineModel<string[]>({ default: [] })
 const visible = defineModel<boolean>('visible')
-const collapseRef = ref()
+
 const accountStore = useAccountStore()
 const accounts = computed(() => accountStore.accounts)
 
+const accountPickerRef = ref()
 const isAllSelected = ref()
 const innerSelecteds = ref<string[]>([])
-const expandeds = ref<string[]>([])
 
 watch(() => selecteds.value, (newValue) => {
   if (newValue)
-    innerSelecteds.value = lodash.cloneDeep(newValue)
+    innerSelecteds.value = lodash.cloneDeep(newValue ?? [])
 }, { immediate: true, deep: true })
 
 watch(() => visible.value, (newValue) => {
   // 重置选中项
   if (newValue) {
-    collapseRef.value?.toggleAll(true)
+    accountPickerRef.value.toggleAll(true)
     innerSelecteds.value = lodash.cloneDeep(selecteds.value ?? [])
   }
-}, { immediate: true })
+})
 
 function handleAfterEnter() {
   // console.log('handleAfterEnter')
 }
 
 function handleConfirm() {
+  const selectAccounts: IAccount[] = []
+  accounts.value.forEach((a) => {
+    if (isSelected(a)) {
+      selectAccounts.push({ ...a })
+    }
+    a.childs?.forEach((ac) => {
+      if (isSelected(ac)) {
+        selectAccounts.push({ ...ac, name: `${a.name}-${ac.name}` })
+      }
+    })
+  })
   selecteds.value = innerSelecteds.value
-  emit('confirm', accounts.value.filter(ac => isSelected(ac)))
+  emit('confirm', selectAccounts)
 }
 
 function isSelected(account: IAccount) {
   return innerSelecteds.value.includes(account.accountId) || false
 }
 
-function hasChilds(account: IAccount) {
-  return account.childs && account.childs.length > 0
+function handleChange(selecteds: string[]) {
+
 }
 
 function handleAllSelectClick() {
-  if (isAllSelected.value) {
-    innerSelecteds.value = []
-  }
-  else {
-    accounts.value.forEach((c) => {
-      innerSelecteds.value.push(c.accountId)
-      innerSelecteds.value.push(...(c.childs?.map(c => c.accountId) ?? []))
-    })
-  }
+  accountPickerRef.value.selectAll(isAllSelected.value)
   isAllSelected.value = !isAllSelected.value
-}
-
-function handleAccountClick(account: IAccount) {
-  // console.log(account, 'account')
-  if (isSelected(account)) {
-    innerSelecteds.value = innerSelecteds.value.filter(id => id !== account.accountId)
-  }
-  else {
-    innerSelecteds.value.push(account.accountId)
-  }
 }
 </script>
 
@@ -92,75 +85,16 @@ function handleAccountClick(account: IAccount) {
         <text>{{ isAllSelected ? '取消全选' : '全选' }}</text>
       </view>
     </template>
-    <!-- 目录列表 -->
+    <!-- 账户列表 -->
     <view class="px-2">
-      <scroll-view scroll-y class="h-[50vh]">
-        <view class="p-2 space-y-3">
-          <wd-collapse ref="collapseRef" v-model="expandeds">
-            <wd-collapse-item v-for="account in accounts" :key="account.accountId" :name="account.accountId" :border="false">
-              <template #title="{ expanded }">
-                <view
-                  class="relative flex items-center gap-3 py-3"
-                >
-                  <view class="flex flex-1 items-center justify-between gap-3 px-2">
-                    <view class="relative flex items-center rounded-md bg-indigo-500/10 px-2 py-1" @tap.stop="handleAccountClick(account)">
-                      <view>
-                        <bill-icon size="23" :icon="account.icon" :text="account.name" />
-                      </view>
-                      <view class="ml-1 flex-1 truncate text-sm">
-                        {{ account.name }}
-                      </view>
-                      <view
-                        class="absolute inset-0 z-10 overflow-hidden rounded-md transition-all duration-200"
-                        :class="[isSelected(account) ? 'bg-indigo-500/10 ring-2 ring-indigo-500' : 'bg-transparent']"
-                      >
-                        <view
-                          v-if=" isSelected(account)"
-                          class="absolute h-5 w-5 flex animate-fade-in animate-duration-200 items-end justify-end rounded-full bg-indigo-500 shadow-sm -left-2 -top-2"
-                        />
-                      </view>
-                    </view>
-                    <view v-if="hasChilds(account)">
-                      <wd-icon v-if="expanded" size="16" name="up" />
-                      <wd-icon v-else size="16" name="down" />
-                    </view>
-                  </view>
-                </view>
-              </template>
-
-              <view
-                v-if="hasChilds(account)"
-                class="flex flex-wrap gap-3 rounded-md bg-[var(--wot-input-bg)] p-3"
-              >
-                <view
-                  v-for="child in account.childs" :key="child.accountId"
-                  class="relative rounded-md bg-indigo-500/10 px-2 py-1"
-                  @tap="handleAccountClick(child)"
-                >
-                  <view class="max-w-[100px] flex items-center">
-                    <view>
-                      <bill-icon size="23" :icon="child.icon" :text="child.name" />
-                    </view>
-                    <view class="ml-1 flex-1 truncate text-sm">
-                      {{ child.name }}
-                    </view>
-                  </view>
-
-                  <view
-                    class="absolute inset-0 z-10 overflow-hidden rounded-md transition-all duration-200"
-                    :class="[isSelected(child) ? 'bg-indigo-500/10 ring-2 ring-indigo-500' : 'bg-transparent']"
-                  >
-                    <view
-                      v-if=" isSelected(child)"
-                      class="absolute h-5 w-5 flex animate-fade-in animate-duration-200 items-end justify-end rounded-full bg-indigo-500 shadow-sm -left-2 -top-2"
-                    />
-                  </view>
-                </view>
-              </view>
-            </wd-collapse-item>
-          </wd-collapse>
-        </view>
-      </scroll-view>
+      <list-picker-view
+        ref="accountPickerRef"
+        v-model="innerSelecteds"
+        :list="accounts"
+        value-key="accountId"
+        custom-class="h-[50vh]"
+        @change="handleChange"
+      />
     </view>
   </bottom-popup>
 </template>

@@ -117,24 +117,24 @@ function handleDatePickerConfirm({ value }: { value: number }) {
 }
 
 function handleLedgerConfirm(ledgers: ILedger[]) {
-  // console.log(filter.value.ledgers)
+  // console.log(ledgers)
   showLedgerPicker.value = false
   ledgerName.value = ledgers.map(ledger => ledger.name).join(', ')
 }
 
 function handleCategoryConfirm(categories: ICategory[]) {
-  // console.log(filter.value.ledgers)
+  // console.log(categories)
   showCategoryPicker.value = false
-  // categoryName.value = ledgers.map(ledger => ledger.name).join(', ')
+  categoryName.value = categories.map(ca => ca.name).join(', ')
 }
 
 function handleAccountConfirm(accounts: IAccount[]) {
-  // console.log(filter.value.ledgers)
+  // console.log(accounts)
   showAccountPicker.value = false
-  // accountName.value = ledgers.map(ledger => ledger.name).join(', ')
+  accountName.value = accounts.map(ac => ac.name).join(', ')
 }
 function handleTagConfirm(tags: ITag[]) {
-  // console.log(filter.value.ledgers)
+  // console.log(tags)
   showTagPicker.value = false
   tagName.value = tags.map(t => t.name).join(', ')
 }
