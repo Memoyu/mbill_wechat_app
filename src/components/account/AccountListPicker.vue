@@ -12,7 +12,7 @@ defineOptions({
 })
 
 const props = defineProps<{
-
+  showSelectAll?: boolean
 }>()
 const emit = defineEmits(['confirm'])
 const selecteds = defineModel<string[]>({ default: [] })
@@ -76,6 +76,7 @@ function handleAllSelectClick() {
   <bottom-popup v-model="visible" title="账户选择" @confirm="handleConfirm" @after-enter="handleAfterEnter">
     <template #action>
       <view
+        v-if="showSelectAll"
         class="px-3 py-1 text-base text-gray-400"
         hover-class="bg-gray-50"
         :hover-start-time="0"
@@ -100,11 +101,5 @@ function handleAllSelectClick() {
 </template>
 
 <style lang="scss" scoped>
-:deep(.wd-collapse-item__header) {
-  padding: 0;
-  overflow: auto;
-}
-:deep(.wd-collapse-item__body) {
-  padding: 0;
-}
+
 </style>

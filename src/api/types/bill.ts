@@ -49,10 +49,11 @@ export interface IRelationBill {
 export interface IBillPageQuery {
   beginDate: string
   endDate: string
-  ledgerIds: string[]
   type?: BillTypeEnum
-  categoryId?: string
-  accountId?: string
+  ledgerIds?: string[]
+  categoryIds?: string[]
+  accountIds?: string[]
+  tagIds?: string[]
 }
 
 export interface IBillDateGroup {
@@ -79,22 +80,6 @@ export interface IBill {
   tags: IBillTag []
   address: string
   createTime: Date
-}
-
-export interface ISelectBillGroup {
-  date: string
-  items: ISelectBill[]
-}
-
-export interface ISelectBill {
-  billId: string
-  type: BillTypeEnum
-  category: string
-  account: string
-  amount: number
-  date: string
-  remark: string
-  tags: IBillTag []
 }
 
 export interface IBillLedger {

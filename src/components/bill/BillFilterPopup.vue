@@ -5,6 +5,17 @@ import type { ILedger } from '@/api/types/ledger'
 import type { ITag } from '@/api/types/tag'
 import type { ActionItem } from '@/typings'
 import dayjs from 'dayjs'
+import lodash from 'lodash'
+
+export interface IBillFilter {
+  type?: number
+  beginDate?: string
+  endDate?: string
+  ledgers?: string[]
+  categories?: string[]
+  accounts?: string[]
+  tags?: string[]
+}
 
 defineOptions({
   options: {
@@ -19,26 +30,16 @@ const props = defineProps<{
 const emit = defineEmits(['confirm'])
 const show = defineModel<boolean>()
 
-const filter = ref<{
-  type: string
-  dateType: string
-  dateBegin?: string
-  dateEnd?: string
-  ledgers?: string[]
-  categories?: string[]
-  accounts?: string[]
-  tags?: string[]
-}>({
-  type: '',
-  dateType: '',
+const filter = ref<IBillFilter>({
   ledgers: [],
   categories: [],
   accounts: [],
   tags: [],
 })
 const showDatePicker = ref(false)
+const dateType = ref<string>('')
 const pickerDate = ref<number>(dayjs().valueOf())
-const pickerDateType = ref<number>(0)
+const pickerDateType = ref<number>(0) // 选择的时间范围类型 0: 起始 1: 截止
 const showLedgerPicker = ref(false)
 const ledgerName = ref<string>('')
 const showCategoryPicker = ref(false)
@@ -55,13 +56,16 @@ const actions: ActionItem[] = [
     type: 'warning',
     action: () => {
       filter.value = {
-        type: '',
-        dateType: '',
         ledgers: [],
         categories: [],
         accounts: [],
         tags: [],
       }
+      dateType.value = ''
+      ledgerName.value = ''
+      categoryName.value = ''
+      accountName.value = ''
+      tagName.value = ''
     },
   },
 ]
@@ -71,35 +75,56 @@ function handleAfterEnter() {
 }
 
 function handleDateTypeChange() {
-  filter.value.dateBegin = ''
-  filter.value.dateEnd = ''
+  filter.value.beginDate = ''
+  filter.value.endDate = ''
 }
 
 function handleConfirm() {
-  console.log('handleConfirmFilter')
-  emit('confirm', filter.value)
+  show.value = false
+  const temp = lodash.cloneDeep(filter.value)
+  // 如果选择了时间标签，则计算时间范围
+  let beginDate = dayjs()
+  const endDate = dayjs()
+  if (dateType.value) {
+    if (dateType.value === '0') {
+      beginDate = dayjs().add(-7, 'day')
+    }
+    else if (dateType.value === '1') {
+      beginDate = dayjs().add(-1, 'month')
+    }
+    else if (dateType.value === '2') {
+      beginDate = dayjs().add(-3, 'month')
+    }
+    else if (dateType.value === '3') {
+      beginDate = dayjs().add(-6, 'month')
+    }
+    temp.beginDate = dayjs(beginDate).format('YYYY-MM-DD')
+    temp.endDate = dayjs(endDate).format('YYYY-MM-DD')
+  }
+  // console.log(temp, 'handleConfirm')
+  emit('confirm', temp)
 }
 
 function handleDateRange(type: number) {
-  filter.value.dateType = ''
+  dateType.value = ''
   pickerDateType.value = type
   let now = dayjs().valueOf()
   if (type === 0) {
     // 起始
-    if (filter.value.dateBegin) {
-      now = dayjs(filter.value.dateBegin).valueOf()
+    if (filter.value.beginDate) {
+      now = dayjs(filter.value.beginDate).valueOf()
     }
     else {
-      filter.value.dateBegin = dayjs(now).format('YYYY-MM-DD')
+      filter.value.beginDate = dayjs(now).format('YYYY-MM-DD')
     }
   }
   else {
     // 截止
-    if (filter.value.dateEnd) {
-      now = dayjs(filter.value.dateEnd).valueOf()
+    if (filter.value.endDate) {
+      now = dayjs(filter.value.endDate).valueOf()
     }
     else {
-      filter.value.dateEnd = dayjs(now).format('YYYY-MM-DD')
+      filter.value.endDate = dayjs(now).format('YYYY-MM-DD')
     }
   }
   pickerDate.value = now
@@ -109,10 +134,10 @@ function handleDateRange(type: number) {
 function handleDatePickerConfirm({ value }: { value: number }) {
   const date = dayjs(value).format('YYYY-MM-DD')
   if (pickerDateType.value === 0) {
-    filter.value.dateBegin = date
+    filter.value.beginDate = date
   }
   else {
-    filter.value.dateEnd = date
+    filter.value.endDate = date
   }
 }
 
@@ -150,10 +175,10 @@ function handleTagConfirm(tags: ITag[]) {
           账单类型
         </view>
         <wd-radio-group v-model="filter.type" allow-uncheck type="button">
-          <wd-radio value="0">
+          <wd-radio :value="0">
             支出
           </wd-radio>
-          <wd-radio value="1">
+          <wd-radio :value="1">
             收入
           </wd-radio>
         </wd-radio-group>
@@ -164,7 +189,7 @@ function handleTagConfirm(tags: ITag[]) {
         <view class="filter-content-title">
           出账日期
         </view>
-        <wd-radio-group v-model="filter.dateType" allow-uncheck type="button" @change="handleDateTypeChange">
+        <wd-radio-group v-model="dateType" allow-uncheck type="button" @change="handleDateTypeChange">
           <wd-radio value="0">
             近1周
           </wd-radio>
@@ -179,11 +204,11 @@ function handleTagConfirm(tags: ITag[]) {
           </wd-radio>
         </wd-radio-group>
         <view class="flex items-center justify-between">
-          <wd-input v-model="filter.dateBegin" placeholder="起始时间" readonly @tap="handleDateRange(0)" />
+          <wd-input v-model="filter.beginDate" placeholder="起始时间" readonly @tap="handleDateRange(0)" />
           <view class="px-4">
             -
           </view>
-          <wd-input v-model="filter.dateEnd" placeholder="截止时间" readonly @tap="handleDateRange(1)" />
+          <wd-input v-model="filter.endDate" placeholder="截止时间" readonly @tap="handleDateRange(1)" />
         </view>
       </view>
 

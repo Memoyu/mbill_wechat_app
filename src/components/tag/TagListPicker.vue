@@ -77,7 +77,7 @@ function handleAllSelectClick() {
   <bottom-popup v-model="visible" title="标签选择" @confirm="handleConfirm" @after-enter="handleAfterEnter">
     <template #action>
       <view
-        v-if="props.showSelectAll"
+        v-if="showSelectAll"
         class="px-3 py-1 text-base text-gray-400"
         hover-class="bg-gray-50"
         :hover-start-time="0"

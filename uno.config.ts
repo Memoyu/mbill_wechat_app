@@ -68,7 +68,7 @@ export default defineConfig({
     transformerVariantGroup(),
   ],
   shortcuts: [
-    ['list-item-box', 'bg-gray-100/60 rounded-lg p-3'],
+    ['list-item-box', 'bg-gray-100 rounded-lg p-3'],
     ['center', 'flex justify-center items-center'],
   ],
   // 动态图标需要在这里配置，或者写在vue页面中注释掉

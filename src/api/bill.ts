@@ -1,4 +1,4 @@
-import type { IBill, IBillDateGroup, IBillPageQuery, ICreateBill, IEditRefundBill, IRefundBill, IRelatedBill, IRelationBill, IUpdateBill } from './types/bill'
+import type { IBill, IBillDateGroup, IBillPageItem, IBillPageQuery, ICreateBill, IEditRefundBill, IRefundBill, IRelatedBill, IRelationBill, IUpdateBill } from './types/bill'
 import type { PageResult } from './types/common'
 import { http } from '@/utils/http'
 
@@ -28,6 +28,13 @@ export function deleteBill(billId: string) {
  */
 export function getBillDateGroup(query: IBillPageQuery) {
   return http.get<PageResult<IBillDateGroup>>('bill/page/group/date', query)
+}
+
+/**
+ * 获取账单分页列表
+ */
+export function getBillPage(query: IBillPageQuery) {
+  return http.get<PageResult<IBillPageItem>>('bill/page', query)
 }
 
 /**

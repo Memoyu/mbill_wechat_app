@@ -22,9 +22,9 @@ const ledgerName = computed(() => {
 
 watch (() => ledgerPickerStore.selectedLedgers, (ledgers) => {
   billStore.loadIndexBills({
-    ledgerIds: ledgers,
     beginDate: dayjs().add(-30, 'day').format('YYYY-MM-DD'),
     endDate: dayjs().format('YYYY-MM-DD'),
+    ledgerIds: ledgers,
   })
 }, { immediate: true, deep: true })
 

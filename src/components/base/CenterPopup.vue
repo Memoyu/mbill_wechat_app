@@ -54,6 +54,8 @@ function handleConfirm() {
         <view class="text-center">
           <text class="line-clamp-1 text-base font-semibold">{{ title }}</text>
         </view>
+        <!-- 标题插槽 -->
+        <slot name="title" />
       </view>
 
       <!-- 内容插槽 -->
