@@ -83,7 +83,7 @@ function isSelected(bill: IBillPageItem) {
     </template>
 
     <view class="">
-      <scroll-view scroll-y class="min-h-[40vh]">
+      <scroll-view scroll-y class="h-[60vh]">
         <view class="flex flex-col gap-2.5 p-3">
           <view v-for="b in bills" :key="b.billId" class="relative list-item-box rounded-lg" @tap.stop="handleSelectBill(b)">
             <bill-item :bill="b" />

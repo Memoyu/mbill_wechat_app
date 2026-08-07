@@ -6,7 +6,7 @@ import { http } from '@/utils/http'
  * 创建账单
  */
 export function createBill(create: ICreateBill) {
-  return http.post<IBill>('bill/create', create)
+  return http.post<string>('bill/create', create)
 }
 
 /**

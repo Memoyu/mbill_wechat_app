@@ -13,6 +13,7 @@ const props = withDefaults(defineProps<{
   showCancel?: boolean
   confirmText?: string
   cancelText?: string
+  height?: string
 }>(), {
   showBtn: true,
   showCancel: true,
@@ -44,7 +45,7 @@ function handleConfirm() {
     position="center"
     transition="fade-up"
     custom-class="relative rounded-3xl w-90vw"
-    custom-style="max-height: 70vh;"
+    :custom-style="(height ? `height: ${height}` : '')"
     @close="show = false"
     @after-enter="emit('after-enter')"
   >
