@@ -33,13 +33,13 @@ watch(() => selecteds.value, (newValue) => {
 watch(() => visible.value, (newValue) => {
   // 重置选中项
   if (newValue) {
-    accountPickerRef.value.toggleAll(true)
     innerSelecteds.value = lodash.cloneDeep(selecteds.value ?? [])
   }
 })
 
 function handleAfterEnter() {
   // console.log('handleAfterEnter')
+  accountPickerRef.value.toggleAll(true)
 }
 
 function handleConfirm() {
@@ -89,6 +89,7 @@ function handleAllSelectClick() {
     <!-- 账户列表 -->
     <view class="px-2">
       <list-picker-view
+        v-if="visible"
         ref="accountPickerRef"
         v-model="innerSelecteds"
         :list="accounts"

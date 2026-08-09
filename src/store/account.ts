@@ -110,20 +110,19 @@ export const useAccountStore = defineStore(
      * @param accountId 账单id
      * @param parentId 父账户ID
      */
-    const deleteAccount = (accountId: string, parentId?: string) => {
-      fetchDeleteAccount(accountId).then(() => {
-        let list = state.accounts
-        // 添加子账户到指定父类下
-        if (parentId) {
-          const parent = list.find(item => item.accountId === parentId)
-          if (parent) {
-            list = parent.childs || []
-          }
+    const deleteAccount = async (accountId: string, parentId?: string) => {
+      await fetchDeleteAccount(accountId)
+      let list = state.accounts
+      // 添加子账户到指定父类下
+      if (parentId) {
+        const parent = list.find(item => item.accountId === parentId)
+        if (parent) {
+          list = parent.childs || []
         }
+      }
 
-        const index = list.findIndex(l => l.accountId === accountId)
-        list.splice(index, 1)
-      })
+      const index = list.findIndex(l => l.accountId === accountId)
+      list.splice(index, 1)
     }
 
     return {

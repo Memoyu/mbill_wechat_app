@@ -28,7 +28,7 @@ function handleConfirm() {
 </script>
 
 <template>
-  <bottom-popup v-model="show" @confirm="handleConfirm">
+  <bottom-popup v-model="show" auto-height @confirm="handleConfirm">
     <wd-datetime-picker-view v-model="innerDate" :type="type" @change="handleDateChange" />
   </bottom-popup>
 </template>

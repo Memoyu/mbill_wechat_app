@@ -42,6 +42,7 @@ function handleConfirm() {
   <wd-popup
     v-model="show"
     lock-scroll
+    lazy-render
     position="center"
     transition="fade-up"
     custom-class="relative rounded-3xl w-90vw"

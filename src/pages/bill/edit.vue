@@ -6,6 +6,7 @@ import { useToast } from '@wot-ui/ui'
 import dayjs from 'dayjs'
 import Decimal from 'decimal.js'
 import { getAddressInfo } from '@/api/aggregation'
+import { getBill } from '@/api/bill'
 import { useBillStore, useLedgerStore, useSettingsStore } from '@/store'
 import { getDateFormat } from '@/utils/date'
 import { systemInfo } from '@/utils/systemInfo'
@@ -32,46 +33,43 @@ const showAccounts = ref(false)
 const showTags = ref(false)
 const showAddressEdit = ref(false)
 const addressInput = ref()
-const location = ref()
 const categoryPickerHeight = ref(0)
 
-const billId = ref('')
+const isCreate = ref(true)
 const bill = ref<IEditBill>({
   type: 0,
   ledger: { ledgerId: '', name: '账单选择' },
   category: { categoryId: '', name: '', icon: '' },
   account: { accountId: '', name: '账户选择', icon: '' },
   amount: 0,
-  date: dayjs().format(),
+  date: dayjs().format('YYYY-MM-DD HH:mm:00'),
   remark: '',
   tags: [] as ITag[],
+  location: '',
   address: '',
 })
-
-const billDate = ref(dayjs().valueOf())
-
-const isCreate = ref(true)
+const billDate = ref(dayjs(bill.value.date).valueOf())
 const tagIds = ref<string[]>([])
-watch(() => bill.value.tags, (newTags, oldTags) => {
-  initFixedHeight()
+watch(() => bill.value.tags, () => {
+  calcFixedHeight()
 })
 
 onLoad((options: any) => {
-  console.log('账单id', options.id)
-  billId.value = options.id
-  isCreate.value = !billId.value
-
+  console.log('账单id', options)
+  bill.value.billId = options.id
+  isCreate.value = !options.id
+  console.log('账单id', options.id, isCreate.value)
   initBill()
 })
 
 onMounted(() => {
-  initFixedHeight()
+  calcFixedHeight()
 
   initAddress()
 })
 
 function initBill() {
-  if (isCreate.value) {
+  if (!bill.value.billId) {
     // 赋默认值
     // 账本取第一个
     const ledger = ledgerStore.ledgers[0]
@@ -81,11 +79,30 @@ function initBill() {
     }
   }
   else {
-    // 接口加载bill数据bill.value.ledger = ledgerStore.ledgers[0]
-    // 赋值tagIds
+    getBill(bill.value.billId).then((res) => {
+      bill.value = {
+        ...res,
+      }
+      tagIds.value = res.tags.map((tag: ITag) => tag.tagId)
+      billDate.value = dayjs(res.date).valueOf()
+      // 赋值键盘输入金额
+      setKeyboardInput(res.amount)
+    })
   }
 }
-function initFixedHeight() {
+
+/**
+ * 赋值键盘输入金额
+ * @param value 金额
+ */
+function setKeyboardInput(value: number) {
+  keyboardInput.value = value.toString()
+  inputCursor.value = keyboardInput.value.length
+}
+/**
+ * 计算固定高度
+ */
+function calcFixedHeight() {
   nextTick(() => {
     uni.createSelectorQuery().select('#TOP_NAVBAR').boundingClientRect((top: any) => {
       const topHeight = top.height
@@ -97,6 +114,9 @@ function initFixedHeight() {
   })
 }
 
+/**
+ * 初始化地址信息
+ */
 function initAddress() {
   if (!settingsStore.address)
     return
@@ -113,7 +133,7 @@ function getAddress() {
       success: (res: any) => {
         console.log(res, 'res')
         // bill.value.address = res.address
-        location.value = `${res.longitude},${res.latitude}`
+        bill.value.location = `${res.longitude},${res.latitude}`
         getAddressInfo(res.longitude, res.latitude).then((res) => {
           bill.value.address = res.address
           addressInput.value = res.address
@@ -158,6 +178,11 @@ function getAddress() {
   })
 }
 
+/**
+ * 处理键盘按键按下
+ * @param key 按下的键
+ * @param value 按下的值
+ */
 function handlePressKeyboard(key: any, value: string) {
   // console.log(key, value)
   // key: 键盘按下的键，例如：0-9，+，-，*，÷，.，delete，confirm，custom
@@ -172,7 +197,7 @@ function handlePressKeyboard(key: any, value: string) {
     handleEditComplete(true)
   }
 
-  const amount = calculateExpression(value)
+  const amount = calcExpression(value)
   // console.log('计算结果:', amount)
   bill.value.amount = amount
 }
@@ -182,7 +207,7 @@ function handlePressKeyboard(key: any, value: string) {
  * @param expression 包含数字和运算符的字符串，支持 + - × ÷ 和小数
  * @returns 计算结果
  */
-function calculateExpression(expression: string): number {
+function calcExpression(expression: string): number {
   if (!expression)
     return 0
 
@@ -308,14 +333,14 @@ function handleEditComplete(keep: boolean = false) {
     return toast.error('请输入正确的金额')
 
   if (isCreate.value) {
-    billStore.createBill(edit, location.value).then(() => {
+    billStore.createBill(edit).then(() => {
       if (!keep) {
         uni.navigateBack()
       }
     })
   }
   else {
-    billStore.createBill(edit, location.value).then(() => {
+    billStore.updateBill(edit).then(() => {
       if (!keep) {
         uni.navigateBack()
       }
@@ -330,27 +355,26 @@ function handleLedgerChange(ledger: ILedger) {
   }
 }
 
+/**
+ * 分类选择
+ */
+function handleCategoryChange(category: IBillCategory) {
+  console.log(category, 'handleCategoryChange')
+  bill.value.category = category
+}
+
+/**
+ * 时间选择
+ */
 function handleDateTimeConfirm(datetime: number) {
   // console.log(datetime, 'datetime')
   bill.value.date = dayjs(datetime).format()
   // console.log(bill.value.date, 'datetime')
 }
 
-function handleCategoryChange(item: any) {
-  const { type, select, parent } = item
-
-  if (type !== bill.value.type)
-    return
-
-  let name = select.name
-  if (select.id !== parent.id) {
-    name = `${parent.name}-${name}`
-  }
-  bill.value.category = {
-    categoryId: select.id,
-    name,
-    icon: select.icon,
-  }
+function handleAccountSelectConfirm(account: IBillAccount) {
+  console.log(account, 'handleAccountSelectConfirm')
+  bill.value.account = account
 }
 
 function handleAddressEditShow() {
@@ -367,23 +391,6 @@ function handleTagSelectConfirm(items: ITag[]) {
   // console.log(items, 'tags')
   showTags.value = false
   bill.value.tags = items
-}
-
-function handleAccountSelectConfirm(item: any) {
-  console.log(item, 'handleAccountSelectedChange')
-  const { account, parent } = item
-  if (!account)
-    return
-
-  let name = account.name
-  if (account.id !== parent.id) {
-    name = `${parent.name}-${name}`
-  }
-  bill.value.account = {
-    accountId: account.id,
-    name,
-    icon: account.icon,
-  }
 }
 </script>
 

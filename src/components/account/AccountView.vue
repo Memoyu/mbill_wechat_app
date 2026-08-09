@@ -50,9 +50,19 @@ function initSelectItem() {
 }
 
 function handleAccountItemTap(item: any) {
-  console.log('账户选中', item)
+  // console.log('账户选中', item)
   const { select, parent } = item
-  emit('change', { select, parent })
+
+  let name = select.name
+  if (parent) {
+    name = `${parent.name}-${name}`
+  }
+
+  emit('change', {
+    accountId: select.id,
+    name,
+    icon: select.icon,
+  })
 }
 </script>
 

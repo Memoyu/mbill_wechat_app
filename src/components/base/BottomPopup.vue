@@ -15,13 +15,15 @@ const props = withDefaults(defineProps<{
   showCancel?: boolean
   confirmText?: string
   cancelText?: string
-  height?: number
+  height?: string
+  autoHeight?: boolean
   actions?: ActionItem[]
 }>(), {
   showBtn: true,
   showCancel: false,
   confirmText: '完成',
   cancelText: '取消',
+  height: '60vh',
 })
 const emit = defineEmits<{
   (e: 'after-enter'): void
@@ -54,8 +56,8 @@ function handleConfirm() {
     :close-on-click-modal="true"
     :safe-area-inset-bottom="true"
     lazy-render
-    :custom-class="`rounded-t-3xl relative ${(height ? `h-${height}vh` : '')}`"
-    custom-style="max-height: 60vh;"
+    custom-class="rounded-t-3xl relative"
+    :custom-style="(height && !autoHeight ? `height: ${height}` : '')"
     @close="() => show = false"
     @after-enter="emit('after-enter')"
   >

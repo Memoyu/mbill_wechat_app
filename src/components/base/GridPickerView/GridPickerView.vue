@@ -41,7 +41,6 @@ const rowIndex = ref(-1)
 const childs = ref()
 
 const innerTops = ref<GridSelectItem[]>([])
-const topId = ref()
 const currentId = ref()
 const currentParentId = ref()
 
@@ -70,13 +69,17 @@ watch(() => props.data, (data) => {
   initSelectData(data)
 }, { immediate: true, deep: true })
 
-watch(() => selected.value, (val) => {
-  if (val)
-    initSelected(val)
+watch(() => selected.value, (newValue) => {
+  // console.log(newValue, 'base picker watch selected')
+  if (!newValue) {
+    initSelected()
+    return
+  }
+  selectedItem(newValue)
 }, { immediate: true, deep: true })
 
 function initSelectData(data: GridSelectData) {
-  console.log(data, 'data')
+  // console.log(data, 'data')
   if (!data)
     return
   // 初始化常用项
@@ -89,7 +92,7 @@ function initSelectData(data: GridSelectData) {
   for (let i = 0; i < list.length; i += props.column) {
     const ris = list.slice(i, i + props.column)
     ris.forEach((ri) => {
-      itemMaps[ri.id] = { ridx, item: ri, parent: ri }
+      itemMaps[ri.id] = { ridx, item: ri }
       ri.childs.forEach((ric) => {
         itemMaps[ric.id] = { ridx, item: ric, parent: ri }
       })
@@ -98,33 +101,21 @@ function initSelectData(data: GridSelectData) {
     rs.push(ris)
   }
   rows.value = rs
-
-  initSelected(selected.value || '')
 }
 
 /**
- * 初始化选中项
- * @param sid 选中项id
+ * 初始化选中项, 默认选中第一项
  */
-function initSelected(sid: string) {
-  // console.log(itemMaps, 'itemMaps')
-  const map = itemMaps[sid]
-  if (!map) {
-    if (hasTop.value) {
-      sid = innerTops.value[0].id
-    }
-    else {
-      const list = props.data.list
-      if (!list.length)
-        return
-      sid = list[0].id
-    }
+function initSelected() {
+  if (hasTop.value) {
+    selected.value = innerTops.value[0].id
   }
-
-  // console.log(map, 'init selected')
-  // 初始化选中项
-  const isTop = hasTop.value && innerTops.value.findIndex(t => t.id === sid) > -1
-  selectedItem(sid, false, isTop)
+  else {
+    const list = props.data.list
+    if (!list.length)
+      return
+    selected.value = list[0].id
+  }
 }
 
 /**
@@ -132,7 +123,7 @@ function initSelected(sid: string) {
  * @param item 常用项
  */
 function handleTopItemTap(item: GridSelectItem) {
-  selectedItem(item.id, true)
+  selected.value = item.id
 }
 
 /**
@@ -140,55 +131,53 @@ function handleTopItemTap(item: GridSelectItem) {
  * @param item 列表项
  */
 function handleListItemTap(item: GridSelectItem) {
-  // console.log(item, rowIdx, 'selected item')
-  selectedItem(item.id)
+  selected.value = item.id
 }
 
 /**
  * 选中项处理
  * @param id 选中项id
- * @param isEmit 是否触发emit
- * @param isTop 是否常用项
  */
-function selectedItem(id: string, isEmit = true, isTop = false) {
+function selectedItem(id: string) {
   const map = itemMaps[id]
   if (!map)
     return
 
-  selected.value = id
   const { item, parent } = map
   let rowIdx = map.ridx
 
-  if (parent.childs && parent.childs.length > 0) {
-    childs.value = parent.childs
+  // 赋值子项集合，确定展开row
+  const currentParent = parent || item
+  if (currentParent.childs && currentParent.childs.length > 0) {
+    childs.value = currentParent.childs
   }
   else {
     // 子节点为空时，收起展开内容
     rowIdx = -1
   }
-
-  // 为常用项时，则不选中父项
-  if (isTop) {
-    rowIdx = -1
-    topId.value = id
-    currentParentId.value = undefined
-  }
-  else {
-    currentId.value = id
-    topId.value = undefined
-    currentParentId.value = parent.id
-  }
   rowIndex.value = rowIdx
+  currentId.value = id
+  currentParentId.value = currentParent.id
 
-  isEmit && emit('change', { id, select: item, parent })
+  // console.log(id, item, parent, 'base picker selected')
+  emit('change', { id, select: item, parent })
 }
 
+/**
+ * 获取子项内容高度
+ * @param rowIdx 行索引
+ * @returns 子项内容高度
+ */
 function getChildContentHeight(rowIdx: number) {
+  // console.log(rowIdx, rowIndex.value, childs.value, 'getChildContentHeight')
+  if (!childs.value || childs.value.length < 1 || rowIndex.value !== rowIdx)
+    return '0px'
+
   const row = Math.ceil(childs.value.length / props.column)
   let height = row * itmeHeight.value + 16 // 16 为padding(p-2)
   height = height + ((row - 1) * 8) // 加上行间隔
   // console.log(row, height, 'row')
-  return rowIndex.value === rowIdx && childs.value && childs.value.length > 0 ? `${height}px` : '0px'
+  return `${height}px`
 }
 </script>
 
@@ -206,7 +195,7 @@ function getChildContentHeight(rowIdx: number) {
 
             @tap="handleTopItemTap(top)"
           >
-            <grid-picker-view-item :height="itmeHeight" :item="top" :selected="topId" />
+            <grid-picker-view-item :height="itmeHeight" :item="top" :selected="currentId" />
           </view>
         </view>
         <view class="mt-3 pb-2 font-semibold">

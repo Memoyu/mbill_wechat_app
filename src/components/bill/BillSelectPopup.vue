@@ -17,7 +17,7 @@ defineOptions({
 const props = defineProps<{
   bill: IBill
 }>()
-const emit = defineEmits([''])
+const emit = defineEmits(['confirm'])
 const show = defineModel<boolean>()
 
 const showFilter = ref(false)
@@ -34,7 +34,7 @@ function handleAfterEnter() {
 }
 
 function handleConfirm() {
-
+  emit('confirm', selecteds.value)
 }
 
 function handleSearch() {

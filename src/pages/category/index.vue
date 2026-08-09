@@ -45,8 +45,8 @@ const categoryActions: ActionGroup[] = [
   },
 ]
 
-const dialog = useDialog()
-const toast = useToast()
+const toast = useGlobalToast()
+const dialog = useGlobalDialog()
 const categoryStore = useCategoryStore()
 
 const editShow = ref(false)
@@ -245,7 +245,18 @@ function handleDeleteAction() {
   // console.log('handleEditAction')
   if (!currentCategory.value)
     return
-  categoryStore.deleteCategory(currentCategory.value.categoryId, type.value, currentCategory.value.parentId)
+  const { categoryId, parentId } = currentCategory.value
+  dialog
+    .confirm({
+      msg: `确定要删除分类？`,
+      success: () => {
+        categoryStore.deleteCategory(categoryId, type.value, parentId).then(() => {
+          toast.success('删除成功')
+        }).catch(() => {
+          toast.error('删除失败')
+        })
+      },
+    })
 }
 </script>
 

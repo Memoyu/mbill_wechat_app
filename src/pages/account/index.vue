@@ -2,8 +2,6 @@
 import type { IAccount } from '@/api/types/account'
 import type { IIcon } from '@/api/types/icon'
 import type { ActionGroup, ActionItem } from '@/typings'
-import { useDialog, useToast } from '@wot-ui/ui'
-import { icons } from '@/constants/billIcons'
 import { useAccountStore } from '@/store'
 import { systemInfo } from '@/utils/systemInfo'
 
@@ -44,7 +42,8 @@ const accountActions: ActionGroup[] = [
   },
 ]
 
-const toast = useToast()
+const toast = useGlobalToast()
+const dialog = useGlobalDialog()
 const accountStore = useAccountStore()
 
 const editShow = ref(false)
@@ -232,7 +231,18 @@ function handleDeleteAction() {
   // console.log('handleEditAction')
   if (!currentAccount.value)
     return
-  accountStore.deleteAccount(currentAccount.value.accountId, currentAccount.value.parentId)
+  const { accountId, parentId } = currentAccount.value
+  dialog
+    .confirm({
+      msg: `确定要删除账户？`,
+      success: () => {
+        accountStore.deleteAccount(accountId, parentId).then(() => {
+          toast.success('删除成功')
+        }).catch(() => {
+          toast.error('删除失败')
+        })
+      },
+    })
 }
 </script>
 

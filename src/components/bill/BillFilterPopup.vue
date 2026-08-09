@@ -36,6 +36,7 @@ const filter = ref<IBillFilter>({
   accounts: [],
   tags: [],
 })
+const cloneFilter = ref<IBillFilter>(lodash.cloneDeep(filter.value))
 const showDatePicker = ref(false)
 const dateType = ref<string>('')
 const pickerDate = ref<number>(dayjs().valueOf())
@@ -70,6 +71,12 @@ const actions: ActionItem[] = [
   },
 ]
 
+watch(() => show.value, (val) => {
+  if (val) {
+    filter.value = lodash.cloneDeep(cloneFilter.value)
+  }
+})
+
 function handleAfterEnter() {
   // console.log('handleAfterEnter')
 }
@@ -102,6 +109,7 @@ function handleConfirm() {
     temp.endDate = dayjs(endDate).format('YYYY-MM-DD')
   }
   // console.log(temp, 'handleConfirm')
+  cloneFilter.value = lodash.cloneDeep(temp)
   emit('confirm', temp)
 }
 
@@ -167,7 +175,7 @@ function handleTagConfirm(tags: ITag[]) {
 
 <template>
   <!-- 筛选条件 -->
-  <bottom-popup v-model="show" title="筛选条件" :actions="actions" @confirm="handleConfirm">
+  <bottom-popup v-model="show" height="70vh" title="筛选条件" :actions="actions" @confirm="handleConfirm">
     <view class="mb-3 flex flex-col p-3 space-y-2">
       <!-- 账单类型 -->
       <view>

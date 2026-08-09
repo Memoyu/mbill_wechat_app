@@ -215,7 +215,7 @@ function updateRefundList(dto: IRefundBill) {
       <view class="p-3">
         <text>退款账户</text>
         <!-- :height="240" -->
-        <account-view v-model="accountId" :height="240" />
+        <account-view v-if="show" v-model="accountId" :height="240" />
       </view>
     </view>
   </bottom-popup>

@@ -21,7 +21,7 @@ const visible = defineModel<boolean>('visible')
 
 const categoryStore = useCategoryStore()
 
-const typeActions = ref([])
+const typeActions = ref<string[]>([])
 const type = ref(BillTypeEnum.Expend)
 const expendPickerRef = ref()
 const incomePickerRef = ref()
@@ -46,8 +46,6 @@ watch(() => selecteds.value, (newValue) => {
 watch(() => visible.value, (newValue) => {
   // 重置选中项
   if (newValue) {
-    expendPickerRef.value.toggleAll(true)
-    incomePickerRef.value.toggleAll(true)
     innerSelecteds.value = lodash.cloneDeep(selecteds.value ?? [])
   }
 })
@@ -56,6 +54,8 @@ function handleAfterEnter() {
   // console.log('handleAfterEnter')
   // 弹窗时赋值，确保分段组件能正常工作
   typeActions.value = ['支出', '收入']
+  // expendPickerRef.value.toggleAll(true)
+  // incomePickerRef.value.toggleAll(true)
 }
 
 function handleConfirm() {
@@ -133,6 +133,7 @@ function handleAllSelectClick() {
       <wd-tabs v-model="type" animated>
         <wd-tab key="expend" title="支出" :name="BillTypeEnum.Expend">
           <list-picker-view
+            v-if="visible && type === BillTypeEnum.Expend"
             ref="expendPickerRef"
             v-model="innerSelecteds"
             :list="expends"
@@ -144,6 +145,7 @@ function handleAllSelectClick() {
 
         <wd-tab key="income" title="收入" :name="BillTypeEnum.Income">
           <list-picker-view
+            v-if="visible && type === BillTypeEnum.Income"
             ref="incomePickerRef"
             v-model="innerSelecteds"
             :list="incomes"

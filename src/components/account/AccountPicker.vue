@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { IBillAccount } from '@/api/types/bill'
+
 defineOptions({
   options: {
     addGlobalClass: true,
@@ -13,7 +15,7 @@ const props = defineProps<{
 const emit = defineEmits(['confirm'])
 const show = defineModel<boolean>()
 
-const accountItem = ref()
+const account = ref<IBillAccount>()
 const accountId = ref()
 
 /**
@@ -24,14 +26,14 @@ function handleAfterEnter() {
 }
 
 function handleConfirm() {
-  emit('confirm', { account: accountItem.value.select, parent: accountItem.value.parent })
+  emit('confirm', account.value)
   show.value = false
 }
 </script>
 
 <template>
   <bottom-popup v-model="show" title="选择账户" @after-enter="handleAfterEnter" @confirm="handleConfirm">
-    <account-view v-model="accountId" @change="(item: any) => accountItem = item" />
+    <account-view v-if="show" v-model="accountId" @change="(ac: IBillAccount) => account = ac" />
   </bottom-popup>
 </template>
 

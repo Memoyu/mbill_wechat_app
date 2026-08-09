@@ -135,23 +135,22 @@ export const useCategoryStore = defineStore(
      * @param type 账单类型
      * @param parentId 父分类ID
      */
-    const deleteCategory = (categoryId: string, type: BillTypeEnum, parentId?: string) => {
-      fetchDeleteCategory(categoryId).then(() => {
-        let list = state.expends
-        if (type === BillTypeEnum.Income) {
-          list = state.incomes
+    const deleteCategory = async (categoryId: string, type: BillTypeEnum, parentId?: string) => {
+      await fetchDeleteCategory(categoryId)
+      let list = state.expends
+      if (type === BillTypeEnum.Income) {
+        list = state.incomes
+      }
+      // 添加子分类到指定父类下
+      if (parentId) {
+        const parent = list.find(item => item.categoryId === parentId)
+        if (parent) {
+          list = parent.childs || []
         }
-        // 添加子分类到指定父类下
-        if (parentId) {
-          const parent = list.find(item => item.categoryId === parentId)
-          if (parent) {
-            list = parent.childs || []
-          }
-        }
+      }
 
-        const index = list.findIndex(l => l.categoryId === categoryId)
-        list.splice(index, 1)
-      })
+      const index = list.findIndex(l => l.categoryId === categoryId)
+      list.splice(index, 1)
     }
 
     return {

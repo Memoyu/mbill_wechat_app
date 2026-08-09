@@ -15,7 +15,7 @@ const props = defineProps<{
 }>()
 const emit = defineEmits(['change'])
 const selected = defineModel<string>()
-const type = defineModel<number>('type')
+const type = defineModel<number>('type', { default: 0 })
 
 const categoryStore = useCategoryStore()
 
@@ -31,22 +31,24 @@ onMounted(() => {
 })
 
 watch(() => type.value, (t) => {
-  console.log('分类选择', t)
-  if (t === undefined)
+  // 是否已初始化过
+  if (initTypes.includes(t))
     return
 
   const categories = (t === 0 ? categoryStore.expends : categoryStore.incomes) || []
-
+  let tops: GridSelectItem[] = []
+  let list: GridSelectItem[] = []
   // 常用分类
-  const tops = (categories[0]?.childs || []).map((a) => {
+  tops = (categories[0]?.childs || []).map((a) => {
     return {
       id: a.categoryId,
       name: a.name,
       icon: a.icon,
     } as GridSelectItem
   })
+
   // 分类列表
-  const list = categories.map((a) => {
+  list = categories.map((a) => {
     return {
       id: a.categoryId,
       name: a.name,
@@ -61,11 +63,6 @@ watch(() => type.value, (t) => {
     } as GridSelectItem
   })
 
-  // 是否已初始化过
-  if (initTypes.includes(t)) {
-    return
-  }
-
   if (t === 0) {
     expends.value = { tops, list }
   }
@@ -73,6 +70,7 @@ watch(() => type.value, (t) => {
     incomes.value = { tops, list }
   }
   initTypes.push(t)
+  // console.log('分类初始化完成', t)
 }, { immediate: true })
 
 watch(() => selected.value, (s) => {
@@ -90,10 +88,20 @@ function handleTabChange(change: any) {
   type.value = index
 }
 
-function handleCategoryItemTap(item: any) {
+function handleCategoryChange(item: any) {
   // console.log('选中分类', item)
   const { select, parent } = item
-  emit('change', { type: type.value, select, parent })
+
+  let name = select.name
+  if (parent) {
+    name = `${parent.name}-${name}`
+  }
+
+  emit('change', {
+    categoryId: select.id,
+    name,
+    icon: select.icon,
+  })
 }
 </script>
 
@@ -101,11 +109,11 @@ function handleCategoryItemTap(item: any) {
   <view>
     <wd-tabs v-model="type" animated swipeable @change="handleTabChange">
       <wd-tab key="expend">
-        <grid-picker-view v-model="selectedExpend" :data="expends" :scroll-height="height" @change="handleCategoryItemTap" />
+        <grid-picker-view v-if="initTypes.includes(0)" v-model="selectedExpend" :data="expends" :scroll-height="height" @change="handleCategoryChange" />
       </wd-tab>
 
       <wd-tab key="income">
-        <grid-picker-view v-model="selectedIncome" :data="incomes" :scroll-height="height" @change="handleCategoryItemTap" />
+        <grid-picker-view v-if="initTypes.includes(1)" v-model="selectedIncome" :data="incomes" :scroll-height="height" @change="handleCategoryChange" />
       </wd-tab>
     </wd-tabs>
   </view>

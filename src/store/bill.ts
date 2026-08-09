@@ -1,6 +1,5 @@
 import type { IBill, IBillDateGroup, IBillPageQuery, IEditBill } from '@/api/types/bill'
 import dayjs from 'dayjs'
-import lodash from 'lodash'
 import { defineStore } from 'pinia'
 import {
   createBill as fetchCreateBill,
@@ -26,98 +25,165 @@ export const useBillStore = defineStore(
       state.bills = res.items
     }
 
-    // 辅助函数：将账单插入到分组中的正确位置以保持时间排序
-    const insertBillIntoSortedGroup = (group: IBillDateGroup, bill: any) => {
-      const timeToCompare = dayjs(bill.date).valueOf()
-      let insertIndex = group.items.length
+    const getLoaclBill = (billId: string) => {
+      // 从本地数据获取账单
+      let group
+      let bill
+      let groupIdx = -1
+      let billIdx = -1
 
-      // 从后往前查找插入位置（假设通常是最新时间）
-      for (let i = group.items.length - 1; i >= 0; i--) {
-        if (dayjs(group.items[i].date).valueOf() <= timeToCompare) {
-          insertIndex = i + 1
+      for (let i = 0; i < state.bills.length; i++) {
+        const g = state.bills[i]
+        const idx = g.items.findIndex(item => item.billId === billId)
+
+        if (idx !== -1) {
+          group = g
+          bill = g.items[idx]
+          groupIdx = i
+          billIdx = idx
           break
         }
-        insertIndex = i
       }
 
-      group.items.splice(insertIndex, 0, bill)
+      return group && bill ? { group, groupIdx, bill, billIdx } : undefined
     }
 
-    // 辅助函数：将分组插入到正确位置以保持日期排序
-    const insertGroupIntoSortedGroups = (groups: IBillDateGroup[], newGroup: IBillDateGroup) => {
-      const dateToCompare = dayjs(newGroup.date).valueOf()
-      let insertIndex = groups.length
+    /**
+     * 插入本地账单
+     * @param bill 账单数据
+     */
+    const insertLocalBill = (edit: IEditBill) => {
+      const bill: IBill = {
+        ...edit,
+        billId: edit.billId!,
+        refundAmount: 0,
+        remark: edit.remark || '',
+        location: edit.location || '',
+        address: edit.address || '',
+        tags: edit.tags || [],
+        createTime: new Date(),
+      }
 
-      // 从后往前查找插入位置（假设通常是最新日期）
-      for (let i = groups.length - 1; i >= 0; i--) {
-        if (dayjs(groups[i].date).valueOf() <= dateToCompare) {
-          insertIndex = i + 1
-          break
+      // 维护本地bills数据
+      const targetDate = dayjs(bill.date).format('YYYY-MM-DD')
+      // 查找是否已存在这天的分组
+      let group = state.bills.find(b => dayjs(b.date).format('YYYY-MM-DD') === targetDate)
+
+      if (group) {
+        // 如果存在该日期分组，将账单插入到正确位置以保持排序
+        group.expend += bill.type === 0 ? bill.amount : 0
+        group.income += bill.type === 1 ? bill.amount : 0
+        group.items.push(bill)
+        group.items.sort((a, b) => dayjs(a.date).isBefore(dayjs(b.date)) ? 1 : -1)
+      }
+      else {
+        // 如果不存在该日期分组，创建新的分组
+        group = {
+          date: bill.date,
+          items: [bill],
+          expend: bill.type === 0 ? bill.amount : 0,
+          income: bill.type === 1 ? bill.amount : 0,
         }
-        insertIndex = i
+        state.bills.push(group)
+        state.bills.sort((a, b) => dayjs(a.date).isBefore(dayjs(b.date)) ? 1 : -1)
       }
-
-      groups.splice(insertIndex, 0, newGroup)
     }
 
-    const createBill = async (create: IEditBill, location?: string) => {
+    /**
+     * 删除本地账单
+     * @param billId 账单ID
+     */
+    const deleteLocalBill = ({ group, groupIdx, bill, billIdx }: { group: IBillDateGroup, groupIdx: number, bill: IBill, billIdx: number }) => {
+      // 删除该条账单
+      group.items.splice(billIdx, 1)
+      // 更新分组统计数据
+      group.expend -= bill.type === 0 ? bill.amount : 0
+      group.income -= bill.type === 1 ? bill.amount : 0
+
+      // 判断分组中是否还有账单
+      if (group.items.length === 0) {
+        // 如果没有账单，则删除该分组
+        state.bills.splice(groupIdx, 1)
+      }
+    }
+
+    const createBill = async (create: IEditBill) => {
       const billId = await fetchCreateBill({
         ...create,
         ledgerId: create.ledger.ledgerId,
         categoryId: create.category.categoryId,
         accountId: create.account.accountId,
         tagIds: (create.tags || []).map(tag => tag.tagId),
-        location,
       })
+      create.billId = billId
 
-      // 维护本地bills数据
-      // state.bills.forEach((b) => {
-      //   // 是否已存在这天的分组
-      //   if (dayjs(b.date).isSame(dayjs(bill.date), 'day')) {
-      //     b.items.push(bill)
-      //   }
-      // })
-      const bill: IBill = {
-        ...create,
-        billId,
-        refundAmount: 0,
-        remark: create.remark || '',
-        address: create.address || '',
-        tags: create.tags || [],
-        createTime: new Date(),
-      }
-      bill.billId = billId
-      // 维护本地bills数据
-      const targetDate = dayjs(bill.date).format('YYYY-MM-DD')
-
-      // 查找是否已存在这天的分组
-      const existingGroup = state.bills.find(b => dayjs(b.date).format('YYYY-MM-DD') === targetDate)
-
-      if (existingGroup) {
-        // 如果存在该日期分组，将账单插入到正确位置以保持排序
-        insertBillIntoSortedGroup(existingGroup, bill)
-      }
-      else {
-        // 如果不存在该日期分组，创建新的分组
-        const newGroup: IBillDateGroup = {
-          date: bill.date,
-          items: [bill],
-          income: bill.type === 0 ? bill.amount : 0,
-          expend: bill.type === 1 ? bill.amount : 0,
-        }
-
-        // 将新分组插入到正确位置以保持日期排序
-        insertGroupIntoSortedGroups(state.bills, newGroup)
-      }
+      insertLocalBill(create)
     }
 
     const updateBill = async (update: IEditBill) => {
+      const billId = update.billId!
       // 更新数据
+      await fetchUpdateBill({
+        ...update,
+        billId,
+        ledgerId: update.ledger.ledgerId,
+        categoryId: update.category.categoryId,
+        accountId: update.account.accountId,
+        tagIds: (update.tags || []).map(tag => tag.tagId),
+      })
 
+      // 更新本地数据
+      // 获取本地账单
+      const local = getLoaclBill(billId)
+      // 本地没数据，则不需要处理
+      if (!local) {
+        return
+      }
+      const { group, bill } = local
+
+      // 情况1：账期变更
+      if (!dayjs(update.date).isSame(dayjs(bill.date))) {
+        // 此处进一步判断是日期不一致
+        if (!dayjs(update.date).isSame(dayjs(bill.date), 'date')) {
+          // 日期不一致，从当前分组中删除账单，然后根据实际日期重新插入
+          deleteLocalBill(local)
+          insertLocalBill(update)
+          return
+        }
+        else {
+          // 否则时分变更，则仅更新时间，重新排序
+          bill.date = update.date
+          group.items.sort((a, b) => dayjs(a.date).isBefore(dayjs(b.date)) ? 1 : -1)
+        }
+      }
+
+      // 情况2：金额变更
+      const diffAmount = update.amount - bill.amount
+      group.expend += bill.type === 0 ? diffAmount : 0
+      group.income += bill.type === 1 ? diffAmount : 0
+
+      // 更新账单数据
+      bill.type = update.type
+      bill.ledger = update.ledger
+      bill.category = update.category
+      bill.account = update.account
+      bill.amount = update.amount
+      bill.remark = update.remark || ''
+      bill.location = update.location || ''
+      bill.address = update.address || ''
+      bill.tags = update.tags || []
     }
 
-    const deleteBill = (billId: string) => {
+    const deleteBill = async (billId: string) => {
+      await fetchDeleteBill(billId)
 
+      // 获取本地账单
+      const local = getLoaclBill(billId)
+      // 本地没数据，则不需要处理
+      if (!local) {
+        return
+      }
+      deleteLocalBill(local)
     }
 
     return {

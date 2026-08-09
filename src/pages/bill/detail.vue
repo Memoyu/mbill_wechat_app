@@ -2,7 +2,8 @@
 import type { IBill, IRelatedBill } from '@/api/types/bill'
 import type { ActionItem } from '@/typings'
 import dayjs from 'dayjs'
-import { getBill, getRelatedBill } from '@/api/bill'
+import { getBill, getRelatedBill, relationBill } from '@/api/bill'
+import { useBillStore } from '@/store'
 import { getBillColor, getBillWay } from '@/utils/bill'
 
 definePage({
@@ -11,6 +12,10 @@ definePage({
     navigationBarTitleText: '账单详情',
   },
 })
+
+const toast = useGlobalToast()
+const dialog = useGlobalDialog()
+const billStore = useBillStore()
 
 const showRefund = ref(false)
 const showBillSelect = ref(false)
@@ -25,6 +30,7 @@ const bill = ref<IBill>({
   date: dayjs().format(),
   remark: '',
   tags: [],
+  location: '',
   address: '',
   createTime: dayjs().toDate(),
 })
@@ -39,7 +45,10 @@ const actions: ActionItem[] = [
     text: '编辑',
     icon: 'pen',
     action: () => {
-      console.log('编辑账单')
+      // console.log('编辑账单')
+      uni.navigateTo({
+        url: `/pages/bill/edit?id=${bill.value.billId}`,
+      })
     },
   },
   {
@@ -65,7 +74,8 @@ const actions: ActionItem[] = [
     icon: 'delete',
     type: 'danger',
     action: () => {
-      console.log('删除账单')
+      // console.log('删除账单')
+      handleDelete()
     },
   },
 ]
@@ -81,6 +91,23 @@ onLoad((options: any) => {
   })
 })
 
+/** 删除账单 */
+function handleDelete() {
+  dialog
+    .confirm({
+      msg: `确定要删除账单？`,
+      success: () => {
+        billStore.deleteBill(bill.value.billId).then(() => {
+          uni.navigateBack().then(() => {
+            toast.success('删除成功')
+          })
+        }).catch(() => {
+          toast.error('删除失败')
+        })
+      },
+    })
+}
+
 function handleChangeRefund(diff: number) {
   // 退款金额减少
   bill.value.refundAmount -= diff
@@ -88,6 +115,26 @@ function handleChangeRefund(diff: number) {
   bill.value.amount += diff
 
   // TODO 通知列表金额变动
+}
+
+function handleBillSelectConfirm(selecteds: string[]) {
+  relationBill({
+    billId: bill.value.billId,
+    relationIds: selecteds,
+  }).then(() => {
+    // console.log('关联账单', res)
+    toast.success('关联账单成功')
+    getRelatedBill(bill.value.billId).then((res) => {
+      relatedBill.value = res
+    })
+  })
+}
+
+function handleRelatedBillTap(bill: IBill) {
+  // console.log("账单", props.bill);
+  uni.navigateTo({
+    url: `/pages/bill/detail?id=${bill.billId}`,
+  })
 }
 </script>
 
@@ -98,7 +145,7 @@ function handleChangeRefund(diff: number) {
 
   <!-- 账单信息 -->
   <view class="flex justify-center">
-    <view class="bill-detail-box mt-10 w-[87.5vw]">
+    <view class="bill-detail-box mt-10 w-[89vw]">
       <!-- 分类图标 -->
       <view class="absolute left-50% -top-5 -translate-x-1/2">
         <bill-icon :icon="bill.category.icon" :text="bill.category.name" size="50" />
@@ -230,14 +277,14 @@ function handleChangeRefund(diff: number) {
     <view class="flex justify-center">
       <view
         v-if="relatedBill && relatedBill.items && relatedBill.items.length > 0"
-        class="w-[87.5vw] p-3"
+        class="w-[89vw] p-3"
       >
-        <view class="flex flex-col justify-center gap-8">
-          <view v-for="item in relatedBill.items" :key="item.billId" class="bill-detail-box">
+        <view class="flex flex-col justify-center gap-5">
+          <view v-for="item in relatedBill.items" :key="item.billId" class="bill-detail-box" @tap="handleRelatedBillTap(item)">
             <view class="bill-related-box">
               <view class="bill-related-box-item">
                 <view class="flex items-center items-center gap-3">
-                  <bill-icon :icon="bill.category.icon" :text="bill.category.name" size="22" />
+                  <bill-icon :icon="item.category.icon" :text="item.category.name" size="22" />
                   <view class="font-semibold">
                     {{ item.category.name }}
                   </view>
@@ -247,7 +294,7 @@ function handleChangeRefund(diff: number) {
               <view class="bill-related-box-item">
                 <text class="font-bold">{{ dayjs(item.date).format('YYYY年MM月DD日 HH:mm') }}</text>
                 <view class="flex items-center gap-2 font-bold">
-                  <bill-icon :icon="bill.account.icon" :text="bill.account.name" size="22" />
+                  <bill-icon :icon="item.account.icon" :text="item.account.name" size="22" />
                   <text>{{ item.account.name }}</text>
                 </view>
               </view>
@@ -277,7 +324,7 @@ function handleChangeRefund(diff: number) {
   <refund-popup v-model="showRefund" :bill="bill" @change-refund="handleChangeRefund" />
 
   <!-- 关联账单弹窗 -->
-  <bill-select-popup v-model="showBillSelect" :bill="bill" />
+  <bill-select-popup v-model="showBillSelect" :bill="bill" @confirm="handleBillSelectConfirm" />
 </template>
 
 <style lang="scss" scoped>
@@ -292,8 +339,8 @@ function handleChangeRefund(diff: number) {
     bottom: -6px;
     width: 100%;
     height: 12px;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='12' viewBox='0 0 20 12'%3E%3Ccircle cx='10' cy='0' r='10' fill='%23f3f4f6'/%3E%3C/svg%3E");
-    background-size: 20px 12px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='23' height='12' viewBox='0 0 23 12'%3E%3Ccircle cx='12' cy='0' r='12' fill='%23f3f4f6'/%3E%3C/svg%3E");
+    background-size: 23px 12px;
     background-repeat: repeat-x;
   }
 }

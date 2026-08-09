@@ -15,7 +15,6 @@ const props = defineProps<{
   height: number
   expand?: boolean
 }>()
-const emit = defineEmits(['change'])
 
 const isSelected = computed(() => {
   return props.selected === props.item.id
@@ -27,12 +26,14 @@ const hasChilds = computed(() => {
 </script>
 
 <template>
-  <view class="relative flex items-center justify-center" :style="{ height: `${height}px` }">
-    <view class="flex flex-col items-center">
-      <view :class="[hasChilds ? 'grid-select-item-has-more' : '']">
-        <bill-icon :icon="item.icon" :text="item.name" />
+  <view class="relative" :style="{ height: `${height}px` }">
+    <view class="h-full flex flex-col justify-center gap-1 px-1">
+      <view class="flex justify-center">
+        <view class="relative" :class="[hasChilds ? 'grid-select-item-has-more' : '']">
+          <bill-icon :icon="item.icon" :text="item.name" />
+        </view>
       </view>
-      <view class="grid-select-item-title">
+      <view class="truncate text-center text-xs">
         {{ item.name }}
       </view>
     </view>
@@ -76,10 +77,5 @@ const hasChilds = computed(() => {
     border: 3px solid white;
     @apply: bg-indigo-300;
   }
-}
-
-.grid-select-item-title {
-  font-size: 12px;
-  @apply: line-clamp-1 text-nowrap text-center;
 }
 </style>

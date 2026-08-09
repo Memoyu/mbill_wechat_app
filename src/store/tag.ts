@@ -105,20 +105,19 @@ export const useTagStore = defineStore(
      * @param tagId 账单id
      * @param parentId 父标签ID
      */
-    const deleteTag = (tagId: string, parentId?: string) => {
-      fetchDeleteTag(tagId).then(() => {
-        let list = state.tags
-        // 添加子标签到指定父类下
-        if (parentId) {
-          const parent = list.find(item => item.tagId === parentId)
-          if (parent) {
-            list = parent.childs || []
-          }
+    const deleteTag = async (tagId: string, parentId?: string) => {
+      await fetchDeleteTag(tagId)
+      let list = state.tags
+      // 添加子标签到指定父类下
+      if (parentId) {
+        const parent = list.find(item => item.tagId === parentId)
+        if (parent) {
+          list = parent.childs || []
         }
+      }
 
-        const index = list.findIndex(l => l.tagId === tagId)
-        list.splice(index, 1)
-      })
+      const index = list.findIndex(l => l.tagId === tagId)
+      list.splice(index, 1)
     }
 
     return {

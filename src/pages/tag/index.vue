@@ -43,8 +43,8 @@ const tagActions: ActionGroup[] = [
   },
 ]
 
-const dialog = useDialog()
-const toast = useToast()
+const toast = useGlobalToast()
+const dialog = useGlobalDialog()
 
 const editShow = ref(false)
 const editTitle = ref('新增标签')
@@ -207,7 +207,19 @@ function handleDeleteAction() {
   // console.log('handleEditAction')
   if (!currentTag.value)
     return
-  tagStore.deleteTag(currentTag.value.tagId, currentTag.value.parentId)
+
+  const { tagId, parentId } = currentTag.value
+  dialog
+    .confirm({
+      msg: `确定要删除标签？`,
+      success: () => {
+        tagStore.deleteTag(tagId, parentId).then(() => {
+          toast.success('删除成功')
+        }).catch(() => {
+          toast.error('删除失败')
+        })
+      },
+    })
 }
 </script>
 

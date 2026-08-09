@@ -38,7 +38,7 @@ export interface IEditBill {
   remark?: string
   tags?: IBillTag []
   address?: string
-  createTime?: Date
+  location?: string
 }
 
 export interface IRelationBill {
@@ -78,6 +78,7 @@ export interface IBill {
   date: string
   remark: string
   tags: IBillTag []
+  location: string
   address: string
   createTime: Date
 }
