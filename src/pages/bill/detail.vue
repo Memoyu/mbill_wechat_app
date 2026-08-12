@@ -82,10 +82,15 @@ const actions: ActionItem[] = [
 
 onLoad((options: any) => {
   // console.log('账单id', options.id)
-  getBill(options.id).then((res) => {
+  bill.value.billId = options.id
+})
+
+onShow(() => {
+  console.log('onShow')
+  getBill(bill.value.billId).then((res) => {
     bill.value = res
 
-    getRelatedBill(options.id).then((res) => {
+    getRelatedBill(bill.value.billId).then((res) => {
       relatedBill.value = res
     })
   })

@@ -55,10 +55,9 @@ watch(() => bill.value.tags, () => {
 })
 
 onLoad((options: any) => {
-  console.log('账单id', options)
   bill.value.billId = options.id
   isCreate.value = !options.id
-  console.log('账单id', options.id, isCreate.value)
+  // console.log('账单id', options.id, isCreate.value)
   initBill()
 })
 

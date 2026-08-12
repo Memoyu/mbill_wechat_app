@@ -32,11 +32,6 @@ const dateText = computed(() => {
 })
 
 onLoad(() => {
-  console.log('默认', dayjs('2026-08-09 17:24:00').isSame(dayjs('2026-08-09 17:28:00')))
-  console.log('默认-date', dayjs('2026-08-08 17:24:00').isSame(dayjs('2026-08-09 17:28:00')))
-  console.log('分钟-date same', dayjs('2026-08-09 17:25:00').isSame(dayjs('2026-08-09 17:28:00'), 'date'))
-  console.log('分钟-same', dayjs('2026-08-09 17:28:00').isSame(dayjs('2026-08-09 17:28:00'), 'minute'))
-  console.log('分钟-date', dayjs('2026-08-08 17:28:00').isSame(dayjs('2026-08-09 17:28:00'), 'minute'))
 })
 
 function handleCalendarClick() {
