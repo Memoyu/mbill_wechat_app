@@ -46,14 +46,25 @@ export interface IRelationBill {
   relationIds: string []
 }
 
-export interface IBillPageQuery {
-  beginDate: string
-  endDate: string
+export interface IBillQuery {
+  beginDate?: string
+  endDate?: string
   type?: BillTypeEnum
   ledgerIds?: string[]
   categoryIds?: string[]
   accountIds?: string[]
   tagIds?: string[]
+}
+
+export interface IBillSearchQuery extends IBillQuery {
+  keyword?: string
+  amountMin?: number
+  amountMax?: number
+  excludeBillIds?: string[]
+}
+
+export interface IBillPageQuery extends IBillQuery {
+
 }
 
 export interface IBillDateGroup {

@@ -1,12 +1,14 @@
 import type { IBill, IBillDateGroup, IBillPageQuery, IEditBill } from '@/api/types/bill'
 import dayjs from 'dayjs'
+import { debounce } from 'lodash'
 import { defineStore } from 'pinia'
 import {
   createBill as fetchCreateBill,
   deleteBill as fetchDeleteBill,
   updateBill as fetchUpdateBill,
-  getBillDateGroup,
+  pageBill,
 } from '@/api/bill'
+import { useLedgerPickerStore } from './ledgerPicker'
 
 // 初始化状态
 const initState: {
@@ -18,13 +20,29 @@ const initState: {
 export const useBillStore = defineStore(
   'bill',
   () => {
+    const ledgerPickerStore = useLedgerPickerStore()
     const state = reactive({ ...initState })
+    const pageQuery = reactive<{ query: IBillPageQuery }>({ query: {} })
 
-    const loadIndexBills = async (query: IBillPageQuery) => {
-      const res = await getBillDateGroup(query)
+    /**
+     * 加载账单
+     * @param query 查询参数
+     */
+    const loadBills = debounce(async (query: IBillPageQuery) => {
+      pageQuery.query = {
+        ...pageQuery.query,
+        ...query,
+        ledgerIds: ledgerPickerStore.selectedLedgers,
+      }
+
+      const res = await pageBill(pageQuery.query)
       state.bills = res.items
-    }
+    }, 500)
 
+    /**
+     * 获取本地账单
+     * @param billId 账单ID
+     */
     const getLoaclBill = (billId: string) => {
       // 从本地数据获取账单
       let group
@@ -53,6 +71,11 @@ export const useBillStore = defineStore(
      * @param bill 账单数据
      */
     const insertLocalBill = (edit: IEditBill) => {
+      // 判断新增的账单所属账本是否在当前选中的账本中
+      if (!ledgerPickerStore.isLedgerSelected(edit.ledger.ledgerId)) {
+        return
+      }
+
       const bill: IBill = {
         ...edit,
         billId: edit.billId!,
@@ -188,7 +211,7 @@ export const useBillStore = defineStore(
 
     return {
       ...toRefs(state),
-      loadIndexBills,
+      loadBills,
       createBill,
       updateBill,
       deleteBill,

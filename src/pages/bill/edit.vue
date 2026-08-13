@@ -8,6 +8,7 @@ import Decimal from 'decimal.js'
 import { getAddressInfo } from '@/api/aggregation'
 import { getBill } from '@/api/bill'
 import { useBillStore, useLedgerStore, useSettingsStore } from '@/store'
+import { getBillColor } from '@/utils/bill'
 import { getDateFormat } from '@/utils/date'
 import { systemInfo } from '@/utils/systemInfo'
 
@@ -482,7 +483,7 @@ function handleTagSelectConfirm(items: ITag[]) {
       </view>
       <view>
         <!-- 总金额 -->
-        <wd-text :text="bill.amount" mode="price" type="success" size="17px" />
+        <wd-text :text="bill.amount" mode="price" size="17px" :style="{ color: getBillColor(bill.type) }" />
       </view>
     </view>
 

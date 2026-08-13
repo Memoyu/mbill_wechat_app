@@ -2,6 +2,7 @@
 import type { IBill, IRelatedBill } from '@/api/types/bill'
 import type { ActionItem } from '@/typings'
 import dayjs from 'dayjs'
+import { s } from 'node_modules/vite/dist/node/types.d-aGj9QkWt'
 import { getBill, getRelatedBill, relationBill } from '@/api/bill'
 import { useBillStore } from '@/store'
 import { getBillColor, getBillWay } from '@/utils/bill'
@@ -79,6 +80,10 @@ const actions: ActionItem[] = [
     },
   },
 ]
+
+const excludeBills = computed(() => {
+  return relatedBill.value.items.map(b => b.billId)
+})
 
 onLoad((options: any) => {
   // console.log('账单id', options.id)
@@ -176,12 +181,15 @@ function handleRelatedBillTap(bill: IBill) {
 
       <!-- 中间票据缺口、分割线样式 -->
       <view class="bill-mid-box" />
+
       <view class="bill-bottom-box">
+        <!-- 账单日期 -->
         <view class="bill-bottom-box-item">
           <text class="bill-bottom-box-item-title">日期</text>
           <text class="font-bold">{{ dayjs(bill.date).format('YYYY年MM月DD日 HH:mm') }}</text>
         </view>
 
+        <!-- 账单账户 -->
         <view class="bill-bottom-box-item">
           <text class="bill-bottom-box-item-title">账户</text>
           <view class="flex items-center gap-2 font-bold">
@@ -190,6 +198,13 @@ function handleRelatedBillTap(bill: IBill) {
           </view>
         </view>
 
+        <!-- 账单账本 -->
+        <view class="bill-bottom-box-item">
+          <text class="bill-bottom-box-item-title">账本</text>
+          <text class="font-bold">{{ bill.ledger.name }}</text>
+        </view>
+
+        <!-- 账单地址 -->
         <view v-if="bill.address && bill.address.length > 0" class="bill-bottom-box-item">
           <text class="bill-bottom-box-item-title">地点</text>
           <view class="relative overflow-hidden">
@@ -208,6 +223,7 @@ function handleRelatedBillTap(bill: IBill) {
           </view>
         </view>
 
+        <!-- 账单备注 -->
         <view v-if="bill.remark && bill.remark.length > 0" class="bill-bottom-box-item">
           <text class="bill-bottom-box-item-title">备注</text>
           <view class="relative overflow-hidden">
@@ -226,6 +242,7 @@ function handleRelatedBillTap(bill: IBill) {
           </view>
         </view>
 
+        <!-- 账单标签 -->
         <view v-if="bill.tags && bill.tags.length > 0" class="bill-bottom-box-item">
           <text class="bill-bottom-box-item-title">标签</text>
           <view class="relative overflow-hidden">
@@ -329,7 +346,12 @@ function handleRelatedBillTap(bill: IBill) {
   <refund-popup v-model="showRefund" :bill="bill" @change-refund="handleChangeRefund" />
 
   <!-- 关联账单弹窗 -->
-  <bill-select-popup v-model="showBillSelect" :bill="bill" @confirm="handleBillSelectConfirm" />
+  <bill-select-popup
+    v-model="showBillSelect"
+    :bill="bill"
+    :excludes="excludeBills"
+    @confirm="handleBillSelectConfirm"
+  />
 </template>
 
 <style lang="scss" scoped>

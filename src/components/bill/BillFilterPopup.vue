@@ -15,6 +15,8 @@ export interface IBillFilter {
   categories?: string[]
   accounts?: string[]
   tags?: string[]
+  amountMin?: number
+  amountMax?: number
 }
 
 defineOptions({
@@ -261,6 +263,20 @@ function handleTagConfirm(tags: ITag[]) {
         <view class="rounded-sm bg-[var(--wot-input-bg)] p-3" @tap="showTagPicker = true">
           <text v-if="!tagName || tagName.length <= 0" class="text-[#b1b4bf]">标签</text>
           <text v-else class="line-clamp-1">{{ tagName }}</text>
+        </view>
+      </view>
+
+      <!-- 金额区间 -->
+      <view>
+        <view class="filter-content-title">
+          账单金额
+        </view>
+        <view class="flex items-center justify-between">
+          <wd-input v-model="filter.amountMin" type="number" placeholder="最小金额" />
+          <view class="px-4">
+            -
+          </view>
+          <wd-input v-model="filter.amountMax" type="number" placeholder="最大金额" />
         </view>
       </view>
     </view>

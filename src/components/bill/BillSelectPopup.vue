@@ -2,9 +2,7 @@
 import type { IBillFilter } from './BillFilterPopup.vue'
 import type { IBill, IBillPageItem } from '@/api/types/bill'
 import dayjs from 'dayjs'
-import { getBillPage } from '@/api/bill'
-import { formatFloat } from '@/utils'
-import { getBillColor } from '@/utils/bill'
+import { searchBill } from '@/api/bill'
 
 defineOptions({
   options: {
@@ -14,9 +12,12 @@ defineOptions({
   },
 })
 
-const props = defineProps<{
-  bill: IBill
-}>()
+const props = withDefaults(defineProps<{
+  bill?: IBill
+  excludes?: string[]
+}>(), {
+  excludes: () => [],
+})
 const emit = defineEmits(['confirm'])
 const show = defineModel<boolean>()
 
@@ -35,11 +36,20 @@ function handleAfterEnter() {
 
 function handleConfirm() {
   emit('confirm', selecteds.value)
+  show.value = false
+  // 完成后清空选中
+  selecteds.value = []
 }
 
 function handleSearch() {
   // console.log('handleSearch')
-  getBillPage({
+  const excludeBillIds = [...props.excludes]
+  if (props.bill) {
+    excludeBillIds.push(props.bill.billId)
+  }
+
+  searchBill({
+    keyword: search.value,
     beginDate: query.value.beginDate,
     endDate: query.value.endDate,
     type: query.value.type,
@@ -47,6 +57,7 @@ function handleSearch() {
     categoryIds: query.value.categories,
     accountIds: query.value.accounts,
     tagIds: query.value.tags,
+    excludeBillIds,
   }).then((res) => {
     bills.value = res.items
   })

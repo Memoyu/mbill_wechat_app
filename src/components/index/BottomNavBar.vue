@@ -1,6 +1,5 @@
 <script lang="ts" setup>
-import dayjs from 'dayjs'
-import { useBillStore, useLedgerPickerStore } from '@/store'
+import { useLedgerPickerStore } from '@/store'
 
 defineOptions({
   options: {
@@ -12,21 +11,12 @@ defineOptions({
 
 const emit = defineEmits(['showLedgers'])
 
-const billStore = useBillStore()
 const ledgerPickerStore = useLedgerPickerStore()
 
 const ledgerName = computed(() => {
   // console.log(ledgerPickerStore.selectedLedgerNames)
   return ledgerPickerStore.selectedLedgerNames.join(', ')
 })
-
-watch (() => ledgerPickerStore.selectedLedgers, (ledgers) => {
-  billStore.loadIndexBills({
-    beginDate: dayjs().add(-30, 'day').format('YYYY-MM-DD'),
-    endDate: dayjs().format('YYYY-MM-DD'),
-    ledgerIds: ledgers,
-  })
-}, { immediate: true, deep: true })
 
 function handleNavigateTo(path: string) {
   uni.navigateTo({ url: path })

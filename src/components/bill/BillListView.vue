@@ -43,7 +43,7 @@ const billGroup = computed(() => {
           </view>
         </view>
       </view>
-      <view class="flex flex-col gap-2 list-item-box rounded-lg">
+      <view class="mt-2 flex flex-col gap-2 list-item-box rounded-lg">
         <view v-for="b in g.items" :key="b.billId">
           <bill-item :bill="b" />
         </view>

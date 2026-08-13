@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import dayjs from 'dayjs'
-import { useUserStore } from '@/store'
+import { useBillStore, useLedgerPickerStore, useUserStore } from '@/store'
 import { safeAreaInsets } from '@/utils/systemInfo'
 
 defineOptions({
@@ -17,6 +17,8 @@ definePage({
 })
 
 const userStore = useUserStore()
+const billStore = useBillStore()
+const ledgerPickerStore = useLedgerPickerStore()
 
 const date = ref(Date.now())
 
@@ -30,6 +32,20 @@ const user = computed(() => userStore.userInfo)
 const dateText = computed(() => {
   return dayjs(date.value).format('YYYY年MM月')
 })
+
+// 监听日期改变
+watch (() => date.value, (value) => {
+  // 整月查询
+  billStore.loadBills({
+    beginDate: dayjs(value).startOf('month').format(),
+    endDate: dayjs(value).endOf('month').format(),
+  })
+}, { immediate: true })
+
+// 监听账本选中
+watch (() => ledgerPickerStore.selectedLedgers, () => {
+  billStore.loadBills({})
+}, { deep: true })
 
 onLoad(() => {
 })
