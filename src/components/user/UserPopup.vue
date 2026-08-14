@@ -1,7 +1,10 @@
 <script setup lang="ts">
+import type { IBillSummaryAmountItem } from '@/api/types/bill'
 import dayjs from 'dayjs'
 import { uploadAvatar } from '@/api/common'
 import { useUserStore } from '@/store'
+import { formatFloat } from '@/utils'
+import { getBillColor } from '@/utils/bill'
 
 // TODO 待账单数据完成录入，再进行【年数据统计】开发
 
@@ -28,6 +31,17 @@ const userStore = useUserStore()
 
 const editShow = ref(false)
 const nickname = ref()
+const summary = ref<IBillSummaryAmountItem>({
+  income: 0,
+  expend: 0,
+  incomeAvg: 0,
+  expendAvg: 0,
+  surplus: 0,
+  expendHighest: 0,
+  expendLowst: 0,
+  incomeHighest: 0,
+  incomeLowst: 0,
+})
 
 const user = computed(() => userStore.userInfo)
 
@@ -80,18 +94,90 @@ function handleEditConfirm() {
       </view>
 
       <!-- 用户信息 -->
-      <view class="px-4">
+      <view class="flex flex-col gap-5 px-4">
         <view class="user-block">
-          <view class="flex items-center justify-between px-4 py-2">
-            <text class="font-semibold">用户信息</text>
+          <view class="user-block-title">
+            用户信息
           </view>
-          <wd-cell title="ID" :value="user.userId || '-'" />
-          <wd-cell title="注册" :value="dayjs(user.createTime).format('YYYY-MM-DD') || '-'" />
+          <view class="flex flex-col gap-3">
+            <view class="flex justify-between">
+              <text>ID</text>
+              <text class="text-gray-500">
+                {{ user.userId || '-' }}
+              </text>
+            </view>
+
+            <view class="flex justify-between">
+              <text>注册</text>
+              <text class="text-gray-500">
+                {{ dayjs(user.createTime).format('YYYY-MM-DD') || '-' }}
+              </text>
+            </view>
+          </view>
         </view>
 
+        <!-- 年汇总统计 -->
         <view class="user-block">
-          <view class="h-50 text-center">
-            年数据统计
+          <view class="user-block-title">
+            年汇总统计
+          </view>
+          <view class="flex flex-col gap-3 text-gray-500">
+            <view class="flex justify-between">
+              <view class="flex flex-col">
+                <text>结余</text>
+                <text class="text-xl text-indigo font-semibold">
+                  {{ formatFloat(summary.surplus) }}
+                </text>
+              </view>
+
+              <!-- 总金额 -->
+              <view class="flex flex-col gap-3">
+                <view class="flex gap-1">
+                  <text>支出</text>
+                  <text class="font-bold" :style="{ color: getBillColor(0) }">
+                    {{ formatFloat(summary.expend) }}
+                  </text>
+                </view>
+                <view class="flex gap-1">
+                  <text>收入</text>
+                  <text class="font-bold" :style="{ color: getBillColor(1) }">
+                    {{ formatFloat(summary.income) }}
+                  </text>
+                </view>
+              </view>
+            </view>
+
+            <view class="flex justify-between">
+              <view class="flex flex-col justify-end gap-3">
+                <view class="flex gap-1">
+                  <text>日均支出</text>
+                  <text class="font-bold" :style="{ color: getBillColor(0) }">
+                    {{ formatFloat(summary.expendAvg) }}
+                  </text>
+                </view>
+                <view class="flex gap-1">
+                  <text>日均收入</text>
+                  <text class="font-bold" :style="{ color: getBillColor(0) }">
+                    {{ formatFloat(summary.incomeAvg) }}
+                  </text>
+                </view>
+              </view>
+
+              <view class="flex flex-col justify-end gap-3">
+                <view class="flex gap-1">
+                  <text>最高支出</text>
+                  <text class="font-bold" :style="{ color: getBillColor(0) }">
+                    {{ formatFloat(summary.expendHighest) }}
+                  </text>
+                </view>
+                <view class="flex gap-1">
+                  <text>最高收入</text>
+                  <text class="font-bold" :style="{ color: getBillColor(0) }">
+                    {{ formatFloat(summary.incomeHighest) }}
+                  </text>
+                </view>
+              </view>
+            </view>
           </view>
         </view>
 
@@ -126,10 +212,13 @@ function handleEditConfirm() {
 
 <style lang="scss" scoped>
 .user-block {
-  @apply: bg-whit flex flex-col gap-2 overflow-hidden border border-gray-100 rounded-2xl mb-5;
+  @apply: bg-whit py-3 px-4 overflow-hidden border border-gray-100 rounded-2xl;
   box-shadow:
     0 8px 20px -6px rgba(0, 0, 0, 0.06),
     0 4px 12px -4px rgba(0, 0, 0, 0.03);
+}
+.user-block-title {
+  @apply: font-semibold mb-4;
 }
 
 .avatar-box {

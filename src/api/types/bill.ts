@@ -140,3 +140,28 @@ export interface IRefundBill {
   date: string
   remark?: string
 }
+
+export interface IBillSummaryAmountQuery extends IBillQuery {
+  series: 0 | 1 | 2
+}
+
+export interface IBillSummaryAmount {
+  summary: IBillSummaryAmountItem
+  series: IBillSummaryAmountItemWithDate []
+}
+
+export interface IBillSummaryAmountItem {
+  income: number
+  expend: number
+  incomeAvg: number
+  expendAvg: number
+  surplus: number
+  expendHighest: number
+  expendLowst: number
+  incomeHighest: number
+  incomeLowst: number
+}
+
+export interface IBillSummaryAmountItemWithDate extends IBillSummaryAmountItem {
+  date: string
+}

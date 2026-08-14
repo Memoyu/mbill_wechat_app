@@ -104,8 +104,8 @@ function handleCalendarClick() {
     </view>
   </view>
 
-  <!-- 日期栏 -->
-  <view class="mt-3 w-screen">
+  <view class="w-screen flex flex-col gap-3">
+    <!-- 日期栏 -->
     <view class="flex justify-between px-5">
       <view class="flex items-center" @tap="isDateSelectShow = true">
         <view class="mr-1 font-bold">
@@ -115,19 +115,15 @@ function handleCalendarClick() {
       </view>
       <view class="iconfont icon-calendar text-2xl" @tap="handleCalendarClick" />
     </view>
-  </view>
 
-  <!-- 账单月汇总 -->
-  <view class="mt-3 w-screen">
-    <view class="mx-3 rounded-xl bg-indigo-300/20 px-2 py-3">
-      <month-summary />
+    <!-- 账单金额汇总 -->
+    <view class="mx-3 rounded-xl bg-indigo-300/20 p-3">
+      <amount-summary :date="date" />
     </view>
-  </view>
 
-  <!-- 账单周期汇总 -->
-  <view class="mt-3 w-screen">
-    <view class="mx-3 rounded-xl bg-indigo-300/20 px-2 py-3">
-      <date-range-summary />
+    <!-- 账单金额汇总统计 -->
+    <view v-if="dayjs(date).isSame(dayjs(), 'month')" class="mx-3 rounded-xl bg-indigo-300/20 px-2 py-3">
+      <column-amount-summary :date="date" />
     </view>
   </view>
 

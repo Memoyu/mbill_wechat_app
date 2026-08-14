@@ -1,4 +1,4 @@
-import type { IBill, IBillDateGroup, IBillPageItem, IBillPageQuery, IBillSearchQuery, ICreateBill, IEditRefundBill, IRefundBill, IRelatedBill, IRelationBill, IUpdateBill } from './types/bill'
+import type { IBill, IBillDateGroup, IBillPageItem, IBillPageQuery, IBillSearchQuery, IBillSummaryAmount, IBillSummaryAmountQuery, ICreateBill, IEditRefundBill, IRefundBill, IRelatedBill, IRelationBill, IUpdateBill } from './types/bill'
 import type { PageResult } from './types/common'
 import { http } from '@/utils/http'
 
@@ -24,6 +24,13 @@ export function deleteBill(billId: string) {
 }
 
 /**
+ * 账单详情
+ */
+export function getBill(billId: string) {
+  return http.get<IBill>('bill/get', { billId })
+}
+
+/**
  * 账单分页
  */
 export function pageBill(query: IBillPageQuery) {
@@ -38,10 +45,10 @@ export function searchBill(query: IBillSearchQuery) {
 }
 
 /**
- * 获取账单详情
+ * 账单金额汇总
  */
-export function getBill(billId: string) {
-  return http.get<IBill>('bill/get', { billId })
+export function summaryAmountBill(query: IBillSummaryAmountQuery) {
+  return http.get<IBillSummaryAmount>('bill/summary/amount', query)
 }
 
 /**
@@ -52,7 +59,7 @@ export function relationBill(relation: IRelationBill) {
 }
 
 /**
- * 获取账单关联账单列表
+ * 账单关联账单列表
  */
 export function getRelatedBill(billId: string) {
   return http.get<IRelatedBill>('bill/related', { billId })
@@ -73,21 +80,21 @@ export function updateRefundBill(refund: IEditRefundBill) {
 }
 
 /**
- * 删除账单
+ * 删除账单退款
  */
 export function deleteRefundBill(refundId: string) {
   return http.delete('bill/refund/delete', { refundId })
 }
 
 /**
- * 获取账单详情
+ * 账单退款详情
  */
 export function getRefundBill(refundId: string) {
   return http.get<IRefundBill>('bill/refund/get', { refundId })
 }
 
 /**
- * 获取账单详情
+ * 账单退款列表
  */
 export function getRefundBillList(billId: string) {
   return http.get<IRefundBill[]>('bill/refund/list', { billId })
