@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import dayjs from 'dayjs'
 import { useBillStore, useLedgerPickerStore, useUserStore } from '@/store'
-import { safeAreaInsets } from '@/utils/systemInfo'
+import { safeAreaInsets } from '@/utils'
 
 defineOptions({
   name: 'Home',
@@ -48,6 +48,7 @@ watch (() => ledgerPickerStore.selectedLedgers, () => {
 }, { deep: true })
 
 onLoad(() => {
+  billStore.loadYearSummary()
 })
 
 function handleCalendarClick() {

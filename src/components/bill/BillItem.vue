@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import type { IBillPageItem } from '@/api/types/bill'
 import dayjs from 'dayjs'
-import { formatFloat } from '@/utils'
-import { getBillColor } from '@/utils/bill'
+import { formatFloat, getBillColor } from '@/utils'
 
 const props = defineProps<{
   bill: IBillPageItem
@@ -21,8 +20,11 @@ function handleBillTap() {
     <view class="mb-2 flex items-center justify-between">
       <!-- 分类 -->
       <view class="flex items-center">
-        <bill-icon :icon="bill.category.icon" :text="bill.category.name" />
-        <text class="ml-2">{{ bill.category.name }}</text>
+        <bill-icon :icon="bill.category.icon" :text="bill.category.name" size="36" />
+        <view class="ml-2 flex flex-col gap-0.5">
+          <text>{{ bill.ledger.name }}</text>
+          <text>{{ bill.category.name }}</text>
+        </view>
       </view>
       <!-- 金额 -->
       <text class="font-bold" :style="{ color: getBillColor(bill.type) }">{{ formatFloat(bill.amount) }}</text>

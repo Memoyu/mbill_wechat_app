@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import type { ITag } from '@/api/types/tag'
 import type { ActionGroup, ActionItem } from '@/typings'
-import { useDialog, useToast } from '@wot-ui/ui'
 import { useTagStore } from '@/store'
-import { systemInfo } from '@/utils/systemInfo'
+import { systemInfo } from '@/utils'
 
 definePage({
   style: {

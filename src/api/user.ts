@@ -1,5 +1,5 @@
 import type { IAuthLoginRes, IDoubleTokenRes, IUpdateUser, IUserInfo } from './types/user'
-import { http } from '@/utils/http'
+import { http } from '@/utils'
 
 /**
  * 获取微信登录凭证

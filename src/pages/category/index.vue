@@ -2,11 +2,9 @@
 import type { ICategory } from '@/api/types/category'
 import type { IIcon } from '@/api/types/icon'
 import type { ActionGroup, ActionItem } from '@/typings'
-import { useDialog, useToast } from '@wot-ui/ui'
-import { c } from 'node_modules/vite/dist/node/types.d-aGj9QkWt'
 import { useCategoryStore } from '@/store'
 import { BillTypeEnum } from '@/typings'
-import { systemInfo } from '@/utils/systemInfo'
+import { systemInfo } from '@/utils'
 
 definePage({
   style: {

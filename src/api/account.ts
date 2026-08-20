@@ -1,5 +1,5 @@
 import type { IAccount, ICreateAccount, IUpdateAccount, IUpdateAccountSort } from './types/account'
-import { http } from '@/utils/http'
+import { http } from '@/utils'
 
 /**
  * 创建账单账户

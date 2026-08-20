@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import dayjs from 'dayjs'
-import { getWeekLabel } from '@/utils/date'
+import { getWeekLabel } from '@/utils'
 
 const props = withDefaults(defineProps<{
   expand?: boolean

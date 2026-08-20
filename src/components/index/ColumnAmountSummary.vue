@@ -1,9 +1,7 @@
 <script setup lang="ts">
 import dayjs from 'dayjs'
-import { summaryAmountBill } from '@/api/bill'
-import { useSettingsStore } from '@/store'
-import { formatFloat } from '@/utils'
-import { getBillColor } from '@/utils/bill'
+import { useBillStore, useSettingsStore } from '@/store'
+import { formatFloat, getBillColor } from '@/utils'
 
 defineOptions({
   options: {
@@ -70,6 +68,7 @@ const dateTypes = [
   },
 ]
 
+const billStore = useBillStore()
 const settingsStore = useSettingsStore()
 
 const showSummarySetting = ref(false)
@@ -113,11 +112,37 @@ watch(() => showSummarySetting.value, () => {
   }
 })
 
+watch(() => billStore.charts, (data) => {
+  const categories: string[] = []
+  const expendSeries: number[] = []
+  const incomeSeries: number[] = []
+  data.forEach((item) => {
+    const date = dayjs(item.date)
+    categories.push(date.date().toString())
+    expendSeries.push(item.expend)
+    incomeSeries.push(item.income)
+  })
+
+  chartData.value.categories = categories
+  if (type.value === 0) {
+    chartOpts.value.color = [colors[0]]
+    chartData.value.series = [{ name: '日支出', data: expendSeries }]
+  }
+  else if (type.value === 1) {
+    chartOpts.value.color = [colors[1]]
+    chartData.value.series = [{ name: '日收入', data: incomeSeries }]
+  }
+  else {
+    chartOpts.value.color = [...colors]
+    chartData.value.series = [{ name: '日支出', data: expendSeries }, { name: '日收入', data: incomeSeries }]
+  }
+}, { deep: true })
+
 onMounted(() => {
-  getAmountSummary()
+  getAmountCharts()
 })
 
-function getAmountSummary() {
+function getAmountCharts() {
   const dt = settingsStore.index.summary.date
   const type = settingsStore.index.summary.type
 
@@ -134,43 +159,13 @@ function getAmountSummary() {
     beginDate = dayjs().subtract(15, 'day').format('YYYY-MM-DD')
   }
 
-  summaryAmountBill({
-    beginDate,
-    endDate,
-    type,
-    series: 2,
-  }).then((res) => {
-    const categories: string[] = []
-    const expendSeries: number[] = []
-    const incomeSeries: number[] = []
-    res.series.forEach((item) => {
-      expend.value = res.summary.expend
-      income.value = res.summary.income
-      const date = dayjs(item.date)
-      categories.push(date.date().toString())
-      expendSeries.push(item.expend)
-      incomeSeries.push(item.income)
-    })
-
-    chartData.value.categories = categories
-    if (type === 0) {
-      chartOpts.value.color = [colors[0]]
-      chartData.value.series = [{ name: '日支出', data: expendSeries }]
-    }
-    else if (type === 1) {
-      chartOpts.value.color = [colors[1]]
-      chartData.value.series = [{ name: '日收入', data: incomeSeries }]
-    }
-    else {
-      chartOpts.value.color = [...colors]
-      chartData.value.series = [{ name: '日支出', data: expendSeries }, { name: '日收入', data: incomeSeries }]
-    }
-  })
+  // 重载数据
+  billStore.loadCharts(beginDate, endDate, type)
 }
 
 function handleSettingConfirm() {
   settingsStore.updateIndexSummary(dateType.value, type.value)
-  getAmountSummary()
+  getAmountCharts()
   showSummarySetting.value = false
 }
 </script>

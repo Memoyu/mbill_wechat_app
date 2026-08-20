@@ -1,6 +1,6 @@
 import type { IBill, IBillDateGroup, IBillPageItem, IBillPageQuery, IBillSearchQuery, IBillSummaryAmount, IBillSummaryAmountQuery, ICreateBill, IEditRefundBill, IRefundBill, IRelatedBill, IRelationBill, IUpdateBill } from './types/bill'
 import type { PageResult } from './types/common'
-import { http } from '@/utils/http'
+import { http } from '@/utils'
 
 /**
  * 创建账单

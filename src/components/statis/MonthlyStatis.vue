@@ -2,8 +2,7 @@
 import type { Dayjs } from 'dayjs'
 import dayjs from 'dayjs'
 import { BillOptions } from '@/typings'
-import { getBillColor } from '@/utils/bill'
-import { systemInfo } from '@/utils/systemInfo'
+import { getBillColor, systemInfo } from '@/utils'
 
 defineOptions({
   options: {

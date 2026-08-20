@@ -1,5 +1,5 @@
 import type { IQiniuUploadToken } from './types/common'
-import { http } from '@/utils/http'
+import { http } from '@/utils'
 
 /**
  * 获取七牛上传凭证

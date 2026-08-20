@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { ActionItem } from '@/typings'
-import { safeAreaInsets } from '@/utils/systemInfo'
+import { safeAreaInsets } from '@/utils'
 
 const props = defineProps<{
   title?: string

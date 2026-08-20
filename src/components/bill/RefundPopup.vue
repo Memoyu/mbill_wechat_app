@@ -3,8 +3,7 @@ import type { IBill, IEditRefundBill, IRefundBill } from '@/api/types/bill'
 import type { ActionItem } from '@/typings'
 import dayjs from 'dayjs'
 import { createRefundBill, deleteRefundBill, getRefundBillList, updateRefundBill } from '@/api/bill'
-import { getBillColor } from '@/utils/bill'
-import { getDateFormat } from '@/utils/date'
+import { getBillColor, getDateFormat } from '@/utils'
 
 defineOptions({
   options: {

@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-import { safeAreaInsets } from '@/utils/systemInfo'
-
 definePage({
   style: {
     navigationStyle: 'custom',

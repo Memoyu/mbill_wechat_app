@@ -1,4 +1,5 @@
-import type { IBill, IBillDateGroup, IBillPageQuery, IEditBill } from '@/api/types/bill'
+import type { IBill, IBillDateGroup, IBillPageQuery, IBillSummaryAmountItem, IEditBill } from '@/api/types/bill'
+import type { BillTypeEnum } from '@/typings'
 import dayjs from 'dayjs'
 import { debounce } from 'lodash'
 import { defineStore } from 'pinia'
@@ -7,14 +8,41 @@ import {
   deleteBill as fetchDeleteBill,
   updateBill as fetchUpdateBill,
   pageBill,
+  summaryAmountBill,
 } from '@/api/bill'
 import { useLedgerPickerStore } from './ledgerPicker'
 
 // 初始化状态
 const initState: {
   bills: IBillDateGroup[]
+  summary: IBillSummaryAmountItem
+  charts: IBillSummaryAmountItem []
+  yearSummary: IBillSummaryAmountItem
 } = {
   bills: [],
+  summary: {
+    income: 0,
+    expend: 0,
+    incomeAvg: 0,
+    expendAvg: 0,
+    surplus: 0,
+    expendHighest: 0,
+    expendLowst: 0,
+    incomeHighest: 0,
+    incomeLowst: 0,
+  },
+  charts: [],
+  yearSummary: {
+    income: 0,
+    expend: 0,
+    incomeAvg: 0,
+    expendAvg: 0,
+    surplus: 0,
+    expendHighest: 0,
+    expendLowst: 0,
+    incomeHighest: 0,
+    incomeLowst: 0,
+  },
 }
 
 export const useBillStore = defineStore(
@@ -38,6 +66,37 @@ export const useBillStore = defineStore(
       const res = await pageBill(pageQuery.query)
       state.bills = res.items
     }, 500)
+
+    const loadSummary = async (date: number) => {
+      const res = await summaryAmountBill({
+        beginDate: dayjs(date).startOf('month').format(),
+        endDate: dayjs(date).endOf('month').format(),
+        series: 0,
+        ledgerIds: ledgerPickerStore.selectedLedgers,
+      })
+      state.summary = res.summary
+    }
+
+    const loadCharts = async (beginDate: string, endDate: string, type?: BillTypeEnum) => {
+      const res = await summaryAmountBill({
+        beginDate,
+        endDate,
+        type,
+        series: 2,
+      })
+      state.charts = res.series
+    }
+
+    const loadYearSummary = async () => {
+      // 本年度金额汇总
+      const res = await summaryAmountBill({
+        beginDate: dayjs().startOf('year').format('YYYY-MM-DD'),
+        endDate: dayjs().endOf('year').format('YYYY-MM-DD'),
+        series: 0,
+        ledgerIds: [], // 所有账本
+      })
+      state.yearSummary = res.summary
+    }
 
     /**
      * 获取本地账单
@@ -212,6 +271,9 @@ export const useBillStore = defineStore(
     return {
       ...toRefs(state),
       loadBills,
+      loadSummary,
+      loadCharts,
+      loadYearSummary,
       createBill,
       updateBill,
       deleteBill,

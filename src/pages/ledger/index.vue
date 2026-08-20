@@ -6,7 +6,7 @@ import dayjs from 'dayjs'
 import UQRCode from 'uqrcodejs'
 import { getColorByName, gradients } from '@/constants/gradients'
 import { useLedgerStore } from '@/store'
-import { systemInfo } from '@/utils/systemInfo'
+import { systemInfo } from '@/utils'
 
 definePage({
   style: {
@@ -146,6 +146,15 @@ function handleLedgerActions(ledger: any) {
   actionShow.value = true
 }
 
+function handleLedgerTap(ledger: any) {
+  if (!ledger)
+    return
+
+  uni.navigateTo({
+    url: `/pages/ledger/detail?ledgerId=${ledger.ledgerId}`,
+  })
+}
+
 function handleChangeColorAction() {
   colorPickerShow.value = true
 }
@@ -251,7 +260,7 @@ function handleSortChange(list: ILedger[]) {
     <view class="px-3 py-2">
       <drag-sort-list-view :list="ledgers" :gap="8" key-prop="ledgerId" :height="scrollHeight" @change="handleSortChange">
         <template #content="{ listItem }">
-          <view class="relative overflow-hidden transition-all duration-200">
+          <view class="relative overflow-hidden transition-all duration-200" @tap.stop="handleLedgerTap(listItem)">
             <!-- 账簿封面 -->
             <view class="bg-gradient-to-br" :style="{ background: gradients[listItem.color] }">
               <!-- 装饰元素容器 -->

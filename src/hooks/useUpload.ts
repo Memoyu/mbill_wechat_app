@@ -1,5 +1,5 @@
 import { ref } from 'vue'
-import { getEnvBaseUrl } from '@/utils/index'
+import { getEnvBaseUrl } from '@/utils'
 
 const VITE_UPLOAD_BASEURL = `${getEnvBaseUrl()}/upload`
 

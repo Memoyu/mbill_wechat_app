@@ -142,15 +142,19 @@ export interface IRefundBill {
 }
 
 export interface IBillSummaryAmountQuery extends IBillQuery {
+  /**
+   * 分组汇总: 0：不分组，1：按月，2：按日
+   */
   series: 0 | 1 | 2
 }
 
 export interface IBillSummaryAmount {
   summary: IBillSummaryAmountItem
-  series: IBillSummaryAmountItemWithDate []
+  series: IBillSummaryAmountItem []
 }
 
 export interface IBillSummaryAmountItem {
+  date?: string
   income: number
   expend: number
   incomeAvg: number
@@ -160,8 +164,4 @@ export interface IBillSummaryAmountItem {
   expendLowst: number
   incomeHighest: number
   incomeLowst: number
-}
-
-export interface IBillSummaryAmountItemWithDate extends IBillSummaryAmountItem {
-  date: string
 }

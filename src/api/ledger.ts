@@ -1,5 +1,5 @@
 import type { ICreateLedger, ILedger, ILedgerWithCreater, IUpdateLedger, IUpdateLedgerColor, IUpdateLedgerSort } from './types/ledger'
-import { http } from '@/utils/http'
+import { http } from '@/utils'
 
 /**
  * 创建账本

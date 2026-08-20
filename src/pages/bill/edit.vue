@@ -8,9 +8,7 @@ import Decimal from 'decimal.js'
 import { getAddressInfo } from '@/api/aggregation'
 import { getBill } from '@/api/bill'
 import { useBillStore, useLedgerStore, useSettingsStore } from '@/store'
-import { getBillColor } from '@/utils/bill'
-import { getDateFormat } from '@/utils/date'
-import { systemInfo } from '@/utils/systemInfo'
+import { getBillColor, getDateFormat, systemInfo } from '@/utils'
 
 definePage({
   style: {

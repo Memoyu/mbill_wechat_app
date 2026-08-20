@@ -1,12 +1,8 @@
 <script setup lang="ts">
-import type { IBillSummaryAmountItem } from '@/api/types/bill'
 import dayjs from 'dayjs'
 import { uploadAvatar } from '@/api/common'
-import { useUserStore } from '@/store'
-import { formatFloat } from '@/utils'
-import { getBillColor } from '@/utils/bill'
-
-// TODO 待账单数据完成录入，再进行【年数据统计】开发
+import { useBillStore, useUserStore } from '@/store'
+import { formatFloat, getBillColor } from '@/utils'
 
 const show = defineModel<boolean>()
 const actions = [{
@@ -28,27 +24,17 @@ const actions = [{
 }]
 
 const userStore = useUserStore()
+const billStore = useBillStore()
 
 const editShow = ref(false)
 const nickname = ref()
-const summary = ref<IBillSummaryAmountItem>({
-  income: 0,
-  expend: 0,
-  incomeAvg: 0,
-  expendAvg: 0,
-  surplus: 0,
-  expendHighest: 0,
-  expendLowst: 0,
-  incomeHighest: 0,
-  incomeLowst: 0,
-})
 
+const summary = computed(() => billStore.yearSummary)
 const user = computed(() => userStore.userInfo)
 
-function handleCancelClick() {
-  show.value = false
-}
-
+/**
+ * 选择头像
+ */
 function handleChooseAvatar(e: any) {
   if (!e?.detail?.avatarUrl)
     return
@@ -58,14 +44,27 @@ function handleChooseAvatar(e: any) {
   })
 }
 
+/**
+ * 修改昵称
+ */
 function handelNicknameInput() {
   nickname.value = user.value.nickname
   editShow.value = true
 }
 
+/*
+ * 昵称修改确认
+ */
 function handleEditConfirm() {
   userStore.setUserNickname(nickname.value)
   editShow.value = false
+}
+
+/**
+ * 刷新年汇总统计
+ */
+function handleSummaryRefresh() {
+  billStore.loadYearSummary()
 }
 </script>
 
@@ -77,7 +76,6 @@ function handleEditConfirm() {
     :safe-area-inset-bottom="true"
     custom-class="rounded-t-3xl relative h-60vh"
     lock-scroll
-    @close="handleCancelClick"
   >
     <view class="h-full overflow-auto">
       <!-- 标题栏 -->
@@ -118,8 +116,11 @@ function handleEditConfirm() {
 
         <!-- 年汇总统计 -->
         <view class="user-block">
-          <view class="user-block-title">
-            年汇总统计
+          <view class="user-block-title flex items-center justify-between">
+            <text>年汇总统计</text>
+            <view class="flex items-center justify-center rounded-full bg-gray-100/80 p-1" @tap="handleSummaryRefresh">
+              <wd-icon name="refresh" size="18" />
+            </view>
           </view>
           <view class="flex flex-col gap-3 text-gray-500">
             <view class="flex justify-between">

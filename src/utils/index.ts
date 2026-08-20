@@ -1,9 +1,14 @@
 /* eslint-disable style/indent */
 import type { PageMetaDatum, SubPackages } from '@uni-helper/vite-plugin-uni-pages'
-/** 如果是运行抖音小程序，就不引入 @uni-helper/uni-env，否则运行报错（找不到process) */
-import { isMpWeixin } from '@uni-helper/uni-env'
 
 import { pages, subPackages } from '@/pages.json'
+
+export * from './bill'
+export * from './date'
+export * from './debounce'
+export * from './http'
+export * from './systemInfo'
+export * from './uploadFile'
 
 export type PageInstance = Page.PageInstance<AnyObject, object> & { $page: Page.PageInstance<AnyObject, object> & { fullPath: string } }
 

@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import { useBillStore } from '@/store'
-import { formatFloat } from '@/utils'
-import { getBillColor } from '@/utils/bill'
-import { getDateFormat, getWeekday } from '@/utils/date'
+import { formatFloat, getBillColor, getDateFormat, getWeekday } from '@/utils'
 
 const billStore = useBillStore()
 

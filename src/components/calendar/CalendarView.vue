@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { CSSProperties } from 'vue'
-import { objToStyle } from '@/utils'
-import { compareDate, getMonthEndDay } from '@/utils/date'
+import { compareDate, getMonthEndDay, objToStyle } from '@/utils'
 
 export interface CalendarDayItem {
   date: number

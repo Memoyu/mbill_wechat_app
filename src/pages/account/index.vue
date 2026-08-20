@@ -3,7 +3,7 @@ import type { IAccount } from '@/api/types/account'
 import type { IIcon } from '@/api/types/icon'
 import type { ActionGroup, ActionItem } from '@/typings'
 import { useAccountStore } from '@/store'
-import { systemInfo } from '@/utils/systemInfo'
+import { systemInfo } from '@/utils'
 
 definePage({
   style: {

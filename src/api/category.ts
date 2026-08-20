@@ -1,5 +1,5 @@
 import type { ICategory, ICreateCategory, IUpdateCategory, IUpdateCategorySort } from './types/category'
-import { http } from '@/utils/http'
+import { http } from '@/utils'
 
 /**
  * 创建账单分类

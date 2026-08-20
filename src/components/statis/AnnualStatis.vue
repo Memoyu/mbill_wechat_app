@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { systemInfo } from '@/utils/systemInfo'
+import { systemInfo } from '@/utils'
 
 const props = defineProps<{
 

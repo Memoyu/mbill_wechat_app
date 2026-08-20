@@ -1,40 +1,19 @@
 <script setup lang="ts">
-import type { IBillSummaryAmountItem } from '@/api/types/bill'
-import dayjs from 'dayjs'
-import { summaryAmountBill } from '@/api/bill'
-import { formatFloat } from '@/utils'
-import { getBillColor } from '@/utils/bill'
+import { useBillStore } from '@/store'
+import { formatFloat, getBillColor } from '@/utils'
 
 const props = defineProps<{
   date: number
 }>()
 
-const summary = ref<IBillSummaryAmountItem>({
-  income: 0,
-  expend: 0,
-  incomeAvg: 0,
-  expendAvg: 0,
-  surplus: 0,
-  expendHighest: 0,
-  expendLowst: 0,
-  incomeHighest: 0,
-  incomeLowst: 0,
-})
+const billStore = useBillStore()
+
+const summary = computed(() => billStore.summary)
 
 watch(() => props.date, (date) => {
   // 重新加载数据
-  getAmountSummary(date)
+  billStore.loadSummary(date)
 }, { immediate: true })
-
-function getAmountSummary(date: number) {
-  summaryAmountBill({
-    beginDate: dayjs(date).startOf('month').format(),
-    endDate: dayjs(date).endOf('month').format(),
-    series: 0,
-  }).then((res) => {
-    summary.value = res.summary
-  })
-}
 </script>
 
 <template>
@@ -48,7 +27,7 @@ function getAmountSummary(date: number) {
       </view>
 
       <!-- 总金额 -->
-      <view class="flex gap-3">
+      <view class="flex gap-4">
         <view class="flex gap-1">
           <text>支出</text>
           <text class="font-bold" :style="{ color: getBillColor(0) }">
@@ -61,22 +40,6 @@ function getAmountSummary(date: number) {
             {{ formatFloat(summary.income) }}
           </text>
         </view>
-      </view>
-    </view>
-
-    <!-- 最高、日均 -->
-    <view class="flex flex-col justify-end gap-3">
-      <view class="flex gap-1">
-        <text>日均支出</text>
-        <text class="font-bold" :style="{ color: getBillColor(0) }">
-          {{ formatFloat(summary.expendAvg) }}
-        </text>
-      </view>
-      <view class="flex gap-1">
-        <text>最高支出</text>
-        <text class="font-bold" :style="{ color: getBillColor(0) }">
-          {{ formatFloat(summary.expendHighest) }}
-        </text>
       </view>
     </view>
   </view>

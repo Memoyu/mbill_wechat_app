@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import dayjs from 'dayjs'
-import { systemInfo } from '@/utils/systemInfo'
+import { systemInfo } from '@/utils'
 
 definePage({
   style: {

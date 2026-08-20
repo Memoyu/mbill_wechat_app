@@ -2,10 +2,9 @@
 import type { IBill, IRelatedBill } from '@/api/types/bill'
 import type { ActionItem } from '@/typings'
 import dayjs from 'dayjs'
-import { s } from 'node_modules/vite/dist/node/types.d-aGj9QkWt'
 import { getBill, getRelatedBill, relationBill } from '@/api/bill'
 import { useBillStore } from '@/store'
-import { getBillColor, getBillWay } from '@/utils/bill'
+import { getBillColor } from '@/utils'
 
 definePage({
   style: {
