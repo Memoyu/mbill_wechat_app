@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { useBillStore } from '@/store'
+import { useIndexBillStore } from '@/store'
 import { formatFloat, getBillColor, getDateFormat, getWeekday } from '@/utils'
 
-const billStore = useBillStore()
+const indexBillStore = useIndexBillStore()
 
 const billGroup = computed(() => {
-  return billStore.bills
+  return indexBillStore.bills
 })
 </script>
 

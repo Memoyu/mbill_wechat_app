@@ -1,4 +1,4 @@
-import type { ICategory, ICreateCategory, IUpdateCategory, IUpdateCategorySort } from './types/category'
+import type { ICategory, ICreateCategory, IGroupCategory, IUpdateCategory, IUpdateCategorySort } from './types/category'
 import { http } from '@/utils'
 
 /**
@@ -33,5 +33,5 @@ export function deleteCategory(categoryId: string) {
  * 获取账单分类组合列表
  */
 export function getCategoryGroup() {
-  return http.get<ICategory[]>('category/list/group')
+  return http.get<IGroupCategory>('category/list/group')
 }

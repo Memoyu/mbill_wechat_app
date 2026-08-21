@@ -7,7 +7,7 @@ interface State {
   weather: boolean
   address: boolean
   index: {
-    summary: {
+    charts: {
       show: boolean
       type?: BillTypeEnum
       date: number
@@ -21,7 +21,7 @@ const initState: State = {
   weather: false,
   address: false,
   index: {
-    summary: {
+    charts: {
       show: true,
       date: 0,
     },
@@ -34,13 +34,14 @@ export const useSettingsStore = defineStore(
   () => {
     const state = reactive({ ...initState })
 
-    const updateIndexSummary = (date: number, type?: BillTypeEnum) => {
-      state.index.summary.type = type
-      state.index.summary.date = date
+    const updateIndexCharts = (date: number, type?: BillTypeEnum) => {
+      state.index.charts.type = type
+      state.index.charts.date = date
     }
+
     return {
       ...toRefs(state),
-      updateIndexSummary,
+      updateIndexCharts,
       version: import.meta.env.VITE_APP_VERSION,
     }
   },

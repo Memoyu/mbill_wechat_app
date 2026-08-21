@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import dayjs from 'dayjs'
 import { uploadAvatar } from '@/api/common'
-import { useBillStore, useUserStore } from '@/store'
+import { useIndexBillStore, useUserStore } from '@/store'
 import { formatFloat, getBillColor } from '@/utils'
 
 const show = defineModel<boolean>()
@@ -24,12 +24,12 @@ const actions = [{
 }]
 
 const userStore = useUserStore()
-const billStore = useBillStore()
+const indexBillStore = useIndexBillStore()
 
 const editShow = ref(false)
 const nickname = ref()
 
-const summary = computed(() => billStore.yearSummary)
+const summary = computed(() => indexBillStore.yearSummary)
 const user = computed(() => userStore.userInfo)
 
 /**
@@ -64,7 +64,7 @@ function handleEditConfirm() {
  * 刷新年汇总统计
  */
 function handleSummaryRefresh() {
-  billStore.loadYearSummary()
+  indexBillStore.loadYearSummary()
 }
 </script>
 

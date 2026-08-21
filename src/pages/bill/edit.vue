@@ -7,7 +7,7 @@ import dayjs from 'dayjs'
 import Decimal from 'decimal.js'
 import { getAddressInfo } from '@/api/aggregation'
 import { getBill } from '@/api/bill'
-import { useBillStore, useLedgerStore, useSettingsStore } from '@/store'
+import { useIndexBillStore, useLedgerStore, useSettingsStore } from '@/store'
 import { getBillColor, getDateFormat, systemInfo } from '@/utils'
 
 definePage({
@@ -20,7 +20,7 @@ definePage({
 const toast = useToast()
 const ledgerStore = useLedgerStore()
 const settingsStore = useSettingsStore()
-const billStore = useBillStore()
+const indexBillStore = useIndexBillStore()
 
 const typeOptions = ['支出', '收入']
 const keyboardInput = ref('')
@@ -331,14 +331,14 @@ function handleEditComplete(keep: boolean = false) {
     return toast.error('请输入正确的金额')
 
   if (isCreate.value) {
-    billStore.createBill(edit).then(() => {
+    indexBillStore.createBill(edit).then(() => {
       if (!keep) {
         uni.navigateBack()
       }
     })
   }
   else {
-    billStore.updateBill(edit).then(() => {
+    indexBillStore.updateBill(edit).then(() => {
       if (!keep) {
         uni.navigateBack()
       }

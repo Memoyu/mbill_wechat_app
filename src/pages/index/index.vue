@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import dayjs from 'dayjs'
-import { useBillStore, useLedgerPickerStore, useUserStore } from '@/store'
+import { useIndexBillStore, useLedgerPickerStore, useUserStore } from '@/store'
 import { safeAreaInsets } from '@/utils'
 
 defineOptions({
@@ -17,10 +17,8 @@ definePage({
 })
 
 const userStore = useUserStore()
-const billStore = useBillStore()
+const indexBillStore = useIndexBillStore()
 const ledgerPickerStore = useLedgerPickerStore()
-
-const date = ref(Date.now())
 
 const isUserShow = ref(false)
 const isLedgersShow = ref(false)
@@ -30,26 +28,30 @@ const isDateSelectShow = ref(false)
 const user = computed(() => userStore.userInfo)
 
 const dateText = computed(() => {
-  return dayjs(date.value).format('YYYY年MM月')
+  const date = dayjs(indexBillStore.date.value)
+  let text = date.format('YYYY年MM月')
+  if (indexBillStore.date.type === 'year') {
+    text = date.format('YYYY年')
+  }
+  else if (indexBillStore.date.type === 'date') {
+    text = date.format('YYYY年MM月DD日')
+  }
+  return text
 })
-
-// 监听日期改变
-watch (() => date.value, (value) => {
-  // 整月查询
-  billStore.loadBills({
-    beginDate: dayjs(value).startOf('month').format(),
-    endDate: dayjs(value).endOf('month').format(),
-  })
-}, { immediate: true })
 
 // 监听账本选中
 watch (() => ledgerPickerStore.selectedLedgers, () => {
-  billStore.loadBills({})
+  indexBillStore.loadIndexData()
 }, { deep: true })
 
 onLoad(() => {
-  billStore.loadYearSummary()
+  indexBillStore.loadIndexData()
+  indexBillStore.loadYearSummary()
 })
+
+function handleDateChange(e: any) {
+  indexBillStore.setDate(e)
+}
 
 function handleCalendarClick() {
   uni.navigateTo({
@@ -119,12 +121,12 @@ function handleCalendarClick() {
 
     <!-- 账单金额汇总 -->
     <view class="mx-3 rounded-xl bg-indigo-300/20 p-3">
-      <amount-summary :date="date" />
+      <amount-summary />
     </view>
 
     <!-- 账单金额汇总统计 -->
-    <view v-if="dayjs(date).isSame(dayjs(), 'month')" class="mx-3 rounded-xl bg-indigo-300/20 px-2 py-3">
-      <column-amount-summary :date="date" />
+    <view v-if="dayjs(indexBillStore.date.value).isSame(dayjs(), 'month')" class="mx-3 rounded-xl bg-indigo-300/20 px-2 py-3">
+      <amount-summary-charts />
     </view>
   </view>
 
@@ -140,7 +142,7 @@ function handleCalendarClick() {
   <wd-gap height="calc(32px + var(--wot-tabbar-height, 50px))" />
 
   <!-- 日期选择弹窗 -->
-  <date-picker v-model="isDateSelectShow" v-model:date="date" type="year-month" />
+  <date-picker v-model="isDateSelectShow" choose-type :date="indexBillStore.date" @change="handleDateChange" />
 
   <!-- 账本弹窗 -->
   <ledger-picker v-model="isLedgersShow" />

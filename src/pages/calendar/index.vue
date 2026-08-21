@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import type { IDatePickerValue } from '@/components/base/DatePicker.vue'
 import dayjs from 'dayjs'
 import { systemInfo } from '@/utils'
 
@@ -12,14 +13,17 @@ definePage({
 const show = ref(false)
 const isDateSelectShow = ref(false)
 const calExpand = ref(true)
-const date = ref(Date.now())
+const date = ref<IDatePickerValue>({
+  value: dayjs().valueOf(),
+  type: 'year-month',
+})
 const navbarHeight = ref(0)
 const calendarHeight = ref(0)
 
 const { proxy } = getCurrentInstance() as any
 
 const dateText = computed(() => {
-  return dayjs(date.value).format('YYYY年MM月')
+  return dayjs(date.value.value).format('YYYY年MM月')
 })
 
 const scrollHeight = computed(() => {
@@ -81,9 +85,8 @@ function handleMonthChange(month: number) {
         <view class="iconfont icon-today text-xl" @click="handleTodayClick" />
       </view>
     </template>
-    <template #action>
+    <template #prefix-action>
       <view class="mt-3 flex items-center gap-3 text-sm">
-        <slot name="action" />
         <view class="flex">
           <view>
             收入
@@ -115,7 +118,7 @@ function handleMonthChange(month: number) {
   </nav-bar>
   <!-- 日历组件 -->
   <view id="CALENDAR" class="mx-3 rounded-3xl bg-white p-2">
-    <calendar v-model="date" :expand="calExpand" @change="handleMonthChange" @heightchange="handleCalHeightChange" />
+    <calendar v-model="date.value" :expand="calExpand" @change="handleMonthChange" @heightchange="handleCalHeightChange" />
   </view>
 
   <scroll-view

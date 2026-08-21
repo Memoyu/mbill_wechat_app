@@ -1,19 +1,13 @@
 <script setup lang="ts">
-import { useBillStore } from '@/store'
+import { useIndexBillStore } from '@/store'
 import { formatFloat, getBillColor } from '@/utils'
 
 const props = defineProps<{
-  date: number
 }>()
 
-const billStore = useBillStore()
+const indexBillStore = useIndexBillStore()
 
-const summary = computed(() => billStore.summary)
-
-watch(() => props.date, (date) => {
-  // 重新加载数据
-  billStore.loadSummary(date)
-}, { immediate: true })
+const summary = computed(() => indexBillStore.summary)
 </script>
 
 <template>

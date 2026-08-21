@@ -3,7 +3,7 @@ import type { IBill, IRelatedBill } from '@/api/types/bill'
 import type { ActionItem } from '@/typings'
 import dayjs from 'dayjs'
 import { getBill, getRelatedBill, relationBill } from '@/api/bill'
-import { useBillStore } from '@/store'
+import { useIndexBillStore } from '@/store'
 import { getBillColor } from '@/utils'
 
 definePage({
@@ -15,7 +15,7 @@ definePage({
 
 const toast = useGlobalToast()
 const dialog = useGlobalDialog()
-const billStore = useBillStore()
+const indexBillStore = useIndexBillStore()
 
 const showRefund = ref(false)
 const showBillSelect = ref(false)
@@ -106,7 +106,7 @@ function handleDelete() {
     .confirm({
       msg: `确定要删除账单？`,
       success: () => {
-        billStore.deleteBill(bill.value.billId).then(() => {
+        indexBillStore.deleteBill(bill.value.billId).then(() => {
           uni.navigateBack().then(() => {
             toast.success('删除成功')
           })

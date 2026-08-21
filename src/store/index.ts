@@ -16,8 +16,8 @@ setActivePinia(store)
 export default store
 
 export * from './account'
-export * from './bill'
 export * from './category'
+export * from './indexBill'
 export * from './ledger'
 export * from './ledgerPicker'
 export * from './settings'

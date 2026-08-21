@@ -1,3 +1,8 @@
+export interface IGroupAccount {
+  tops: IAccount[]
+  items: IAccount[]
+}
+
 export interface IAccount {
   accountId: string
   name: string

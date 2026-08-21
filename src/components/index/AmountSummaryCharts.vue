@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import dayjs from 'dayjs'
-import { useBillStore, useSettingsStore } from '@/store'
+import { useIndexBillStore, useSettingsStore } from '@/store'
 import { formatFloat, getBillColor } from '@/utils'
 
 defineOptions({
@@ -12,7 +12,6 @@ defineOptions({
 })
 
 const props = defineProps<{
-  date: number
 }>()
 
 const colors = ['#f87171', '#4ade80']
@@ -68,15 +67,12 @@ const dateTypes = [
   },
 ]
 
-const billStore = useBillStore()
+const indexBillStore = useIndexBillStore()
 const settingsStore = useSettingsStore()
 
-const showSummarySetting = ref(false)
-const type = ref()
-const dateType = ref(0)
-
-const expend = ref(0)
-const income = ref(0)
+const showChartsSetting = ref(false)
+const innerType = ref()
+const innerDate = ref(0)
 const chartData = ref<{
   categories: string[]
   series: {
@@ -99,24 +95,29 @@ const chartData = ref<{
 })
 
 const dateTitle = computed(() => {
-  return dateTypes[settingsStore.index.summary.date].label
+  return dateTypes[settingsStore.index.charts.date].label
 })
 const typeTitle = computed(() => {
-  return settingsStore.index.summary.type === 0 ? '支出' : settingsStore.index.summary.type === 1 ? '收入' : ''
+  return settingsStore.index.charts.type === 0 ? '支出' : settingsStore.index.charts.type === 1 ? '收入' : ''
+})
+const charts = computed(() => {
+  return indexBillStore.charts
 })
 
-watch(() => showSummarySetting.value, () => {
-  if (showSummarySetting.value) {
-    type.value = settingsStore.index.summary.type
-    dateType.value = settingsStore.index.summary.date
+watch(() => showChartsSetting.value, () => {
+  // 弹窗时，根据选项设置恢复内部选项
+  if (showChartsSetting.value) {
+    innerType.value = settingsStore.index.charts.type
+    innerDate.value = settingsStore.index.charts.date
   }
 })
 
-watch(() => billStore.charts, (data) => {
+watch(() => charts.value, (data) => {
+  // 数据源变更后构造数据
   const categories: string[] = []
   const expendSeries: number[] = []
   const incomeSeries: number[] = []
-  data.forEach((item) => {
+  data.series.forEach((item) => {
     const date = dayjs(item.date)
     categories.push(date.date().toString())
     expendSeries.push(item.expend)
@@ -124,11 +125,11 @@ watch(() => billStore.charts, (data) => {
   })
 
   chartData.value.categories = categories
-  if (type.value === 0) {
+  if (innerType.value === 0) {
     chartOpts.value.color = [colors[0]]
     chartData.value.series = [{ name: '日支出', data: expendSeries }]
   }
-  else if (type.value === 1) {
+  else if (innerType.value === 1) {
     chartOpts.value.color = [colors[1]]
     chartData.value.series = [{ name: '日收入', data: incomeSeries }]
   }
@@ -138,40 +139,18 @@ watch(() => billStore.charts, (data) => {
   }
 }, { deep: true })
 
-onMounted(() => {
-  getAmountCharts()
-})
-
-function getAmountCharts() {
-  const dt = settingsStore.index.summary.date
-  const type = settingsStore.index.summary.type
-
-  // 默认本周，周一到周日
-  let beginDate = dayjs().startOf('week').add(1, 'day').format('YYYY-MM-DD')
-  let endDate = dayjs().format('YYYY-MM-DD')
-  if (dt === 0) {
-    endDate = dayjs().endOf('week').add(1, 'day').format('YYYY-MM-DD')
-  }
-  else if (dt === 1) {
-    beginDate = dayjs().subtract(7, 'day').format('YYYY-MM-DD')
-  }
-  else if (dt === 2) {
-    beginDate = dayjs().subtract(15, 'day').format('YYYY-MM-DD')
-  }
-
-  // 重载数据
-  billStore.loadCharts(beginDate, endDate, type)
-}
-
+/**
+ * 确认设置
+ */
 function handleSettingConfirm() {
-  settingsStore.updateIndexSummary(dateType.value, type.value)
-  getAmountCharts()
-  showSummarySetting.value = false
+  settingsStore.updateIndexCharts(innerDate.value, innerType.value)
+  indexBillStore.loadCharts()
+  showChartsSetting.value = false
 }
 </script>
 
 <template>
-  <view v-if="settingsStore.index.summary.show">
+  <view v-if="settingsStore.index.charts.show">
     <view class="flex items-start justify-between">
       <view>
         <view class="font-bold">
@@ -181,18 +160,18 @@ function handleSettingConfirm() {
           <view class="flex gap-2">
             <text>支出:</text>
             <text class="font-semibold" :style="{ color: getBillColor(0) }">
-              {{ formatFloat(expend) }}
+              {{ formatFloat(charts.summary.expend) }}
             </text>
           </view>
           <view class="flex gap-2">
             <text>收入:</text>
             <text class="font-semibold" :style="{ color: getBillColor(1) }">
-              {{ formatFloat(income) }}
+              {{ formatFloat(charts.summary.income) }}
             </text>
           </view>
         </view>
       </view>
-      <view class="flex items-center justify-center rounded-full bg-white/70 p-1" @tap="showSummarySetting = true">
+      <view class="flex items-center justify-center rounded-full bg-white/70 p-1" @tap="showChartsSetting = true">
         <wd-icon name="more" size="18" />
       </view>
     </view>
@@ -207,14 +186,14 @@ function handleSettingConfirm() {
   </view>
 
   <!-- 汇总设置 -->
-  <bottom-popup v-model="showSummarySetting" height="30vh" title="汇总设置" @confirm="handleSettingConfirm">
+  <bottom-popup v-model="showChartsSetting" height="30vh" title="汇总设置" @confirm="handleSettingConfirm">
     <view class="mb-3 flex flex-col p-3 space-y-2">
       <!-- 账单类型 -->
       <view>
         <view class="filter-content-title">
           账单类型
         </view>
-        <wd-radio-group v-model="type" allow-uncheck type="button">
+        <wd-radio-group v-model="innerType" allow-uncheck type="button">
           <wd-radio v-for=" t in types" :key="t.value" :value="t.value">
             {{ t.label }}
           </wd-radio>
@@ -226,7 +205,7 @@ function handleSettingConfirm() {
         <view class="filter-content-title">
           时间范围
         </view>
-        <wd-radio-group v-model="dateType" type="button">
+        <wd-radio-group v-model="innerDate" type="button">
           <wd-radio v-for=" dt in dateTypes" :key="dt.value" :value="dt.value">
             {{ dt.label }}
           </wd-radio>

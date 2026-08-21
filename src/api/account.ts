@@ -1,4 +1,4 @@
-import type { IAccount, ICreateAccount, IUpdateAccount, IUpdateAccountSort } from './types/account'
+import type { IAccount, ICreateAccount, IGroupAccount, IUpdateAccount, IUpdateAccountSort } from './types/account'
 import { http } from '@/utils'
 
 /**
@@ -33,5 +33,5 @@ export function deleteAccount(categoryId: string) {
  * 获取账单账户组合列表
  */
 export function getAccountGroup() {
-  return http.get<IAccount[]>('account/list/group')
+  return http.get<IGroupAccount>('account/list/group')
 }
