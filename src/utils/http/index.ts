@@ -1,8 +1,6 @@
-import type { IDoubleTokenRes } from '@/api/types/user'
 import type { CustomRequestOptions, IResponse } from '@/utils/http/types'
 import { nextTick } from 'vue'
 import { useTokenStore } from '@/store/token'
-import { isDoubleTokenMode } from '@/utils'
 import { ResultEnum } from './enum'
 
 // 刷新 token 状态管理
@@ -28,14 +26,9 @@ export function http<T>(options: CustomRequestOptions) {
 
         if (isTokenExpired) {
           const tokenStore = useTokenStore()
-          if (!isDoubleTokenMode) {
-            // 未启用双token策略，清理用户信息，跳转到登录页
-            tokenStore.logout()
-            return reject(res)
-          }
 
           /* -------- 无感刷新 token ----------- */
-          const { refreshToken } = tokenStore.tokenInfo as IDoubleTokenRes || {}
+          const { refreshToken } = tokenStore.tokenInfo
           // token 失效的，且有刷新 token 的，才放到请求队列里
           if (refreshToken) {
             taskQueue.push(() => {

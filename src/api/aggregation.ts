@@ -1,5 +1,5 @@
 import type { IAddressInfo, IWeatherInfo } from './types/aggregation'
-import { http } from '@/utils'
+import { http } from '@/utils/http'
 
 /**
  * 获取地址信息

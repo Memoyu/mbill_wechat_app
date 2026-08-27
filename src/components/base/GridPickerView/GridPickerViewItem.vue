@@ -16,13 +16,8 @@ const props = defineProps<{
   expand?: boolean
 }>()
 
-const isSelected = computed(() => {
-  return props.selected === props.item.id
-})
-
-const hasChilds = computed(() => {
-  return props.item.childs && props.item.childs.length > 0
-})
+const isSelected = computed(() => props.selected === props.item.id)
+const hasChilds = computed(() => props.item.childs && props.item.childs.length > 0)
 </script>
 
 <template>

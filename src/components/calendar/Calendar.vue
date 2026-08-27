@@ -2,21 +2,25 @@
 import dayjs from 'dayjs'
 import { getWeekLabel } from '@/utils'
 
-const props = withDefaults(defineProps<{
-  expand?: boolean
-}>(), {
-  expand: true,
+defineOptions({
+  options: {
+    addGlobalClass: true,
+    virtualHost: true,
+    styleIsolation: 'shared',
+  },
 })
-const emit = defineEmits(['change', 'heightchange'])
+
+const props = withDefaults(defineProps<{
+}>(), {
+})
+const emit = defineEmits(['change', 'selected', 'heightchange'])
 const date = defineModel<number>()
 
-const INIT_HEIGHT = 60
 const MAX_DATE = dayjs(dayjs().format('YYYY-MM-DD')).valueOf()
 const { proxy } = getCurrentInstance() as any
 
 const dateValue = ref(Date.now())
-const swiperHeight = ref(INIT_HEIGHT)
-const computedHeight = ref(0)
+const swiperHeight = ref(0)
 const dateList = ref<number[]>([])
 const currentIndex = ref(0)
 const oldIndex = ref(0)
@@ -29,24 +33,14 @@ const weekLabel = computed(() => {
   }
 })
 
-watch(() => props.expand, (val) => {
-  console.log(val, 'calendar expand')
-  if (val)
-    swiperHeight.value = computedHeight.value
-  else
-    swiperHeight.value = INIT_HEIGHT
-  emitHeightChange(swiperHeight.value)
-})
-
 watch(() => date.value, (val) => {
   if (val === currentDate.value)
     return
   console.log(val, dateList.value[currentIndex.value])
   initDateList(dayjs(dayjs(val).format('YYYY-MM-DD')).valueOf())
-})
+}, { immediate: true })
 
 onMounted(() => {
-  initDateList()
 })
 
 function initDateList(baseDate = MAX_DATE) {
@@ -62,23 +56,23 @@ function initDateList(baseDate = MAX_DATE) {
   oldIndex.value = currentIndex.value
   currentDate.value = dates[currentIndex.value]
   getSwiperItemHeight()
-  // console.log('initDateList', swiperList.value, swiperIndex.value)
+  console.log('initDateList', dateList.value, currentIndex.value)
 }
 function handleDateChange(e: any) {
   // dateValue.value = e.value
   // currentIndex.value = 3
+  const d = e.value
+  date.value = d
+  emit('selected', d)
 }
 
 function handleSwiperChange(e: any) {
   // console.log(e, 'change')
   oldIndex.value = currentIndex.value
-
   const index = e.detail.current
   const month = dateList.value[index]
-
   emit('change', month)
   currentDate.value = month
-  date.value = month
   currentIndex.value = index
   // console.log(currentIndex.value, 'currentIndex.value')
   getSwiperItemHeight()
@@ -125,10 +119,9 @@ function getSwiperItemHeight() {
       .in(proxy)
       .select(`#calendar-view-${month}`)
       .boundingClientRect((view: any) => {
-        // console.log(view, month, 'boundingClientRect')
+        console.log(view, month, 'boundingClientRect')
         // 输出元素位置信息
-        swiperHeight.value = view?.height ?? INIT_HEIGHT
-        computedHeight.value = swiperHeight.value
+        swiperHeight.value = view?.height ?? 399
         emitHeightChange(swiperHeight.value)
       })
       .exec(), 0)

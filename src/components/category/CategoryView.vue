@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import type { GridSelectData, GridSelectItem } from '../base/GridPickerView/GridPickerView.vue'
+import type { GridSelectItem } from '../base/GridPickerView/GridPickerView.vue'
+import { getCategoryTop } from '@/api/category'
 import { useCategoryStore } from '@/store'
 
 defineOptions({
@@ -12,6 +13,7 @@ defineOptions({
 
 const props = defineProps<{
   height: number
+  showTop?: boolean
 }>()
 const emit = defineEmits(['change'])
 const selected = defineModel<string>()
@@ -23,11 +25,30 @@ const initTypes: number[] = []
 
 const selectedExpend = ref('')
 const selectedIncome = ref('')
-const expends = ref<GridSelectData>({ tops: [], list: [] })
-const incomes = ref<GridSelectData>({ tops: [], list: [] })
+const expends = ref<GridSelectItem[]>([])
+const incomes = ref<GridSelectItem[]>([])
+const expendTops = ref<GridSelectItem[]>([])
+const incomeTops = ref<GridSelectItem[]>([])
 
 onMounted(() => {
-
+  if (props.showTop) {
+    getCategoryTop().then((res) => {
+      expendTops.value = (res.expends ?? []).map((a) => {
+        return {
+          id: a.categoryId,
+          name: a.name,
+          icon: a.icon,
+        } as GridSelectItem
+      })
+      incomeTops.value = (res.incomes ?? []).map((a) => {
+        return {
+          id: a.categoryId,
+          name: a.name,
+          icon: a.icon,
+        } as GridSelectItem
+      })
+    })
+  }
 })
 
 watch(() => type.value, (t) => {
@@ -36,16 +57,7 @@ watch(() => type.value, (t) => {
     return
 
   const categories = (t === 0 ? categoryStore.expends : categoryStore.incomes) || []
-  let tops: GridSelectItem[] = []
   let list: GridSelectItem[] = []
-  // 常用分类
-  tops = (categories[0]?.childs || []).map((a) => {
-    return {
-      id: a.categoryId,
-      name: a.name,
-      icon: a.icon,
-    } as GridSelectItem
-  })
 
   // 分类列表
   list = categories.map((a) => {
@@ -64,10 +76,10 @@ watch(() => type.value, (t) => {
   })
 
   if (t === 0) {
-    expends.value = { tops, list }
+    expends.value = list
   }
   else {
-    incomes.value = { tops, list }
+    incomes.value = list
   }
   initTypes.push(t)
   // console.log('分类初始化完成', t)
@@ -109,11 +121,11 @@ function handleCategoryChange(item: any) {
   <view>
     <wd-tabs v-model="type" animated swipeable @change="handleTabChange">
       <wd-tab key="expend">
-        <grid-picker-view v-if="initTypes.includes(0)" v-model="selectedExpend" :data="expends" :scroll-height="height" @change="handleCategoryChange" />
+        <grid-picker-view v-if="initTypes.includes(0)" v-model="selectedExpend" :list="expends" :tops="expendTops" :scroll-height="height" @change="handleCategoryChange" />
       </wd-tab>
 
       <wd-tab key="income">
-        <grid-picker-view v-if="initTypes.includes(1)" v-model="selectedIncome" :data="incomes" :scroll-height="height" @change="handleCategoryChange" />
+        <grid-picker-view v-if="initTypes.includes(1)" v-model="selectedIncome" :list="incomes" :tops="incomeTops" :scroll-height="height" @change="handleCategoryChange" />
       </wd-tab>
     </wd-tabs>
   </view>

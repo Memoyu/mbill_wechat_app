@@ -3,7 +3,7 @@ import type { IBill, IEditRefundBill, IRefundBill } from '@/api/types/bill'
 import type { ActionItem } from '@/typings'
 import dayjs from 'dayjs'
 import { createRefundBill, deleteRefundBill, getRefundBillList, updateRefundBill } from '@/api/bill'
-import { getBillColor, getDateFormat } from '@/utils'
+import { getBillColor, formatDate } from '@/utils'
 
 defineOptions({
   options: {
@@ -182,7 +182,7 @@ function updateRefundList(dto: IRefundBill) {
 
         <view class="flex items-center justify-between">
           <view class="flex space-x-3">
-            <text> {{ `${getDateFormat(item.date)} ${dayjs(item.date).format('HH:mm')}` }}</text>
+            <text> {{ `${formatDate(item.date)} ${dayjs(item.date).format('HH:mm')}` }}</text>
             <text>{{ item.remark }}</text>
           </view>
           <wd-text :text="item.amountBefore" mode="price" decoration="line-through" />
@@ -206,7 +206,7 @@ function updateRefundList(dto: IRefundBill) {
         <!-- 时间 -->
         <wd-form-item title="退款时间">
           <view @tap="showDateTime = true">
-            {{ `${getDateFormat(date)} ${dayjs(date).format('HH:mm')}` }}
+            {{ `${formatDate(date)} ${dayjs(date).format('HH:mm')}` }}
           </view>
         </wd-form-item>
       </wd-form>

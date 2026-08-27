@@ -115,9 +115,8 @@ function handleDateClick(index: number) {
       <view
         v-for="(item, index) in days"
         :key="index"
-        :class="`calendar-day ${item.disabled ? 'is-disabled' : ''} ${item.isLastRow ? 'is-last-row' : ''} ${
-          item.type ? dayTypeClass(item.type) : ''
-        }`"
+        class="calendar-day"
+        :class="[item.disabled ? 'is-disabled' : '', item.isLastRow ? 'is-last-row' : '', item.type ? dayTypeClass(item.type) : '']"
         :style="index === 0 ? firstDayStyle : ''"
         @tap="handleDateClick(index)"
       >

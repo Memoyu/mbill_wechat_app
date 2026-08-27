@@ -13,10 +13,7 @@ const emit = defineEmits(['showLedgers'])
 
 const ledgerPickerStore = useLedgerPickerStore()
 
-const ledgerName = computed(() => {
-  // console.log(ledgerPickerStore.selectedLedgerNames)
-  return ledgerPickerStore.selectedLedgerNames.join(', ')
-})
+const ledgerName = computed(() => ledgerPickerStore.selectedLedgerNames.join(', '))
 
 function handleNavigateTo(path: string) {
   uni.navigateTo({ url: path })
@@ -24,7 +21,7 @@ function handleNavigateTo(path: string) {
 </script>
 
 <template>
-  <view class="fixed bottom-8 left-0 right-0 z-4 mx-auto w-90% flex animate-fade-in-up animate-duration-400 animate-ease-out">
+  <view class="fixed bottom-8 left-0 right-0 z-2 mx-auto w-90% flex animate-fade-in-up animate-duration-400 animate-ease-out">
     <view
       class="flex flex-1 items-center justify-between rounded-full bg-white px-3.5 py-2.5 shadow-lg"
       :style="{ boxShadow: '0 8px 24px -6px rgba(0,0,0,0.12), 0 4px 8px -4px rgba(0,0,0,0.08)' }"

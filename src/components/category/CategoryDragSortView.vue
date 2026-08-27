@@ -15,10 +15,8 @@ defineExpose({
 const categoryStore = useCategoryStore()
 const isInit = ref(false)
 
-const categories = computed(() => {
-  // isInit 用于在init后才赋值数据，不然导致排序组件计算高度有问题
-  return isInit.value ? (props.type === BillTypeEnum.Expend ? categoryStore.expends : categoryStore.incomes) : []
-})
+// isInit 用于在init后才赋值数据，不然导致排序组件计算高度有问题
+const categories = computed(() => isInit.value ? (props.type === BillTypeEnum.Expend ? categoryStore.expends : categoryStore.incomes) : [])
 
 function init() {
   if (isInit.value)

@@ -37,9 +37,7 @@ const style = computed(() => {
   return `${objToStyle(style)}`
 })
 
-const isImage = computed(() => {
-  return props.icon && props.icon.length > 0
-})
+const isImage = computed(() => props.icon && props.icon.length > 0)
 </script>
 
 <template>

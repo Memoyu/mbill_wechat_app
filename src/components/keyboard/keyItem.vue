@@ -25,9 +25,7 @@ const emit = defineEmits(['press'])
 const touch = useTouch()
 const active = ref<boolean>(false)
 
-const keyClass = computed(() => {
-  return `keyboard-key ${props.value.emphasize ? 'keyboard-key-emphasize' : ''}`
-})
+const keyClass = computed(() => `keyboard-key ${props.value.emphasize ? 'keyboard-key-emphasize' : ''}`)
 
 function handleTouchStart(event: TouchEvent) {
   touch.touchStart(event)

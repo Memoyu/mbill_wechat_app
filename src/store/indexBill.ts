@@ -25,7 +25,7 @@ interface ILoaclBill {
 const initState: {
   date: IDatePickerValue
   /** 账单列表 */
-  bills: IBillDateGroup[]
+  groups: IBillDateGroup[]
   /** 账单金额汇总 */
   summary: IBillSummaryAmountItem
   /** 账单金额汇总图表 */
@@ -40,7 +40,7 @@ const initState: {
     value: dayjs().valueOf(),
     type: 'year-month',
   },
-  bills: [],
+  groups: [],
   summary: {
     income: 0,
     expend: 0,
@@ -78,6 +78,7 @@ export const useIndexBillStore = defineStore(
     const settingsStore = useSettingsStore()
     const ledgerPickerStore = useLedgerPickerStore()
     const state = reactive({ ...initState })
+    const pageSize = 15
 
     const getDateRange = () => {
       const date = dayjs(state.date.value)
@@ -99,12 +100,38 @@ export const useIndexBillStore = defineStore(
      * 加载账单
      * @param query 查询参数
      */
-    const loadBills = async () => {
+    const loadBills = async (page: number) => {
+      if (page === 1) {
+        state.groups = []
+      }
+
       const res = await pageBill({
         ...getDateRange(),
         ledgerIds: ledgerPickerStore.selectedLedgers,
+        size: pageSize,
+        page,
       })
-      state.bills = res.items
+      // 组合数据
+      // 新增组交给z-paging处理
+      let items: IBillDateGroup[] = []
+      if (state.groups.length === 0) {
+        items = res.items
+      }
+      else {
+        for (let i = 0; i < res.items.length; i++) {
+          const g = res.items[i]
+          const target = state.groups.find(i => dayjs(i.date).isSame(dayjs(g.date), 'date'))
+          if (target) {
+            target.items.push(...g.items)
+            target.items.sort((a, b) => dayjs(a.date).isBefore(dayjs(b.date)) ? 1 : -1)
+          }
+          else {
+            items.push(g)
+          }
+        }
+      }
+
+      return { items, noMore: page * pageSize >= res.total }
     }
 
     const loadSummary = async () => {
@@ -160,11 +187,10 @@ export const useIndexBillStore = defineStore(
     /**
      * 初始化加载首页数据
      */
-    const loadIndexData = debounce(() => {
-      loadBills()
+    const loadIndexSummary = () => {
       loadSummary()
       loadCharts()
-    }, 500)
+    }
 
     /**
      * 获取本地账单
@@ -177,8 +203,8 @@ export const useIndexBillStore = defineStore(
       let groupIdx = -1
       let billIdx = -1
 
-      for (let i = 0; i < state.bills.length; i++) {
-        const g = state.bills[i]
+      for (let i = 0; i < state.groups.length; i++) {
+        const g = state.groups[i]
         const idx = g.items.findIndex(item => item.billId === billId)
 
         if (idx !== -1) {
@@ -215,9 +241,8 @@ export const useIndexBillStore = defineStore(
       }
 
       // 维护本地bills数据
-      const targetDate = dayjs(bill.date).format('YYYY-MM-DD')
       // 查找是否已存在这天的分组
-      let group = state.bills.find(b => dayjs(b.date).format('YYYY-MM-DD') === targetDate)
+      let group = state.groups.find(b => dayjs(b.date).isSame(dayjs(bill.date), 'date'))
 
       if (group) {
         // 如果存在该日期分组，将账单插入到正确位置以保持排序
@@ -234,8 +259,8 @@ export const useIndexBillStore = defineStore(
           expend: bill.type === 0 ? bill.amount : 0,
           income: bill.type === 1 ? bill.amount : 0,
         }
-        state.bills.push(group)
-        state.bills.sort((a, b) => dayjs(a.date).isBefore(dayjs(b.date)) ? 1 : -1)
+        state.groups.push(group)
+        state.groups.sort((a, b) => dayjs(a.date).isBefore(dayjs(b.date)) ? 1 : -1)
       }
 
       updateLocalDiffAmount(bill.date, bill.type, bill.amount)
@@ -298,7 +323,7 @@ export const useIndexBillStore = defineStore(
       // 判断分组中是否还有账单
       if (group.items.length === 0) {
         // 如果没有账单，则删除该分组
-        state.bills.splice(groupIdx, 1)
+        state.groups.splice(groupIdx, 1)
       }
 
       updateLocalDiffAmount(bill.date, bill.type, -bill.amount)
@@ -336,7 +361,6 @@ export const useIndexBillStore = defineStore(
      */
     const setDate = (date: any) => {
       state.date = date
-      loadIndexData()
     }
 
     const createBill = async (create: IEditBill) => {
@@ -392,7 +416,7 @@ export const useIndexBillStore = defineStore(
 
     return {
       ...toRefs(state),
-      loadIndexData,
+      loadIndexSummary,
       loadBills,
       loadSummary,
       loadCharts,

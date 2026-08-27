@@ -22,9 +22,7 @@ const props = withDefaults(defineProps<{
 const emit = defineEmits(['tap'])
 const selecteds = defineModel<string[]>({ default: [] })
 
-const isSelected = computed(() => {
-  return selecteds.value.includes(props.item[props.valueKey]) || false
-})
+const isSelected = computed(() => selecteds.value.includes(props.item[props.valueKey]) || false)
 </script>
 
 <template>

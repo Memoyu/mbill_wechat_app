@@ -1,7 +1,6 @@
 import type { Dialog } from '@wot-ui/ui/components/wd-dialog/types'
 import type { Toast } from '@wot-ui/ui/components/wd-toast/types'
 import type { ILedger, IUpdateLedger, IUpdateLedgerColor } from '@/api/types/ledger'
-import lodash from 'lodash'
 import { defineStore } from 'pinia'
 import {
   createLedger as fetchCreateLedger,
@@ -14,7 +13,6 @@ import {
   getLedgerList,
 } from '@/api/ledger'
 import { gradients } from '@/constants/gradients'
-import { useLedgerPickerStore } from './ledgerPicker'
 
 // 初始化状态
 const initState: {
@@ -30,17 +28,15 @@ function getRandomColor() {
 export const useLedgerStore = defineStore(
   'ledger',
   () => {
-    const ledgerPickerStore = useLedgerPickerStore()
     const state = reactive({ ...initState })
 
     /**
      * 加载账本数据
      */
     const loadLedgers = async () => {
-      state.ledgers = await getLedgerList()
-      // 在没有选中任何账本时，默认选中第一个账本
-      if (state.ledgers && state.ledgers.length > 0 && ledgerPickerStore.selectedLedgers.length < 1)
-        ledgerPickerStore.toggleLedgerSelection(state.ledgers[0].ledgerId)
+      const ledgers = await getLedgerList()
+      state.ledgers = ledgers
+      return ledgers
     }
 
     /**

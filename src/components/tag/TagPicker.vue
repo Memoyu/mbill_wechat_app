@@ -10,9 +10,7 @@ const emit = defineEmits(['confirm'])
 const show = defineModel<boolean>()
 const tagStore = useTagStore()
 
-const tagGroups = computed(() => {
-  return tagStore.tags
-})
+const tagGroups = computed(() => tagStore.tags)
 
 const selectedIds = ref(props.tags)
 

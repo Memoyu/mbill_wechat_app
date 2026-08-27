@@ -3,7 +3,13 @@ export interface IQiniuUploadToken {
   host: string
 }
 
-export interface PageResult<T> {
+export interface IPageQuery {
+  size?: number
+  page?: number
+  sort?: string
+}
+
+export interface IPageResult<T> {
   items: T[]
   total: number
 }

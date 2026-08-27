@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { onHide, onLaunch, onShow } from '@dcloudio/uni-app'
 import { navigateToInterceptor } from '@/router/interceptor'
-import { useAccountStore, useCategoryStore, useLedgerStore, useTagStore, useTokenStore } from './store'
+import { useAccountStore, useCategoryStore, useLedgerPickerStore, useLedgerStore, useTagStore, useTokenStore } from './store'
 import { useIconStore } from './store/icon'
 
 const tokenStore = useTokenStore()
 const ledgerStore = useLedgerStore()
+const ledgerPickerStore = useLedgerPickerStore()
 const categoryStore = useCategoryStore()
 const accountStore = useAccountStore()
 const tagStore = useTagStore()
@@ -16,7 +17,11 @@ onLaunch((options) => {
   // 微信登录
   tokenStore.wxLogin().then(() => {
     // 初始化数据
-    ledgerStore.loadLedgers()
+    ledgerStore.loadLedgers().then((res) => {
+      // 在没有选中任何账本时，默认选中第一个账本
+      if (res && res.length > 0 && ledgerPickerStore.selectedLedgers.length < 1)
+        ledgerPickerStore.toggleLedgerSelection(res[0].ledgerId)
+    })
     categoryStore.loadCategories()
     accountStore.loadAccounts()
     tagStore.loadTags()

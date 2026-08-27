@@ -1,6 +1,6 @@
 import type { IBill, IBillDateGroup, IBillPageItem, IBillPageQuery, IBillSearchQuery, IBillSummaryAmount, IBillSummaryAmountQuery, ICreateBill, IEditRefundBill, IRefundBill, IRelatedBill, IRelationBill, IUpdateBill } from './types/bill'
-import type { PageResult } from './types/common'
-import { http } from '@/utils'
+import type { IPageResult } from './types/common'
+import { http } from '@/utils/http'
 
 /**
  * 创建账单
@@ -34,14 +34,14 @@ export function getBill(billId: string) {
  * 账单分页
  */
 export function pageBill(query: IBillPageQuery) {
-  return http.get<PageResult<IBillDateGroup>>('bill/page', query)
+  return http.get<IPageResult<IBillDateGroup>>('bill/page', query)
 }
 
 /**
  * 账单搜索
  */
 export function searchBill(query: IBillSearchQuery) {
-  return http.get<PageResult<IBillPageItem>>('bill/search', query)
+  return http.get<IPageResult<IBillPageItem>>('bill/search', query)
 }
 
 /**

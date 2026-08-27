@@ -36,7 +36,7 @@ export interface PageParams {
 }
 
 // 分页响应数据
-export interface PageResult<T> {
+export interface IPageResult<T> {
   list: T[]
   total: number
   page: number

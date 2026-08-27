@@ -8,7 +8,7 @@ import Decimal from 'decimal.js'
 import { getAddressInfo } from '@/api/aggregation'
 import { getBill } from '@/api/bill'
 import { useIndexBillStore, useLedgerStore, useSettingsStore } from '@/store'
-import { getBillColor, getDateFormat, systemInfo } from '@/utils'
+import { getBillColor, formatDate, systemInfo } from '@/utils'
 
 definePage({
   style: {
@@ -414,7 +414,13 @@ function handleTagSelectConfirm(items: ITag[]) {
   </nav-bar>
 
   <!-- 账单分类 -->
-  <category-view v-model="bill.category.categoryId" v-model:type="bill.type" :height="categoryPickerHeight" @change="handleCategoryChange" />
+  <category-view
+    v-model="bill.category.categoryId"
+    v-model:type="bill.type"
+    show-top
+    :height="categoryPickerHeight"
+    @change="handleCategoryChange"
+  />
 
   <view id="BOTTOM_INPUT" class="absolute bottom-0 left-0 right-0">
     <!-- 标签 -->
@@ -444,7 +450,7 @@ function handleTagSelectConfirm(items: ITag[]) {
           <view class="bill-attr-box-item" @tap="showDateTime = true">
             <!-- 日期 -->
             <wd-icon name="calendar-line" size="20px" />
-            <text class="ml-1">{{ `${getDateFormat(billDate)} ${dayjs(billDate).format('HH:mm')}` }}</text>
+            <text class="ml-1">{{ `${formatDate(billDate)} ${dayjs(billDate).format('HH:mm')}` }}</text>
           </view>
           <view class="bill-attr-box-item" @tap="showAccounts = true">
             <!-- 账户 -->

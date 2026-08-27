@@ -6,7 +6,6 @@ import { pages, subPackages } from '@/pages.json'
 export * from './bill'
 export * from './date'
 export * from './debounce'
-export * from './http'
 export * from './systemInfo'
 export * from './uploadFile'
 
@@ -126,11 +125,6 @@ export function getCurrentPageI18nKey() {
 export function getEnvBaseUrl() {
   return import.meta.env.VITE_SERVER_BASEURL
 }
-
-/**
- * 是否是双token模式
- */
-export const isDoubleTokenMode = import.meta.env.VITE_AUTH_MODE === 'double'
 
 /**
  * 首页路径，通过 page.json 里面的 type 为 home 的页面获取，如果没有，则默认是第一个页面

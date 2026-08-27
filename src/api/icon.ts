@@ -1,5 +1,5 @@
 import type { IIconCatalog } from './types/icon'
-import { http } from '@/utils'
+import { http } from '@/utils/http'
 
 /**
  * 获取图标目录

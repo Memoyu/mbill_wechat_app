@@ -1,9 +1,4 @@
 <script setup lang="ts">
-export interface GridSelectData {
-  list: GridSelectItem[]
-  tops?: GridSelectItem[]
-}
-
 export interface GridSelectItem {
   id: string
   name: string
@@ -20,7 +15,8 @@ defineOptions({
 })
 
 const props = withDefaults(defineProps<{
-  data: GridSelectData
+  list: GridSelectItem[]
+  tops?: GridSelectItem[]
   height?: number
   scrollHeight?: number
   column?: number
@@ -52,9 +48,7 @@ const itemsBoxStyle = computed(() => {
   }
 })
 
-const hasTop = computed(() => {
-  return innerTops.value && innerTops.value.length > 0
-})
+const hasTop = computed(() => innerTops.value && innerTops.value.length > 0)
 
 watch(() => props.height, (nh) => {
   itmeHeight.value = nh
@@ -65,28 +59,12 @@ watch(() => props.scrollHeight, (nh) => {
     scrollHeight.value = nh
 }, { immediate: true })
 
-watch(() => props.data, (data) => {
-  initSelectData(data)
-}, { immediate: true, deep: true })
-
-watch(() => selected.value, (newValue) => {
-  // console.log(newValue, 'base picker watch selected')
-  if (!newValue) {
-    initSelected()
+watch(() => props.list, (list) => {
+  if (!list) {
     return
   }
-  selectedItem(newValue)
-}, { immediate: true, deep: true })
-
-function initSelectData(data: GridSelectData) {
-  // console.log(data, 'data')
-  if (!data)
-    return
-  // 初始化常用项
-  innerTops.value = data.tops || []
 
   const rs: GridSelectItem[][] = []
-  const list = data.list ?? []
   let ridx = 0
   // 构建行列数据，以及选中项
   for (let i = 0; i < list.length; i += props.column) {
@@ -101,7 +79,20 @@ function initSelectData(data: GridSelectData) {
     rs.push(ris)
   }
   rows.value = rs
-}
+}, { immediate: true, deep: true })
+
+watch(() => props.tops, (tops) => {
+  innerTops.value = tops ?? []
+}, { immediate: true, deep: true })
+
+watch(() => selected.value, (newValue) => {
+  // console.log(newValue, 'base picker watch selected')
+  if (!newValue) {
+    initSelected()
+    return
+  }
+  selectedItem(newValue)
+}, { immediate: true, deep: true })
 
 /**
  * 初始化选中项, 默认选中第一项
@@ -111,7 +102,7 @@ function initSelected() {
     selected.value = innerTops.value[0].id
   }
   else {
-    const list = props.data.list
+    const list = props.list ?? []
     if (!list.length)
       return
     selected.value = list[0].id

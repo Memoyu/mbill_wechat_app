@@ -11,13 +11,9 @@ import { BillTypeEnum } from '@/typings'
 
 // 初始化状态
 const initState: {
-  expendTops: ICategory[]
-  incomeTops: ICategory[]
   expends: ICategory[]
   incomes: ICategory[]
 } = {
-  expendTops: [],
-  incomeTops: [],
   expends: [],
   incomes: [],
 }
@@ -34,8 +30,6 @@ export const useCategoryStore = defineStore(
       const res = await getCategoryGroup()
       state.expends = res.expends
       state.incomes = res.incomes
-      state.expendTops = res.expendTops
-      state.incomeTops = res.incomeTops
     }
 
     /**

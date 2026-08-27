@@ -32,13 +32,8 @@ watch(() => props.value, (val) => {
   currentLedgerId.value = val
 })
 
-const ledgers = computed(() => {
-  return ledgerStore.ledgers
-})
-
-const isAllSelected = computed(() => {
-  return ledgerPickerStore.isAllSelected
-})
+const ledgers = computed(() => ledgerStore.ledgers)
+const isAllSelected = computed(() => ledgerPickerStore.isAllSelected)
 
 function handleLedgerItemClick(item: ILedger) {
   // console.log('点击')

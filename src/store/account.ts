@@ -11,10 +11,8 @@ import {
 
 // 初始化状态
 const initState: {
-  tops: IAccount[]
   accounts: IAccount[]
 } = {
-  tops: [],
   accounts: [],
 }
 
@@ -28,7 +26,6 @@ export const useAccountStore = defineStore(
      */
     const loadAccounts = async () => {
       const res = await getAccountGroup()
-      state.tops = res.tops
       state.accounts = res.items
     }
 

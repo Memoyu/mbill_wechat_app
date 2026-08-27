@@ -1,5 +1,5 @@
 import type { ICreateTag, ITag, IUpdateTag, IUpdateTagSort } from './types/tag'
-import { http } from '@/utils'
+import { http } from '@/utils/http'
 
 /**
  * 创建账单标签

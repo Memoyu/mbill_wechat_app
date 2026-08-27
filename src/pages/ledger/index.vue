@@ -3,7 +3,6 @@ import type { ILedger } from '@/api/types/ledger'
 import type { ActionGroup, ActionItem } from '@/typings'
 import { useDialog, useToast } from '@wot-ui/ui'
 import dayjs from 'dayjs'
-import UQRCode from 'uqrcodejs'
 import { getColorByName, gradients } from '@/constants/gradients'
 import { useLedgerStore } from '@/store'
 import { systemInfo } from '@/utils'
@@ -70,16 +69,12 @@ const ledgerActions: ActionGroup[] = [
     ],
   },
 ]
-const qrcodeCanvasId = 'ledgerQrcodeCnvas'
 
-const { proxy } = getCurrentInstance() as any
 const dialog = useDialog()
 const toast = useToast()
 const ledgerStore = useLedgerStore()
 
-const ledgers = computed(() => {
-  return ledgerStore.ledgers
-})
+const ledgers = computed(() => ledgerStore.ledgers)
 
 const editShow = ref(false)
 const shareShow = ref(false)
@@ -205,25 +200,6 @@ function handleShareAction() {
   if (!currentLedger.value)
     return
 
-  // 转换尺寸
-  const size = 240
-  // 获取uQRCode实例
-  const qr = new UQRCode()
-  qr.setOptions({
-    // 设置二维码内容
-    data: currentLedger.value.ledgerId,
-    // 设置二维码大小，必须与canvas设置的宽高一致
-    size,
-    // 设置二维码边距
-    margin: uni.upx2px(10),
-  })
-  // 调用制作二维码方法
-  qr.make()
-  // 获取canvas上下文
-  const canvasContext = uni.createCanvasContext(qrcodeCanvasId, proxy)
-  // 设置uQRCode实例的canvas上下文
-  qr.canvasContext = canvasContext
-  qr.drawCanvas()
   shareShow.value = true
 }
 
@@ -361,7 +337,7 @@ function handleSortChange(list: ILedger[]) {
   <!-- 分享二维码 -->
   <center-popup v-model="shareShow" title="扫码加入" :show-btn="false">
     <view class="mb-7 flex items-center justify-center px-3">
-      <canvas :id="qrcodeCanvasId" :canvas-id="qrcodeCanvasId" style="width: 240px;height: 240px;" />
+      <wd-qr-code :text="currentLedger?.ledgerId" />
     </view>
   </center-popup>
 </template>

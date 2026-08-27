@@ -1,5 +1,5 @@
 import type { IAccount, ICreateAccount, IGroupAccount, IUpdateAccount, IUpdateAccountSort } from './types/account'
-import { http } from '@/utils'
+import { http } from '@/utils/http'
 
 /**
  * 创建账单账户
@@ -34,4 +34,11 @@ export function deleteAccount(categoryId: string) {
  */
 export function getAccountGroup() {
   return http.get<IGroupAccount>('account/list/group')
+}
+
+/**
+ * 获取常用账单账户列表
+ */
+export function getAccountTop() {
+  return http.get<IAccount[]>('account/list/top')
 }

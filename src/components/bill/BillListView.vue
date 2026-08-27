@@ -1,24 +1,31 @@
 <script setup lang="ts">
-import { useIndexBillStore } from '@/store'
-import { formatFloat, getBillColor, getDateFormat, getWeekday } from '@/utils'
+import type { IBillDateGroup } from '@/api/types/bill'
+import { formatDate, formatFloat, getBillColor, weekDate } from '@/utils'
 
-const indexBillStore = useIndexBillStore()
-
-const billGroup = computed(() => {
-  return indexBillStore.bills
+defineOptions({
+  options: {
+    addGlobalClass: true,
+    virtualHost: true,
+    styleIsolation: 'shared',
+  },
 })
+
+const props = defineProps<{
+  groups: IBillDateGroup[]
+  fixedDateFormat?: boolean
+}>()
 </script>
 
 <template>
   <view class="p-3">
-    <view v-for="g in billGroup" :key="g.date" class="mt-5">
+    <view v-for="g in groups" :key="g.date" class="mt-5">
       <view class="flex items-center justify-between">
         <view class="flex">
           <view class="font-bold">
-            {{ getDateFormat(g.date) }}
+            {{ formatDate(g.date, fixedDateFormat) }}
           </view>
           <view class="ml-2 text-gray">
-            {{ getWeekday(g.date) }}
+            {{ weekDate(g.date) }}
           </view>
         </view>
         <view class="flex items-center gap-3 text-sm">

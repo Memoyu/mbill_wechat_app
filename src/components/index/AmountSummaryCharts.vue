@@ -94,15 +94,9 @@ const chartData = ref<{
   ],
 })
 
-const dateTitle = computed(() => {
-  return dateTypes[settingsStore.index.charts.date].label
-})
-const typeTitle = computed(() => {
-  return settingsStore.index.charts.type === 0 ? '支出' : settingsStore.index.charts.type === 1 ? '收入' : ''
-})
-const charts = computed(() => {
-  return indexBillStore.charts
-})
+const dateTitle = computed(() => dateTypes[settingsStore.index.charts.date].label)
+const typeTitle = computed(() => settingsStore.index.charts.type === 0 ? '支出' : settingsStore.index.charts.type === 1 ? '收入' : '')
+const charts = computed(() => indexBillStore.charts)
 
 watch(() => showChartsSetting.value, () => {
   // 弹窗时，根据选项设置恢复内部选项

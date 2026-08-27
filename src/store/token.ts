@@ -1,28 +1,21 @@
-import type { IAuthLoginRes } from '@/api/types/user'
+import type { IAuthLoginRes } from '@/api/types/auth'
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue' // 修复：导入 computed
-import { isDoubleTokenRes, isSingleTokenRes } from '@/api/types/user'
 import {
   logout as fetchLogout,
   refreshToken as fetchRefreshToken,
   wxLogin as fetchWxLogin,
   getWxCode,
-} from '@/api/user'
-import { isDoubleTokenMode } from '@/utils'
+} from '@/api/auth'
 import { useUserStore } from './user'
 
 // 初始化状态
-const tokenInfoState = isDoubleTokenMode
-  ? {
-      accessToken: '',
-      accessExpiresIn: 0,
-      refreshToken: '',
-      refreshExpiresIn: 0,
-    }
-  : {
-      token: '',
-      expiresIn: 0,
-    }
+const tokenInfoState = {
+  accessToken: '',
+  accessExpiresIn: 0,
+  refreshToken: '',
+  refreshExpiresIn: 0,
+}
 
 export const useTokenStore = defineStore(
   'token',
@@ -32,6 +25,7 @@ export const useTokenStore = defineStore(
 
     // 添加一个时间戳 ref 作为响应式依赖
     const nowTime = ref(Date.now())
+
     /**
      * 更新响应式数据:now
      * 确保isTokenExpired/isRefreshTokenExpired重新计算,而不是用错误过期缓存值
@@ -50,18 +44,12 @@ export const useTokenStore = defineStore(
 
       // 计算并存储过期时间
       const now = Date.now()
-      if (isSingleTokenRes(val)) {
-        // 单token模式
-        const expireTime = now + val.expiresIn * 1000
-        uni.setStorageSync('accessTokenExpireTime', expireTime)
-      }
-      else if (isDoubleTokenRes(val)) {
-        // 双token模式
-        const accessExpireTime = now + val.accessExpiresIn * 1000
-        const refreshExpireTime = now + val.refreshExpiresIn * 1000
-        uni.setStorageSync('accessTokenExpireTime', accessExpireTime)
-        uni.setStorageSync('refreshTokenExpireTime', refreshExpireTime)
-      }
+
+      // 双token模式
+      const accessExpireTime = now + val.accessExpiresIn * 1000
+      const refreshExpireTime = now + val.refreshExpiresIn * 1000
+      uni.setStorageSync('accessTokenExpireTime', accessExpireTime)
+      uni.setStorageSync('refreshTokenExpireTime', refreshExpireTime)
     }
 
     /**
@@ -84,9 +72,6 @@ export const useTokenStore = defineStore(
      * 判断refreshToken是否过期
      */
     const isRefreshTokenExpired = computed(() => {
-      if (!isDoubleTokenMode)
-        return true
-
       const now = nowTime.value
       const refreshExpireTime = uni.getStorageSync('refreshTokenExpireTime')
 
@@ -112,12 +97,8 @@ export const useTokenStore = defineStore(
       if (!tokenInfo.value) {
         return false
       }
-      if (isDoubleTokenMode) {
-        return isDoubleTokenRes(tokenInfo.value) && !!tokenInfo.value.accessToken
-      }
-      else {
-        return isSingleTokenRes(tokenInfo.value) && !!tokenInfo.value.token
-      }
+
+      return tokenInfo.value.accessToken
     })
 
     /**
@@ -196,14 +177,9 @@ export const useTokenStore = defineStore(
      * @returns 刷新结果
      */
     const refreshToken = async () => {
-      if (!isDoubleTokenMode) {
-        console.error('单token模式不支持刷新token')
-        throw new Error('单token模式不支持刷新token')
-      }
-
       try {
         // 安全检查，确保refreshToken存在
-        if (!isDoubleTokenRes(tokenInfo.value) || !tokenInfo.value.refreshToken) {
+        if (!tokenInfo.value.refreshToken) {
           throw new Error('无效的refreshToken')
         }
 
@@ -234,12 +210,7 @@ export const useTokenStore = defineStore(
         return ''
       }
 
-      if (!isDoubleTokenMode) {
-        return isSingleTokenRes(tokenInfo.value) ? tokenInfo.value.token : ''
-      }
-      else {
-        return isDoubleTokenRes(tokenInfo.value) ? tokenInfo.value.accessToken : ''
-      }
+      return tokenInfo.value.accessToken || ''
     })
 
     /**
@@ -248,7 +219,7 @@ export const useTokenStore = defineStore(
      */
     const tryGetValidToken = async (): Promise<string> => {
       updateNowTime()
-      if (!getValidToken.value && isDoubleTokenMode && !isRefreshTokenExpired.value) {
+      if (!getValidToken.value && !isRefreshTokenExpired.value) {
         try {
           await refreshToken()
           return getValidToken.value

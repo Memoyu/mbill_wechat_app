@@ -80,9 +80,7 @@ const actions: ActionItem[] = [
   },
 ]
 
-const excludeBills = computed(() => {
-  return relatedBill.value.items.map(b => b.billId)
-})
+const excludeBills = computed(() => relatedBill.value.items.map(b => b.billId))
 
 onLoad((options: any) => {
   // console.log('账单id', options.id)

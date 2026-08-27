@@ -1,5 +1,5 @@
-import type { ICategory, ICreateCategory, IGroupCategory, IUpdateCategory, IUpdateCategorySort } from './types/category'
-import { http } from '@/utils'
+import type { ICategory, ICreateCategory, IGroupCategory, ITopCategory, IUpdateCategory, IUpdateCategorySort } from './types/category'
+import { http } from '@/utils/http'
 
 /**
  * 创建账单分类
@@ -34,4 +34,11 @@ export function deleteCategory(categoryId: string) {
  */
 export function getCategoryGroup() {
   return http.get<IGroupCategory>('category/list/group')
+}
+
+/**
+ * 获取常用账单分类列表
+ */
+export function getCategoryTop() {
+  return http.get<ITopCategory>('category/list/top')
 }

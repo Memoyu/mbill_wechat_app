@@ -13,16 +13,12 @@ const dialog = useDialog()
 const ledgerStore = useLedgerStore()
 
 // 获取当前卡盒的颜色
-const currentColor = computed(() => {
-  return ledgerStore.getLedgerColor(props.ledgerId)
-})
+const currentColor = computed(() => ledgerStore.getLedgerColor(props.ledgerId))
+const currentSystem = computed(() => getColorSystem(currentColor.value))
 
 function handleSelect(colorIndex: number) {
   ledgerStore.updateLedgerColor([{ ledgerId: props.ledgerId, color: colorIndex }])
 }
-
-const currentSystem = computed(() => getColorSystem(currentColor.value))
-
 // 处理统一色系
 function handleUnifyColors() {
   dialog

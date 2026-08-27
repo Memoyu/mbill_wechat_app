@@ -29,6 +29,14 @@ const query = ref<IBillFilter>({
 })
 const selecteds = ref<string[]>([])
 const bills = ref<IBillPageItem[]>([])
+const paging = ref()
+const showPaging = ref(false)
+
+watch(() => show.value, (val) => {
+  if (val) {
+    showPaging.value = true
+  }
+})
 
 function handleAfterEnter() {
   // console.log('handleAfterEnter')
@@ -41,8 +49,8 @@ function handleConfirm() {
   selecteds.value = []
 }
 
-function handleSearch() {
-  // console.log('handleSearch')
+function handleQuery(page: number, size: number) {
+  // console.log('handleQuery', page, size)
   const excludeBillIds = [...props.excludes]
   if (props.bill) {
     excludeBillIds.push(props.bill.billId)
@@ -58,9 +66,18 @@ function handleSearch() {
     accountIds: query.value.accounts,
     tagIds: query.value.tags,
     excludeBillIds,
+    size,
+    page,
   }).then((res) => {
-    bills.value = res.items
+    paging.value.completeByTotal (res.items, res.total)
+  }).catch((res) => {
+    paging.value.complete(false)
   })
+}
+
+function handleSearch() {
+  // console.log('handleSearch')
+  paging.value.reload()
 }
 
 function handleConfirmFilter(filter: any) {
@@ -92,10 +109,9 @@ function isSelected(bill: IBillPageItem) {
         </template>
       </wd-search>
     </template>
-
-    <view class="">
-      <scroll-view scroll-y class="h-[60vh]">
-        <view class="flex flex-col gap-2.5 p-3">
+    <view class="h-[60vh] w-full">
+      <z-paging v-if="showPaging" ref="paging" v-model="bills" :fixed="false" :default-page-size="15" :refresher-enabled="false" @query="handleQuery">
+        <view class="px-2 space-y-2">
           <view v-for="b in bills" :key="b.billId" class="relative list-item-box rounded-lg" @tap.stop="handleSelectBill(b)">
             <bill-item :bill="b" />
             <view
@@ -109,7 +125,7 @@ function isSelected(bill: IBillPageItem) {
             </view>
           </view>
         </view>
-      </scroll-view>
+      </z-paging>
     </view>
   </center-popup>
 

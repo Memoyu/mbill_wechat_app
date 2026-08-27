@@ -1,3 +1,4 @@
+import type { IPageQuery } from './common'
 import type { BillTypeEnum } from '@/typings'
 
 export interface ICreateBill {
@@ -46,7 +47,7 @@ export interface IRelationBill {
   relationIds: string []
 }
 
-export interface IBillQuery {
+export interface IBillQuery extends IPageQuery {
   beginDate?: string
   endDate?: string
   type?: BillTypeEnum

@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import type { GridSelectData, GridSelectItem } from '../base/GridPickerView/GridPickerView.vue'
+import type { GridSelectItem } from '../base/GridPickerView/GridPickerView.vue'
+import { getAccountTop } from '@/api/account'
 import { useAccountStore } from '@/store'
 
 defineOptions({
@@ -11,10 +12,9 @@ defineOptions({
 })
 
 const props = withDefaults(defineProps<{
-  showTop?: boolean
   height?: number
+  showTop?: boolean
 }>(), {
-  showTop: true,
   height: 400,
 })
 const emit = defineEmits(['change'])
@@ -22,13 +22,26 @@ const selected = defineModel<string>()
 
 const accountStore = useAccountStore()
 
-const accountData = ref<GridSelectData>({ list: [], tops: [] })
+const tops = ref<GridSelectItem[]>([])
+const list = ref<GridSelectItem[]>([])
 
 onMounted(() => {
   initSelectItem()
 })
 
 function initSelectItem() {
+  if (props.showTop) {
+    getAccountTop().then((res) => {
+      tops.value = (res ?? []).map((a) => {
+        return {
+          id: a.accountId,
+          name: a.name,
+          icon: a.icon,
+        } as GridSelectItem
+      })
+    })
+  }
+
   const accounts = accountStore.accounts.map((a) => {
     return {
       id: a.accountId,
@@ -43,10 +56,7 @@ function initSelectItem() {
       }),
     }
   })
-  accountData.value = {
-    list: accounts,
-    tops: [],
-  }
+  list.value = accounts
 }
 
 function handleAccountItemTap(item: any) {
@@ -67,7 +77,7 @@ function handleAccountItemTap(item: any) {
 </script>
 
 <template>
-  <grid-picker-view v-model="selected" :data="accountData" :scroll-height="height" @change="handleAccountItemTap" />
+  <grid-picker-view v-model="selected" :list="list" :tops="tops" :scroll-height="height" @change="handleAccountItemTap" />
 </template>
 
 <style lang="scss" scoped>
