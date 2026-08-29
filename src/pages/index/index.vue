@@ -66,9 +66,9 @@ function handleCalendarClick() {
  * z-paging 查询
  */
 function handleQuery(page: number) {
-  console.log('handleQuery page', page)
+  // console.log('handleQuery page', page)
   indexBillStore.loadBills(page).then((res) => {
-    console.log('complete')
+    // console.log('complete')
     paging.value.completeByNoMore(res.items, res.noMore)
   }).catch((res) => {
     paging.value.complete(false)

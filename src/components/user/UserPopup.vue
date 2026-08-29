@@ -2,7 +2,7 @@
 import dayjs from 'dayjs'
 import { uploadAvatar } from '@/api/common'
 import { useIndexBillStore, useUserStore } from '@/store'
-import { formatFloat, getBillColor } from '@/utils'
+import { amountFormat, getBillColor } from '@/utils'
 
 const show = defineModel<boolean>()
 const actions = [{
@@ -127,22 +127,22 @@ function handleSummaryRefresh() {
               <view class="flex flex-col">
                 <text>结余</text>
                 <text class="text-xl text-indigo font-semibold">
-                  {{ formatFloat(summary.surplus) }}
+                  {{ amountFormat(summary.surplus) }}
                 </text>
               </view>
 
               <!-- 总金额 -->
               <view class="flex flex-col gap-3">
                 <view class="flex gap-1">
-                  <text>支出</text>
+                  <text>支</text>
                   <text class="font-bold" :style="{ color: getBillColor(0) }">
-                    {{ formatFloat(summary.expend) }}
+                    {{ amountFormat(summary.expend) }}
                   </text>
                 </view>
                 <view class="flex gap-1">
-                  <text>收入</text>
+                  <text>收</text>
                   <text class="font-bold" :style="{ color: getBillColor(1) }">
-                    {{ formatFloat(summary.income) }}
+                    {{ amountFormat(summary.income) }}
                   </text>
                 </view>
               </view>
@@ -153,13 +153,13 @@ function handleSummaryRefresh() {
                 <view class="flex gap-1">
                   <text>日均支出</text>
                   <text class="font-bold" :style="{ color: getBillColor(0) }">
-                    {{ formatFloat(summary.expendAvg) }}
+                    {{ amountFormat(summary.expendAvg) }}
                   </text>
                 </view>
                 <view class="flex gap-1">
                   <text>日均收入</text>
                   <text class="font-bold" :style="{ color: getBillColor(0) }">
-                    {{ formatFloat(summary.incomeAvg) }}
+                    {{ amountFormat(summary.incomeAvg) }}
                   </text>
                 </view>
               </view>
@@ -168,13 +168,13 @@ function handleSummaryRefresh() {
                 <view class="flex gap-1">
                   <text>最高支出</text>
                   <text class="font-bold" :style="{ color: getBillColor(0) }">
-                    {{ formatFloat(summary.expendHighest) }}
+                    {{ amountFormat(summary.expendHighest) }}
                   </text>
                 </view>
                 <view class="flex gap-1">
                   <text>最高收入</text>
                   <text class="font-bold" :style="{ color: getBillColor(0) }">
-                    {{ formatFloat(summary.incomeHighest) }}
+                    {{ amountFormat(summary.incomeHighest) }}
                   </text>
                 </view>
               </view>

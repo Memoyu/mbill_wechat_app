@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import type { CSSProperties } from 'vue'
-import { compareDate, getMonthEndDay, objToStyle } from '@/utils'
+import dayjs from 'dayjs'
+import { compareDate, getBillColor, getMonthEndDay, objToStyle } from '@/utils'
 
 export interface CalendarDayItem {
   date: number
   text?: number | string
-  topInfo?: string
-  bottomInfo?: string
+  expend?: number
+  income?: number
   disabled?: boolean
   isLastRow?: boolean
   type: string
@@ -38,12 +39,7 @@ const firstDayStyle = computed(() => {
   return objToStyle(dayStyle)
 })
 
-const dateMonth = computed(() => {
-  const date = new Date(props.month)
-  const year = date.getFullYear()
-  const month = String(date.getMonth() + 1).padStart(2, '0')
-  return `${year}年${month}月`
-})
+const dateMonth = computed(() => dayjs(props.month).format('YYYY年MM月'))
 
 const dayTypeClass = computed(() => {
   return (type: string) => {
@@ -78,8 +74,8 @@ function setDays() {
     dayList.push({
       date,
       text: day,
-      topInfo: '',
-      bottomInfo: '',
+      expend: day % 2 === 0 ? 100 : 0,
+      income: 0,
       type,
     })
   }
@@ -120,12 +116,19 @@ function handleDateClick(index: number) {
         :style="index === 0 ? firstDayStyle : ''"
         @tap="handleDateClick(index)"
       >
-        <view class="calendar-day-box">
-          <view class="calendar-day-text">
+        <view class="flex flex-col items-center justify-center py-0.5">
+          <view class="font-semibold">
             {{ item.text }}
           </view>
-          <view class="calendar-day-bottom">
-            {{ item.bottomInfo }}
+          <view class="h-8">
+            <view v-if="item.expend !== 0 || item.income !== 0" class="flex flex-col items-center text-xs">
+              <text :style="{ color: getBillColor(0) }">
+                {{ item.expend }}
+              </text>
+              <text :style="{ color: getBillColor(1) }">
+                {{ item.income }}
+              </text>
+            </view>
           </view>
         </view>
       </view>
@@ -149,34 +152,15 @@ function handleDateClick(index: number) {
 .calendar-day {
   position: relative;
   width: 14.285%;
-  height: 54px;
-  line-height: 54px;
-  text-align: center;
+  display: flex;
+  justify-content: center;
+  items-align: center;
 }
 
 .is-selected {
   border-radius: 8px;
-  background: #4d80f0;
-  color: rgb(255, 255, 255);
-}
-
-.calendar-day-box {
-  position: relative;
-  z-index: 2;
-}
-
-.calendar-day-text {
-  font-weight: 500;
-}
-
-.calendar-day-bottom {
-  position: absolute;
-  bottom: 10px;
-  left: 0;
-  right: 0;
-  line-height: 1.1;
-  font-size: 10px;
-  text-align: center;
+  color: white;
+  @apply: bg-indigo-200;
 }
 
 .calendar-month-text {

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { IBillDateGroup } from '@/api/types/bill'
-import { formatDate, formatFloat, getBillColor, weekDate } from '@/utils'
+import { amountFormat, formatDate, getBillColor, weekDate } from '@/utils'
 
 defineOptions({
   options: {
@@ -30,16 +30,16 @@ const props = defineProps<{
         </view>
         <view class="flex items-center gap-3 text-sm">
           <view class="flex gap-1">
-            <text>支出</text>
+            <text>支</text>
             <text class="font-semibold" :style="{ color: getBillColor(0) }">
-              {{ formatFloat(g.expend) }}
+              {{ amountFormat(g.expend) }}
             </text>
           </view>
 
           <view class="flex gap-1">
-            <text>收入</text>
+            <text>收</text>
             <text class="font-semibold" :style="{ color: getBillColor(1) }">
-              {{ formatFloat(g.income) }}
+              {{ amountFormat(g.income) }}
             </text>
           </view>
         </view>

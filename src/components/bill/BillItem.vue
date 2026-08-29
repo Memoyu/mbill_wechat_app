@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { IBillPageItem } from '@/api/types/bill'
 import dayjs from 'dayjs'
-import { formatFloat, getBillColor } from '@/utils'
+import { amountFormat, getBillColor } from '@/utils'
 
 const props = defineProps<{
   bill: IBillPageItem
@@ -27,7 +27,7 @@ function handleBillTap() {
         </view>
       </view>
       <!-- 金额 -->
-      <text class="font-bold" :style="{ color: getBillColor(bill.type) }">{{ formatFloat(bill.amount) }}</text>
+      <text class="font-bold" :style="{ color: getBillColor(bill.type) }">{{ amountFormat(bill.amount) }}</text>
     </view>
 
     <view class="ml-9 flex flex-col text-xs text-gray-500 space-y-2">

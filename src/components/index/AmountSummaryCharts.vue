@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import dayjs from 'dayjs'
 import { useIndexBillStore, useSettingsStore } from '@/store'
-import { formatFloat, getBillColor } from '@/utils'
+import { amountFormat, getBillColor } from '@/utils'
 
 defineOptions({
   options: {
@@ -152,15 +152,15 @@ function handleSettingConfirm() {
         </view>
         <view class="flex gap-3 text-sm text-gray-400">
           <view class="flex gap-2">
-            <text>支出:</text>
+            <text>支:</text>
             <text class="font-semibold" :style="{ color: getBillColor(0) }">
-              {{ formatFloat(charts.summary.expend) }}
+              {{ amountFormat(charts.summary.expend) }}
             </text>
           </view>
           <view class="flex gap-2">
-            <text>收入:</text>
+            <text>收:</text>
             <text class="font-semibold" :style="{ color: getBillColor(1) }">
-              {{ formatFloat(charts.summary.income) }}
+              {{ amountFormat(charts.summary.income) }}
             </text>
           </view>
         </view>

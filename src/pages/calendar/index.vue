@@ -1,10 +1,10 @@
 <script lang="ts" setup>
-import type { IBillDateGroup } from '@/api/types/bill'
+import type { IBillDateGroup, IBillSummaryAmountItem } from '@/api/types/bill'
 import type { IDatePickerValue } from '@/components/base/DatePicker.vue'
 import dayjs from 'dayjs'
-import { pageBill } from '@/api/bill'
+import { pageBill, summaryAmountBill } from '@/api/bill'
 import { useLedgerPickerStore } from '@/store'
-import { systemInfo } from '@/utils'
+import { amountFormat, getBillColor, systemInfo } from '@/utils'
 
 definePage({
   style: {
@@ -31,6 +31,17 @@ const calendarPaging = ref()
 const listPaging = ref()
 const ledgerIds = ref<string[]>(ledgerPickerStore.selectedLedgers)
 const groups = ref<IBillDateGroup[]>([])
+const monthSummary = ref<IBillSummaryAmountItem> ({
+  income: 0,
+  expend: 0,
+  incomeAvg: 0,
+  expendAvg: 0,
+  surplus: 0,
+  expendHighest: 0,
+  expendLowst: 0,
+  incomeHighest: 0,
+  incomeLowst: 0,
+})
 
 const contentHeight = ref<number>()
 const floatingHeight = ref<number>()
@@ -38,15 +49,37 @@ const anchors = ref<number[]>([])
 const pagingHeight = computed(() => (floatingHeight.value || 32) - 32)
 
 watch(() => [navbarHeight.value, calendarHeight.value], ([nav, cal]) => {
+  // console.log(nav, cal, 'initNavbarHeight')
   // 更新组件高度
   contentHeight.value = systemInfo.windowHeight - nav
-  floatingHeight.value = contentHeight.value - cal
-  anchors.value = [pagingHeight.value, systemInfo.windowHeight * 0.8]
+  floatingHeight.value = contentHeight.value - cal - 16 // 留点间隙
+  anchors.value = [floatingHeight.value, systemInfo.windowHeight * 0.8]
+})
+
+onLoad(() => {
+  initData()
 })
 
 onMounted(() => {
   initNavbarHeight()
 })
+
+function getDateRange(type: 'month' | 'date' = 'date') {
+  return {
+    beginDate: dayjs(date.value.value).startOf(type).format('YYYY-MM-DD 00:00:00'),
+    endDate: dayjs(date.value.value).endOf(type).format('YYYY-MM-DD 23:59:59'),
+  }
+}
+
+function initData() {
+  summaryAmountBill({
+    ...getDateRange('month'),
+    series: 0,
+    ledgerIds: ledgerPickerStore.selectedLedgers,
+  }).then((res) => {
+    monthSummary.value = res.summary
+  })
+}
 
 function initNavbarHeight() {
   nextTick(() => {
@@ -73,30 +106,27 @@ function handleDateChange(d: number) {
 }
 
 function handleCalHeightChange(height: number) {
-  console.log(height, 'handleCalHeightChange')
+  // console.log(height, 'handleCalHeightChange')
   calendarHeight.value = height + 16
 }
 
 function handelFloatingHeightChange({ height }: { height: number }) {
-  console.log(height, 'handelFloatingHeightChange')
+  // console.log(height, 'handelFloatingHeightChange')
   floatingHeight.value = height
 }
 
 function handleCalendarQuery() {
   calendarPaging.value.complete()
 }
+
 function handleListQuery(page: number, size: number) {
   // console.log(params, 'handleQuery')
   if (page === 1) {
     groups.value = []
   }
 
-  const beginDate = dayjs(date.value.value).startOf('date').format('YYYY-MM-DD 00:00:00')
-  const endDate = dayjs(date.value.value).endOf('date').format('YYYY-MM-DD 23:59:59')
-
   pageBill({
-    beginDate,
-    endDate,
+    ...getDateRange(),
     ledgerIds: ledgerIds.value,
     size,
     page,
@@ -144,32 +174,25 @@ function handleListQuery(page: number, size: number) {
       </view>
     </template>
     <template #prefix-action>
-      <view class="mt-3 flex items-center gap-3 text-sm">
-        <view class="flex">
-          <view>
-            收入
-          </view>
-          <view class="ml-1 text-emerald">
-            2000000
-          </view>
+      <view class="mt-2 w-full flex items-center justify-between text-sm">
+        <view class="flex gap-1">
+          <text>支</text>
+          <text :style="{ color: getBillColor(0) }">
+            {{ amountFormat(monthSummary.expend) }}
+          </text>
         </view>
 
-        <view class="flex">
-          <view>
-            支出
-          </view>
-          <view class="ml-1 text-rose">
-            2000000
-          </view>
+        <view class="flex gap-1">
+          <text>收</text>
+          <text :style="{ color: getBillColor(1) }">
+            {{ amountFormat(monthSummary.income) }}
+          </text>
         </view>
-
-        <view class="flex">
-          <view>
-            结余
-          </view>
-          <view class="ml-1 text-gray">
-            2000000
-          </view>
+        <view class="flex gap-1">
+          <text>余</text>
+          <text class="text-[var(--mbill-surplus-color)]">
+            {{ amountFormat(monthSummary.surplus) }}
+          </text>
         </view>
       </view>
     </template>
@@ -185,7 +208,7 @@ function handleListQuery(page: number, size: number) {
 
     <!-- 浮窗展示账单列表 -->
     <wd-floating-panel :anchors="anchors" :content-draggable="false" @height-change="handelFloatingHeightChange">
-      <z-paging ref="listPaging" v-model="groups" :height="`${pagingHeight && (pagingHeight - 32)}px`" :fixed="false" :refresher-enabled="false" :default-page-size="15" @query="handleListQuery">
+      <z-paging ref="listPaging" v-model="groups" :height="`${pagingHeight}px`" :fixed="false" :refresher-enabled="false" :default-page-size="15" @query="handleListQuery">
         <bill-list-view :groups="groups" fixed-date-format />
       </z-paging>
     </wd-floating-panel>
@@ -199,11 +222,11 @@ function handleListQuery(page: number, size: number) {
 :deep(.wd-floating-panel) {
   z-index: 6;
 }
-:deep(.wd-floating-panel__header) {
-  background-color: var(--wot-input-bg);
-}
+// :deep(.wd-floating-panel__header) {
+//   background-color: var(--wot-avatar-bg);
+// }
 
-:deep(.wd-floating-panel__content) {
-  background-color: var(--wot-input-bg);
-}
+// :deep(.wd-floating-panel__content) {
+//   background-color: var(--wot-avatar-bg);
+// }
 </style>

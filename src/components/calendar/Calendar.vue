@@ -36,12 +36,9 @@ const weekLabel = computed(() => {
 watch(() => date.value, (val) => {
   if (val === currentDate.value)
     return
-  console.log(val, dateList.value[currentIndex.value])
+  // console.log(val, dateList.value[currentIndex.value])
   initDateList(dayjs(dayjs(val).format('YYYY-MM-DD')).valueOf())
 }, { immediate: true })
-
-onMounted(() => {
-})
 
 function initDateList(baseDate = MAX_DATE) {
   const base = dayjs(baseDate)
@@ -119,7 +116,7 @@ function getSwiperItemHeight() {
       .in(proxy)
       .select(`#calendar-view-${month}`)
       .boundingClientRect((view: any) => {
-        console.log(view, month, 'boundingClientRect')
+        // console.log(view, month, 'boundingClientRect')
         // 输出元素位置信息
         swiperHeight.value = view?.height ?? 399
         emitHeightChange(swiperHeight.value)
