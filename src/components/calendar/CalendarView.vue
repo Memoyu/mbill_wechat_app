@@ -1,29 +1,29 @@
 <script setup lang="ts">
 import type { CSSProperties } from 'vue'
 import dayjs from 'dayjs'
-import { compareDate, getBillColor, getMonthEndDay, objToStyle } from '@/utils'
+import { getBillColor, getMonthEndDay, objToStyle } from '@/utils'
 
-export interface CalendarDayItem {
+export interface CalendarBillItem {
+  date: string
+  expend: number
+  income: number
+}
+
+interface CalendarDayItem {
   date: number
-  text?: number | string
-  expend?: number
-  income?: number
-  disabled?: boolean
-  isLastRow?: boolean
-  type: string
+  text: number | string
+  expend: number
+  income: number
+  disabled: boolean
 }
 
-export interface CalendarProps {
-  /**
-   * 日期
-   */
+const props = defineProps<{
   month: number
-}
-const props = defineProps<CalendarProps>()
+  bills: Array<CalendarBillItem>
+}>()
 const emit = defineEmits(['change'])
-const currentDate = defineModel()
+const currentDate = defineModel<number>()
 const days = ref<Array<CalendarDayItem>>([])
-// const innerValue = ref()
 
 // 计算偏移
 const offset = computed(() => {
@@ -41,22 +41,19 @@ const firstDayStyle = computed(() => {
 
 const dateMonth = computed(() => dayjs(props.month).format('YYYY年MM月'))
 
-const dayTypeClass = computed(() => {
-  return (type: string) => {
-    return `is-${type}`
-  }
-})
+watch(() => props.month, () => {
+  setDays()
+}, { immediate: true })
 
-watch(
-  [() => currentDate.value, () => props.month],
-  () => {
-    setDays()
-  },
-  {
-    deep: true,
-    immediate: true,
-  },
-)
+watch(() => props.bills, (data) => {
+  days.value.forEach((day) => {
+    const bill = data.find(item => dayjs(item.date).isSame(dayjs(day.date), 'date'))
+    if (!bill)
+      return
+    day.expend = bill.expend
+    day.income = bill.income
+  })
+}, { deep: true, immediate: true })
 
 function setDays() {
   const dayList: Array<CalendarDayItem> = []
@@ -67,54 +64,73 @@ function setDays() {
 
   for (let day = 1; day <= totalDay; day++) {
     const date = new Date(year, month, day).getTime()
-    let type = getDateType(date)
-    if (!type && compareDate(date, Date.now()) === 0) {
-      type = 'current'
-    }
+
     dayList.push({
       date,
       text: day,
-      expend: day % 2 === 0 ? 100 : 0,
+      expend: 0,
       income: 0,
-      type,
+      disabled: false,
     })
   }
   days.value = dayList
 }
 
-function getDateType(date: number) {
-  if (currentDate.value && compareDate(date, currentDate.value as number) === 0) {
-    return 'selected'
-  }
-  return ''
-}
-
-function handleDateClick(index: number) {
+function handleSelectedDate(index: number) {
   const date = days.value[index]
   // console.log(date, '点击')
   if (date.disabled)
     return
 
-  if (date.type !== 'selected') {
+  if (date.date !== currentDate.value) {
     emit('change', { value: date.date })
     currentDate.value = date.date
   }
+}
+
+function isCurrentDate(date: number) {
+  return dayjs(currentDate.value).isSame(dayjs(date), 'date')
+}
+
+function getFormatAmount(amount: number) {
+  const absAmount = Math.abs(amount)
+
+  if (absAmount < 10000)
+    return amount
+
+  const units = [
+    { value: 100000000, suffix: '亿' },
+    { value: 10000, suffix: '万' },
+  ]
+
+  for (const unit of units) {
+    if (absAmount >= unit.value) {
+      const formatted = (amount / unit.value)
+        .toFixed(2)
+        .replace(/\.00$/, '')
+        .replace(/(\.\d)0$/, '$1')
+      return `${formatted}${unit.suffix}`
+    }
+  }
+
+  return amount
 }
 </script>
 
 <template>
   <view class="calendar rounded-2xl">
     <view class="calendar-days">
-      <view class="calendar-month-text">
+      <!-- 调试时使用 -->
+      <!-- <view class="calendar-month-text">
         {{ dateMonth }}
-      </view>
+      </view> -->
       <view
         v-for="(item, index) in days"
         :key="index"
         class="calendar-day"
-        :class="[item.disabled ? 'is-disabled' : '', item.isLastRow ? 'is-last-row' : '', item.type ? dayTypeClass(item.type) : '']"
+        :class="[isCurrentDate(item.date) ? 'calendar-selected-day' : '']"
         :style="index === 0 ? firstDayStyle : ''"
-        @tap="handleDateClick(index)"
+        @tap="handleSelectedDate(index)"
       >
         <view class="flex flex-col items-center justify-center py-0.5">
           <view class="font-semibold">
@@ -123,10 +139,10 @@ function handleDateClick(index: number) {
           <view class="h-8">
             <view v-if="item.expend !== 0 || item.income !== 0" class="flex flex-col items-center text-xs">
               <text :style="{ color: getBillColor(0) }">
-                {{ item.expend }}
+                {{ getFormatAmount(item.expend) }}
               </text>
               <text :style="{ color: getBillColor(1) }">
-                {{ item.income }}
+                {{ getFormatAmount(item.income) }}
               </text>
             </view>
           </view>
@@ -157,7 +173,7 @@ function handleDateClick(index: number) {
   items-align: center;
 }
 
-.is-selected {
+.calendar-selected-day {
   border-radius: 8px;
   color: white;
   @apply: bg-indigo-200;

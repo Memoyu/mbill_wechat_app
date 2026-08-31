@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { CalendarBillItem } from './CalendarView.vue'
 import dayjs from 'dayjs'
 import { getWeekLabel } from '@/utils'
 
@@ -10,9 +11,9 @@ defineOptions({
   },
 })
 
-const props = withDefaults(defineProps<{
-}>(), {
-})
+const props = defineProps<{
+  bills: Array<CalendarBillItem>
+}>()
 const emit = defineEmits(['change', 'selected', 'heightchange'])
 const date = defineModel<number>()
 
@@ -21,7 +22,7 @@ const { proxy } = getCurrentInstance() as any
 
 const dateValue = ref(Date.now())
 const swiperHeight = ref(0)
-const dateList = ref<number[]>([])
+const monthList = ref<number[]>([])
 const currentIndex = ref(0)
 const oldIndex = ref(0)
 const currentDate = ref()
@@ -36,7 +37,7 @@ const weekLabel = computed(() => {
 watch(() => date.value, (val) => {
   if (val === currentDate.value)
     return
-  // console.log(val, dateList.value[currentIndex.value])
+  // console.log(val, monthList.value[currentIndex.value])
   initDateList(dayjs(dayjs(val).format('YYYY-MM-DD')).valueOf())
 }, { immediate: true })
 
@@ -48,12 +49,12 @@ function initDateList(baseDate = MAX_DATE) {
     return endOfBase.add(i + 1, 'month').startOf('month').valueOf()
   })
 
-  dateList.value = dates
+  monthList.value = dates
   currentIndex.value = Math.floor(dates.length / 2)
   oldIndex.value = currentIndex.value
   currentDate.value = dates[currentIndex.value]
   getSwiperItemHeight()
-  console.log('initDateList', dateList.value, currentIndex.value)
+  console.log('initDateList', monthList.value, currentIndex.value)
 }
 function handleDateChange(e: any) {
   // dateValue.value = e.value
@@ -67,7 +68,7 @@ function handleSwiperChange(e: any) {
   // console.log(e, 'change')
   oldIndex.value = currentIndex.value
   const index = e.detail.current
-  const month = dateList.value[index]
+  const month = monthList.value[index]
   emit('change', month)
   currentDate.value = month
   currentIndex.value = index
@@ -81,32 +82,33 @@ function handleSwiperAnimationFinish(e: any) {
   tryAddSwiperItem()
 }
 function tryAddSwiperItem() {
-  // console.log(lodash.cloneDeep(dateList.value), 'handleSwiperChange')
+  // console.log(lodash.cloneDeep(monthList.value), 'handleSwiperChange')
   if (oldIndex.value < currentIndex.value) {
     // 向后滑动
     // 移除第一个月份swiper item, 并在末尾增加一个月份swiper item
 
-    if (currentIndex.value >= dateList.value.length - 3) {
+    if (currentIndex.value >= monthList.value.length - 3) {
       console.log('新增日期项')
-      const lastDate = dateList.value.at(-1)
-      dateList.value.push(dayjs(lastDate).add(1, 'month').startOf('month').valueOf())
+      const lastDate = monthList.value.at(-1)
+      monthList.value.push(dayjs(lastDate).add(1, 'month').startOf('month').valueOf())
     }
-    console.log('向后滑动', dateList.value)
+    console.log('向后滑动', monthList.value)
   }
   else {
     // 向前滑动
     // 移除末尾一个月份swiper item, 并在开头增加一个月份swiper item
     if (currentIndex.value <= 2) {
-      const firstDate = dateList.value.at(0)
-      dateList.value.unshift(dayjs(firstDate).subtract(1, 'month').startOf('month').valueOf())
+      const firstDate = monthList.value.at(0)
+      monthList.value.unshift(dayjs(firstDate).subtract(1, 'month').startOf('month').valueOf())
       // 插入前面，index发生改变，需要调整当前swiper current
       currentIndex.value += 1
       oldIndex.value = currentIndex.value
     }
 
-    console.log('向前滑动', dateList.value)
+    console.log('向前滑动', monthList.value)
   }
 }
+
 function getSwiperItemHeight() {
   const month = currentDate.value
   // console.log('date', dayjs(month).format('YYYY-MM'))
@@ -127,6 +129,10 @@ function getSwiperItemHeight() {
 function emitHeightChange(height: number) {
   emit('heightchange', height + 36) // 36 weeks height
 }
+
+function getBills(month: number) {
+  return currentDate.value === month ? props.bills : []
+}
 </script>
 
 <template>
@@ -146,8 +152,8 @@ function emitHeightChange(height: number) {
     @change="handleSwiperChange"
     @animationfinish="handleSwiperAnimationFinish"
   >
-    <swiper-item v-for="item in dateList" :key="item">
-      <calendar-view :id="`calendar-view-${item}`" v-model="dateValue" class="calendar-content" :month="item" @change="handleDateChange" />
+    <swiper-item v-for="item in monthList" :key="item">
+      <calendar-view :id="`calendar-view-${item}`" v-model="dateValue" :month="item" :bills="getBills(item)" @change="handleDateChange" />
     </swiper-item>
   </swiper>
 </template>

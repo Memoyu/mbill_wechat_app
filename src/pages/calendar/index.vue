@@ -1,7 +1,9 @@
 <script lang="ts" setup>
-import type { IBillDateGroup, IBillSummaryAmountItem } from '@/api/types/bill'
+import type { IBillDateGroup, IBillSummaryAmount, IBillSummaryAmountItem } from '@/api/types/bill'
 import type { IDatePickerValue } from '@/components/base/DatePicker.vue'
+import type { CalendarBillItem } from '@/components/calendar/CalendarView.vue'
 import dayjs from 'dayjs'
+import _ from 'lodash'
 import { pageBill, summaryAmountBill } from '@/api/bill'
 import { useLedgerPickerStore } from '@/store'
 import { amountFormat, getBillColor, systemInfo } from '@/utils'
@@ -15,18 +17,17 @@ definePage({
 
 const { proxy } = getCurrentInstance() as any
 const ledgerPickerStore = useLedgerPickerStore()
+const summaryCache: Array<{ date: number, data: IBillSummaryAmount }> = []
 
 const isDateSelectShow = ref(false)
 const date = ref<IDatePickerValue>({
   value: dayjs().valueOf(),
   type: 'year-month',
 })
-
 const month = ref<number>(date.value.value)
 const monthText = computed(() => dayjs(month.value).format('YYYY年MM月'))
 const navbarHeight = ref(0)
 const calendarHeight = ref(0)
-
 const calendarPaging = ref()
 const listPaging = ref()
 const ledgerIds = ref<string[]>(ledgerPickerStore.selectedLedgers)
@@ -42,6 +43,7 @@ const monthSummary = ref<IBillSummaryAmountItem> ({
   incomeHighest: 0,
   incomeLowst: 0,
 })
+const daySummaries = ref<CalendarBillItem[]> ([])
 
 const contentHeight = ref<number>()
 const floatingHeight = ref<number>()
@@ -57,29 +59,12 @@ watch(() => [navbarHeight.value, calendarHeight.value], ([nav, cal]) => {
 })
 
 onLoad(() => {
-  initData()
+  getSummaryAmountBill()
 })
 
 onMounted(() => {
   initNavbarHeight()
 })
-
-function getDateRange(type: 'month' | 'date' = 'date') {
-  return {
-    beginDate: dayjs(date.value.value).startOf(type).format('YYYY-MM-DD 00:00:00'),
-    endDate: dayjs(date.value.value).endOf(type).format('YYYY-MM-DD 23:59:59'),
-  }
-}
-
-function initData() {
-  summaryAmountBill({
-    ...getDateRange('month'),
-    series: 0,
-    ledgerIds: ledgerPickerStore.selectedLedgers,
-  }).then((res) => {
-    monthSummary.value = res.summary
-  })
-}
 
 function initNavbarHeight() {
   nextTick(() => {
@@ -94,9 +79,11 @@ function handleToday() {
   // 定位到今天
 }
 
+const debounced = _.debounce(getSummaryAmountBill, 500)
 function handleMonthChange(m: number) {
-  // console.log('月份切换', m)
+  console.log('月份切换', m)
   month.value = m
+  debounced()
 }
 
 function handleDateChange(d: number) {
@@ -116,7 +103,30 @@ function handelFloatingHeightChange({ height }: { height: number }) {
 }
 
 function handleCalendarQuery() {
-  calendarPaging.value.complete()
+  getSummaryAmountBill(true).then(() => {
+    calendarPaging.value.complete()
+  })
+}
+
+async function getSummaryAmountBill(forced: boolean = false) {
+  const dm = dayjs(month.value)
+  const cache = summaryCache.find(c => dayjs(c.date).isSame(dm, 'month'))
+  let data = cache?.data
+  if (cache && !forced) {
+    data = cache.data
+  }
+  else {
+    data = await summaryAmountBill({
+      beginDate: dm.startOf('month').format('YYYY-MM-DD 00:00:00'),
+      endDate: dm.endOf('month').format('YYYY-MM-DD 23:59:59'),
+      series: 2,
+      ledgerIds: ledgerPickerStore.selectedLedgers,
+    })
+    summaryCache.push({ date: month.value, data })
+  }
+
+  monthSummary.value = data.summary
+  daySummaries.value = data.series.map(s => s as CalendarBillItem)
 }
 
 function handleListQuery(page: number, size: number) {
@@ -126,7 +136,8 @@ function handleListQuery(page: number, size: number) {
   }
 
   pageBill({
-    ...getDateRange(),
+    beginDate: dayjs(date.value.value).format('YYYY-MM-DD 00:00:00'),
+    endDate: dayjs(date.value.value).format('YYYY-MM-DD 23:59:59'),
     ledgerIds: ledgerIds.value,
     size,
     page,
@@ -174,7 +185,7 @@ function handleListQuery(page: number, size: number) {
       </view>
     </template>
     <template #prefix-action>
-      <view class="mt-2 w-full flex items-center justify-between text-sm">
+      <view class="mt-2 w-full flex items-center gap-2 text-sm">
         <view class="flex gap-1">
           <text>支</text>
           <text :style="{ color: getBillColor(0) }">
@@ -202,7 +213,7 @@ function handleListQuery(page: number, size: number) {
     <z-paging ref="calendarPaging" :fixed="false" refresher-only @query="handleCalendarQuery">
       <!-- 日历组件 -->
       <view id="CALENDAR" class="mx-3 rounded-3xl bg-white p-2">
-        <calendar v-model="date.value" @change="handleMonthChange" @selected="handleDateChange" @heightchange="handleCalHeightChange" />
+        <calendar v-model="date.value" :bills="daySummaries" @change="handleMonthChange" @selected="handleDateChange" @heightchange="handleCalHeightChange" />
       </view>
     </z-paging>
 

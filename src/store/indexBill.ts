@@ -1,8 +1,8 @@
+import type { OpUnitType } from 'dayjs'
 import type { IBill, IBillDateGroup, IBillSummaryAmountItem, IEditBill } from '@/api/types/bill'
 import type { IDatePickerValue } from '@/components/base/DatePicker.vue'
 import type { BillTypeEnum } from '@/typings'
 import dayjs from 'dayjs'
-import { debounce } from 'lodash'
 import { defineStore } from 'pinia'
 import {
   createBill as fetchCreateBill,
@@ -239,6 +239,15 @@ export const useIndexBillStore = defineStore(
         tags: edit.tags || [],
         createTime: new Date(),
       }
+
+      // 判断添加的账单日期是否在当前指定的日期内
+      let dt = state.date.type.toString()
+      if (dt === 'year-month') {
+        dt = 'month'
+      }
+      // console.log('dt', dt, state.date.type, bill.date, state.date.value)
+      if (!dayjs(bill.date).isSame(dayjs(state.date.value), dt as OpUnitType))
+        return
 
       // 维护本地bills数据
       // 查找是否已存在这天的分组
