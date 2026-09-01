@@ -29,12 +29,12 @@ const paging = ref()
 const user = computed(() => userStore.userInfo)
 
 const dateText = computed(() => {
-  const date = dayjs(indexBillStore.date.value)
+  const date = dayjs(indexBillStore.date)
   let text = date.format('YYYY年MM月')
-  if (indexBillStore.date.type === 'year') {
+  if (indexBillStore.dateType === 'year') {
     text = date.format('YYYY年')
   }
-  else if (indexBillStore.date.type === 'date') {
+  else if (indexBillStore.dateType === 'date') {
     text = date.format('YYYY年MM月DD日')
   }
   return text
@@ -135,7 +135,9 @@ function handleQuery(page: number) {
           </view>
           <wd-icon size="16" name="caret-down" />
         </view>
-        <view class="iconfont icon-calendar text-2xl" @tap="handleCalendarClick" />
+        <action-btn @tap="handleCalendarClick">
+          <view class="iconfont icon-calendar" />
+        </action-btn>
       </view>
 
       <!-- 账单金额汇总 -->
@@ -144,7 +146,7 @@ function handleQuery(page: number) {
       </view>
 
       <!-- 账单金额汇总统计 -->
-      <view v-if="dayjs(indexBillStore.date.value).isSame(dayjs(), 'month')" class="mx-3 rounded-xl bg-indigo-300/20 px-2 py-3">
+      <view v-if="dayjs(indexBillStore.date).isSame(dayjs(), 'month')" class="mx-3 rounded-xl bg-indigo-300/20 px-2 py-3">
         <amount-summary-charts />
       </view>
     </view>
@@ -166,7 +168,7 @@ function handleQuery(page: number) {
     <bottom-nav-bar @show-ledgers="isLedgersShow = true" />
 
     <!-- 日期选择弹窗 -->
-    <date-picker v-model="isDateSelectShow" choose-type :date="indexBillStore.date" @change="handleDateChange" />
+    <date-picker v-model="isDateSelectShow" choose-type :date="indexBillStore.date" :type="indexBillStore.dateType" @change="handleDateChange" />
 
     <!-- 账本弹窗 -->
     <ledger-picker v-model="isLedgersShow" />

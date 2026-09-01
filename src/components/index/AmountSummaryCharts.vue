@@ -145,7 +145,7 @@ function handleSettingConfirm() {
 
 <template>
   <view v-if="settingsStore.index.charts.show">
-    <view class="flex items-start justify-between">
+    <view class="flex items-center justify-between">
       <view>
         <view class="font-bold">
           {{ dateTitle }}{{ typeTitle }}汇总
@@ -165,9 +165,9 @@ function handleSettingConfirm() {
           </view>
         </view>
       </view>
-      <view class="flex items-center justify-center rounded-full bg-white/70 p-1" @tap="showChartsSetting = true">
-        <wd-icon name="more" size="18" />
-      </view>
+      <action-btn @tap="showChartsSetting = true">
+        <view class="iconfont icon-more" />
+      </action-btn>
     </view>
     <view class="col-amount-summary-box">
       <qiun-data-charts

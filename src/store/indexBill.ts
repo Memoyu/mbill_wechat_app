@@ -1,6 +1,6 @@
+import type { DateTimeType } from '@wot-ui/ui/components/wd-datetime-picker-view/types'
 import type { OpUnitType } from 'dayjs'
 import type { IBill, IBillDateGroup, IBillSummaryAmountItem, IEditBill } from '@/api/types/bill'
-import type { IDatePickerValue } from '@/components/base/DatePicker.vue'
 import type { BillTypeEnum } from '@/typings'
 import dayjs from 'dayjs'
 import { defineStore } from 'pinia'
@@ -23,7 +23,8 @@ interface ILoaclBill {
 
 // 初始化状态
 const initState: {
-  date: IDatePickerValue
+  date: number
+  dateType: DateTimeType
   /** 账单列表 */
   groups: IBillDateGroup[]
   /** 账单金额汇总 */
@@ -36,10 +37,8 @@ const initState: {
   /** 用户弹窗年度账单金额汇总 */
   yearSummary: IBillSummaryAmountItem
 } = {
-  date: {
-    value: dayjs().valueOf(),
-    type: 'year-month',
-  },
+  date: dayjs().valueOf(),
+  dateType: 'year-month',
   groups: [],
   summary: {
     income: 0,
@@ -81,14 +80,14 @@ export const useIndexBillStore = defineStore(
     const pageSize = 15
 
     const getDateRange = () => {
-      const date = dayjs(state.date.value)
+      const date = dayjs(state.date)
       let beginDate = date.startOf('date')
       let endDate = date.endOf('date')
-      if (state.date.type === 'year-month') {
+      if (state.dateType === 'year-month') {
         beginDate = date.startOf('month')
         endDate = date.endOf('month')
       }
-      else if (state.date.type === 'year') {
+      else if (state.dateType === 'year') {
         beginDate = date.startOf('year')
         endDate = date.endOf('year')
       }
@@ -241,12 +240,12 @@ export const useIndexBillStore = defineStore(
       }
 
       // 判断添加的账单日期是否在当前指定的日期内
-      let dt = state.date.type.toString()
+      let dt = state.dateType.toString()
       if (dt === 'year-month') {
         dt = 'month'
       }
       // console.log('dt', dt, state.date.type, bill.date, state.date.value)
-      if (!dayjs(bill.date).isSame(dayjs(state.date.value), dt as OpUnitType))
+      if (!dayjs(bill.date).isSame(dayjs(state.date), dt as OpUnitType))
         return
 
       // 维护本地bills数据
@@ -369,7 +368,8 @@ export const useIndexBillStore = defineStore(
      * @param date 日期、类型
      */
     const setDate = (date: any) => {
-      state.date = date
+      state.date = date.value
+      state.dateType = date.type
     }
 
     const createBill = async (create: IEditBill) => {

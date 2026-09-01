@@ -2,13 +2,9 @@
 import type { DateTimeType } from '@wot-ui/ui/components/wd-datetime-picker-view/types'
 import dayjs from 'dayjs'
 
-export interface IDatePickerValue {
-  value: number
-  type: DateTimeType
-}
-
 const props = withDefaults(defineProps<{
-  date: IDatePickerValue
+  date: number
+  type: DateTimeType
   chooseType?: boolean
 }>(), {
 })
@@ -38,16 +34,16 @@ const innerDate = ref(dayjs().valueOf())
 
 watch(() => show.value, (val) => {
   if (val) {
-    innerType.value = props.date.type
-    innerDate.value = props.date.value
+    innerType.value = props.type
+    innerDate.value = props.date
   }
 })
 
-watch(() => props.date, (val) => {
-  if (val) {
-    innerType.value = val.type
-    innerDate.value = val.value
-  }
+watch([props.date, props.type], ([date, type]) => {
+  if (!date || !type)
+    return
+  innerDate.value = date as number
+  innerType.value = type as DateTimeType
 }, { immediate: true, deep: true })
 
 function handleDateChange() {

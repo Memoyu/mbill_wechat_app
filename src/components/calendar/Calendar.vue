@@ -10,22 +10,21 @@ defineOptions({
     styleIsolation: 'shared',
   },
 })
-
 const props = defineProps<{
   bills: Array<CalendarBillItem>
+  month: number
 }>()
 const emit = defineEmits(['change', 'selected', 'heightchange'])
-const date = defineModel<number>()
+const date = defineModel<number>({ default: dayjs().valueOf() })
 
-const MAX_DATE = dayjs(dayjs().format('YYYY-MM-DD')).valueOf()
 const { proxy } = getCurrentInstance() as any
+const MAX_DATE = dayjs().valueOf()
 
-const dateValue = ref(Date.now())
 const swiperHeight = ref(0)
 const monthList = ref<number[]>([])
-const currentIndex = ref(0)
 const oldIndex = ref(0)
-const currentDate = ref()
+const currentIndex = ref(0)
+const currentMonth = ref(props.month)
 
 // 周标题
 const weekLabel = computed(() => {
@@ -34,27 +33,33 @@ const weekLabel = computed(() => {
   }
 })
 
-watch(() => date.value, (val) => {
-  if (val === currentDate.value)
+watch(() => date.value, (d) => {
+  // 同一个月份不处理
+  if (dayjs(currentMonth.value).isSame(dayjs(d), 'month'))
     return
-  // console.log(val, monthList.value[currentIndex.value])
-  initDateList(dayjs(dayjs(val).format('YYYY-MM-DD')).valueOf())
+
+  initMonthList(d)
+  emit('selected', d)
+  emit('change', currentMonth.value)
 }, { immediate: true })
 
-function initDateList(baseDate = MAX_DATE) {
-  const base = dayjs(baseDate)
-  const endOfBase = base.subtract(3, 'month').startOf('month')
+watch(() => props.month, (value) => {
+  initMonthList(value)
+  emit('change', currentMonth.value)
+}, { immediate: true })
 
-  const dates = Array.from({ length: 5 }, (_, i) => {
+function initMonthList(baseDate = MAX_DATE) {
+  const endOfBase = dayjs(baseDate).subtract(3, 'month').startOf('month')
+  const months = Array.from({ length: 5 }, (_, i) => {
     return endOfBase.add(i + 1, 'month').startOf('month').valueOf()
   })
 
-  monthList.value = dates
-  currentIndex.value = Math.floor(dates.length / 2)
+  monthList.value = months
+  currentIndex.value = Math.floor(months.length / 2)
   oldIndex.value = currentIndex.value
-  currentDate.value = dates[currentIndex.value]
+  currentMonth.value = months[currentIndex.value]
   getSwiperItemHeight()
-  console.log('initDateList', monthList.value, currentIndex.value)
+  console.log('initMonthList', monthList.value, currentIndex.value)
 }
 function handleDateChange(e: any) {
   // dateValue.value = e.value
@@ -70,7 +75,7 @@ function handleSwiperChange(e: any) {
   const index = e.detail.current
   const month = monthList.value[index]
   emit('change', month)
-  currentDate.value = month
+  currentMonth.value = month
   currentIndex.value = index
   // console.log(currentIndex.value, 'currentIndex.value')
   getSwiperItemHeight()
@@ -79,9 +84,6 @@ function handleSwiperChange(e: any) {
 function handleSwiperAnimationFinish(e: any) {
   // console.log(e, currentIndex.value, 'animationfinish')
   // currentIndex.value = oldIndex.value
-  tryAddSwiperItem()
-}
-function tryAddSwiperItem() {
   // console.log(lodash.cloneDeep(monthList.value), 'handleSwiperChange')
   if (oldIndex.value < currentIndex.value) {
     // 向后滑动
@@ -110,7 +112,7 @@ function tryAddSwiperItem() {
 }
 
 function getSwiperItemHeight() {
-  const month = currentDate.value
+  const month = currentMonth.value
   // console.log('date', dayjs(month).format('YYYY-MM'))
   setTimeout(() =>
     uni
@@ -131,7 +133,7 @@ function emitHeightChange(height: number) {
 }
 
 function getBills(month: number) {
-  return currentDate.value === month ? props.bills : []
+  return currentMonth.value === month ? props.bills : []
 }
 </script>
 
@@ -153,7 +155,7 @@ function getBills(month: number) {
     @animationfinish="handleSwiperAnimationFinish"
   >
     <swiper-item v-for="item in monthList" :key="item">
-      <calendar-view :id="`calendar-view-${item}`" v-model="dateValue" :month="item" :bills="getBills(item)" @change="handleDateChange" />
+      <calendar-view :id="`calendar-view-${item}`" v-model="date" :month="item" :bills="getBills(item)" @change="handleDateChange" />
     </swiper-item>
   </swiper>
 </template>

@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import type { IBillDateGroup, IBillSummaryAmount, IBillSummaryAmountItem } from '@/api/types/bill'
-import type { IDatePickerValue } from '@/components/base/DatePicker.vue'
 import type { CalendarBillItem } from '@/components/calendar/CalendarView.vue'
 import dayjs from 'dayjs'
 import _ from 'lodash'
@@ -20,11 +19,8 @@ const ledgerPickerStore = useLedgerPickerStore()
 const summaryCache: Array<{ date: number, data: IBillSummaryAmount }> = []
 
 const isDateSelectShow = ref(false)
-const date = ref<IDatePickerValue>({
-  value: dayjs().valueOf(),
-  type: 'year-month',
-})
-const month = ref<number>(date.value.value)
+const date = ref<number>(dayjs().valueOf())
+const month = ref<number>(date.value)
 const monthText = computed(() => dayjs(month.value).format('YYYY年MM月'))
 const navbarHeight = ref(0)
 const calendarHeight = ref(0)
@@ -77,6 +73,7 @@ function initNavbarHeight() {
 
 function handleToday() {
   // 定位到今天
+  date.value = dayjs().valueOf()
 }
 
 const debounced = _.debounce(getSummaryAmountBill, 500)
@@ -88,7 +85,7 @@ function handleMonthChange(m: number) {
 
 function handleDateChange(d: number) {
   // console.log('日期切换', d)
-  date.value.value = d
+  date.value = d
   listPaging.value.reload()
 }
 
@@ -136,8 +133,8 @@ function handleListQuery(page: number, size: number) {
   }
 
   pageBill({
-    beginDate: dayjs(date.value.value).format('YYYY-MM-DD 00:00:00'),
-    endDate: dayjs(date.value.value).format('YYYY-MM-DD 23:59:59'),
+    beginDate: dayjs(date.value).format('YYYY-MM-DD 00:00:00'),
+    endDate: dayjs(date.value).format('YYYY-MM-DD 23:59:59'),
     ledgerIds: ledgerIds.value,
     size,
     page,
@@ -181,7 +178,9 @@ function handleListQuery(page: number, size: number) {
           </text>
           <wd-icon name="caret-down" />
         </view>
-        <view class="iconfont icon-today text-xl" @click="handleToday" />
+        <action-btn @tap="handleToday">
+          <view class="iconfont icon-today" />
+        </action-btn>
       </view>
     </template>
     <template #prefix-action>
@@ -213,7 +212,7 @@ function handleListQuery(page: number, size: number) {
     <z-paging ref="calendarPaging" :fixed="false" refresher-only @query="handleCalendarQuery">
       <!-- 日历组件 -->
       <view id="CALENDAR" class="mx-3 rounded-3xl bg-white p-2">
-        <calendar v-model="date.value" :bills="daySummaries" @change="handleMonthChange" @selected="handleDateChange" @heightchange="handleCalHeightChange" />
+        <calendar v-model="date" :month="month" :bills="daySummaries" @change="handleMonthChange" @selected="handleDateChange" @heightchange="handleCalHeightChange" />
       </view>
     </z-paging>
 
@@ -226,7 +225,7 @@ function handleListQuery(page: number, size: number) {
   </view>
 
   <!-- 日期选择弹窗 -->
-  <date-picker v-model="isDateSelectShow" v-model:date="date" />
+  <date-picker v-model="isDateSelectShow" :date="month" type="year-month" />
 </template>
 
 <style lang="scss" scoped>
