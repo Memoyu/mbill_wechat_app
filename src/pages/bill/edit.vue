@@ -8,7 +8,7 @@ import Decimal from 'decimal.js'
 import { getAddressInfo } from '@/api/aggregation'
 import { getBill } from '@/api/bill'
 import { useIndexBillStore, useLedgerStore, useSettingsStore } from '@/store'
-import { getBillColor, formatDate, systemInfo } from '@/utils'
+import { formatDate, getBillColor, systemInfo } from '@/utils'
 
 definePage({
   style: {
@@ -319,6 +319,7 @@ function calcExpression(expression: string): number {
 
 function handleEditComplete(keep: boolean = false) {
   console.log('handleEditComplete', bill.value)
+  // TODO 防连击处理
   // 校验必要参数
   const edit = bill.value
   if (!edit.ledger || !edit.ledger.ledgerId)

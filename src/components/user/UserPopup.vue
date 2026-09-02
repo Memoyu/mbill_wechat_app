@@ -118,9 +118,10 @@ function handleSummaryRefresh() {
         <view class="user-block">
           <view class="user-block-title flex items-center justify-between">
             <text>年汇总统计</text>
-            <view class="flex items-center justify-center rounded-full bg-gray-100/80 p-1" @tap="handleSummaryRefresh">
-              <wd-icon name="refresh" size="18" />
-            </view>
+
+            <action-btn @tap="handleSummaryRefresh">
+              <wd-icon name="refresh" size="16" />
+            </action-btn>
           </view>
           <view class="flex flex-col gap-3 text-gray-500">
             <view class="flex justify-between">

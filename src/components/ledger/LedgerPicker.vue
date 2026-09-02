@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { ILedger } from '@/api/types/ledger'
 import { useDialog, useToast } from '@wot-ui/ui'
-import { s } from 'node_modules/vite/dist/node/types.d-aGj9QkWt'
 import { useLedgerPickerStore, useLedgerStore } from '@/store'
 
 defineOptions({
