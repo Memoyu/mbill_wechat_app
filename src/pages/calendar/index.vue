@@ -79,13 +79,11 @@ function handleToday() {
 const debounced = _.debounce(getSummaryAmountBill, 500)
 function handleMonthChange(m: number) {
   console.log('月份切换', m)
-  month.value = m
   debounced()
 }
 
 function handleDateChange(d: number) {
-  // console.log('日期切换', d)
-  date.value = d
+  console.log('日期切换', d)
   listPaging.value.reload()
 }
 
@@ -108,11 +106,9 @@ function handleCalendarQuery() {
 async function getSummaryAmountBill(forced: boolean = false) {
   const dm = dayjs(month.value)
   const cache = summaryCache.find(c => dayjs(c.date).isSame(dm, 'month'))
+  console.log(cache, 'cache')
   let data = cache?.data
-  if (cache && !forced) {
-    data = cache.data
-  }
-  else {
+  if (!data || forced) {
     data = await summaryAmountBill({
       beginDate: dm.startOf('month').format('YYYY-MM-DD 00:00:00'),
       endDate: dm.endOf('month').format('YYYY-MM-DD 23:59:59'),
@@ -127,7 +123,7 @@ async function getSummaryAmountBill(forced: boolean = false) {
 }
 
 function handleListQuery(page: number, size: number) {
-  // console.log(params, 'handleQuery')
+  console.log(page, size, 'handleQuery')
   if (page === 1) {
     groups.value = []
   }
@@ -212,7 +208,7 @@ function handleListQuery(page: number, size: number) {
     <z-paging ref="calendarPaging" :fixed="false" refresher-only @query="handleCalendarQuery">
       <!-- 日历组件 -->
       <view id="CALENDAR" class="mx-3 rounded-3xl bg-white p-2">
-        <calendar v-model="date" :month="month" :bills="daySummaries" @change="handleMonthChange" @selected="handleDateChange" @heightchange="handleCalHeightChange" />
+        <calendar v-model="date" v-model:month="month" :bills="daySummaries" @change="handleMonthChange" @selected="handleDateChange" @heightchange="handleCalHeightChange" />
       </view>
     </z-paging>
 
@@ -225,7 +221,7 @@ function handleListQuery(page: number, size: number) {
   </view>
 
   <!-- 日期选择弹窗 -->
-  <date-picker v-model="isDateSelectShow" :date="month" type="year-month" />
+  <date-picker v-model="isDateSelectShow" v-model:date="month" type="year-month" />
 </template>
 
 <style lang="scss" scoped>

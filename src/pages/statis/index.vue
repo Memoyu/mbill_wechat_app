@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import { systemInfo } from '@/utils'
+
 definePage({
   style: {
     navigationStyle: 'custom',
@@ -10,28 +12,51 @@ const options = [
   '年统计',
   '自定义',
 ]
+const initializedTabs: number[] = []
 
 const monthlyStatisRef = ref()
 const annualStatisRef = ref()
 const customStatisRef = ref()
 
+const { proxy } = getCurrentInstance() as any
 const active = ref(0)
+const contentHeight = ref(0)
 
 watch(() => active.value, (val) => {
   initComponent(val)
 })
 
 onMounted(() => {
-  initComponent(0)
+  calcNavbarHeight()
 })
 
-function initComponent(cidx: number) {
-  if (cidx === 0)
-    monthlyStatisRef.value.init()
-  else if (cidx === 1)
-    annualStatisRef.value.init()
-  else if (cidx === 2)
-    customStatisRef.value.init()
+function calcNavbarHeight() {
+  nextTick(() => {
+    uni
+      .createSelectorQuery()
+      .in(proxy)
+      .select('#TOP_NAVBAR')
+      .boundingClientRect((view: any) => {
+        contentHeight.value = systemInfo.windowHeight - (view?.height ?? 92)
+        initComponent(0)
+        console.log(view, contentHeight.value, 'TOP_NAVBAR')
+      })
+      .exec()
+  })
+}
+
+function initComponent(tabIdx: number) {
+  if (initializedTabs.includes(tabIdx))
+    return
+
+  if (tabIdx === 0)
+    monthlyStatisRef.value.init(contentHeight.value)
+  else if (tabIdx === 1)
+    annualStatisRef.value.init(contentHeight.value)
+  else if (tabIdx === 2)
+    customStatisRef.value.init(contentHeight.value)
+
+  initializedTabs.push(tabIdx)
 }
 </script>
 

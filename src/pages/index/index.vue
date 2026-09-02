@@ -46,7 +46,6 @@ watch (() => ledgerPickerStore.selectedLedgers, () => {
 }, { deep: true })
 
 onLoad(() => {
-  indexBillStore.loadIndexSummary()
   indexBillStore.loadYearSummary()
 })
 
@@ -66,6 +65,7 @@ function handleCalendarClick() {
  * z-paging 查询
  */
 function handleQuery(page: number) {
+  indexBillStore.loadIndexSummary()
   // console.log('handleQuery page', page)
   indexBillStore.loadBills(page).then((res) => {
     // console.log('complete')

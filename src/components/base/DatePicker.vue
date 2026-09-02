@@ -10,7 +10,6 @@ const props = withDefaults(defineProps<{
 })
 const emit = defineEmits(['change', 'update:date'])
 const show = defineModel<boolean>()
-
 const types = [
   {
     label: '按天',
@@ -28,7 +27,6 @@ const types = [
     icon: 'icon-year',
   },
 ]
-
 const innerType = ref<DateTimeType>()
 const innerDate = ref(dayjs().valueOf())
 
@@ -39,12 +37,13 @@ watch(() => show.value, (val) => {
   }
 })
 
-watch([props.date, props.type], ([date, type]) => {
-  if (!date || !type)
-    return
-  innerDate.value = date as number
-  innerType.value = type as DateTimeType
-}, { immediate: true, deep: true })
+watch(() => props.date, (val) => {
+  innerDate.value = val
+}, { immediate: true })
+
+watch(() => props.type, (val) => {
+  innerType.value = val
+}, { immediate: true })
 
 function handleDateChange() {
 }
@@ -52,7 +51,7 @@ function handleDateChange() {
 function handleConfirm() {
   const date = { value: innerDate.value, type: innerType.value }
   emit('change', date)
-  emit('update:date', date)
+  emit('update:date', innerDate.value)
   show.value = false
 }
 </script>

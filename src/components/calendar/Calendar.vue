@@ -12,19 +12,18 @@ defineOptions({
 })
 const props = defineProps<{
   bills: Array<CalendarBillItem>
-  month: number
 }>()
 const emit = defineEmits(['change', 'selected', 'heightchange'])
 const date = defineModel<number>({ default: dayjs().valueOf() })
+const month = defineModel<number>('month', { default: dayjs().valueOf() })
 
 const { proxy } = getCurrentInstance() as any
-const MAX_DATE = dayjs().valueOf()
 
 const swiperHeight = ref(0)
 const monthList = ref<number[]>([])
 const oldIndex = ref(0)
 const currentIndex = ref(0)
-const currentMonth = ref(props.month)
+const changed = ref(false)
 
 // 周标题
 const weekLabel = computed(() => {
@@ -33,23 +32,34 @@ const weekLabel = computed(() => {
   }
 })
 
-watch(() => date.value, (d) => {
-  // 同一个月份不处理
-  if (dayjs(currentMonth.value).isSame(dayjs(d), 'month'))
+watch(() => date.value, (value) => {
+  emit('selected', value)
+  month.value = dayjs(value).startOf('month').valueOf()
+  swipToDate(value)
+})
+
+watch(() => month.value, (value) => {
+  emit('change', value)
+  // 如果是当前月份，则不处理
+  if (value === monthList.value[currentIndex.value])
     return
-
-  initMonthList(d)
-  emit('selected', d)
-  emit('change', currentMonth.value)
+  swipToDate(value)
 }, { immediate: true })
 
-watch(() => props.month, (value) => {
-  initMonthList(value)
-  emit('change', currentMonth.value)
-}, { immediate: true })
+function swipToDate(date: number) {
+  // 变更月份在列表中，则转到当前
+  const monthIndex = monthList.value.findIndex(m => dayjs(m).isSame(dayjs(date), 'month'))
+  if (monthIndex >= 0) {
+    currentIndex.value = monthIndex
+    oldIndex.value = currentIndex.value
+    return
+  }
+  // 否则重新生成月份列表
+  initMonthList(date)
+}
 
-function initMonthList(baseDate = MAX_DATE) {
-  const endOfBase = dayjs(baseDate).subtract(3, 'month').startOf('month')
+function initMonthList(base: number) {
+  const endOfBase = dayjs(base).subtract(3, 'month').startOf('month')
   const months = Array.from({ length: 5 }, (_, i) => {
     return endOfBase.add(i + 1, 'month').startOf('month').valueOf()
   })
@@ -57,48 +67,48 @@ function initMonthList(baseDate = MAX_DATE) {
   monthList.value = months
   currentIndex.value = Math.floor(months.length / 2)
   oldIndex.value = currentIndex.value
-  currentMonth.value = months[currentIndex.value]
-  getSwiperItemHeight()
-  console.log('initMonthList', monthList.value, currentIndex.value)
+
+  calcSwiperItemHeight()
+  // console.log('initMonthList', monthList.value, currentIndex.value)
 }
+
 function handleDateChange(e: any) {
-  // dateValue.value = e.value
-  // currentIndex.value = 3
-  const d = e.value
-  date.value = d
-  emit('selected', d)
+  const { value } = e
+  date.value = value
 }
 
 function handleSwiperChange(e: any) {
   // console.log(e, 'change')
+  changed.value = true
   oldIndex.value = currentIndex.value
   const index = e.detail.current
-  const month = monthList.value[index]
-  emit('change', month)
-  currentMonth.value = month
   currentIndex.value = index
-  // console.log(currentIndex.value, 'currentIndex.value')
-  getSwiperItemHeight()
+  month.value = monthList.value[index]
+
+  calcSwiperItemHeight()
 }
 
 function handleSwiperAnimationFinish(e: any) {
-  // console.log(e, currentIndex.value, 'animationfinish')
+  // 滑动完成，并且当前项变更，则处理月份列表
+  if (!changed.value)
+    return
+  handleSwiperListChange()
+}
+
+function handleSwiperListChange() {
   // currentIndex.value = oldIndex.value
   // console.log(lodash.cloneDeep(monthList.value), 'handleSwiperChange')
   if (oldIndex.value < currentIndex.value) {
     // 向后滑动
-    // 移除第一个月份swiper item, 并在末尾增加一个月份swiper item
-
     if (currentIndex.value >= monthList.value.length - 3) {
-      console.log('新增日期项')
+      // console.log('新增日期项')
       const lastDate = monthList.value.at(-1)
       monthList.value.push(dayjs(lastDate).add(1, 'month').startOf('month').valueOf())
     }
-    console.log('向后滑动', monthList.value)
+    // console.log('向后滑动', monthList.value)
   }
   else {
     // 向前滑动
-    // 移除末尾一个月份swiper item, 并在开头增加一个月份swiper item
     if (currentIndex.value <= 2) {
       const firstDate = monthList.value.at(0)
       monthList.value.unshift(dayjs(firstDate).subtract(1, 'month').startOf('month').valueOf())
@@ -106,13 +116,12 @@ function handleSwiperAnimationFinish(e: any) {
       currentIndex.value += 1
       oldIndex.value = currentIndex.value
     }
-
-    console.log('向前滑动', monthList.value)
+    // console.log('向前滑动', monthList.value)
   }
 }
 
-function getSwiperItemHeight() {
-  const month = currentMonth.value
+function calcSwiperItemHeight() {
+  const month = monthList.value[currentIndex.value]
   // console.log('date', dayjs(month).format('YYYY-MM'))
   setTimeout(() =>
     uni
@@ -133,7 +142,7 @@ function emitHeightChange(height: number) {
 }
 
 function getBills(month: number) {
-  return currentMonth.value === month ? props.bills : []
+  return monthList.value[currentIndex.value] === month ? props.bills : []
 }
 </script>
 
