@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import type { IBillDateGroup, IBillSummaryAmount, IBillSummaryAmountItem } from '@/api/types/bill'
+import type { ILedger } from '@/api/types/ledger'
 import type { CalendarBillItem } from '@/components/calendar/CalendarView.vue'
 import dayjs from 'dayjs'
 import _ from 'lodash'
@@ -15,10 +16,12 @@ definePage({
 })
 
 const { proxy } = getCurrentInstance() as any
-const ledgerPickerStore = useLedgerPickerStore()
+
 const summaryCache: Array<{ date: number, data: IBillSummaryAmount }> = []
 
-const isDateSelectShow = ref(false)
+const showDateSelect = ref(false)
+const showMore = ref(false)
+
 const date = ref<number>(dayjs().valueOf())
 const month = ref<number>(date.value)
 const monthText = computed(() => dayjs(month.value).format('YYYY年MM月'))
@@ -26,14 +29,15 @@ const navbarHeight = ref(0)
 const calendarHeight = ref(0)
 const calendarPaging = ref()
 const listPaging = ref()
-const ledgerIds = ref<string[]>(ledgerPickerStore.selectedLedgers)
+const ledgers = ref<string[]>()
 const groups = ref<IBillDateGroup[]>([])
 const monthSummary = ref<IBillSummaryAmountItem> ({
   income: 0,
   expend: 0,
+  surplus: 0,
   incomeAvg: 0,
   expendAvg: 0,
-  surplus: 0,
+  surplusAvg: 0,
   expendHighest: 0,
   expendLowst: 0,
   incomeHighest: 0,
@@ -97,6 +101,11 @@ function handelFloatingHeightChange({ height }: { height: number }) {
   floatingHeight.value = height
 }
 
+function handleMoreConfirm() {
+  calendarPaging.value.reload()
+  listPaging.value.reload()
+}
+
 function handleCalendarQuery() {
   getSummaryAmountBill(true).then(() => {
     calendarPaging.value.complete()
@@ -113,7 +122,7 @@ async function getSummaryAmountBill(forced: boolean = false) {
       beginDate: dm.startOf('month').format('YYYY-MM-DD 00:00:00'),
       endDate: dm.endOf('month').format('YYYY-MM-DD 23:59:59'),
       series: 2,
-      ledgerIds: ledgerPickerStore.selectedLedgers,
+      ledgerIds: ledgers.value,
     })
     summaryCache.push({ date: month.value, data })
   }
@@ -131,7 +140,7 @@ function handleListQuery(page: number, size: number) {
   pageBill({
     beginDate: dayjs(date.value).format('YYYY-MM-DD 00:00:00'),
     endDate: dayjs(date.value).format('YYYY-MM-DD 23:59:59'),
-    ledgerIds: ledgerIds.value,
+    ledgerIds: ledgers.value,
     size,
     page,
   }).then((res) => {
@@ -162,21 +171,27 @@ function handleListQuery(page: number, size: number) {
 </script>
 
 <template>
-  <page-meta :page-style="`overflow:${isDateSelectShow ? 'hidden' : 'visible'};`" />
+  <page-meta :page-style="`overflow:${showDateSelect || showMore ? 'hidden' : 'visible'};`" />
   <draw-background2 />
   <!-- 导航栏 -->
   <nav-bar id="TOP_NAVBAR">
     <template #title>
       <view class="w-full flex items-center justify-between">
-        <view class="flex items-center" @tap="isDateSelectShow = true">
+        <view class="flex items-center" @tap="showDateSelect = true">
           <text class="mr-2">
             {{ monthText }}
           </text>
           <wd-icon name="caret-down" />
         </view>
-        <action-btn @tap="handleToday">
-          <view class="iconfont icon-today" />
-        </action-btn>
+        <view class="flex gap-2">
+          <action-btn @tap="handleToday">
+            <view class="iconfont icon-today" />
+          </action-btn>
+
+          <action-btn @tap="showMore = true">
+            <view class="iconfont icon-more" />
+          </action-btn>
+        </view>
       </view>
     </template>
     <template #prefix-action>
@@ -221,7 +236,10 @@ function handleListQuery(page: number, size: number) {
   </view>
 
   <!-- 日期选择弹窗 -->
-  <date-picker v-model="isDateSelectShow" v-model:date="month" type="year-month" />
+  <date-picker v-model="showDateSelect" v-model:date="month" type="year-month" />
+
+  <!-- 更多筛选条件 -->
+  <calendar-more v-model="showMore" v-model:ledgers="ledgers" @confirm="handleMoreConfirm" />
 </template>
 
 <style lang="scss" scoped>

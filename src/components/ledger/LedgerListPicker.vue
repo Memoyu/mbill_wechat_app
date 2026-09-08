@@ -11,9 +11,11 @@ defineOptions({
   },
 })
 
-const props = defineProps<{
-
-}>()
+const props = withDefaults(defineProps<{
+  height?: string
+}>(), {
+  height: '60vh',
+})
 const emit = defineEmits(['confirm'])
 const selecteds = defineModel<string[]>()
 const visible = defineModel<boolean>('visible')
@@ -70,7 +72,7 @@ function handleLedgerClick(ledger: ILedger) {
 </script>
 
 <template>
-  <bottom-popup v-model="visible" title="账本选择" @confirm="handleConfirm" @after-enter="handleAfterEnter">
+  <bottom-popup v-model="visible" title="账本选择" :height="height" @confirm="handleConfirm" @after-enter="handleAfterEnter">
     <template #action>
       <view
         class="px-3 py-1 text-base text-gray-400"
@@ -85,7 +87,7 @@ function handleLedgerClick(ledger: ILedger) {
 
     <!-- 账单列表 -->
     <view class="px-2">
-      <scroll-view scroll-y class="max-h-[50vh]">
+      <scroll-view scroll-y class="h-full">
         <view class="p-2 space-y-3">
           <view
             v-for="ledger in ledgers" :key="ledger.ledgerId"
@@ -103,7 +105,7 @@ function handleLedgerClick(ledger: ILedger) {
 
             <!-- 选中遮罩层 -->
             <view
-              class="absolute inset-0 z-10 overflow-hidden rounded-md transition-all duration-200"
+              class="absolute inset-0 z-3 overflow-hidden rounded-md transition-all duration-200"
               :class="[isSelected(ledger) ? 'bg-indigo-500/10 ring-2 ring-indigo-500' : 'bg-transparent']"
             >
               <view

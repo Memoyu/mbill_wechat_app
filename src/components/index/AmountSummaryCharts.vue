@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import dayjs from 'dayjs'
+import { billColors } from '@/constants/billIcons'
 import { useIndexBillStore, useSettingsStore } from '@/store'
 import { amountFormat, getBillColor } from '@/utils'
 
@@ -14,9 +15,8 @@ defineOptions({
 const props = defineProps<{
 }>()
 
-const colors = ['#f87171', '#4ade80']
 const chartOpts = ref({
-  color: [...colors],
+  color: [...billColors],
   padding: [15, 15, 0, 5],
   enableScroll: false,
   dataLabel: false,
@@ -120,15 +120,15 @@ watch(() => charts.value, (data) => {
 
   chartData.value.categories = categories
   if (innerType.value === 0) {
-    chartOpts.value.color = [colors[0]]
+    chartOpts.value.color = [billColors[0]]
     chartData.value.series = [{ name: '日支出', data: expendSeries }]
   }
   else if (innerType.value === 1) {
-    chartOpts.value.color = [colors[1]]
+    chartOpts.value.color = [billColors[1]]
     chartData.value.series = [{ name: '日收入', data: incomeSeries }]
   }
   else {
-    chartOpts.value.color = [...colors]
+    chartOpts.value.color = [...billColors]
     chartData.value.series = [{ name: '日支出', data: expendSeries }, { name: '日收入', data: incomeSeries }]
   }
 }, { deep: true })
@@ -173,6 +173,7 @@ function handleSettingConfirm() {
       <qiun-data-charts
         type="column"
         canvas2d
+        in-scroll-view
         :opts="chartOpts"
         :chart-data="chartData"
       />

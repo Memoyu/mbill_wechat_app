@@ -3,7 +3,7 @@ import type { IBill, IEditRefundBill, IRefundBill } from '@/api/types/bill'
 import type { ActionItem } from '@/typings'
 import dayjs from 'dayjs'
 import { createRefundBill, deleteRefundBill, getRefundBillList, updateRefundBill } from '@/api/bill'
-import { getBillColor, formatDate } from '@/utils'
+import { formatDate, getBillColor } from '@/utils'
 
 defineOptions({
   options: {
@@ -19,6 +19,7 @@ const props = defineProps<{
 const emit = defineEmits(['changeRefund'])
 const show = defineModel<boolean>()
 
+const mounted = ref(false)
 const toast = useGlobalToast()
 const dialog = useGlobalDialog()
 
@@ -52,6 +53,7 @@ const actions: ActionItem[] = [
 watch(() => show.value, (val) => {
   // 弹窗时获取退款列表
   if (val) {
+    mounted.value = true
     getRefundBillList(props.bill.billId).then((res) => {
       refundList.value = res
     })
@@ -192,7 +194,7 @@ function updateRefundList(dto: IRefundBill) {
   </center-popup>
 
   <!-- 退款编辑 -->
-  <bottom-popup v-model="showEdit" title="退款" :actions="isCreate ? [] : actions" @after-enter="handleEditAfterEnter" @confirm="handleConfirm">
+  <bottom-popup v-if="mounted" v-model="showEdit" title="退款" :actions="isCreate ? [] : actions" @after-enter="handleEditAfterEnter" @confirm="handleConfirm">
     <view class="flex flex-col space-y-6">
       <wd-form :model="refund">
         <!-- 金额 -->
@@ -220,7 +222,7 @@ function updateRefundList(dto: IRefundBill) {
   </bottom-popup>
 
   <!-- 日期弹窗 -->
-  <date-time-picker v-model="showDateTime" v-model:date="date" />
+  <date-time-picker v-if="mounted" v-model="showDateTime" v-model:date="date" />
 </template>
 
 <style lang="scss" scoped>

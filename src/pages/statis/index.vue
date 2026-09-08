@@ -39,7 +39,7 @@ function calcNavbarHeight() {
       .boundingClientRect((view: any) => {
         contentHeight.value = systemInfo.windowHeight - (view?.height ?? 92)
         initComponent(0)
-        console.log(view, contentHeight.value, 'TOP_NAVBAR')
+        // console.log(view, contentHeight.value, 'TOP_NAVBAR')
       })
       .exec()
   })
@@ -74,21 +74,15 @@ function initComponent(tabIdx: number) {
   <view>
     <wd-tabs v-model="active" swipeable animated>
       <wd-tab title="月统计" :name="0">
-        <view>
-          <monthly-statis ref="monthlyStatisRef" />
-        </view>
+        <monthly-statis ref="monthlyStatisRef" />
       </wd-tab>
 
       <wd-tab title="年统计" :name="1">
-        <view>
-          <annual-statis ref="annualStatisRef" />
-        </view>
+        <annual-statis ref="annualStatisRef" />
       </wd-tab>
 
       <wd-tab title="自定义" :name="2">
-        <view>
-          <custom-statis ref="customStatisRef" />
-        </view>
+        <custom-statis ref="customStatisRef" />
       </wd-tab>
     </wd-tabs>
   </view>

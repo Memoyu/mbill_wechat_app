@@ -158,9 +158,10 @@ export interface IBillSummaryAmountItem {
   date?: string
   income: number
   expend: number
+  surplus: number
   incomeAvg: number
   expendAvg: number
-  surplus: number
+  surplusAvg: number
   expendHighest: number
   expendLowst: number
   incomeHighest: number

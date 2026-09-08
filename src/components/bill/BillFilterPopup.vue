@@ -32,6 +32,7 @@ const props = defineProps<{
 const emit = defineEmits(['confirm'])
 const show = defineModel<boolean>()
 
+const mounted = ref(false)
 const filter = ref<IBillFilter>({
   ledgers: [],
   categories: [],
@@ -75,6 +76,7 @@ const actions: ActionItem[] = [
 
 watch(() => show.value, (val) => {
   if (val) {
+    mounted.value = true
     filter.value = lodash.cloneDeep(cloneFilter.value)
   }
 })
@@ -283,19 +285,19 @@ function handleTagConfirm(tags: ITag[]) {
   </bottom-popup>
 
   <!-- 日期选择器 -->
-  <wd-datetime-picker v-model="pickerDate" v-model:visible="showDatePicker" type="date" @confirm="handleDatePickerConfirm" />
+  <wd-datetime-picker v-if="mounted" v-model="pickerDate" v-model:visible="showDatePicker" type="date" @confirm="handleDatePickerConfirm" />
 
   <!-- 账本选择器 -->
-  <ledger-list-picker v-model="filter.ledgers" v-model:visible="showLedgerPicker" @confirm="handleLedgerConfirm" />
+  <ledger-list-picker v-if="mounted" v-model="filter.ledgers" v-model:visible="showLedgerPicker" @confirm="handleLedgerConfirm" />
 
   <!-- 分类选择器 -->
-  <category-list-picker v-model="filter.categories" v-model:visible="showCategoryPicker" @confirm="handleCategoryConfirm" />
+  <category-list-picker v-if="mounted" v-model="filter.categories" v-model:visible="showCategoryPicker" @confirm="handleCategoryConfirm" />
 
   <!-- 账户选择器 -->
-  <account-list-picker v-model="filter.accounts" v-model:visible="showAccountPicker" @confirm="handleAccountConfirm" />
+  <account-list-picker v-if="mounted" v-model="filter.accounts" v-model:visible="showAccountPicker" @confirm="handleAccountConfirm" />
 
   <!-- 账户选择器 -->
-  <tag-list-picker v-model="filter.tags" v-model:visible="showTagPicker" @confirm="handleTagConfirm" />
+  <tag-list-picker v-if="mounted" v-model="filter.tags" v-model:visible="showTagPicker" @confirm="handleTagConfirm" />
 </template>
 
 <style lang="scss" scoped>

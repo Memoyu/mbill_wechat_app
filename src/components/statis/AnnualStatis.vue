@@ -23,7 +23,7 @@ function handleScrollToLower() {
 
 function getYears(year: number, count = 10) {
   const dates = Array.from({ length: count }, (_, i) => {
-    return (year + i).toString()
+    return (year - i).toString()
   })
   // console.log(dates, '2222')
   return dates

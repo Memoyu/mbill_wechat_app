@@ -43,9 +43,10 @@ const initState: {
   summary: {
     income: 0,
     expend: 0,
+    surplus: 0,
     incomeAvg: 0,
     expendAvg: 0,
-    surplus: 0,
+    surplusAvg: 0,
     expendHighest: 0,
     expendLowst: 0,
     incomeHighest: 0,
@@ -61,9 +62,10 @@ const initState: {
   yearSummary: {
     income: 0,
     expend: 0,
+    surplus: 0,
     incomeAvg: 0,
     expendAvg: 0,
-    surplus: 0,
+    surplusAvg: 0,
     expendHighest: 0,
     expendLowst: 0,
     incomeHighest: 0,

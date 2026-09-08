@@ -8,6 +8,6 @@ export function getBillWay(type: BillWayEnum) {
   return type === BillWayEnum.Manual ? '手动记账' : '自动记账'
 }
 
-export function getBillColor(type: BillTypeEnum) {
-  return type === BillTypeEnum.Expend ? 'var(--mbill-expend-color)' : 'var(--mbill-income-color)'
+export function getBillColor(type: number) {
+  return type === BillTypeEnum.Expend ? 'var(--mbill-expend-color)' : type === BillTypeEnum.Income ? 'var(--mbill-income-color)' : 'var(--mbill-surplus-color)'
 }
