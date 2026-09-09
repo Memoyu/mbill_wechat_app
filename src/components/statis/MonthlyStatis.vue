@@ -296,7 +296,7 @@ function handleQuery() {
               :chart-data="categoryData"
             />
           </view>
-          <view class="h-220px">
+          <view class="mt-3 h-220px">
             <view class="flex items-center gap-2">
               <bill-icon icon="https://oss.memoyu.com/icons/finances/14.png" text="222334" size="36" />
               <view class="flex-1 space-y-1">
@@ -322,9 +322,9 @@ function handleQuery() {
 
         <view class="mon-statis-block">
           <view class="flex items-center justify-between">
-            <text class="font-semibold">成员数据</text>
+            <text class="font-semibold">标签数据</text>
             <view>
-              <mbill-segmented v-model="billType.member" :options="BillOptions" />
+              <mbill-segmented v-model="billType.tag" :options="BillOptions" />
             </view>
           </view>
           <view class="h-35">
@@ -337,9 +337,9 @@ function handleQuery() {
 
         <view class="mon-statis-block">
           <view class="flex items-center justify-between">
-            <text class="font-semibold">标签数据</text>
+            <text class="font-semibold">成员数据</text>
             <view>
-              <mbill-segmented v-model="billType.tag" :options="BillOptions" />
+              <mbill-segmented v-model="billType.member" :options="BillOptions" />
             </view>
           </view>
           <view class="h-35">

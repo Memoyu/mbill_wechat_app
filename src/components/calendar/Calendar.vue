@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { CalendarBillItem } from './CalendarView.vue'
+import type { IBillSummaryAmount } from '@/api/types/bill.js'
 import dayjs from 'dayjs'
+import { useSettingsStore } from '@/store'
 import { getWeekLabel } from '@/utils'
 
 defineOptions({
@@ -11,7 +13,7 @@ defineOptions({
   },
 })
 const props = defineProps<{
-  bills: Array<CalendarBillItem>
+  summary: IBillSummaryAmount
 }>()
 const emit = defineEmits(['change', 'selected', 'heightchange'])
 const date = defineModel<number>({ default: dayjs().valueOf() })
@@ -25,6 +27,7 @@ const oldIndex = ref(0)
 const currentIndex = ref(0)
 const changed = ref(false)
 
+const config = computed(() => useSettingsStore().calendar)
 // 周标题
 const weekLabel = computed(() => {
   return (index: number) => {
@@ -142,7 +145,30 @@ function emitHeightChange(height: number) {
 }
 
 function getBills(month: number) {
-  return monthList.value[currentIndex.value] === month ? props.bills : []
+  if (monthList.value[currentIndex.value] !== month)
+    return []
+
+  const items = props.summary.series.map((s) => {
+    let heat = 0
+    if (config.value.heatMap === 0) {
+      heat = s.expend / props.summary.summary.expend
+    }
+    else if (config.value.heatMap === 1) {
+      heat = s.income / props.summary.summary.income
+    }
+    else if (config.value.heatMap === 2) {
+      heat = s.income - s.expend / props.summary.summary.surplus
+    }
+
+    return {
+      date: s.date,
+      expend: s.expend,
+      income: s.income,
+      heat: heat === 0 ? 0 : Number.parseFloat(heat.toFixed(2)) + 0.3,
+    } as CalendarBillItem
+  })
+  console.log(items, 'items')
+  return items
 }
 </script>
 

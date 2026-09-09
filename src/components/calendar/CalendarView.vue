@@ -7,6 +7,7 @@ export interface CalendarBillItem {
   date: string
   expend: number
   income: number
+  heat: number
 }
 
 interface CalendarDayItem {
@@ -14,6 +15,7 @@ interface CalendarDayItem {
   text: number | string
   expend: number
   income: number
+  heat: number
   disabled: boolean
 }
 
@@ -52,6 +54,7 @@ watch(() => props.bills, (data) => {
       return
     day.expend = bill.expend
     day.income = bill.income
+    day.heat = bill.heat
   })
 }, { deep: true, immediate: true })
 
@@ -70,6 +73,7 @@ function setDays() {
       text: day,
       expend: 0,
       income: 0,
+      heat: 0,
       disabled: false,
     })
   }
@@ -127,25 +131,30 @@ function getFormatAmount(amount: number) {
       <view
         v-for="(item, index) in days"
         :key="index"
-        class="calendar-day"
-        :class="[isCurrentDate(item.date) ? 'calendar-selected-day' : '']"
+        class="calendar-day relative"
         :style="index === 0 ? firstDayStyle : ''"
-        @tap="handleSelectedDate(index)"
       >
-        <view class="flex flex-col items-center justify-center py-0.5">
-          <view class="font-semibold">
-            {{ item.text }}
-          </view>
-          <view class="h-8">
-            <view v-if="item.expend !== 0 || item.income !== 0" class="flex flex-col items-center text-xs">
-              <text :style="{ color: getBillColor(0) }">
-                {{ getFormatAmount(item.expend) }}
-              </text>
-              <text :style="{ color: getBillColor(1) }">
-                {{ getFormatAmount(item.income) }}
-              </text>
+        <view
+          class="calendar-day-content m-1 rounded-lg"
+          :class="[isCurrentDate(item.date) ? 'calendar-selected-day' : '']"
+          @tap="handleSelectedDate(index)"
+        >
+          <view class="flex flex-col items-center justify-center py-0.5">
+            <view class="font-semibold">
+              {{ item.text }}
+            </view>
+            <view class="h-8">
+              <view v-if="item.expend !== 0 || item.income !== 0" class="flex flex-col items-center text-xs">
+                <text :style="{ color: getBillColor(0) }">
+                  {{ getFormatAmount(item.expend) }}
+                </text>
+                <text :style="{ color: getBillColor(1) }">
+                  {{ getFormatAmount(item.income) }}
+                </text>
+              </view>
             </view>
           </view>
+          <view class="absolute inset-0 z--1 rounded-lg bg-indigo-100" :style="{ opacity: item.heat }" />
         </view>
       </view>
     </view>
@@ -167,14 +176,14 @@ function getFormatAmount(amount: number) {
 
 .calendar-day {
   position: relative;
-  width: 14.285%;
+  width: 14.2857%;
+}
+.calendar-day-content {
+  position: relative;
   display: flex;
   justify-content: center;
-  items-align: center;
 }
-
 .calendar-selected-day {
-  border-radius: 8px;
   color: white;
   @apply: bg-indigo-200;
 }

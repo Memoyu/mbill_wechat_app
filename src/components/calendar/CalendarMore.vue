@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { ILedger } from '@/api/types/ledger'
-import { useLedgerPickerStore, useLedgerStore } from '@/store'
+import { useLedgerPickerStore, useLedgerStore, useSettingsStore } from '@/store'
 
 defineOptions({
   options: {
@@ -11,37 +11,34 @@ defineOptions({
 })
 
 const props = defineProps<{
-
 }>()
 const emit = defineEmits(['confirm'])
 const show = defineModel<boolean>()
-const ledgers = defineModel<string[]>('ledgers', { default: [] })
 
-const ledgerPickerStore = useLedgerPickerStore()
 const ledgerStore = useLedgerStore()
+const settingsStore = useSettingsStore()
 
 const mounted = ref(false)
 const showLedgerPicker = ref(false)
 const ledgerName = ref<string>('')
-const innerLedgers = ref<string[]>(ledgers.value)
+const innerLedgers = ref<string[]>([])
+const innerHeatMap = ref<number>(-1)
+
+const config = computed(() => settingsStore.calendar)
 
 watch(() => show.value, (newVal) => {
   if (newVal) {
     mounted.value = true
-    innerLedgers.value = ledgers.value
-    formatLedgerName(innerLedgers.value)
+    innerLedgers.value = config.value.ledgers
+    innerHeatMap.value = config.value.heatMap
+    formatLedgerName(config.value.ledgers)
   }
 })
 
-onMounted(() => {
-  ledgers.value = ledgerPickerStore.selectedLedgers
-  formatLedgerName(ledgers.value)
-})
-
 function handleConfirm() {
-  ledgers.value = innerLedgers.value
+  settingsStore.updateCalendar(innerLedgers.value, innerHeatMap.value)
   show.value = false
-  emit('confirm', { ledgers: innerLedgers.value })
+  emit('confirm', config.value)
 }
 
 function handleLedgerConfirm(ledgers: ILedger[]) {
@@ -66,6 +63,27 @@ function formatLedgerName(ledgers: string[]) {
           <text v-if="!ledgerName || ledgerName.length <= 0" class="text-[#b1b4bf]">账本</text>
           <text v-else class="line-clamp-1">{{ ledgerName }}</text>
         </view>
+      </view>
+
+      <!-- 热力图 -->
+      <view>
+        <view class="more-content-title">
+          热力背景
+        </view>
+        <wd-radio-group v-model="innerHeatMap" allow-uncheck type="button">
+          <wd-radio :value="-1">
+            关闭
+          </wd-radio>
+          <wd-radio :value="0">
+            支出
+          </wd-radio>
+          <wd-radio :value="1">
+            收入
+          </wd-radio>
+          <wd-radio :value="2">
+            结余
+          </wd-radio>
+        </wd-radio-group>
       </view>
     </view>
   </bottom-popup>
