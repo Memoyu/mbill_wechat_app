@@ -56,6 +56,7 @@ watch(() => props.bills, (data) => {
     day.income = bill.income
     day.heat = bill.heat
   })
+  // console.log('账单金额列表变更')
 }, { deep: true, immediate: true })
 
 function setDays() {
@@ -135,7 +136,7 @@ function getFormatAmount(amount: number) {
         :style="index === 0 ? firstDayStyle : ''"
       >
         <view
-          class="calendar-day-content m-1 rounded-lg"
+          class="calendar-day-content m-0.5 rounded-lg"
           :class="[isCurrentDate(item.date) ? 'calendar-selected-day' : '']"
           @tap="handleSelectedDate(index)"
         >

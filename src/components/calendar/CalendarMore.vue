@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { ILedger } from '@/api/types/ledger'
-import { useLedgerPickerStore, useLedgerStore, useSettingsStore } from '@/store'
+import { useLedgerStore, useSettingsStore } from '@/store'
 
 defineOptions({
   options: {

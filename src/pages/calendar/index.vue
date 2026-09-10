@@ -83,10 +83,9 @@ function handleToday() {
   date.value = dayjs().valueOf()
 }
 
-const debounced = _.debounce(getSummaryAmountBill, 500)
 function handleMonthChange(m: number) {
   console.log('月份切换', m)
-  debounced()
+  getSummaryAmountBill()
 }
 
 function handleDateChange(d: number) {

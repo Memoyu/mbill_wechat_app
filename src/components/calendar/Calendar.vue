@@ -150,13 +150,13 @@ function getBills(month: number) {
 
   const items = props.summary.series.map((s) => {
     let heat = 0
-    if (config.value.heatMap === 0) {
+    if (config.value.heatMap === 0 && s.expend !== 0) {
       heat = s.expend / props.summary.summary.expend
     }
-    else if (config.value.heatMap === 1) {
+    else if (config.value.heatMap === 1 && s.expend !== 0) {
       heat = s.income / props.summary.summary.income
     }
-    else if (config.value.heatMap === 2) {
+    else if (config.value.heatMap === 2 && s.income - s.expend !== 0) {
       heat = s.income - s.expend / props.summary.summary.surplus
     }
 
@@ -167,7 +167,7 @@ function getBills(month: number) {
       heat: heat === 0 ? 0 : Number.parseFloat(heat.toFixed(2)) + 0.3,
     } as CalendarBillItem
   })
-  console.log(items, 'items')
+  // console.log(items, 'items')
   return items
 }
 </script>
