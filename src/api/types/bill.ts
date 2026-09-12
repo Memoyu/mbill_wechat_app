@@ -167,3 +167,53 @@ export interface IBillSummaryAmountItem {
   incomeHighest: number
   incomeLowst: number
 }
+
+export interface IBillSummaryCategoryQuery extends IBillQuery {
+}
+
+export interface IBillSummaryCategory {
+  expends: IBillSummaryCategoryItem []
+  incomes: IBillSummaryCategoryItem []
+}
+
+export interface IBillSummaryCategoryItem {
+  categoryId: string
+  name: string
+  icon: string
+  count: number
+  amount: number
+  percent: number
+}
+
+export interface IBillSummaryAccountQuery extends IBillQuery {
+}
+
+export interface IBillSummaryAccount {
+  expends: IBillSummaryAccountItem []
+  incomes: IBillSummaryAccountItem []
+}
+
+export interface IBillSummaryAccountItem {
+  accountId: string
+  name: string
+  icon: string
+  count: number
+  amount: number
+  percent: number
+}
+
+export interface IBillSummaryTagQuery extends IBillQuery {
+}
+
+export interface IBillSummaryTag {
+  tags: IBillSummaryTagItem []
+}
+
+export interface IBillSummaryTagItem {
+  tagId: string
+  name: string
+  income: number
+  expend: number
+  incomeCount: number
+  expendCount: number
+}

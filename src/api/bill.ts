@@ -1,4 +1,4 @@
-import type { IBill, IBillDateGroup, IBillPageItem, IBillPageQuery, IBillSearchQuery, IBillSummaryAmount, IBillSummaryAmountQuery, ICreateBill, IEditRefundBill, IRefundBill, IRelatedBill, IRelationBill, IUpdateBill } from './types/bill'
+import type { IBill, IBillDateGroup, IBillPageItem, IBillPageQuery, IBillSearchQuery, IBillSummaryAccount, IBillSummaryAccountQuery, IBillSummaryAmount, IBillSummaryAmountQuery, IBillSummaryCategory, IBillSummaryCategoryQuery, IBillSummaryTag, IBillSummaryTagQuery, ICreateBill, IEditRefundBill, IRefundBill, IRelatedBill, IRelationBill, IUpdateBill } from './types/bill'
 import type { IPageResult } from './types/common'
 import { http } from '@/utils/http'
 
@@ -49,6 +49,27 @@ export function searchBill(query: IBillSearchQuery) {
  */
 export function summaryAmountBill(query: IBillSummaryAmountQuery) {
   return http.get<IBillSummaryAmount>('bill/summary/amount', query)
+}
+
+/**
+ * 账单分类金额汇总
+ */
+export function summaryCategoryBill(query: IBillSummaryCategoryQuery) {
+  return http.get<IBillSummaryCategory>('bill/summary/category', query)
+}
+
+/**
+ * 账单账户金额汇总
+ */
+export function summaryAccountBill(query: IBillSummaryAccountQuery) {
+  return http.get<IBillSummaryAccount>('bill/summary/account', query)
+}
+
+/**
+ * 账单标签金额汇总
+ */
+export function summaryTagBill(query: IBillSummaryTagQuery) {
+  return http.get<IBillSummaryTag>('bill/summary/tag', query)
 }
 
 /**

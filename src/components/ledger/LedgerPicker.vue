@@ -32,8 +32,6 @@ watch(() => props.value, (val) => {
 })
 
 const ledgers = computed(() => ledgerStore.ledgers)
-const isAllSelected = computed(() => ledgerPickerStore.isAllSelected)
-
 function handleLedgerItemClick(item: ILedger) {
   // console.log('点击')
   if (props.single) {
@@ -43,7 +41,7 @@ function handleLedgerItemClick(item: ILedger) {
   }
   else {
     ledgerPickerStore.toggleLedgerSelection(item.ledgerId)
-    emit('change', ledgerPickerStore.selectedLedgers)
+    emit('change', ledgerPickerStore.selecteds)
   }
 }
 
@@ -105,9 +103,8 @@ function isSelected(ledger: ILedger) {
 
         <view class="flex items-center space-x-4">
           <view v-if="!single" class="title-icon-box" @tap="handleAllSelectClick">
-            <wd-icon v-if="isAllSelected" name="close" />
-            <wd-icon v-else name="check" />
-            <text class="ml-2">{{ isAllSelected ? '取消全选' : '全选' }}</text>
+            <wd-icon name="check" />
+            <text class="ml-2">全选</text>
           </view>
 
           <view class="title-icon-box" @tap="handleScanClick">

@@ -108,7 +108,7 @@ export const useIndexBillStore = defineStore(
 
       const res = await pageBill({
         ...getDateRange(),
-        ledgerIds: ledgerPickerStore.selectedLedgers,
+        ledgerIds: ledgerPickerStore.selecteds,
         size: pageSize,
         page,
       })
@@ -139,7 +139,7 @@ export const useIndexBillStore = defineStore(
       const res = await summaryAmountBill({
         ...getDateRange(),
         series: 0,
-        ledgerIds: ledgerPickerStore.selectedLedgers,
+        ledgerIds: ledgerPickerStore.selecteds,
       })
       state.summary = res.summary
     }
@@ -166,7 +166,7 @@ export const useIndexBillStore = defineStore(
         endDate,
         type,
         series: 2,
-        ledgerIds: ledgerPickerStore.selectedLedgers,
+        ledgerIds: ledgerPickerStore.selecteds,
       })
       state.charts = {
         summary: { income: res.summary.income, expend: res.summary.expend },

@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import type { Dayjs } from 'dayjs'
-import type { IBillSummaryAmount } from '@/api/types/bill'
+import type { IBillSummaryAccount, IBillSummaryAmount, IBillSummaryCategory, IBillSummaryTag } from '@/api/types/bill'
 import dayjs from 'dayjs'
-import { summaryAmountBill } from '@/api/bill'
+import { summaryAccountBill, summaryAmountBill, summaryCategoryBill, summaryTagBill } from '@/api/bill'
 import { billColors } from '@/constants/billIcons'
 import { useLedgerPickerStore } from '@/store'
 import { BillOptions } from '@/typings'
@@ -30,7 +30,7 @@ const paging = ref()
 const billType = ref({
   summary: 0,
   category: 0,
-  member: 0,
+  account: 0,
   tag: 0,
 })
 
@@ -92,7 +92,6 @@ const summaryData = ref({
     },
   ],
 })
-
 const categoryOpts = ref({
   color: ['#1890FF', '#91CB74', '#FAC858', '#EE6666', '#73C0DE', '#3CA272', '#FC8452', '#9A60B4', '#ea7ccc'],
   padding: [5, 5, 5, 5],
@@ -112,36 +111,114 @@ const categoryOpts = ref({
 const categoryData = ref({
   series: [
     {
-      data: [{ name: '一班', value: 50 }, { name: '二班', value: 30 }, { name: '三班', value: 20 }, { name: '四班', value: 18, labelText: '四班:18人' }, { name: '五班', value: 8 }] as { name: string, value: number }[],
+      data: [] as { name: string, value: number }[],
     },
   ],
 })
+const category = ref<IBillSummaryCategory>({
+  expends: [],
+  incomes: [],
+})
+const accountOpts = ref({
+  color: ['#1890FF', '#91CB74', '#FAC858', '#EE6666', '#73C0DE', '#3CA272', '#FC8452', '#9A60B4', '#ea7ccc'],
+  padding: [5, 5, 5, 5],
+  enableScroll: false,
+  extra: {
+    pie: {
+      activeOpacity: 0.5,
+      activeRadius: 10,
+      offsetAngle: 0,
+      labelWidth: 15,
+      border: true,
+      borderWidth: 1.5,
+      borderColor: '#FFFFFF',
+    },
+  },
+})
+const accountData = ref({
+  series: [
+    {
+      data: [] as { name: string, value: number }[],
+    },
+  ],
+})
+const account = ref<IBillSummaryAccount>({
+  expends: [],
+  incomes: [],
+})
+
+const tagOpts = ref({
+  color: ['#1890FF', '#91CB74', '#FAC858', '#EE6666', '#73C0DE', '#3CA272', '#FC8452', '#9A60B4', '#ea7ccc'],
+  padding: [5, 5, 5, 5],
+  enableScroll: false,
+  extra: {
+    pie: {
+      activeOpacity: 0.5,
+      activeRadius: 10,
+      offsetAngle: 0,
+      labelWidth: 15,
+      border: true,
+      borderWidth: 1.5,
+      borderColor: '#FFFFFF',
+    },
+  },
+})
+const tagData = ref({
+  series: [
+    {
+      data: [] as { name: string, value: number }[],
+    },
+  ],
+})
+const tag = ref<IBillSummaryTag>({
+  tags: [],
+})
+
+const dateRange = computed(() => {
+  const date = dayjs(options.value[active.value])
+  return {
+    beginDate: date.startOf('month').format('YYYY-MM-DD 00:00:00'),
+    endDate: date.endOf('month').format('YYYY-MM-DD 23:59:59'),
+  }
+})
 
 watch(() => billType.value.summary, () => {
-  changeSummary()
+  changeAmountSummary()
+})
+
+watch(() => billType.value.category, () => {
+  changeCategorySummary()
+})
+
+watch(() => billType.value.account, () => {
+  changeAccountSummary()
+})
+
+watch(() => billType.value.tag, () => {
+  changeTagSummary()
 })
 
 function init(height: number) {
   contentHeight.value = height
   options.value = getMonths(dayjs(), 20)
   getSummaryAmountBill()
+  getSummaryCategoryBill()
+  getSummaryAccountBill()
+  getSummaryTagBill()
 }
 
 function getSummaryAmountBill() {
-  const date = dayjs(options.value[active.value])
-
   summaryAmountBill({
-    beginDate: date.startOf('month').format('YYYY-MM-DD 00:00:00'),
-    endDate: date.endOf('month').format('YYYY-MM-DD 23:59:59'),
+    ...dateRange.value,
     series: 2,
-    ledgerIds: ledgerPickerStore.selectedLedgers,
+    ledgerIds: ledgerPickerStore.selecteds,
   }).then((res) => {
     summary.value = res
-    changeSummary()
+    changeAmountSummary()
   })
 }
 
-function changeSummary() {
+function changeAmountSummary() {
   const categories: number[] = []
   const series: number[] = []
   summary.value.series.forEach((item, index) => {
@@ -156,6 +233,78 @@ function changeSummary() {
   summaryOpts.value.color = [billColors[billType.value.summary === 1 ? 1 : 0]]
   summaryData.value.categories = categories
   summaryData.value.series = [{ name, data: series }]
+}
+
+function getSummaryCategoryBill() {
+  summaryCategoryBill({
+    ...dateRange.value,
+    ledgerIds: ledgerPickerStore.selecteds,
+  }).then((res) => {
+    category.value = res
+    changeCategorySummary()
+  })
+}
+
+function changeCategorySummary() {
+  categoryData.value.series[0].data = (billType.value.category === 1 ? category.value.incomes : category.value.expends).map((item) => {
+    return {
+      name: item.name,
+      value: item.amount,
+      labelText: item.name,
+    }
+  })
+}
+
+function getSummaryAccountBill() {
+  summaryAccountBill({
+    ...dateRange.value,
+    ledgerIds: ledgerPickerStore.selecteds,
+  }).then((res) => {
+    account.value = res
+    changeAccountSummary()
+  })
+}
+
+function changeAccountSummary() {
+  accountData.value.series[0].data = (billType.value.account === 1 ? account.value.incomes : account.value.expends).map((item) => {
+    return {
+      name: item.name,
+      value: item.amount,
+      labelText: item.name,
+    }
+  })
+}
+
+function getSummaryTagBill() {
+  summaryTagBill({
+    ...dateRange.value,
+    ledgerIds: ledgerPickerStore.selecteds,
+  }).then((res) => {
+    tag.value = res
+    changeTagSummary()
+  })
+}
+
+function changeTagSummary() {
+  const ts: any[] = []
+  tag.value.tags.forEach((t) => {
+    if (billType.value.tag === 0 && t.expendCount > 0) {
+      ts.push({
+        name: t.name,
+        value: t.expend,
+        labelText: t.name,
+      })
+    }
+    if (billType.value.tag === 1 && t.incomeCount > 0) {
+      ts.push({
+        name: t.name,
+        value: t.income,
+        labelText: t.name,
+      })
+    }
+  })
+  console.log('tagData', ts)
+  tagData.value.series[0].data = ts
 }
 
 function handleScrollToLower() {
@@ -296,25 +445,69 @@ function handleQuery() {
               :chart-data="categoryData"
             />
           </view>
-          <view class="mt-3 h-220px">
-            <view class="flex items-center gap-2">
-              <bill-icon icon="https://oss.memoyu.com/icons/finances/14.png" text="222334" size="36" />
-              <view class="flex-1 space-y-1">
-                <view class="flex items-center justify-between">
-                  <view class="flex gap-2">
-                    <text class="font-semibold">
-                      分类名称
-                    </text>
-                    <text class="text-sm text-gray-500">
-                      2笔
-                    </text>
-                    <text class="text-sm text-gray-500">
-                      35%
-                    </text>
+          <view class="mt-3 max-h-220px overflow-y-auto space-y-3">
+            <view v-for="item in (billType.category === 1 ? category.incomes : category.expends)" :key="item.categoryId">
+              <view class="flex items-center gap-2">
+                <bill-icon :icon="item.icon" :text="item.name" size="36" />
+                <view class="flex-1 space-y-1">
+                  <view class="flex items-center justify-between">
+                    <view class="flex gap-2">
+                      <text class="font-semibold">
+                        {{ item.name }}
+                      </text>
+                      <text class="text-sm text-gray-500">
+                        {{ item.count }}笔
+                      </text>
+                      <text class="text-sm text-gray-500">
+                        {{ item.percent }}%
+                      </text>
+                    </view>
+                    <wd-text :text="item.amount" mode="price" :color="getBillColor(billType.category)" bold />
                   </view>
-                  <wd-text :text="summary.summary.expend" mode="price" :color="getBillColor(billType.category)" bold />
+                  <wd-progress :percentage="item.percent" hide-text />
                 </view>
-                <wd-progress :percentage="35" hide-text />
+              </view>
+            </view>
+          </view>
+        </view>
+
+        <view class="mon-statis-block">
+          <view class="flex items-center justify-between">
+            <text class="font-semibold">账户数据</text>
+            <view>
+              <mbill-segmented v-model="billType.account" :options="BillOptions" />
+            </view>
+          </view>
+          <view class="h-250px">
+            <qiun-data-charts
+              type="pie"
+              canvas2d
+              in-scroll-view
+              :opts="accountOpts"
+              :chart-data="accountData"
+            />
+          </view>
+          <view class="mt-3 max-h-220px overflow-y-auto space-y-3">
+            <view v-for="item in (billType.account === 1 ? account.incomes : account.expends)" :key="item.accountId">
+              <view class="flex items-center gap-2">
+                <bill-icon :icon="item.icon" :text="item.name" size="36" />
+                <view class="flex-1 space-y-1">
+                  <view class="flex items-center justify-between">
+                    <view class="flex gap-2">
+                      <text class="font-semibold">
+                        {{ item.name }}
+                      </text>
+                      <text class="text-sm text-gray-500">
+                        {{ item.count }}笔
+                      </text>
+                      <text class="text-sm text-gray-500">
+                        {{ item.percent }}%
+                      </text>
+                    </view>
+                    <wd-text :text="item.amount" mode="price" :color="getBillColor(billType.account)" bold />
+                  </view>
+                  <wd-progress :percentage="item.percent" hide-text />
+                </view>
               </view>
             </view>
           </view>
@@ -327,26 +520,32 @@ function handleQuery() {
               <mbill-segmented v-model="billType.tag" :options="BillOptions" />
             </view>
           </view>
-          <view class="h-35">
-            占比图
+          <view class="h-250px">
+            <qiun-data-charts
+              type="pie"
+              canvas2d
+              in-scroll-view
+              :opts="tagOpts"
+              :chart-data="tagData"
+            />
           </view>
-          <view class="h-35">
-            数据条
-          </view>
-        </view>
-
-        <view class="mon-statis-block">
-          <view class="flex items-center justify-between">
-            <text class="font-semibold">成员数据</text>
-            <view>
-              <mbill-segmented v-model="billType.member" :options="BillOptions" />
+          <view class="mt-3 max-h-220px overflow-y-auto space-y-3">
+            <view v-for="item in tag.tags" :key="item.tagId">
+              <view class="flex items-center justify-between">
+                <view class="flex items-baseline space-x-1">
+                  <text class="font-semibold">
+                    {{ item.name }}
+                  </text>
+                  <text class="text-xs text-gray-500">
+                    {{ item.expendCount + item.incomeCount }}笔
+                  </text>
+                </view>
+                <view class="flex flex-col gap-0.5">
+                  <wd-text :text="item.expend" mode="price" :color="getBillColor(0)" bold />
+                  <wd-text :text="item.income" mode="price" :color="getBillColor(1)" bold />
+                </view>
+              </view>
             </view>
-          </view>
-          <view class="h-35">
-            占比图
-          </view>
-          <view class="h-35">
-            数据条
           </view>
         </view>
 
@@ -354,7 +553,7 @@ function handleQuery() {
           <view class="flex items-center justify-between">
             <text class="font-semibold">报表统计</text>
           </view>
-          <view class="h-35 space-y-3">
+          <view class="h-40 overflow-y-auto space-y-3">
             <view v-for="item in summary.series.filter(s => s.expend > 0 || s.income > 0)" :key="item.date">
               <view class="grid grid-cols-4 flex-1 gap-4 text-center">
                 <text class="font-semibold">
@@ -369,12 +568,13 @@ function handleQuery() {
           </view>
         </view>
       </view>
+      <wd-gap height="20" />
     </z-paging>
   </view>
 </template>
 
 <style lang="scss" scoped>
 .mon-statis-block {
-  @apply: rounded-lg bg-indigo-300/20 p-2;
+  @apply: rounded-lg bg-indigo-300/20 p-2 space-y-2;
 }
 </style>

@@ -3,58 +3,52 @@ import { useLedgerStore } from './ledger'
 
 // 初始化状态
 const initState: {
-  isAllSelected: boolean
-  selectedLedgers: string[]
-  selectedLedgerNames: string[]
+  selecteds: string[]
+  selectedNames: string[]
 } = {
-  isAllSelected: false,
-  selectedLedgers: [],
-  selectedLedgerNames: [],
+  selecteds: [],
+  selectedNames: [],
 }
 
 export const useLedgerPickerStore = defineStore(
   'ledger-picker',
   () => {
+    const toast = useGlobalToast()
     const ledgerStore = useLedgerStore()
     const state = reactive({ ...initState })
 
     const toggleLedgerSelection = (ledgerId: string) => {
-      const selectedIds = state.selectedLedgers
+      const selectedIds = state.selecteds
       const index = selectedIds.indexOf(ledgerId)
-      state.isAllSelected = false
 
       if (index === -1) {
         selectedIds.push(ledgerId)
-        state.isAllSelected = selectedIds.length === ledgerStore.ledgers.length
       }
       else {
+        if (selectedIds.length === 1) {
+          toast.warning('请至少选择一个账本')
+          return
+        }
         selectedIds.splice(index, 1)
       }
       updateSelectedLedgerNames()
     }
 
     const selectAllLedgers = () => {
-      if (state.isAllSelected) {
-        state.selectedLedgers = []
-      }
-      else {
-        state.selectedLedgers = ledgerStore.ledgers.map(l => l.ledgerId)
-      }
-
-      state.isAllSelected = !state.isAllSelected
+      state.selecteds = ledgerStore.ledgers.map(l => l.ledgerId)
       updateSelectedLedgerNames()
     }
 
     const isLedgerSelected = (ledgerId: string) => {
       // console.log('校验选中')
-      return state.selectedLedgers.includes(ledgerId) || false
+      return state.selecteds.includes(ledgerId) || false
     }
 
     function updateSelectedLedgerNames() {
-      state.selectedLedgerNames = []
+      state.selectedNames = []
       ledgerStore.ledgers.forEach((ledger) => {
-        if (state.selectedLedgers.includes(ledger.ledgerId)) {
-          state.selectedLedgerNames.push(ledger.name)
+        if (state.selecteds.includes(ledger.ledgerId)) {
+          state.selectedNames.push(ledger.name)
         }
       })
     }

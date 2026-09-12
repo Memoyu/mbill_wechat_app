@@ -13,7 +13,7 @@ const emit = defineEmits(['showLedgers'])
 
 const ledgerPickerStore = useLedgerPickerStore()
 
-const ledgerName = computed(() => ledgerPickerStore.selectedLedgerNames.join(', '))
+const ledgerName = computed(() => ledgerPickerStore.selectedNames.join(', '))
 
 function handleNavigateTo(path: string) {
   uni.navigateTo({ url: path })

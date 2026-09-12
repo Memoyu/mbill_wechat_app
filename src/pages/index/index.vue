@@ -41,7 +41,7 @@ const dateText = computed(() => {
 })
 
 // 监听账本选中
-watch (() => ledgerPickerStore.selectedLedgers, () => {
+watch (() => ledgerPickerStore.selecteds, () => {
   paging.value.reload()
 }, { deep: true })
 
@@ -163,21 +163,22 @@ function handleQuery(page: number) {
         <wd-gap height="calc(32px + var(--wot-tabbar-height, 50px))" />
       </view>
     </template>
-
-    <!-- 底部导航栏 -->
-    <bottom-nav-bar @show-ledgers="isLedgersShow = true" />
-
-    <!-- 日期选择弹窗 -->
-    <date-picker v-model="isDateSelectShow" choose-type :date="indexBillStore.date" :type="indexBillStore.dateType" @change="handleDateChange" />
-
-    <!-- 账本弹窗 -->
-    <ledger-picker v-model="isLedgersShow" />
-
-    <!-- 用户弹窗 -->
-    <user-popup v-model="isUserShow" />
-    <!-- 设置弹窗 -->
-    <setting-popup v-model="isSettingsShow" />
   </z-paging>
+
+  <!-- 底部导航栏 -->
+  <bottom-nav-bar @show-ledgers="isLedgersShow = true" />
+
+  <!-- 日期选择弹窗 -->
+  <date-picker v-model="isDateSelectShow" choose-type :date="indexBillStore.date" :type="indexBillStore.dateType" @change="handleDateChange" />
+
+  <!-- 账本弹窗 -->
+  <ledger-picker v-model="isLedgersShow" />
+
+  <!-- 用户弹窗 -->
+  <user-popup v-model="isUserShow" />
+
+  <!-- 设置弹窗 -->
+  <setting-popup v-model="isSettingsShow" />
 </template>
 
 <style lang="scss" scoped>

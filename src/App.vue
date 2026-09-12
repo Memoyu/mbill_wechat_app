@@ -19,7 +19,7 @@ onLaunch((options) => {
     // 初始化数据
     ledgerStore.loadLedgers().then((res) => {
       // 在没有选中任何账本时，默认选中第一个账本
-      if (res && res.length > 0 && ledgerPickerStore.selectedLedgers.length < 1)
+      if (res && res.length > 0 && ledgerPickerStore.selecteds.length < 1)
         ledgerPickerStore.toggleLedgerSelection(res[0].ledgerId)
     })
     categoryStore.loadCategories()

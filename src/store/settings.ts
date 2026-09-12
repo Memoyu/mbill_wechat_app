@@ -42,7 +42,7 @@ export const useSettingsStore = defineStore(
   'settings',
   () => {
     const ledgerPickerStore = useLedgerPickerStore()
-    const state = reactive({ ...initState, calendar: { ...initState.calendar, ledgers: ledgerPickerStore.selectedLedgers } })
+    const state = reactive({ ...initState, calendar: { ...initState.calendar, ledgers: ledgerPickerStore.selecteds } })
 
     const updateIndexCharts = (date: number, type?: BillTypeEnum) => {
       state.index.charts.type = type
