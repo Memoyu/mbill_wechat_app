@@ -30,7 +30,7 @@ function initOptionNode() {
       segmentWidth.value = res.width
 
       uni.createSelectorQuery().in(proxy).selectAll('.bill-segment-item').boundingClientRect((res: any) => {
-        // console.log(res)
+        console.log(res, 'bill-segment-item')
         nodes.value = res
         calcLineLeft(active.value)
       }).exec()
@@ -76,7 +76,7 @@ function calcLineLeft(idx: number) {
 
   let offset = 0// 初始化为 px 宽度
   for (let i = 0; i < idx; i++) {
-    offset += nodes.value[i].width! + 10
+    offset += nodes.value[i].width! + 6
   }
   const node = nodes.value[idx]
   lineLeft.value = Math.floor(offset + node.width! / 2 - lineWidth / 2)
@@ -92,7 +92,7 @@ function calcLineLeft(idx: number) {
     >
       <view class="relative flex items-center">
         <!-- 选项 -->
-        <view class="min-w-max flex gap-2.5 whitespace-nowrap">
+        <view class="min-w-max flex gap-1.5 whitespace-nowrap">
           <view v-for="(op, index) in options" :key="index" class="bill-segment-item" @tap="handelOptionTap(index, op)">
             <view v-if="$slots.content">
               <slot name="content" :option="{ value: op, index }" />

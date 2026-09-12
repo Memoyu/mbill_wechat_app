@@ -94,6 +94,6 @@ function initComponent(tabIdx: number) {
   background: none;
 }
 :deep(.wd-tabs__nav) {
-  display: none;
+  display: none !important;
 }
 </style>

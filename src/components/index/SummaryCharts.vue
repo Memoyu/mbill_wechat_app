@@ -14,6 +14,7 @@ defineOptions({
 
 const props = defineProps<{
 }>()
+const settingShow = defineModel({ default: false })
 
 const chartOpts = ref({
   color: [...billColors],
@@ -42,16 +43,7 @@ const chartOpts = ref({
     },
   },
 })
-const types = [
-  {
-    label: '支出',
-    value: 0,
-  },
-  {
-    label: '收入',
-    value: 1,
-  },
-]
+
 const dateTypes = [
   {
     label: '本周',
@@ -70,9 +62,7 @@ const dateTypes = [
 const indexBillStore = useIndexBillStore()
 const settingsStore = useSettingsStore()
 
-const showChartsSetting = ref(false)
 const innerType = ref()
-const innerDate = ref(0)
 const chartData = ref<{
   categories: string[]
   series: {
@@ -97,14 +87,6 @@ const chartData = ref<{
 const dateTitle = computed(() => dateTypes[settingsStore.index.charts.date].label)
 const typeTitle = computed(() => settingsStore.index.charts.type === 0 ? '支出' : settingsStore.index.charts.type === 1 ? '收入' : '')
 const charts = computed(() => indexBillStore.charts)
-
-watch(() => showChartsSetting.value, () => {
-  // 弹窗时，根据选项设置恢复内部选项
-  if (showChartsSetting.value) {
-    innerType.value = settingsStore.index.charts.type
-    innerDate.value = settingsStore.index.charts.date
-  }
-})
 
 watch(() => charts.value, (data) => {
   // 数据源变更后构造数据
@@ -132,15 +114,6 @@ watch(() => charts.value, (data) => {
     chartData.value.series = [{ name: '日支出', data: expendSeries }, { name: '日收入', data: incomeSeries }]
   }
 }, { deep: true })
-
-/**
- * 确认设置
- */
-function handleSettingConfirm() {
-  settingsStore.updateIndexCharts(innerDate.value, innerType.value)
-  indexBillStore.loadCharts()
-  showChartsSetting.value = false
-}
 </script>
 
 <template>
@@ -165,7 +138,7 @@ function handleSettingConfirm() {
           </view>
         </view>
       </view>
-      <action-btn @tap="showChartsSetting = true">
+      <action-btn @tap="settingShow = true">
         <view class="iconfont icon-more" />
       </action-btn>
     </view>
@@ -179,43 +152,10 @@ function handleSettingConfirm() {
       />
     </view>
   </view>
-
-  <!-- 汇总设置 -->
-  <bottom-popup v-model="showChartsSetting" height="30vh" title="汇总设置" @confirm="handleSettingConfirm">
-    <view class="mb-3 flex flex-col p-3 space-y-2">
-      <!-- 账单类型 -->
-      <view>
-        <view class="filter-content-title">
-          账单类型
-        </view>
-        <wd-radio-group v-model="innerType" allow-uncheck type="button">
-          <wd-radio v-for=" t in types" :key="t.value" :value="t.value">
-            {{ t.label }}
-          </wd-radio>
-        </wd-radio-group>
-      </view>
-
-      <!-- 时间范围 -->
-      <view>
-        <view class="filter-content-title">
-          时间范围
-        </view>
-        <wd-radio-group v-model="innerDate" type="button">
-          <wd-radio v-for=" dt in dateTypes" :key="dt.value" :value="dt.value">
-            {{ dt.label }}
-          </wd-radio>
-        </wd-radio-group>
-      </view>
-    </view>
-  </bottom-popup>
 </template>
 
 <style lang="scss" scoped>
 .col-amount-summary-box {
   height: 150px;
-}
-
-.filter-content-title {
-  @apply font-bold pb-2;
 }
 </style>

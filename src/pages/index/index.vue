@@ -20,10 +20,11 @@ const userStore = useUserStore()
 const indexBillStore = useIndexBillStore()
 const ledgerPickerStore = useLedgerPickerStore()
 
-const isUserShow = ref(false)
-const isLedgersShow = ref(false)
-const isSettingsShow = ref(false)
-const isDateSelectShow = ref(false)
+const userShow = ref(false)
+const ledgersShow = ref(false)
+const settingsShow = ref(false)
+const dateSelectShow = ref(false)
+const chartSettingShow = ref(false)
 const paging = ref()
 
 const user = computed(() => userStore.userInfo)
@@ -78,7 +79,7 @@ function handleQuery(page: number) {
 
 <template>
   <!-- 处理滚动穿透 -->
-  <page-meta :page-style="`overflow:${isLedgersShow || isUserShow || isSettingsShow || isDateSelectShow ? 'hidden' : 'visible'};`" />
+  <page-meta :page-style="`overflow:${ledgersShow || userShow || settingsShow || chartSettingShow || dateSelectShow ? 'hidden' : 'visible'};`" />
   <draw-background1 />
   <z-paging ref="paging" v-model="indexBillStore.groups" :default-page-size="15" @query="handleQuery">
     <template #top>
@@ -95,7 +96,7 @@ function handleQuery(page: number) {
             hover-class="sticky-item-hover"
             :hover-start-time="0"
             :hover-stay-time="200"
-            @tap="isUserShow = true"
+            @tap="userShow = true"
           >
             <wd-avatar :size="40" :src="user.avatar" />
           </view>
@@ -106,7 +107,7 @@ function handleQuery(page: number) {
             hover-class="bg-gray-50 !scale-97 transform-origin-center"
             :hover-start-time="0"
             :hover-stay-time="200"
-            @tap="isSettingsShow = true"
+            @tap="settingsShow = true"
           >
             <text class="i-carbon-settings text-sm" />
             <text class="whitespace-nowrap text-xs">设置</text>
@@ -129,7 +130,7 @@ function handleQuery(page: number) {
     <view class="w-screen flex flex-col gap-3">
       <!-- 日期栏 -->
       <view class="flex justify-between px-5">
-        <view class="flex items-center" @tap="isDateSelectShow = true">
+        <view class="flex items-center" @tap="dateSelectShow = true">
           <view class="mr-1 font-bold">
             {{ dateText }}
           </view>
@@ -147,7 +148,7 @@ function handleQuery(page: number) {
 
       <!-- 账单金额汇总统计 -->
       <view v-if="dayjs(indexBillStore.date).isSame(dayjs(), 'month')" class="mx-3 rounded-xl bg-indigo-300/20 px-2 py-3">
-        <amount-summary-charts />
+        <summary-charts v-model="chartSettingShow" />
       </view>
     </view>
 
@@ -165,20 +166,23 @@ function handleQuery(page: number) {
     </template>
   </z-paging>
 
-  <!-- 底部导航栏 -->
-  <bottom-nav-bar @show-ledgers="isLedgersShow = true" />
-
   <!-- 日期选择弹窗 -->
-  <date-picker v-model="isDateSelectShow" choose-type :date="indexBillStore.date" :type="indexBillStore.dateType" @change="handleDateChange" />
+  <date-picker v-model="dateSelectShow" choose-type :date="indexBillStore.date" :type="indexBillStore.dateType" @change="handleDateChange" />
 
   <!-- 账本弹窗 -->
-  <ledger-picker v-model="isLedgersShow" />
+  <ledger-picker v-model="ledgersShow" />
 
   <!-- 用户弹窗 -->
-  <user-popup v-model="isUserShow" />
+  <user-popup v-model="userShow" />
 
   <!-- 设置弹窗 -->
-  <setting-popup v-model="isSettingsShow" />
+  <setting-popup v-model="settingsShow" />
+
+  <!-- 账单金额汇总统计设置 -->
+  <summary-chart-setting v-model="chartSettingShow" />
+
+  <!-- 底部导航栏 -->
+  <bottom-nav-bar @show-ledgers="ledgersShow = true" />
 </template>
 
 <style lang="scss" scoped>
