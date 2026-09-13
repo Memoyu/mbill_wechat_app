@@ -17,6 +17,7 @@ export default store
 
 export * from './account'
 export * from './category'
+export * from './filterBill'
 export * from './indexBill'
 export * from './ledger'
 export * from './ledgerPicker'

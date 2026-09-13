@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import type { IBillFilter } from './BillFilterPopup.vue'
 import type { IBill, IBillPageItem } from '@/api/types/bill'
-import dayjs from 'dayjs'
 import { searchBill } from '@/api/bill'
+import { useFilterBillStore } from '@/store'
 
 defineOptions({
   options: {
@@ -21,12 +20,12 @@ const props = withDefaults(defineProps<{
 const emit = defineEmits(['confirm'])
 const show = defineModel<boolean>()
 
+const filterBillStore = useFilterBillStore()
+
 const showFilter = ref(false)
 const search = ref('')
-const query = ref<IBillFilter>({
-  beginDate: dayjs().add(-1, 'month').format('YYYY-MM-DD'),
-  endDate: dayjs().format('YYYY-MM-DD'),
-})
+const filter = computed(() => filterBillStore.filter)
+
 const selecteds = ref<string[]>([])
 const bills = ref<IBillPageItem[]>([])
 const paging = ref()
@@ -58,13 +57,13 @@ function handleQuery(page: number, size: number) {
 
   searchBill({
     keyword: search.value,
-    beginDate: query.value.beginDate,
-    endDate: query.value.endDate,
-    type: query.value.type,
-    ledgerIds: query.value.ledgers,
-    categoryIds: query.value.categories,
-    accountIds: query.value.accounts,
-    tagIds: query.value.tags,
+    beginDate: filter.value.beginDate,
+    endDate: filter.value.endDate,
+    type: filter.value.type,
+    ledgerIds: filter.value.ledgers,
+    categoryIds: filter.value.categories,
+    accountIds: filter.value.accounts,
+    tagIds: filter.value.tags,
     excludeBillIds,
     size,
     page,
@@ -80,9 +79,9 @@ function handleSearch() {
   paging.value.reload()
 }
 
-function handleConfirmFilter(filter: any) {
-  // console.log('handleConfirmFilter', filter)
-  query.value = filter
+function handleFilterConfirm(filter: any) {
+  // console.log('handleFilterConfirm', filter)
+  handleSearch()
 }
 
 function handleSelectBill(bill: IBillPageItem) {
@@ -130,7 +129,7 @@ function isSelected(bill: IBillPageItem) {
   </center-popup>
 
   <!-- 筛选弹窗 -->
-  <bill-filter-popup v-model="showFilter" @confirm="handleConfirmFilter" />
+  <bill-filter-popup v-model="showFilter" @confirm="handleFilterConfirm" />
 </template>
 
 <style lang="scss" scoped>

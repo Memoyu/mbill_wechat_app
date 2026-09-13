@@ -59,7 +59,7 @@ function changeTagSummary() {
       })
     }
   })
-  console.log('tagData', ts)
+  // console.log('tagData', ts)
   tagData.value.series[0].data = ts
 }
 </script>

@@ -19,6 +19,7 @@ defineExpose({
 
 const ledgerPickerStore = useLedgerPickerStore()
 
+const mounted = ref(false)
 const contentHeight = ref(0)
 const options = ref()
 const active = ref(0)
@@ -67,6 +68,7 @@ watch(() => active.value, () => {
 })
 
 function init(height: number) {
+  mounted.value = true
   contentHeight.value = height
   options.value = getMonths(dayjs().valueOf(), 20)
   loadData()
@@ -137,10 +139,10 @@ function handleQuery() {
 </script>
 
 <template>
-  <view :style="{ height: `${contentHeight}px` }" class="w-full">
+  <view v-if="mounted" :style="{ height: `${contentHeight}px` }" class="w-full">
     <z-paging ref="paging" :fixed="false" refresher-only @query="handleQuery">
       <template #top>
-        <view class="z-5 bg-white/70 pb-2 pt-3 backdrop-blur-md">
+        <view class="z-5 bg-white/70 py-3 backdrop-blur-md">
           <!-- 月份选择器 -->
           <view class="px-2">
             <mbill-segmented v-model="active" :options="options" @scrolltolower="handleScrollToLower">

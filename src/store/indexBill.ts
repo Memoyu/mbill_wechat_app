@@ -74,7 +74,7 @@ const initState: {
 }
 
 export const useIndexBillStore = defineStore(
-  'bill',
+  'index-bill',
   () => {
     const settingsStore = useSettingsStore()
     const ledgerPickerStore = useLedgerPickerStore()

@@ -30,7 +30,7 @@ function initOptionNode() {
       segmentWidth.value = res.width
 
       uni.createSelectorQuery().in(proxy).selectAll('.bill-segment-item').boundingClientRect((res: any) => {
-        console.log(res, 'bill-segment-item')
+        // console.log(res, 'bill-segment-item')
         nodes.value = res
         calcLineLeft(active.value)
       }).exec()

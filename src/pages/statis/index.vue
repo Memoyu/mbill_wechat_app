@@ -72,7 +72,7 @@ function initComponent(tabIdx: number) {
   </nav-bar>
 
   <view>
-    <wd-tabs v-model="active" swipeable animated>
+    <wd-tabs v-model="active" animated>
       <wd-tab title="月统计" :name="0">
         <monthly-statis ref="monthlyStatisRef" />
       </wd-tab>

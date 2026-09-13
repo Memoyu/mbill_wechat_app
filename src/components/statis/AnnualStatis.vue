@@ -136,7 +136,7 @@ function handleQuery() {
   <view v-if="mounted" :style="{ height: `${contentHeight}px` }" class="w-full">
     <z-paging ref="paging" :fixed="false" refresher-only @query="handleQuery">
       <template #top>
-        <view class="z-5 bg-white/70 pb-2 pt-3 backdrop-blur-md">
+        <view class="z-5 bg-white/70 py-3 backdrop-blur-md">
           <view class="px-2">
             <mbill-segmented v-model="active" :options="options" @scrolltolower="handleScrollToLower">
               <template #content="{ option }">
