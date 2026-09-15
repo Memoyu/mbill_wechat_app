@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import type { IBillSummaryAccount } from '@/api/types/bill'
-import { BillOptions } from '@/typings'
+import { billOptions } from '@/typings'
 import { getBillColor } from '@/utils'
 
 const props = defineProps<{
   data: IBillSummaryAccount
 }>()
 
-const accountOpts = ref({
+const chartOpts = ref({
   color: ['#1890FF', '#91CB74', '#FAC858', '#EE6666', '#73C0DE', '#3CA272', '#FC8452', '#9A60B4', '#ea7ccc'],
   padding: [5, 5, 5, 5],
   enableScroll: false,
@@ -23,7 +23,7 @@ const accountOpts = ref({
     },
   },
 })
-const accountData = ref({
+const chartData = ref({
   series: [
     {
       data: [] as { name: string, value: number }[],
@@ -42,7 +42,7 @@ watch(() => type.value, () => {
 })
 
 function changeAccountSummary() {
-  accountData.value.series[0].data = (type.value === 1 ? props.data.incomes : props.data.expends).map((item) => {
+  chartData.value.series[0].data = (type.value === 1 ? props.data.incomes : props.data.expends).map((item) => {
     return {
       name: item.name,
       value: item.amount,
@@ -56,7 +56,7 @@ function changeAccountSummary() {
   <view class="mb-4 flex items-center justify-between">
     <text class="font-semibold">账户数据</text>
     <view>
-      <mbill-segmented v-model="type" :options="BillOptions" />
+      <mbill-segmented v-model="type" :options="billOptions" />
     </view>
   </view>
   <view class="h-250px">
@@ -64,8 +64,8 @@ function changeAccountSummary() {
       type="pie"
       canvas2d
       in-scroll-view
-      :opts="accountOpts"
-      :chart-data="accountData"
+      :opts="chartOpts"
+      :chart-data="chartData"
     />
   </view>
   <view class="mt-3 max-h-220px overflow-y-auto space-y-3">

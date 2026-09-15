@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { CSSProperties } from 'vue'
 import dayjs from 'dayjs'
+import { billSecColors } from '@/constants/billIcons'
+import { useSettingsStore } from '@/store'
 import { getBillColor, getMonthEndDay, objToStyle } from '@/utils'
 
 export interface CalendarBillItem {
@@ -27,6 +29,7 @@ const emit = defineEmits(['change'])
 const currentDate = defineModel<number>()
 const days = ref<Array<CalendarDayItem>>([])
 
+const config = computed(() => useSettingsStore().calendar)
 // 计算偏移
 const offset = computed(() => {
   const firstDayOfWeek = 0
@@ -120,6 +123,12 @@ function getFormatAmount(amount: number) {
 
   return amount
 }
+
+function getHeatmapColor(type: number) {
+  if (type < 0)
+    return ''
+  return billSecColors[type]
+}
 </script>
 
 <template>
@@ -155,7 +164,7 @@ function getFormatAmount(amount: number) {
               </view>
             </view>
           </view>
-          <view class="absolute inset-0 z--1 rounded-lg bg-indigo-100" :style="{ opacity: item.heat }" />
+          <view class="absolute inset-0 z--1 rounded-lg" :style="{ opacity: item.heat, backgroundColor: getHeatmapColor(config.heatMap) }" />
         </view>
       </view>
     </view>

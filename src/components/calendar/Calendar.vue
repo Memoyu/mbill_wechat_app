@@ -13,7 +13,7 @@ defineOptions({
   },
 })
 const props = defineProps<{
-  summary: IBillSummaryAmount
+  data: IBillSummaryAmount
 }>()
 const emit = defineEmits(['change', 'selected', 'heightchange'])
 const date = defineModel<number>({ default: dayjs().valueOf() })
@@ -148,23 +148,24 @@ function getBills(month: number) {
   if (monthList.value[currentIndex.value] !== month)
     return []
 
-  const items = props.summary.series.map((s) => {
+  const items = props.data.items.map((i) => {
+    const s = i.summary
     let heat = 0
     if (config.value.heatMap === 0 && s.expend !== 0) {
-      heat = s.expend / props.summary.summary.expend
+      heat = s.expend / props.data.summary.expend
     }
-    else if (config.value.heatMap === 1 && s.expend !== 0) {
-      heat = s.income / props.summary.summary.income
+    else if (config.value.heatMap === 1 && s.income !== 0) {
+      heat = s.income / props.data.summary.income
     }
     else if (config.value.heatMap === 2 && s.income - s.expend !== 0) {
-      heat = s.income - s.expend / props.summary.summary.surplus
+      heat = (s.income - s.expend) / props.data.summary.surplus
     }
 
     return {
       date: s.date,
       expend: s.expend,
       income: s.income,
-      heat: heat === 0 ? 0 : Number.parseFloat(heat.toFixed(2)) + 0.3,
+      heat: heat === 0 ? 0 : Number.parseFloat((heat + 0.2).toFixed(2)),
     } as CalendarBillItem
   })
   // console.log(items, 'items')

@@ -1,3 +1,4 @@
+import { billColors } from '@/constants/billIcons'
 import { BillTypeEnum, BillWayEnum } from '@/typings'
 
 export function getBillType(type: BillTypeEnum) {
@@ -9,5 +10,5 @@ export function getBillWay(type: BillWayEnum) {
 }
 
 export function getBillColor(type: number) {
-  return type === BillTypeEnum.Expend ? 'var(--mbill-expend-color)' : type === BillTypeEnum.Income ? 'var(--mbill-income-color)' : 'var(--mbill-surplus-color)'
+  return billColors[type] || ''
 }

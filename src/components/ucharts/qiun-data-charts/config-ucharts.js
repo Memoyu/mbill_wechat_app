@@ -30,7 +30,7 @@ const color = [
 ]
 
 // 事件转换函数，主要用作格式化x轴为时间轴，根据需求自行修改
-const formatDateTime = (timeStamp, returnType) => {
+function formatDateTime(timeStamp, returnType) {
   const date = new Date()
   date.setTime(timeStamp * 1000)
   const y = date.getFullYear()
@@ -151,6 +151,18 @@ const cfu = {
     pieDemo(val, index, series, opts) {
       if (index !== undefined) {
         return `${series[index].name}：${series[index].data}元`
+      }
+    },
+
+    amountTrendChartTooltip(item, category, index, opts) {
+      if (item.name.includes('支出')) {
+        return `支出:${item.data}元`
+      }
+      else if (item.name.includes('收入')) {
+        return `收入:${item.data}元`
+      }
+      else if (item.name.includes('结余')) {
+        return `结余:${item.data}元`
       }
     },
   },

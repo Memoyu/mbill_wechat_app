@@ -1,16 +1,17 @@
 <script setup lang="ts">
-import type { IBillSummaryAmountItem } from '@/api/types/bill'
+import type { IBillSummaryAmount } from '@/api/types/bill'
+import dayjs from 'dayjs'
 import { billColors } from '@/constants/billIcons'
-import { BillOptions } from '@/typings'
+import { billOptions } from '@/typings'
 
 const props = defineProps<{
   dateType: 'date' | 'month'
-  data: IBillSummaryAmountItem []
+  data: IBillSummaryAmount []
 }>()
 
 const isDate = computed(() => props.dateType === 'date')
 
-const summaryOpts = ref({
+const chartOpts = ref({
   color: ['#f87171'],
   enableScroll: false,
   dataLabel: false,
@@ -48,7 +49,7 @@ const summaryOpts = ref({
     },
   },
 })
-const summaryData = ref({
+const chartData = ref({
   categories: [] as number[],
   series: [
     {
@@ -71,8 +72,13 @@ watch(() => type.value, () => {
 function changeAmountSummary() {
   const categories: number[] = []
   const series: number[] = []
-  props.data.forEach((item, index) => {
-    categories.push(index + 1)
+  props.data.forEach((it) => {
+    const item = it.summary
+    let d = dayjs(item.date).month() + 1
+    if (isDate.value) {
+      d = dayjs(item.date).date()
+    }
+    categories.push(d)
     series.push(type.value === 1 ? item.income : item.expend)
   })
 
@@ -80,9 +86,9 @@ function changeAmountSummary() {
   if (type.value === 1) {
     name = isDate.value ? '日收入' : '月收入'
   }
-  summaryOpts.value.color = [billColors[type.value === 1 ? 1 : 0]]
-  summaryData.value.categories = categories
-  summaryData.value.series = [{ name, data: series }]
+  chartOpts.value.color = [billColors[type.value === 1 ? 1 : 0]]
+  chartData.value.categories = categories
+  chartData.value.series = [{ name, data: series }]
 }
 </script>
 
@@ -92,7 +98,7 @@ function changeAmountSummary() {
       收支统计
     </text>
     <view>
-      <mbill-segmented v-model="type" :options="BillOptions" />
+      <mbill-segmented v-model="type" :options="billOptions" />
     </view>
   </view>
   <view class="h-160px">
@@ -100,8 +106,8 @@ function changeAmountSummary() {
       type="column"
       canvas2d
       in-scroll-view
-      :opts="summaryOpts"
-      :chart-data="summaryData"
+      :opts="chartOpts"
+      :chart-data="chartData"
     />
   </view>
 </template>

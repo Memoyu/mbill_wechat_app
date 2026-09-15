@@ -1,6 +1,6 @@
 import type { DateTimeType } from '@wot-ui/ui/components/wd-datetime-picker-view/types'
 import type { OpUnitType } from 'dayjs'
-import type { IBill, IBillDateGroup, IBillSummaryAmountItem, IEditBill } from '@/api/types/bill'
+import type { IBill, IBillDateGroup, IBillSummaryAmount, IBillSummaryAmountItem, IEditBill } from '@/api/types/bill'
 import type { BillTypeEnum } from '@/typings'
 import dayjs from 'dayjs'
 import { defineStore } from 'pinia'
@@ -32,7 +32,7 @@ const initState: {
   /** 账单金额汇总图表 */
   charts: {
     summary: { income: number, expend: number }
-    series: IBillSummaryAmountItem []
+    items: IBillSummaryAmount []
   }
   /** 用户弹窗年度账单金额汇总 */
   yearSummary: IBillSummaryAmountItem
@@ -57,7 +57,7 @@ const initState: {
       income: 0,
       expend: 0,
     },
-    series: [],
+    items: [],
   },
   yearSummary: {
     income: 0,
@@ -170,7 +170,7 @@ export const useIndexBillStore = defineStore(
       })
       state.charts = {
         summary: { income: res.summary.income, expend: res.summary.expend },
-        series: res.series,
+        items: res.items,
       }
     }
 
@@ -349,11 +349,11 @@ export const useIndexBillStore = defineStore(
       state.charts.summary.expend += type === 0 ? diffAmount : 0
       state.charts.summary.income += type === 1 ? diffAmount : 0
       // 遍历series
-      for (let i = 0; i < state.charts.series.length; i++) {
-        const series = state.charts.series[i]
-        if (dayjs(series.date).isSame(dayjs(date), 'date')) {
-          series.expend += type === 0 ? diffAmount : 0
-          series.income += type === 1 ? diffAmount : 0
+      for (let i = 0; i < state.charts.items.length; i++) {
+        const item = state.charts.items[i]
+        if (dayjs(item.summary.date).isSame(dayjs(date), 'date')) {
+          item.summary.expend += type === 0 ? diffAmount : 0
+          item.summary.income += type === 1 ? diffAmount : 0
           break
         }
       }

@@ -43,7 +43,7 @@ const monthSummary = ref<IBillSummaryAmount> ({
     incomeHighest: 0,
     incomeLowst: 0,
   },
-  series: [],
+  items: [],
 })
 const contentHeight = ref<number>()
 const floatingHeight = ref<number>()
@@ -61,9 +61,9 @@ watch(() => [navbarHeight.value, calendarHeight.value], ([nav, cal]) => {
   anchors.value = [floatingHeight.value, systemInfo.windowHeight * 0.8]
 })
 
-onLoad(() => {
-  getSummaryAmountBill()
-})
+// onLoad(() => {
+//   getSummaryAmountBill()
+// })
 
 onMounted(() => {
   initNavbarHeight()
@@ -224,7 +224,7 @@ function handleListQuery(page: number, size: number) {
     <z-paging ref="calendarPaging" :fixed="false" refresher-only @query="handleCalendarQuery">
       <!-- 日历组件 -->
       <view id="CALENDAR" class="mx-3 rounded-3xl bg-white p-2">
-        <calendar v-model="date" v-model:month="month" :summary="monthSummary" @change="handleMonthChange" @selected="handleDateChange" @heightchange="handleCalHeightChange" />
+        <calendar v-model="date" v-model:month="month" :data="monthSummary" @change="handleMonthChange" @selected="handleDateChange" @heightchange="handleCalHeightChange" />
       </view>
     </z-paging>
 

@@ -144,14 +144,14 @@ export interface IRefundBill {
 
 export interface IBillSummaryAmountQuery extends IBillQuery {
   /**
-   * 分组汇总: 0：不分组，1：按月，2：按日
+   * 分组汇总: 0：不分组，1：按月，2：按日，3：按月、日
    */
-  series: 0 | 1 | 2
+  series: 0 | 1 | 2 | 3
 }
 
 export interface IBillSummaryAmount {
   summary: IBillSummaryAmountItem
-  series: IBillSummaryAmountItem []
+  items: IBillSummaryAmount []
 }
 
 export interface IBillSummaryAmountItem {

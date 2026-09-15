@@ -72,7 +72,6 @@ const chartData = ref<{
 }>({
   categories: [],
   series: [
-
     {
       name: '日支出',
       data: [],
@@ -93,7 +92,8 @@ watch(() => charts.value, (data) => {
   const categories: string[] = []
   const expendSeries: number[] = []
   const incomeSeries: number[] = []
-  data.series.forEach((item) => {
+  data.items.forEach((it) => {
+    const item = it.summary
     const date = dayjs(item.date)
     categories.push(date.date().toString())
     expendSeries.push(item.expend)

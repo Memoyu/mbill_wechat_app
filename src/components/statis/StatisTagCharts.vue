@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import type { IBillSummaryTag } from '@/api/types/bill'
-import { BillOptions } from '@/typings'
+import { billOptions } from '@/typings'
 import { getBillColor } from '@/utils'
 
 const props = defineProps<{
   data: IBillSummaryTag
 }>()
 
-const tagOpts = ref({
+const chartOpts = ref({
   color: ['#1890FF', '#91CB74', '#FAC858', '#EE6666', '#73C0DE', '#3CA272', '#FC8452', '#9A60B4', '#ea7ccc'],
   padding: [5, 5, 5, 5],
   enableScroll: false,
@@ -23,7 +23,7 @@ const tagOpts = ref({
     },
   },
 })
-const tagData = ref({
+const chartData = ref({
   series: [
     {
       data: [] as { name: string, value: number }[],
@@ -59,8 +59,8 @@ function changeTagSummary() {
       })
     }
   })
-  // console.log('tagData', ts)
-  tagData.value.series[0].data = ts
+  // console.log('chartData', ts)
+  chartData.value.series[0].data = ts
 }
 </script>
 
@@ -68,7 +68,7 @@ function changeTagSummary() {
   <view class="mb-4 flex items-center justify-between">
     <text class="font-semibold">标签数据</text>
     <view>
-      <mbill-segmented v-model="type" :options="BillOptions" />
+      <mbill-segmented v-model="type" :options="billOptions" />
     </view>
   </view>
   <view class="h-250px">
@@ -76,8 +76,8 @@ function changeTagSummary() {
       type="pie"
       canvas2d
       in-scroll-view
-      :opts="tagOpts"
-      :chart-data="tagData"
+      :opts="chartOpts"
+      :chart-data="chartData"
     />
   </view>
   <view class="mt-3 max-h-220px overflow-y-auto space-y-3">

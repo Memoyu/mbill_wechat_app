@@ -38,7 +38,7 @@ const summary = ref<IBillSummaryAmount>({
     incomeHighest: 0,
     incomeLowst: 0,
   },
-  series: [],
+  items: [],
 })
 
 const category = ref<IBillSummaryCategory>({
@@ -163,13 +163,16 @@ function handleQuery() {
       </template>
 
       <view class="mx-3 space-y-4">
-        <!-- 汇总 -->
         <view class="mon-statis-block">
-          <statis-amount-summary :summary="summary.summary" />
+          <statis-amount-summary :data="summary.summary" />
         </view>
 
         <view class="mon-statis-block">
-          <statis-amount-charts date-type="date" :data="summary.series" />
+          <statis-amount-trend-charts date-type="date" :data="summary.items" />
+        </view>
+
+        <view class="mon-statis-block">
+          <statis-amount-charts date-type="date" :data="summary.items" />
         </view>
 
         <view class="mon-statis-block">
@@ -185,7 +188,7 @@ function handleQuery() {
         </view>
 
         <view class="mon-statis-block">
-          <statis-amount-report date-type="date" :data="summary.series" />
+          <statis-amount-report date-type="date" :data="summary.items" />
         </view>
       </view>
 
@@ -196,6 +199,6 @@ function handleQuery() {
 
 <style lang="scss" scoped>
 .mon-statis-block {
-  @apply: rounded-lg bg-indigo-300/20 p-2;
+  @apply: rounded-lg bg-indigo-200/20 p-2;
 }
 </style>
