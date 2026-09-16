@@ -1,9 +1,13 @@
 <script setup lang="ts">
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   options: string[]
-}>()
+  gap?: number
+}>(), {
+  gap: 0,
+})
 
 const emit = defineEmits(['scrolltolower'])
+
 const active = defineModel({ default: 0 })
 const { proxy } = getCurrentInstance() as any
 const lineWidth = 32
@@ -76,7 +80,7 @@ function calcLineLeft(idx: number) {
 
   let offset = 0// 初始化为 px 宽度
   for (let i = 0; i < idx; i++) {
-    offset += nodes.value[i].width! + 6
+    offset += nodes.value[i].width! + props.gap
   }
   const node = nodes.value[idx]
   lineLeft.value = Math.floor(offset + node.width! / 2 - lineWidth / 2)
@@ -92,8 +96,8 @@ function calcLineLeft(idx: number) {
     >
       <view class="relative flex items-center">
         <!-- 选项 -->
-        <view class="min-w-max flex gap-1.5 whitespace-nowrap">
-          <view v-for="(op, index) in options" :key="index" class="bill-segment-item" @tap="handelOptionTap(index, op)">
+        <view class="min-w-max flex whitespace-nowrap" :style="{ gap: `${gap}px` }">
+          <view v-for="(op, index) in options" :key="index + op" class="bill-segment-item" @tap="handelOptionTap(index, op)">
             <view v-if="$slots.content">
               <slot name="content" :option="{ value: op, index }" />
             </view>

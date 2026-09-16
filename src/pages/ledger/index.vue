@@ -310,7 +310,7 @@ function handleSortChange(list: ILedger[]) {
           <view class="grid grid-cols-4 gap-4">
             <view
               v-for="(gradient, index) in gradients"
-              :key="index"
+              :key="index + gradient"
               class="relative aspect-square overflow-hidden rounded-xl shadow-sm transition-all duration-200"
               :class="[editLedger.color === index ? 'ring-2 ring-indigo-500 ring-offset-2' : '']"
               :style="{ background: gradient }"

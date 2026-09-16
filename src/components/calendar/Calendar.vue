@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { CalendarBillItem } from './CalendarView.vue'
+import type { CalendarDataItem } from './CalendarView.vue'
 import type { IBillSummaryAmount } from '@/api/types/bill.js'
 import dayjs from 'dayjs'
 import { useSettingsStore } from '@/store'
-import { getWeekLabel } from '@/utils'
+import { calcHeat } from '@/utils'
 
 defineOptions({
   options: {
@@ -29,11 +29,7 @@ const changed = ref(false)
 
 const config = computed(() => useSettingsStore().calendar)
 // 周标题
-const weekLabel = computed(() => {
-  return (index: number) => {
-    return getWeekLabel(index - 1)
-  }
-})
+const weekLabels = ['一', '二', '三', '四', '五', '六', '日']
 
 watch(() => date.value, (value) => {
   emit('selected', value)
@@ -149,24 +145,13 @@ function getBills(month: number) {
     return []
 
   const items = props.data.items.map((i) => {
-    const s = i.summary
-    let heat = 0
-    if (config.value.heatMap === 0 && s.expend !== 0) {
-      heat = s.expend / props.data.summary.expend
-    }
-    else if (config.value.heatMap === 1 && s.income !== 0) {
-      heat = s.income / props.data.summary.income
-    }
-    else if (config.value.heatMap === 2 && s.income - s.expend !== 0) {
-      heat = (s.income - s.expend) / props.data.summary.surplus
-    }
-
+    const item = i.summary
     return {
-      date: s.date,
-      expend: s.expend,
-      income: s.income,
-      heat: heat === 0 ? 0 : Number.parseFloat((heat + 0.2).toFixed(2)),
-    } as CalendarBillItem
+      date: item.date,
+      expend: item.expend,
+      income: item.income,
+      heat: calcHeat(config.value.heatMap, props.data.summary, item),
+    } as CalendarDataItem
   })
   // console.log(items, 'items')
   return items
@@ -174,9 +159,9 @@ function getBills(month: number) {
 </script>
 
 <template>
-  <view class="calendar-weeks">
-    <view v-for="item in 7" :key="item" class="calendar-week">
-      {{ weekLabel(item) }}
+  <view class="grid grid-cols-7 py-2 text-base font-semibold">
+    <view v-for="item in weekLabels" :key="item" class="calendar-week">
+      {{ item }}
     </view>
   </view>
 
@@ -191,21 +176,12 @@ function getBills(month: number) {
     @animationfinish="handleSwiperAnimationFinish"
   >
     <swiper-item v-for="item in monthList" :key="item">
-      <calendar-view :id="`calendar-view-${item}`" v-model="date" :month="item" :bills="getBills(item)" @change="handleDateChange" />
+      <calendar-view :id="`calendar-view-${item}`" v-model="date" :month="item" :hm-type="config.heatMap" :data="getBills(item)" @change="handleDateChange" />
     </swiper-item>
   </swiper>
 </template>
 
 <style lang="scss" scoped>
-.calendar-weeks {
-  display: flex;
-  height: 36px;
-  line-height: 36px;
-  color: rgba(0, 0, 0, 0.85);
-  font-size: 16px;
-  font-weight: bold;
-}
-
 .calendar-week {
   flex: 1 1 0%;
   text-align: center;

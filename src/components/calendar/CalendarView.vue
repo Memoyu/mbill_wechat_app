@@ -1,11 +1,9 @@
 <script setup lang="ts">
-import type { CSSProperties } from 'vue'
 import dayjs from 'dayjs'
 import { billSecColors } from '@/constants/billIcons'
-import { useSettingsStore } from '@/store'
-import { getBillColor, getMonthEndDay, objToStyle } from '@/utils'
+import { getBillColor, getMonthEndDay } from '@/utils'
 
-export interface CalendarBillItem {
+export interface CalendarDataItem {
   date: string
   expend: number
   income: number
@@ -21,38 +19,31 @@ interface CalendarDayItem {
   disabled: boolean
 }
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
+  hmType: number // 热力图类型
   month: number
-  bills: Array<CalendarBillItem>
-}>()
+  data: Array<CalendarDataItem>
+  highlight?: boolean
+}>(), {
+  highlight: true,
+})
 const emit = defineEmits(['change'])
 const currentDate = defineModel<number>()
 const days = ref<Array<CalendarDayItem>>([])
 
-const config = computed(() => useSettingsStore().calendar)
 // 计算偏移
 const offset = computed(() => {
-  const firstDayOfWeek = 0
-  const offset = (7 + new Date(props.month).getDay() - firstDayOfWeek) % 7
-  return offset
+  const day = dayjs(props.month).day()
+  return (day === 0 ? 7 : day)
 })
-
-// 月第一天样式
-const firstDayStyle = computed(() => {
-  const dayStyle: CSSProperties = {}
-  dayStyle.marginLeft = `${(100 / 7) * offset.value}%`
-  return objToStyle(dayStyle)
-})
-
-const dateMonth = computed(() => dayjs(props.month).format('YYYY年MM月'))
 
 watch(() => props.month, () => {
   setDays()
 }, { immediate: true })
 
-watch(() => props.bills, (data) => {
+watch(() => props.data, (data) => {
   days.value.forEach((day) => {
-    const bill = data.find(item => dayjs(item.date).isSame(dayjs(day.date), 'date'))
+    const bill = data?.find(item => dayjs(item.date).isSame(dayjs(day.date), 'date'))
     if (!bill)
       return
     day.expend = bill.expend
@@ -97,7 +88,7 @@ function handleSelectedDate(index: number) {
 }
 
 function isCurrentDate(date: number) {
-  return dayjs(currentDate.value).isSame(dayjs(date), 'date')
+  return props.highlight && dayjs(currentDate.value).isSame(dayjs(date), 'date')
 }
 
 function getFormatAmount(amount: number) {
@@ -132,20 +123,16 @@ function getHeatmapColor(type: number) {
 </script>
 
 <template>
-  <view class="calendar rounded-2xl">
-    <view class="calendar-days">
-      <!-- 调试时使用 -->
-      <!-- <view class="calendar-month-text">
-        {{ dateMonth }}
-      </view> -->
+  <view class="relative rounded-2xl">
+    <view class="grid grid-cols-7">
       <view
         v-for="(item, index) in days"
-        :key="index"
-        class="calendar-day relative"
-        :style="index === 0 ? firstDayStyle : ''"
+        :key="item.date"
+        class="relative"
+        :style="index === 0 ? { gridColumnStart: `${offset}` } : {}"
       >
         <view
-          class="calendar-day-content m-0.5 rounded-lg"
+          class="relative m-0.5 flex justify-center rounded-lg"
           :class="[isCurrentDate(item.date) ? 'calendar-selected-day' : '']"
           @tap="handleSelectedDate(index)"
         >
@@ -164,7 +151,7 @@ function getHeatmapColor(type: number) {
               </view>
             </view>
           </view>
-          <view class="absolute inset-0 z--1 rounded-lg" :style="{ opacity: item.heat, backgroundColor: getHeatmapColor(config.heatMap) }" />
+          <view class="absolute inset-0 z--1 rounded-lg" :style="{ opacity: item.heat, backgroundColor: getHeatmapColor(hmType) }" />
         </view>
       </view>
     </view>
@@ -172,38 +159,7 @@ function getHeatmapColor(type: number) {
 </template>
 
 <style scoped>
-.calendar {
-  position: relative;
-}
-
-.calendar-days {
-  position: relative;
-  display: flex;
-  flex-wrap: wrap;
-  font-size: 16px;
-  color: rgba(0, 0, 0, 0.85);
-}
-
-.calendar-day {
-  position: relative;
-  width: 14.2857%;
-}
-.calendar-day-content {
-  position: relative;
-  display: flex;
-  justify-content: center;
-}
 .calendar-selected-day {
-  color: white;
-  @apply: bg-indigo-200;
-}
-
-.calendar-month-text {
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translate(-50%, 0);
-  white-space: nowrap;
-  @apply: text-40px text-gray-200/60 font-semibold;
+  @apply: text-white bg-indigo-200;
 }
 </style>

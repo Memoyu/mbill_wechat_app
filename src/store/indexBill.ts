@@ -41,6 +41,7 @@ const initState: {
   dateType: 'year-month',
   groups: [],
   summary: {
+    date: '',
     income: 0,
     expend: 0,
     surplus: 0,
@@ -60,6 +61,7 @@ const initState: {
     items: [],
   },
   yearSummary: {
+    date: '',
     income: 0,
     expend: 0,
     surplus: 0,

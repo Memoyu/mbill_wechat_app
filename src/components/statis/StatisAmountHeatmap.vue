@@ -3,9 +3,10 @@ import type { IBillSummaryAmount } from '@/api/types/bill'
 import dayjs from 'dayjs'
 import { billSecColors } from '@/constants/billIcons'
 import { billOptions } from '@/typings'
+import { calcHeat } from '@/utils'
 
 interface CalendarMonthItem {
-  start: number
+  offset: number
   month: number
   days: number[]
   heats: number[]
@@ -19,6 +20,8 @@ const props = defineProps<{
 const type = ref(0)
 const months = ref<CalendarMonthItem[]>([])
 const bgColor = ref<string>(billSecColors[0])
+const showPopup = ref(false)
+const month = ref()
 
 watch(() => props.data, (newData) => {
   if (newData) {
@@ -29,38 +32,33 @@ watch(() => props.data, (newData) => {
 
 watch(() => type.value, (val) => {
   // console.log(type.value, 'type')
-  bgColor.value = !val || val < 0 ? '' : billSecColors[val]
+  bgColor.value = val < 0 ? '' : billSecColors[val]
   initCalendar(props.data)
 })
 
 function initCalendar(data: IBillSummaryAmount) {
   const year = dayjs(data.summary.date).year()
-  months.value = Array.from({ length: 12 }, (_, i) => {
+  const ms = []
+  for (let i = 0; i < 12; i++) {
     const month = i + 1
     const date = dayjs(`${year}-${month}-01`)
     const dayCount = date.daysInMonth()
     const day = date.day()
-    const start = (day === 0 ? 7 : day)
+    const offset = (day === 0 ? 7 : day)
     const days = Array.from({ length: dayCount }, (_, i) => i + 1)
-    return { start, month, days, heats: getHeats(data.items[i]) } as CalendarMonthItem
-  })
-  console.log(months.value, 'months')
+    ms.push({ offset, month, days, heats: getHeats(data.items[i]) })
+  }
+  months.value = ms
+  // console.log(months.value, 'months')
 }
 function getHeats(data: IBillSummaryAmount) {
   return data.items.map((i) => {
-    const s = i.summary
-    let heat = 0
-    if (type.value === 0 && s.expend !== 0) {
-      heat = s.expend / props.data.summary.expend
-    }
-    else if (type.value === 1 && s.income !== 0) {
-      heat = s.income / props.data.summary.income
-    }
-    else if (type.value === 2 && s.income - s.expend !== 0) {
-      heat = (s.income - s.expend) / props.data.summary.surplus
-    }
-    return heat === 0 ? 0 : Number.parseFloat((heat + 0.2).toFixed(2))
+    return calcHeat(type.value, props.data.summary, i.summary)
   })
+}
+function handleMonthTap(m: number) {
+  showPopup.value = true
+  month.value = m
 }
 </script>
 
@@ -73,15 +71,15 @@ function getHeats(data: IBillSummaryAmount) {
       <mbill-segmented v-model="type" :options="[...billOptions, '结余']" />
     </view>
   </view>
-  <view class="grid grid-cols-4 gap-2 py-3">
+  <view class="grid grid-cols-4 gap-2 px-1 py-3">
     <view v-for="m in months" :key="`month-${m.month}`">
-      <view class="flex flex-col">
+      <view class="flex flex-col" @tap="handleMonthTap(m.month)">
         <text>{{ m.month }}月</text>
         <view class="grid grid-cols-7 mt-2 gap-0.5">
           <view
             v-for="(d, didx) in m.days" :key="`day-${m.month}-${d}`"
-            class="relative h-2.5 w-2.5 rounded bg-gray-200/60"
-            :style="didx === 0 ? { gridColumnStart: `${m.start}` } : {}"
+            class="relative h-2.5 w-2.5 rounded bg-gray-200/50"
+            :style="didx === 0 ? { gridColumnStart: `${m.offset}` } : {}"
           >
             <view class="absolute inset-0 rounded" :style="`background-color:${bgColor};opacity:${m.heats[didx]}`" />
           </view>
@@ -89,6 +87,9 @@ function getHeats(data: IBillSummaryAmount) {
       </view>
     </view>
   </view>
+
+  <!-- 热力图日历弹窗 -->
+  <statis-amount-heatmap-popup v-model="showPopup" :year="year" :month="month" :data="data" />
 </template>
 
 <style lang="scss" scoped>

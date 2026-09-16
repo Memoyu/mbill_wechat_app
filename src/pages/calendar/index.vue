@@ -32,6 +32,7 @@ const listPaging = ref()
 const groups = ref<IBillDateGroup[]>([])
 const monthSummary = ref<IBillSummaryAmount> ({
   summary: {
+    date: '',
     income: 0,
     expend: 0,
     surplus: 0,

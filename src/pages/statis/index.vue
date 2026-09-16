@@ -65,8 +65,8 @@ function initComponent(tabIdx: number) {
   <!-- 导航栏 -->
   <nav-bar id="TOP_NAVBAR" title="数据统计">
     <template #prefix-action>
-      <view class="mt-4 max-w-max rounded-full bg-gray-200/50 px-3 py-1">
-        <mbill-segmented v-model="active" :options="options" />
+      <view class="mt-4 max-w-max rounded-full bg-gray-200/50 px-2 py-1">
+        <mbill-segmented v-model="active" :gap="6" :options="options" />
       </view>
     </template>
   </nav-bar>

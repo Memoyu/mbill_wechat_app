@@ -57,7 +57,7 @@ function handleActionClick(item: any) {
 
       <!-- 操作按钮列表 -->
       <view class="py-4">
-        <view v-for="(item, index) in items" :key="index" class="mb-6">
+        <view v-for="(item, index) in items" :key="index + (item.title ?? '')" class="mb-6">
           <view v-if="item.title && item.title.length > 0" class="mb-2 px-6">
             <text class="text-sm text-gray-400">{{ item.title }}</text>
           </view>

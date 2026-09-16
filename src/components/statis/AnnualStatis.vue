@@ -21,6 +21,7 @@ const paging = ref()
 
 const summary = ref<IBillSummaryAmount>({
   summary: {
+    date: '',
     income: 0,
     expend: 0,
     surplus: 0,
@@ -138,7 +139,7 @@ function handleQuery() {
       <template #top>
         <view class="z-5 bg-white/70 py-3 backdrop-blur-md">
           <view class="px-2">
-            <mbill-segmented v-model="active" :options="options" @scrolltolower="handleScrollToLower">
+            <mbill-segmented v-model="active" :gap="8" :options="options" @scrolltolower="handleScrollToLower">
               <template #content="{ option }">
                 <view class="flex flex-col justify-center rounded-xl bg-indigo-300/20 px-3 py-4">
                   <view class="flex items-end">

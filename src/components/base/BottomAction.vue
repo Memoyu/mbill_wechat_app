@@ -49,7 +49,7 @@ function showMore() {
           :class="[showMore() ? '' : 'justify-center']"
         >
           <view
-            v-for="(action, index) in actions" :key="index"
+            v-for="(action, index) in actions" :key="index + action.text"
             class="w-13 flex flex-col items-center justify-center gap-1.5 rounded-xl px-0.5 py-2"
             :hover-class="`${action.type === 'danger' ? 'bg-red-50' : action.type === 'warning' ? 'bg-yellow-50' : 'bg-gray-50'} scale-95 origin-center transition-all`"
             :hover-start-time="0"
@@ -75,7 +75,7 @@ function showMore() {
         </view>
         <view v-else class="min-w-max flex items-center gap-2.5 whitespace-nowrap px-2 py-1">
           <view
-            v-for="(action, index) in actions" :key="index"
+            v-for="(action, index) in actions" :key="index + action.text"
             class="flex items-center justify-center gap-1.5 rounded-xl px-3 py-2"
             :class="[action.type === 'danger' ? 'bg-red-50' : action.type === 'warning' ? 'bg-yellow-50' : 'bg-gray-50']"
             hover-class="opacity-60"

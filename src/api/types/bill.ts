@@ -155,7 +155,7 @@ export interface IBillSummaryAmount {
 }
 
 export interface IBillSummaryAmountItem {
-  date?: string
+  date: string
   income: number
   expend: number
   surplus: number

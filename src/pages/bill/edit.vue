@@ -408,8 +408,8 @@ function handleTagSelectConfirm(items: ITag[]) {
       </view>
     </template>
     <template #prefix-action>
-      <view class="mt-4 max-w-max rounded-full bg-gray-200/50 px-3 py-1">
-        <mbill-segmented v-model="bill.type" :options="typeOptions" />
+      <view class="mt-4 max-w-max rounded-full bg-gray-200/50 px-2 py-1">
+        <mbill-segmented v-model="bill.type" :gap="6" :options="typeOptions" />
       </view>
     </template>
   </nav-bar>

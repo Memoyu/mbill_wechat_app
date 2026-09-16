@@ -34,7 +34,7 @@ function back() {
           <slot name="prefix-action" />
 
           <view v-if="actions && actions.length > 0" class="mt-3 flex items-center space-x-2">
-            <view v-for="(item, index) in actions" :key="index" class="nav-bar-action-icon-box" @tap="item.action">
+            <view v-for="(item, index) in actions" :key="index + item.text" class="nav-bar-action-icon-box" @tap="item.action">
               <wd-icon :name="item.icon" />
               <text class="ml-2">{{ item.text }}</text>
             </view>

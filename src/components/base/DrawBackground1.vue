@@ -3,7 +3,7 @@
     <view class="pointer-events-none fixed inset-0 overflow-hidden">
       <view
         v-for="i in 3"
-        :key="i"
+        :key="`${i}-bg1`"
         class="absolute rounded-full bg-gray-900/[0.02]"
         :style="{
           width: `${350 + i * 100}px`,

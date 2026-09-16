@@ -30,6 +30,7 @@ const query = computed(() => {
 
 const summary = ref<IBillSummaryAmount>({
   summary: {
+    date: '',
     income: 0,
     expend: 0,
     surplus: 0,

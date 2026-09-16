@@ -1,16 +1,14 @@
 import dayjs from 'dayjs'
 
-const weeks = computed(() => {
-  return [
-    '日',
-    '一',
-    '二',
-    '三',
-    '四',
-    '五',
-    '六',
-  ]
-})
+const weeks = [
+  '日',
+  '一',
+  '二',
+  '三',
+  '四',
+  '五',
+  '六',
+]
 
 /**
  * 比较两个时间的日期是否相等
@@ -55,7 +53,7 @@ export function getWeekLabel(index: number) {
   if (index >= 7) {
     index = index % 7
   }
-  return weeks.value[index]
+  return weeks[index]
 }
 
 /**
@@ -91,5 +89,5 @@ export function formatDate(date: string | number | Date, fixed?: boolean): strin
  */
 export function weekDate(date: string | number | Date): string {
   const dayIndex = dayjs(date).day() // 获取星期索引（0 表示周日）
-  return `周${weeks.value[dayIndex]}` // 复用已有的 weeks 数组
+  return `周${weeks[dayIndex]}` // 复用已有的 weeks 数组
 }
