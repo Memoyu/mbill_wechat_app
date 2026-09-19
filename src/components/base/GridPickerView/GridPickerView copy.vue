@@ -18,6 +18,7 @@ const props = withDefaults(defineProps<{
   list: GridSelectItem[]
   tops?: GridSelectItem[]
   height?: number
+  scrollHeight?: number
   column?: number
 }>(), {
   column: 5,
@@ -30,6 +31,7 @@ const selected = defineModel<string>()
 const itemMaps: any = {}
 
 const itmeHeight = ref(70)
+const scrollHeight = ref(300)
 const rows = ref<GridSelectItem[][]>([])
 const rowIndex = ref(-1)
 const childs = ref()
@@ -50,6 +52,11 @@ const hasTop = computed(() => innerTops.value && innerTops.value.length > 0)
 
 watch(() => props.height, (nh) => {
   itmeHeight.value = nh
+}, { immediate: true })
+
+watch(() => props.scrollHeight, (nh) => {
+  if (nh)
+    scrollHeight.value = nh
 }, { immediate: true })
 
 watch(() => props.list, (list) => {
@@ -166,53 +173,55 @@ function getChildContentHeight(rowIdx: number) {
 </script>
 
 <template>
-  <view class="p-2">
-    <!-- 常用项 -->
-    <view v-if="hasTop">
-      <view class="pb-2 font-semibold">
-        常用
-      </view>
-      <view :style="itemsBoxStyle">
-        <view
-          v-for="top in innerTops" :key="`top-${top.id}`"
-
-          @tap="handleTopItemTap(top)"
-        >
-          <grid-picker-view-item :height="itmeHeight" :item="top" :selected="currentId" />
+  <scroll-view scroll-y :style="{ height: `${scrollHeight}px` }">
+    <view class="p-2">
+      <!-- 常用项 -->
+      <view v-if="hasTop">
+        <view class="pb-2 font-semibold">
+          常用
         </view>
-      </view>
-      <view class="mt-3 pb-2 font-semibold">
-        全部
-      </view>
-    </view>
-    <!-- 列表项 -->
-    <view class="space-y-3">
-      <view v-for="(items, rowIdx) in rows" :key="rowIdx" class="flex flex-col space-y-3">
         <view :style="itemsBoxStyle">
           <view
-            v-for="item in items" :key="item.id"
-            @tap="handleListItemTap(item)"
+            v-for="top in innerTops" :key="`top-${top.id}`"
+
+            @tap="handleTopItemTap(top)"
           >
-            <grid-picker-view-item :height="itmeHeight" :expand="item.id === currentParentId" :item="item" :selected="currentId" />
+            <grid-picker-view-item :height="itmeHeight" :item="top" :selected="currentId" />
           </view>
         </view>
-
-        <view
-          class="grid-select-childs-box rounded-lg bg-gray-200"
-          :style="{ height: getChildContentHeight(rowIdx) }"
-        >
-          <view class="p-2" :style="{ ...itemsBoxStyle, display: rowIndex === rowIdx ? '' : 'none' }">
+        <view class="mt-3 pb-2 font-semibold">
+          全部
+        </view>
+      </view>
+      <!-- 列表项 -->
+      <view class="space-y-3">
+        <view v-for="(items, rowIdx) in rows" :key="rowIdx" class="flex flex-col space-y-3">
+          <view :style="itemsBoxStyle">
             <view
-              v-for="child in childs" :key="child.id"
-              @tap="handleListItemTap(child)"
+              v-for="item in items" :key="item.id"
+              @tap="handleListItemTap(item)"
             >
-              <grid-picker-view-item :height="itmeHeight" :item="child" :selected="currentId" />
+              <grid-picker-view-item :height="itmeHeight" :expand="item.id === currentParentId" :item="item" :selected="currentId" />
+            </view>
+          </view>
+
+          <view
+            class="grid-select-childs-box rounded-lg bg-gray-200"
+            :style="{ height: getChildContentHeight(rowIdx) }"
+          >
+            <view class="p-2" :style="{ ...itemsBoxStyle, display: rowIndex === rowIdx ? '' : 'none' }">
+              <view
+                v-for="child in childs" :key="child.id"
+                @tap="handleListItemTap(child)"
+              >
+                <grid-picker-view-item :height="itmeHeight" :item="child" :selected="currentId" />
+              </view>
             </view>
           </view>
         </view>
       </view>
     </view>
-  </view>
+  </scroll-view>
 </template>
 
 <style lang="scss" scoped>

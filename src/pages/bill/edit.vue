@@ -23,7 +23,7 @@ const settingsStore = useSettingsStore()
 const indexBillStore = useIndexBillStore()
 
 const typeOptions = ['支出', '收入']
-const keyboardInput = ref('')
+const keyboardInput = ref('123456789+123456789-123456789-12345678')
 const inputCursor = ref(keyboardInput.value.length)
 
 const showLedgers = ref(false)
@@ -33,6 +33,7 @@ const showTags = ref(false)
 const showAddressEdit = ref(false)
 const addressInput = ref()
 const categoryPickerHeight = ref(0)
+const inputBottom = ref(0)
 
 const isCreate = ref(true)
 const bill = ref<IEditBill>({
@@ -106,7 +107,7 @@ function calcFixedHeight() {
       const topHeight = top.height
       uni.createSelectorQuery().select('#BOTTOM_INPUT').boundingClientRect((bottom: any) => {
         categoryPickerHeight.value = systemInfo.windowHeight - (topHeight + bottom.height)
-        // console.log(topHeight, bottom.height, categoryPickerHeight.value, 'categoryPickerHeight')
+        console.log(topHeight, bottom.height, categoryPickerHeight.value, 'categoryPickerHeight')
       }).exec()
     }).exec()
   })
@@ -391,6 +392,16 @@ function handleTagSelectConfirm(items: ITag[]) {
   showTags.value = false
   bill.value.tags = items
 }
+
+function handleKeyBoardHeightChange(e: any) {
+  console.log(e, 'handleKeyBoardHeightChange')
+  const height = e.height
+  inputBottom.value = height
+}
+
+function handleTouchStart(e: any) {
+  console.log(e.touches[0], 'handleTouchStart')
+}
 </script>
 
 <template>
@@ -423,78 +434,58 @@ function handleTagSelectConfirm(items: ITag[]) {
     @change="handleCategoryChange"
   />
 
-  <view id="BOTTOM_INPUT" class="absolute bottom-0 left-0 right-0">
+  <view id="BOTTOM_INPUT">
     <!-- 标签 -->
-    <view v-if="bill.tags && bill.tags.length > 0" class="relative">
-      <scroll-view scroll-x enhanced :show-scrollbar="false" class="relative mr-2 flex-1" :bounces="false">
+    <view v-if="bill.tags && bill.tags.length > 0" class="py-2">
+      <scroll-view scroll-x enhanced :show-scrollbar="false" class="mr-2 flex-1" :bounces="false">
         <view class="min-w-max flex items-center gap-2.5 whitespace-nowrap px-4">
           <view v-for="tag in bill.tags" :key="tag.tagId" class="flex-shrink-0 rounded-full bg-indigo-300/40 px-2 py-1 text-xs" @tap="showTags = true">
             {{ tag.name }}
           </view>
         </view>
       </scroll-view>
-      <!-- 添加渐变遮罩 -->
-      <view
-        class="pointer-events-none absolute bottom-0 left-0 top-0 w-5 transition-opacity duration-200"
-        :style="{ background: 'linear-gradient(to left, rgba(250, 250, 250, 0) 0%, rgba(250, 250, 250, 0.95) 40%, rgba(250, 250, 250, 1) 100%)' }"
-      />
-      <view
-        class="pointer-events-none absolute bottom-0 right-0 top-0 w-5 transition-opacity duration-200"
-        :style="{ background: 'linear-gradient(to right, rgba(250, 250, 250, 0) 0%, rgba(250, 250, 250, 0.95) 40%, rgba(250, 250, 250, 1) 100%)' }"
-      />
     </view>
 
     <!-- 账单属性 -->
-    <view class="relative">
-      <scroll-view scroll-x enhanced :show-scrollbar="false" :bounces="false">
-        <view class="bill-attr-box min-w-max">
-          <view class="bill-attr-box-item" @tap="showDateTime = true">
-            <!-- 日期 -->
-            <wd-icon name="calendar-line" size="20px" />
-            <text class="ml-1">{{ `${formatDate(billDate)} ${dayjs(billDate).format('HH:mm')}` }}</text>
-          </view>
-          <view class="bill-attr-box-item" @tap="showAccounts = true">
-            <!-- 账户 -->
-            <bill-icon size="22" :icon="bill.account.icon" :text="bill.account.name" />
-            <text class="ml-1">{{ bill.account.name }}</text>
-          </view>
-          <view class="bill-attr-box-item" @tap="showTags = true">
-            <!-- 标签 -->
-            <wd-icon name="tag" size="20px" />
-            <text class="ml-1">标签</text>
-          </view>
-          <view class="bill-attr-box-item" @tap="handleAddressEditShow">
-            <!-- 地点 -->
-            <wd-icon name="location" size="20px" />
-            <text class="address-truncate-start">{{ bill.address || '地址' }}</text>
-          </view>
+    <scroll-view scroll-x enhanced :show-scrollbar="false" :bounces="false">
+      <view class="bill-attr-box min-w-max">
+        <view class="bill-attr-box-item" @tap="showDateTime = true">
+          <!-- 日期 -->
+          <wd-icon name="calendar-line" size="20px" />
+          <text class="ml-1">{{ `${formatDate(billDate)} ${dayjs(billDate).format('HH:mm')}` }}</text>
         </view>
-      </scroll-view>
-      <!-- 添加渐变遮罩 -->
-      <view
-        class="pointer-events-none absolute bottom-0 left-0 top-0 w-5 transition-opacity duration-200"
-        :style="{ background: 'linear-gradient(to left, rgba(250, 250, 250, 0) 0%, rgba(250, 250, 250, 0.95) 40%, rgba(250, 250, 250, 1) 100%)' }"
-      />
-      <view
-        class="pointer-events-none absolute bottom-0 right-0 top-0 w-5 transition-opacity duration-200"
-        :style="{ background: 'linear-gradient(to right, rgba(250, 250, 250, 0) 0%, rgba(250, 250, 250, 0.95) 40%, rgba(250, 250, 250, 1) 100%)' }"
-      />
-    </view>
+        <view class="bill-attr-box-item" @tap="showAccounts = true">
+          <!-- 账户 -->
+          <bill-icon size="22" :icon="bill.account.icon" :text="bill.account.name" />
+          <text class="ml-1">{{ bill.account.name }}</text>
+        </view>
+        <view class="bill-attr-box-item" @tap="showTags = true">
+          <!-- 标签 -->
+          <wd-icon name="tag" size="20px" />
+          <text class="ml-1">标签</text>
+        </view>
+        <view class="bill-attr-box-item" @tap="handleAddressEditShow">
+          <!-- 地点 -->
+          <wd-icon name="location" size="20px" />
+          <text class="address-truncate-start">{{ bill.address || '地址' }}</text>
+        </view>
+      </view>
+    </scroll-view>
+
     <!-- 账单总额、备注 -->
     <view class="flex items-center justify-between px-2 py-1 space-x-xl">
-      <view class="w-full shrink-1">
-        <!-- 备注 -->
-        <wd-input v-model="bill.remark" compact type="text" placeholder="账单备注" />
+      <!-- 备注 -->
+      <view class="relative z-999" :style="{ bottom: `${inputBottom}px` }">
+        <wd-input v-model="bill.remark" type="text" placeholder="账单备注" @keyboardheightchange="handleKeyBoardHeightChange" />
       </view>
-      <view>
-        <!-- 总金额 -->
-        <wd-text :text="bill.amount" mode="price" size="17px" :style="{ color: getBillColor(bill.type) }" />
-      </view>
+      <!-- 总金额 -->
+      <wd-text :text="bill.amount" mode="price" size="17px" :style="{ color: getBillColor(bill.type) }" />
     </view>
 
     <!-- 键盘输入框 -->
     <view class="py-1">
       <amount-input v-model="keyboardInput" v-model:cursor="inputCursor" />
+      <!-- <wd-input v-model="keyboardInput" type="text" placeholder="账单备注" :cursor="inputCursor" @tap="handleinputTap" /> -->
     </view>
     <!-- 金额键盘 -->
     <keyboard v-model="keyboardInput" v-model:cursor="inputCursor" @press="handlePressKeyboard" />

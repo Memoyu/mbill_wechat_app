@@ -42,7 +42,16 @@ function handleConfirm() {
 
 <template>
   <bottom-popup v-model="show" auto-height @confirm="handleConfirm">
-    <wd-calendar-view ref="calendarViewRef" v-model="innerDate" :default-time="defaultTime" type="datetime" hide-second @change="handleDateChange" />
+    <wd-calendar-view
+      ref="calendarViewRef"
+      v-model="innerDate"
+      switch-mode="year-month"
+      :default-time="defaultTime"
+      type="datetime"
+      hide-second
+      :min-date="dayjs().subtract(5, 'year').valueOf()"
+      @change="handleDateChange"
+    />
   </bottom-popup>
 </template>
 

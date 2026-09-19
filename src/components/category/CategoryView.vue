@@ -118,25 +118,27 @@ function handleCategoryChange(item: any) {
 </script>
 
 <template>
-  <view>
-    <wd-tabs v-model="type" animated swipeable @change="handleTabChange">
-      <wd-tab key="expend">
-        <grid-picker-view v-if="initTypes.includes(0)" v-model="selectedExpend" :list="expends" :tops="expendTops" :scroll-height="height" @change="handleCategoryChange" />
-      </wd-tab>
+  <wd-tabs v-model="type" animated swipeable @change="handleTabChange">
+    <wd-tab key="expend">
+      <view class="overflow-y-auto" :style="{ height: `${height}px` }">
+        <grid-picker-view v-if="initTypes.includes(0)" v-model="selectedExpend" :list="expends" :tops="expendTops" @change="handleCategoryChange" />
+      </view>
+    </wd-tab>
 
-      <wd-tab key="income">
-        <grid-picker-view v-if="initTypes.includes(1)" v-model="selectedIncome" :list="incomes" :tops="incomeTops" :scroll-height="height" @change="handleCategoryChange" />
-      </wd-tab>
-    </wd-tabs>
-  </view>
+    <wd-tab key="income">
+      <view class="overflow-y-auto" :style="{ height: `${height}px` }">
+        <grid-picker-view v-if="initTypes.includes(1)" v-model="selectedIncome" :list="incomes" :tops="incomeTops" @change="handleCategoryChange" />
+      </view>
+    </wd-tab>
+  </wd-tabs>
 </template>
 
-<style lang="scss" scoped>
+<style lang="scss">
 // 自定义tabs，隐藏nav
 :deep(.wd-tabs) {
   background: none;
 }
 :deep(.wd-tabs__nav) {
-  display: none;
+  display: none !important;
 }
 </style>

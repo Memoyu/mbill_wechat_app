@@ -60,7 +60,7 @@ function handleAfterEnter() {
       .in(proxy)
       .selectAll('.heat-map-month-title')
       .boundingClientRect((views: any) => {
-        console.log(views, props.month, dayjs(props.month).format('YYYY-MM-DD'), 'boundingClientRect')
+        // console.log(views, props.month, dayjs(props.month).format('YYYY-MM-DD'), 'boundingClientRect')
 
         if (!views || views.length < 1)
           return
@@ -117,15 +117,17 @@ function getBillData(data: IBillSummaryAmount) {
     </template>
     <view class="px-3">
       <scroll-view
-        :class="`h-${scrollHeight}vh`"
+        :style="{ height: `${scrollHeight}vh` }"
         scroll-y
         :show-scrollbar="false"
         scroll-with-animation
         :scroll-top="targetScroll"
       >
-        <view v-for="(m, idx) in months" :key="m.month" class="flex flex-col gap-2">
-          <text class="heat-map-month-title font-semibold">{{ m.label }}</text>
-          <calendar-view :month="m.month" :data="caleData[idx]" :highlight="false" :hm-type="type" />
+        <view class="space-y-3">
+          <view v-for="(m, idx) in months" :key="m.month" class="flex flex-col gap-2">
+            <text class="heat-map-month-title font-semibold">{{ m.label }}</text>
+            <calendar-view :month="m.month" :data="caleData[idx]" :highlight="false" :hm-type="type" />
+          </view>
         </view>
       </scroll-view>
     </view>

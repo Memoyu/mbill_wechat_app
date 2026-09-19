@@ -1,199 +1,80 @@
 <script lang="ts" setup>
-import { canvas2dAdapter } from '@wot-ui/ui/common/canvasHelper'
-import { useTouch } from '@wot-ui/ui/composables/useTouch'
-import { objToStyle, systemInfo } from '@/utils'
+interface ICharNodeItem {
+  width: number
+}
 
 const props = defineProps<{
-  cursor: number
 }>()
 const emit = defineEmits(['update:cursor'])
-const input = defineModel<string>({ default: '' })
 
-const touch = useTouch()
+const gap = 1.4
 const { proxy } = getCurrentInstance() as any
 
-const maxWidth = systemInfo.windowWidth // 最大画布宽度
-const canvasWidth = ref(maxWidth)
-const canvasHeight = 28 // Canvas 高度
-const px = 10 // 初始偏移量
+const input = defineModel<string>({ default: '' })
+const cursor = defineModel<number>('cursor', { default: 0 })
 
-// 光标位置
-const cursorPosition = ref(0)
-// Canvas 上下文
-let ctx: UniApp.CanvasContext | null = null
-let canvas: HTMLCanvasElement | null = null
-const canvasId = ref('textCanvas')
+const charNodes = ref<ICharNodeItem[]>([]) // 字符节点
+const cursorPosition = ref(0) // 光标位置
 
-const pixelRatio = ref<number>(1) // 像素比
-const active = ref<boolean>(false)
+watch(() => input.value, (newVal) => {
+  if (!newVal && newVal.length < 1)
+    return
 
-watchEffect(() => {
+  nextTick(() => {
+    uni
+      .createSelectorQuery()
+      .in(proxy)
+      .selectAll('.INPUT-CHAR-ITEM')
+      .boundingClientRect((views: any) => {
+        console.log(views, 'INPUT-CHAR-ITEM')
+        if (!views)
+          return
+        charNodes.value = views.map((view: any) => {
+          return {
+            width: view.width,
+          }
+        })
+        updateCursorPosition(cursor.value)
+      })
+      .exec()
+  })
+}, { immediate: true })
 
-})
+watch(() => cursor.value, (newCur) => {
+  updateCursorPosition(newCur)
+}, { immediate: true })
 
-const canvasStyle = computed(() => {
-  const style = {
-    width: `${canvasWidth.value}px`,
-    height: `${canvasHeight}px`,
+function updateCursorPosition(newCur: number) {
+  console.log(newCur, charNodes.value, 'updateCursorPosition')
+  if (!charNodes.value || charNodes.value.length < 1)
+    return
+  const index = newCur
+  // 计算元素中心位置
+  let scroll = 0 // 左边 padding
+  for (let i = 0; i < index; i++) {
+    scroll += charNodes.value[i].width
   }
-  return `${objToStyle(style)}`
-})
-
-watch(
-  () => input.value,
-  () => {
-    drawCanvas()
-  },
-  {
-    deep: true,
-    immediate: true,
-  },
-)
-
-watch(
-  () => props.cursor,
-  (newValue) => {
-    cursorPosition.value = newValue
-    // console.log(cursorPosition.value, 'change cursor')
-    drawCanvas()
-  },
-  {
-    deep: true,
-    immediate: true,
-  },
-)
-
-onBeforeMount(() => {
-  pixelRatio.value = systemInfo.pixelRatio
-  cursorPosition.value = input.value?.length ?? 0
-})
-
-onMounted(() => {
-  uni
-    .createSelectorQuery()
-    .in(proxy)
-    .select(`#${canvasId.value}`)
-    .node((res) => {
-      // console.log(res)
-      if (res && res.node) {
-        canvas = res.node
-        ctx = canvas2dAdapter(canvas?.getContext('2d') as CanvasRenderingContext2D)
-        updateCanvasSize()
-        drawCanvas()
-      }
-    })
-    .exec()
-})
-
-// 更新 Canvas 尺寸
-function drawCanvas() {
-  // console.log('更新宽度', ctx, canvas)
-  if (!ctx || !canvas)
-    return
-
-  setCanvasStyle()
-  updateCanvasSize()
-  redrawCanvas()
+  scroll = scroll + (gap * (index - 1)) + Math.floor(gap / 2)
+  scroll = Math.max(0, scroll)
+  cursorPosition.value = scroll
 }
 
-// 重绘画布
-function redrawCanvas() {
-  if (!ctx)
-    return
-
-  // 清空画布(调整width会清空画布)
-  // ctx.clearRect(0, 0, canvasWidth.value, canvasHeight)
-
-  setCanvasStyle()
-  // 绘制文本
-  ctx.fillText(input.value, px, canvasHeight / 2)
-
-  // 绘制光标
-  const textBeforeCursor = input.value.slice(0, cursorPosition.value)
-  const cursorX = px + ctx.measureText(textBeforeCursor).width
-  ctx.beginPath()
-  ctx.moveTo(cursorX, 2)
-  ctx.lineTo(cursorX, canvasHeight - 2)
-  ctx.setStrokeStyle('#00f')
-  ctx.setLineWidth(2)
-  ctx.stroke()
-
-  // 刷新画布
-  ctx.draw()
-}
-
-function updateCanvasSize() {
-  if (!ctx || !canvas)
-    return
-
-  let textWidth = ctx.measureText(input.value).width ?? 0
-  textWidth = Math.ceil(textWidth + px * 2)
-  // 20 为增量
-  canvasWidth.value = textWidth + 20
-  canvas.width = canvasWidth.value * pixelRatio.value
-  canvas.height = canvasHeight * pixelRatio.value
-  ctx.scale(pixelRatio.value, pixelRatio.value)
-  // console.log('算出size', textWidth, canvas.width, canvas.height, pixelRatio.value)
-}
-function setCanvasStyle() {
-  if (!ctx)
-    return
-  // 设置字体样式
-  ctx.setTextBaseline('middle')
-  ctx.setTextAlign('left')
-  // ctx.setFontSize(16 * pixelRatio.value)
-  ctx.font = `${18}px sans-serif`
-  ctx.setFillStyle('#000')
-}
-
-function handleTouchStart(event: TouchEvent) {
-  touch.touchStart(event)
-  active.value = true
-}
-
-function handleTouchMove(event: TouchEvent) {
-  touch.touchMove(event)
-  if (touch.direction.value) {
-    active.value = false
-  }
-}
-
-// 处理 Canvas 点击事件
-function handleTouchEnd(event: TouchEvent) {
-  if (!ctx || !active.value)
-    return
-
-  const { x } = event.changedTouches[0] as any
-  // console.log(event)
-  // console.log(x, 'canvas x')
-  let totalWidth = px // 初始偏移量
-  let newIndex = 0
-
-  // 逐字符累加宽度，找到最接近点击位置的字符索引
-  for (let i = 0; i < input.value.length; i++) {
-    const char = input.value[i]
-
-    const charWidth = ctx.measureText(char).width
-    // console.log(char, charWidth, 'char')
-    if (x <= totalWidth + charWidth / 2) {
-      newIndex = i
-      break
-    }
-    else {
-      newIndex = input.value.length
-    }
-    totalWidth += charWidth
-  }
-  // console.log('选中文字idx', newIndex)
-  // 触发model更新，在watch中处理重新渲染
-  emit('update:cursor', newIndex)
+function handleCharItemTap(index: number, e: any) {
+  console.log(index, e, 'handleCharItemTap')
+  cursor.value = index + 1
 }
 </script>
 
 <template>
-  <view class="amount-input hide-view-scrollbar">
-    <canvas :id="canvasId" type="2d" :style="canvasStyle" :canvas-id="canvasId" @touchstart="handleTouchStart" @touchmove="handleTouchMove" @touchend="handleTouchEnd" />
-  </view>
+  <scroll-view scroll-x>
+    <view class="relative flex text-base" :style="{ gap: `${gap}px` }">
+      <view v-for="(c, idx) in input" :key="`${idx}-${c}`" class="INPUT-CHAR-ITEM" @tap="(e: any) => handleCharItemTap(idx, e)">
+        {{ c }}
+      </view>
+      <view class="px-10" @tap="(e: any) => handleCharItemTap(input.length - 1, e)" />
+      <view class="absolute bottom-0 top-0 my-0.8 w-0.6 bg-indigo-200" :style="{ left: `${cursorPosition}px` }" />
+    </view>
+  </scroll-view>
 </template>
 
 <style lang="scss">

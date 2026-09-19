@@ -63,7 +63,7 @@ function scrollTo(idx: number) {
   // 计算元素中心位置
   let scroll = 0 // 左边 padding
   for (let i = 0; i < idx; i++) {
-    scroll += nodes.value[i].width! + 10
+    scroll += nodes.value[i].width! + props.gap
   }
   // 居中滚动
   scroll = Math.floor((scroll + node.width! / 2) - segmentCenter)
