@@ -23,9 +23,8 @@ const settingsStore = useSettingsStore()
 const indexBillStore = useIndexBillStore()
 
 const typeOptions = ['支出', '收入']
-const keyboardInput = ref('123456789+123456789-123456789-12345678')
+const keyboardInput = ref('') // 123456789+123456789-123456789-12345678
 const inputCursor = ref(keyboardInput.value.length)
-
 const showLedgers = ref(false)
 const showDateTime = ref(false)
 const showAccounts = ref(false)

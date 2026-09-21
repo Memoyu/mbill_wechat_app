@@ -40,38 +40,59 @@ watch(() => input.value, (newVal) => {
   })
 }, { immediate: true })
 
-watch(() => cursor.value, (newCur) => {
-  updateCursorPosition(newCur)
-}, { immediate: true })
-
-function updateCursorPosition(newCur: number) {
-  console.log(newCur, charNodes.value, 'updateCursorPosition')
+function updateCursorPosition(cur: number, event?: any) {
+  // console.log(cur, charNodes.value, 'updateCursorPosition')
   if (!charNodes.value || charNodes.value.length < 1)
     return
-  const index = newCur
+
   // 计算元素中心位置
-  let scroll = 0 // 左边 padding
-  for (let i = 0; i < index; i++) {
-    scroll += charNodes.value[i].width
-  }
-  scroll = scroll + (gap * (index - 1)) + Math.floor(gap / 2)
-  scroll = Math.max(0, scroll)
-  cursorPosition.value = scroll
+  // for (let i = 0; i < cur; i++) {
+  //   scroll += charNodes.value[i].width
+  // }
+
+  uni
+    .createSelectorQuery()
+    .in(proxy)
+    .select(`#INPUT-CHAR-ITEM-${cur}`)
+    .boundingClientRect((view: any) => {
+      console.log(view, `#INPUT-CHAR-ITEM-${cur}`)
+      if (!view)
+        return
+
+      let x = 99999
+      if (event) {
+        x = event.detail.x
+      }
+
+      // 同时更新cursor
+      const node = charNodes.value[cur]
+      const gw = Math.floor(gap)
+      let left = view.left
+      if (x > left + node.width / 2) {
+        left = view.left + node.width
+        cursor.value = cur + 1
+      }
+
+      left = Math.max(0, left)
+      console.log(left, 'left')
+      cursorPosition.value = left - gw
+    })
+    .exec()
 }
 
-function handleCharItemTap(index: number, e: any) {
-  console.log(index, e, 'handleCharItemTap')
-  cursor.value = index + 1
+function handleCharItemTap(index: number, event: any) {
+  console.log(index, event, 'handleCharItemTap')
+  updateCursorPosition(index, event)
 }
 </script>
 
 <template>
   <scroll-view scroll-x>
-    <view class="relative flex text-base" :style="{ gap: `${gap}px` }">
-      <view v-for="(c, idx) in input" :key="`${idx}-${c}`" class="INPUT-CHAR-ITEM" @tap="(e: any) => handleCharItemTap(idx, e)">
+    <view class="relative h-7 flex items-center text-base" :style="{ gap: `${gap}px` }">
+      <view v-for="(c, idx) in input" :id="`INPUT-CHAR-ITEM-${idx}`" :key="`${idx}-${c}`" class="INPUT-CHAR-ITEM" @tap="(e: any) => handleCharItemTap(idx, e)">
         {{ c }}
       </view>
-      <view class="px-10" @tap="(e: any) => handleCharItemTap(input.length - 1, e)" />
+      <view class="min-w-20 grow" @tap="(e: any) => handleCharItemTap(input.length - 1, e)" />
       <view class="absolute bottom-0 top-0 my-0.8 w-0.6 bg-indigo-200" :style="{ left: `${cursorPosition}px` }" />
     </view>
   </scroll-view>
