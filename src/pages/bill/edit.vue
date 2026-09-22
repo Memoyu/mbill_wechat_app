@@ -433,7 +433,7 @@ function handleTouchStart(e: any) {
     @change="handleCategoryChange"
   />
 
-  <view id="BOTTOM_INPUT">
+  <view id="BOTTOM_INPUT" class="absolute bottom-0 left-0 right-0">
     <!-- 标签 -->
     <view v-if="bill.tags && bill.tags.length > 0" class="py-2">
       <scroll-view scroll-x enhanced :show-scrollbar="false" class="mr-2 flex-1" :bounces="false">
