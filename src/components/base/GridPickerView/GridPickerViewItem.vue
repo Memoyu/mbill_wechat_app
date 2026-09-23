@@ -50,8 +50,9 @@ const hasChilds = computed(() => props.item.childs && props.item.childs.length >
     <!-- 父项展开下标 -->
     <wd-icon
       v-if="expand && hasChilds"
-      name="caret-down" :size="23"
-      custom-class="text-indigo-500 absolute bottom-0 left-1/2 z-10 flex translate-y-full items-center justify-center -translate-x-1/2"
+      name="caret-up"
+      size="21"
+      custom-class="text-gray-200 absolute bottom-0 left-1/2 z-10 flex translate-y-full items-center justify-center -translate-x-1/2"
     />
   </view>
 </template>

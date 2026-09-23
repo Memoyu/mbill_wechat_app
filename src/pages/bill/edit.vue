@@ -31,8 +31,7 @@ const showAccounts = ref(false)
 const showTags = ref(false)
 const showAddressEdit = ref(false)
 const addressInput = ref()
-const categoryPickerHeight = ref(0)
-const inputBottom = ref(0)
+const cpHeight = ref(0)
 
 const isCreate = ref(true)
 const bill = ref<IEditBill>({
@@ -105,8 +104,8 @@ function calcFixedHeight() {
     uni.createSelectorQuery().select('#TOP_NAVBAR').boundingClientRect((top: any) => {
       const topHeight = top.height
       uni.createSelectorQuery().select('#BOTTOM_INPUT').boundingClientRect((bottom: any) => {
-        categoryPickerHeight.value = systemInfo.windowHeight - (topHeight + bottom.height)
-        console.log(topHeight, bottom.height, categoryPickerHeight.value, 'categoryPickerHeight')
+        cpHeight.value = systemInfo.windowHeight - (topHeight + bottom.height)
+        console.log(topHeight, bottom.height, cpHeight.value, 'cpHeight')
       }).exec()
     }).exec()
   })
@@ -391,16 +390,6 @@ function handleTagSelectConfirm(items: ITag[]) {
   showTags.value = false
   bill.value.tags = items
 }
-
-function handleKeyBoardHeightChange(e: any) {
-  console.log(e, 'handleKeyBoardHeightChange')
-  const height = e.height
-  inputBottom.value = height
-}
-
-function handleTouchStart(e: any) {
-  console.log(e.touches[0], 'handleTouchStart')
-}
 </script>
 
 <template>
@@ -429,7 +418,7 @@ function handleTouchStart(e: any) {
     v-model="bill.category.categoryId"
     v-model:type="bill.type"
     show-top
-    :height="categoryPickerHeight"
+    :height="cpHeight"
     @change="handleCategoryChange"
   />
 
@@ -450,22 +439,22 @@ function handleTouchStart(e: any) {
       <view class="bill-attr-box min-w-max">
         <view class="bill-attr-box-item" @tap="showDateTime = true">
           <!-- 日期 -->
-          <wd-icon name="calendar-line" size="20px" />
+          <wd-icon name="calendar-line" size="18" />
           <text class="ml-1">{{ `${formatDate(billDate)} ${dayjs(billDate).format('HH:mm')}` }}</text>
         </view>
         <view class="bill-attr-box-item" @tap="showAccounts = true">
           <!-- 账户 -->
-          <bill-icon size="22" :icon="bill.account.icon" :text="bill.account.name" />
+          <bill-icon size="20" :icon="bill.account.icon" :text="bill.account.name" />
           <text class="ml-1">{{ bill.account.name }}</text>
         </view>
         <view class="bill-attr-box-item" @tap="showTags = true">
           <!-- 标签 -->
-          <wd-icon name="tag" size="20px" />
+          <wd-icon name="tag" size="18" />
           <text class="ml-1">标签</text>
         </view>
         <view class="bill-attr-box-item" @tap="handleAddressEditShow">
           <!-- 地点 -->
-          <wd-icon name="location" size="20px" />
+          <wd-icon name="location" size="18" />
           <text class="address-truncate-start">{{ bill.address || '地址' }}</text>
         </view>
       </view>
@@ -474,11 +463,10 @@ function handleTouchStart(e: any) {
     <!-- 账单总额、备注 -->
     <view class="flex items-center justify-between px-2 py-1 space-x-xl">
       <!-- 备注 -->
-      <view class="relative z-999" :style="{ bottom: `${inputBottom}px` }">
-        <wd-input v-model="bill.remark" type="text" placeholder="账单备注" @keyboardheightchange="handleKeyBoardHeightChange" />
-      </view>
+      <!-- <wd-input v-model="bill.remark" type="text" placeholder="账单备注" @keyboardheightchange="handleKeyBoardHeightChange" /> -->
+
       <!-- 总金额 -->
-      <wd-text :text="bill.amount" mode="price" size="17px" :style="{ color: getBillColor(bill.type) }" />
+      <!-- <wd-text :text="bill.amount" mode="price" size="17px" :style="{ color: getBillColor(bill.type) }" /> -->
     </view>
 
     <!-- 键盘输入框 -->
@@ -502,14 +490,14 @@ function handleTouchStart(e: any) {
   <!-- 地点弹窗 -->
   <center-popup v-model="showAddressEdit" title="地址" @confirm="handleAddressEditConfirm">
     <view class="px-3">
-      <wd-input v-model="addressInput" type="text" placeholder="地址" />
+      <wd-input v-model="addressInput" type="text" placeholder="地址" :focus="showAddressEdit" :adjust-position="false" />
     </view>
   </center-popup>
 </template>
 
 <style lang="scss" scoped>
 .bill-attr-box {
-  @apply: flex items-center px-4 py-1 gap-2 whitespace-nowrap;
+  @apply: flex items-center px-2 py-1 gap-2 whitespace-nowrap;
   &-item {
     @apply: flex items-center justify-center py-1.5 px-2.5 bg-indigo-200/40 rounded-full;
   }

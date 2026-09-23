@@ -440,7 +440,7 @@ function getListIndex(dragId: string, list = sortList.value) {
     class="relative"
     :scroll-top="scrollTop"
     scroll-with-animation
-    :enhanced="true"
+    enhanced
     :style="{ height: `${scrollHeight}px` }"
   >
     <movable-area
