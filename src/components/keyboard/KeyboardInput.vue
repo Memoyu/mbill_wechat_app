@@ -1,25 +1,27 @@
 <script lang="ts" setup>
+import type { BillTypeEnum } from '@/typings'
+
 interface ICharNodeItem {
   width: number
   left: number
 }
 
 const props = defineProps<{
+  input: string
+  type: BillTypeEnum
 }>()
 
-const PX = 4 // 节点容器padding x宽度
 const CW = 2 // 光标宽度
 const { proxy } = getCurrentInstance() as any
 
-const input = defineModel<string>({ default: '' })
 const cursor = defineModel<number>('cursor', { default: 0 })
 
 const charNodes = ref<ICharNodeItem[]>([]) // 字符节点
-const cursorPosition = ref(PX) // 光标位置
+const cursorPosition = ref(0) // 光标位置
 const scroll = ref(0)
 
-watch(() => input.value, (newVal) => {
-  if (!newVal && newVal.length < 1)
+watch(() => props.input, (newInput) => {
+  if (!newInput && newInput.length < 1)
     return
 
   nextTick(() => {
@@ -41,7 +43,7 @@ watch(() => input.value, (newVal) => {
           return n
         })
         updateCursorPosition()
-        updateScrollPosition()
+        updateScroll()
       })
       .exec()
   })
@@ -85,20 +87,16 @@ function updateCursorPosition(event?: any) {
 function setCursorPosition(offset: number) {
   offset = Math.max(0, offset)
   // console.log(left, 'left')
-  cursorPosition.value = offset + CW / 2 + PX / 2
+  cursorPosition.value = offset - (CW / 2)
 }
 
-function updateScrollPosition() {
-  // console.log(cursor.value, charNodes.value, 'updateScrollPosition')
+function updateScroll() {
+  // console.log(cursor.value, charNodes.value, 'updateScroll')
   if (!charNodes.value || charNodes.value.length < 1)
     return
 
   const node = charNodes.value[cursor.value - 1]
-  let offset = node.width
-  if (scroll.value === 0) {
-    offset = node.left
-  }
-  scroll.value += offset
+  scroll.value = node.left + node.width
 }
 
 function handleCharItemTap(index: number, event: any) {
@@ -110,23 +108,24 @@ function handleCharItemTap(index: number, event: any) {
 
 <template>
   <scroll-view scroll-x :scroll-left="scroll">
-    <view class="relative h-7 flex items-center px-1 text-base leading-7" :style="{ padding: `0px ${PX}px` }">
+    <view class="relative h-5 w-full flex items-center text-sm leading-5">
       <!-- 字符节点 -->
       <view
         v-for="(c, idx) in input"
         :id="`INPUT-CHAR-ITEM-${idx}`"
         :key="`${idx}-${c}`"
-        class="INPUT-CHAR-ITEM"
+        class="INPUT-CHAR-ITEM h-full align-middle"
         @tap="(e: any) => handleCharItemTap(idx, e)"
       >
         {{ c }}
       </view>
-      <!-- 占位符，留空白时占满 -->
-      <view class="h-full grow" @tap="(e: any) => handleCharItemTap(input.length - 1, e)" />
+
+      <!-- 占位符，留空白时占满，最小宽度为光标占位 -->
+      <view :style="{ minWidth: `${CW}px` }" class="h-full grow" @tap="(e: any) => handleCharItemTap(input.length - 1, e)" />
+
       <!-- 光标 -->
       <view
-        id="INPUT-CHAR-ITEM-CURSOR"
-        class="blink absolute bottom-0 top-0 my-0.8 w-0.5 rounded-sm bg-indigo-200"
+        class="blink absolute bottom-0 top-0 my-0.5 rounded-sm bg-indigo-200"
         :style="{ left: `${cursorPosition}px`, width: `${CW}px` }"
       />
     </view>

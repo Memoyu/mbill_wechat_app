@@ -4,11 +4,10 @@ import type { ILedger } from '@/api/types/ledger'
 import type { ITag } from '@/api/types/tag'
 import { useToast } from '@wot-ui/ui'
 import dayjs from 'dayjs'
-import Decimal from 'decimal.js'
 import { getAddressInfo } from '@/api/aggregation'
 import { getBill } from '@/api/bill'
 import { useIndexBillStore, useLedgerStore, useSettingsStore } from '@/store'
-import { formatDate, getBillColor, systemInfo } from '@/utils'
+import { formatDate, systemInfo } from '@/utils'
 
 definePage({
   style: {
@@ -23,8 +22,6 @@ const settingsStore = useSettingsStore()
 const indexBillStore = useIndexBillStore()
 
 const typeOptions = ['支出', '收入']
-const keyboardInput = ref('') // 123456789+123456789-123456789-12345678
-const inputCursor = ref(keyboardInput.value.length)
 const showLedgers = ref(false)
 const showDateTime = ref(false)
 const showAccounts = ref(false)
@@ -48,6 +45,10 @@ const bill = ref<IEditBill>({
 })
 const billDate = ref(dayjs(bill.value.date).valueOf())
 const tagIds = ref<string[]>([])
+const amountInput = ref('')
+
+const inputBottom = ref(0)
+
 watch(() => bill.value.tags, () => {
   calcFixedHeight()
 })
@@ -82,19 +83,9 @@ function initBill() {
       }
       tagIds.value = res.tags.map((tag: ITag) => tag.tagId)
       billDate.value = dayjs(res.date).valueOf()
-      // 赋值键盘输入金额
-      setKeyboardInput(res.amount)
+      amountInput.value = res.amount.toString()
     })
   }
-}
-
-/**
- * 赋值键盘输入金额
- * @param value 金额
- */
-function setKeyboardInput(value: number) {
-  keyboardInput.value = value.toString()
-  inputCursor.value = keyboardInput.value.length
 }
 /**
  * 计算固定高度
@@ -180,10 +171,11 @@ function getAddress() {
  * @param key 按下的键
  * @param value 按下的值
  */
-function handlePressKeyboard(key: any, value: string) {
+function handlePressKeyboard(data: any) {
   // console.log(key, value)
   // key: 键盘按下的键，例如：0-9，+，-，*，÷，.，delete，confirm，custom
   // value: 键盘按下的值
+  const { key } = data
 
   if (key === 'confirm') {
     // 完成键（创建/更新账单，关闭当前页面）
@@ -193,127 +185,6 @@ function handlePressKeyboard(key: any, value: string) {
     // 再记键（继续创建/更新账单，不关闭当前页面）
     handleEditComplete(true)
   }
-
-  const amount = calcExpression(value)
-  // console.log('计算结果:', amount)
-  bill.value.amount = amount
-}
-
-/**
- * 计算算术表达式的值
- * @param expression 包含数字和运算符的字符串，支持 + - × ÷ 和小数
- * @returns 计算结果
- */
-function calcExpression(expression: string): number {
-  if (!expression)
-    return 0
-
-  // 替换中文乘除号为 JavaScript 运算符
-  let expr = expression.replace(/×/g, '*').replace(/÷/g, '/')
-
-  // 处理以小数点开头的数字，如 ".89" -> "0.89"
-  expr = expr.replace(/([+\-*/]|^)\.(\d)/g, '$10.$2')
-
-  // 移除连续的运算符，保留最后一个
-  expr = expr.replace(/[+\-*/]+/g, (match) => {
-    // 取最后一个运算符
-    const lastOperator = match.slice(-1)
-    return lastOperator
-  })
-
-  // 使用正则表达式分割数字和运算符
-  const tokens = expr.match(/\d+(\.\d+)?|[+\-*/]/g)
-
-  if (!tokens)
-    return 0
-
-  // 过滤掉可能存在的无效token
-  const validTokens = tokens.filter(token =>
-    !Number.isNaN(Number(token)) || ['+', '-', '*', '/'].includes(token),
-  )
-
-  if (validTokens.length === 0)
-    return 0
-
-  // 使用栈来处理运算优先级，使用 Decimal 进行高精度计算
-  const stack: Decimal[] = []
-  let currentNum = null as Decimal | null
-  let operation: string = '+'
-  let index = 0
-
-  while (index < validTokens.length) {
-    const token = validTokens[index]
-
-    // 如果是数字
-    if (!Number.isNaN(Number(token))) {
-      currentNum = new Decimal(token)
-    }
-    // 如果是运算符
-    else if (['+', '-', '*', '/'].includes(token)) {
-      // 如果当前有数字，先处理它
-      if (currentNum !== null) {
-        // 根据之前的运算符执行相应操作
-        switch (operation) {
-          case '+':
-            stack.push(currentNum)
-            break
-          case '-':
-            stack.push(currentNum.negated())
-            break
-          case '*':
-            stack.push(stack.pop()!.times(currentNum))
-            break
-          case '/':
-          {
-            const prev = stack.pop()!
-            // 防止除零错误
-            if (currentNum.isZero()) {
-              toast.error('除数不能为零, 请检查输入')
-              return stack.reduce((acc, curr) => acc.plus(curr), new Decimal(0)).toNumber()
-            }
-            stack.push(prev.dividedBy(currentNum))
-            break
-          }
-        }
-      }
-
-      // 更新运算符，重置当前数字
-      operation = token
-      currentNum = null
-    }
-
-    index++
-  }
-
-  // 处理最后一个数字
-  if (currentNum !== null) {
-    switch (operation) {
-      case '+':
-        stack.push(currentNum)
-        break
-      case '-':
-        stack.push(currentNum.negated())
-        break
-      case '*':
-        stack.push(stack.pop()!.times(currentNum))
-        break
-      case '/':
-      {
-        const prev = stack.pop()!
-        // 防止除零错误
-        if (currentNum.isZero()) {
-          toast.error('除数不能为零, 请检查输入')
-          return stack.reduce((acc, curr) => acc.plus(curr), new Decimal(0)).toNumber()
-        }
-        stack.push(prev.dividedBy(currentNum))
-        break
-      }
-    }
-  }
-
-  // 将栈中所有数值相加得到最终结果
-  const finalResult = stack.reduce((acc, curr) => acc.plus(curr), new Decimal(0))
-  return Number.parseFloat(finalResult.toFixed(2).toString())
 }
 
 function handleEditComplete(keep: boolean = false) {
@@ -390,6 +261,12 @@ function handleTagSelectConfirm(items: ITag[]) {
   showTags.value = false
   bill.value.tags = items
 }
+
+function handleKeyBoardHeightChange(e: any) {
+  console.log(e, 'handleKeyBoardHeightChange')
+  const height = e.height || 0
+  inputBottom.value = height
+}
 </script>
 
 <template>
@@ -424,22 +301,20 @@ function handleTagSelectConfirm(items: ITag[]) {
 
   <view id="BOTTOM_INPUT" class="absolute bottom-0 left-0 right-0">
     <!-- 标签 -->
-    <view v-if="bill.tags && bill.tags.length > 0" class="py-2">
-      <scroll-view scroll-x enhanced :show-scrollbar="false" class="mr-2 flex-1" :bounces="false">
-        <view class="min-w-max flex items-center gap-2.5 whitespace-nowrap px-4">
-          <view v-for="tag in bill.tags" :key="tag.tagId" class="flex-shrink-0 rounded-full bg-indigo-300/40 px-2 py-1 text-xs" @tap="showTags = true">
-            {{ tag.name }}
-          </view>
+    <view v-if="bill.tags && bill.tags.length > 0" class="hide-view-scrollbar overflow-x-auto px-1 pt-2">
+      <view class="min-w-max flex items-center gap-1 whitespace-nowrap">
+        <view v-for="tag in bill.tags" :key="tag.tagId" class="flex-shrink-0 rounded-full bg-indigo-100/40 px-2 py-1 text-sm" @tap="showTags = true">
+          {{ tag.name }}
         </view>
-      </scroll-view>
+      </view>
     </view>
 
     <!-- 账单属性 -->
-    <scroll-view scroll-x enhanced :show-scrollbar="false" :bounces="false">
+    <view class="hide-view-scrollbar overflow-x-auto px-1 py-2">
       <view class="bill-attr-box min-w-max">
         <view class="bill-attr-box-item" @tap="showDateTime = true">
           <!-- 日期 -->
-          <wd-icon name="calendar-line" size="18" />
+          <wd-icon name="calendar-line" size="16" />
           <text class="ml-1">{{ `${formatDate(billDate)} ${dayjs(billDate).format('HH:mm')}` }}</text>
         </view>
         <view class="bill-attr-box-item" @tap="showAccounts = true">
@@ -449,34 +324,26 @@ function handleTagSelectConfirm(items: ITag[]) {
         </view>
         <view class="bill-attr-box-item" @tap="showTags = true">
           <!-- 标签 -->
-          <wd-icon name="tag" size="18" />
+          <wd-icon name="tag" size="16" />
           <text class="ml-1">标签</text>
         </view>
         <view class="bill-attr-box-item" @tap="handleAddressEditShow">
           <!-- 地点 -->
-          <wd-icon name="location" size="18" />
+          <wd-icon name="location" size="16" />
           <text class="address-truncate-start">{{ bill.address || '地址' }}</text>
         </view>
+
+        <view class="bill-attr-box-item" @tap="handleAddressEditShow">
+          <!-- 备注 -->
+          <wd-icon name="message" size="16" />
+          <text class="truncate">{{ bill.remark || '备注' }}</text>
+        </view>
       </view>
-    </scroll-view>
-
-    <!-- 账单总额、备注 -->
-    <view class="flex items-center justify-between px-2 py-1 space-x-xl">
-      <!-- 备注 -->
-      <!-- <wd-input v-model="bill.remark" type="text" placeholder="账单备注" @keyboardheightchange="handleKeyBoardHeightChange" /> -->
-
-      <!-- 总金额 -->
-      <!-- <wd-text :text="bill.amount" mode="price" size="17px" :style="{ color: getBillColor(bill.type) }" /> -->
     </view>
 
-    <!-- 键盘输入框 -->
-    <view class="py-1">
-      <amount-input v-model="keyboardInput" v-model:cursor="inputCursor" />
-      <!-- <wd-input v-model="keyboardInput" type="text" placeholder="账单备注" :cursor="inputCursor" @tap="handleinputTap" /> -->
-    </view>
     <!-- 金额键盘 -->
-    <keyboard v-model="keyboardInput" v-model:cursor="inputCursor" @press="handlePressKeyboard" />
-    <view class="pb-safe" />
+    <keyboard v-model="bill.amount" :input="amountInput" :type="bill.type" @press="handlePressKeyboard" />
+    <!-- <view class="pb-safe" /> -->
   </view>
 
   <!-- 账本弹窗 -->
@@ -488,16 +355,22 @@ function handleTagSelectConfirm(items: ITag[]) {
   <!-- 标签弹窗 -->
   <tag-list-picker v-model="tagIds" v-model:visible="showTags" @confirm="handleTagSelectConfirm" />
   <!-- 地点弹窗 -->
-  <center-popup v-model="showAddressEdit" title="地址" @confirm="handleAddressEditConfirm">
-    <view class="px-3">
-      <wd-input v-model="addressInput" type="text" placeholder="地址" :focus="showAddressEdit" :adjust-position="false" />
-    </view>
-  </center-popup>
+  <view v-if="showAddressEdit" class="absolute inset-x-0 bg-white" :style="{ bottom: `${inputBottom}px` }">
+    <wd-input
+      v-model="addressInput"
+      type="text"
+      placeholder="地址"
+      suffix-icon="check"
+      :focus="showAddressEdit"
+      :adjust-position="false"
+      @keyboardheightchange="handleKeyBoardHeightChange"
+    />
+  </view>
 </template>
 
 <style lang="scss" scoped>
 .bill-attr-box {
-  @apply: flex items-center px-2 py-1 gap-2 whitespace-nowrap;
+  @apply: flex items-center gap-2 whitespace-nowrap;
   &-item {
     @apply: flex items-center justify-center py-1.5 px-2.5 bg-indigo-200/40 rounded-full;
   }
