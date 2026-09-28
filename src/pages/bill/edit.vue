@@ -17,6 +17,7 @@ definePage({
 })
 
 const toast = useToast()
+const loading = useGlobalLoading()
 const ledgerStore = useLedgerStore()
 const settingsStore = useSettingsStore()
 const indexBillStore = useIndexBillStore()
@@ -26,8 +27,8 @@ const showLedgers = ref(false)
 const showDateTime = ref(false)
 const showAccounts = ref(false)
 const showTags = ref(false)
+const showRemarkEdit = ref(false)
 const showAddressEdit = ref(false)
-const addressInput = ref()
 const cpHeight = ref(0)
 
 const isCreate = ref(true)
@@ -46,8 +47,6 @@ const bill = ref<IEditBill>({
 const billDate = ref(dayjs(bill.value.date).valueOf())
 const tagIds = ref<string[]>([])
 const amountInput = ref('')
-
-const inputBottom = ref(0)
 
 watch(() => bill.value.tags, () => {
   calcFixedHeight()
@@ -124,7 +123,6 @@ function getAddress() {
         bill.value.location = `${res.longitude},${res.latitude}`
         getAddressInfo(res.longitude, res.latitude).then((res) => {
           bill.value.address = res.address
-          addressInput.value = res.address
           resolve(res)
         })
       },
@@ -172,7 +170,7 @@ function getAddress() {
  * @param value 按下的值
  */
 function handlePressKeyboard(data: any) {
-  // console.log(key, value)
+  // console.log(data)
   // key: 键盘按下的键，例如：0-9，+，-，*，÷，.，delete，confirm，custom
   // value: 键盘按下的值
   const { key } = data
@@ -187,9 +185,14 @@ function handlePressKeyboard(data: any) {
   }
 }
 
+/**
+ * 编辑完成，提交订单
+ * @param keep 是否继续编辑
+ */
+
 function handleEditComplete(keep: boolean = false) {
-  console.log('handleEditComplete', bill.value)
-  // TODO 防连击处理
+  // console.log('handleEditComplete', bill.value)
+
   // 校验必要参数
   const edit = bill.value
   if (!edit.ledger || !edit.ledger.ledgerId)
@@ -201,11 +204,14 @@ function handleEditComplete(keep: boolean = false) {
   if (edit.amount <= 0)
     return toast.error('请输入正确的金额')
 
+  loading.loading('账单保存中...')
   if (isCreate.value) {
     indexBillStore.createBill(edit).then(() => {
       if (!keep) {
         uni.navigateBack()
       }
+    }).finally(() => {
+      loading.close()
     })
   }
   else {
@@ -213,6 +219,8 @@ function handleEditComplete(keep: boolean = false) {
       if (!keep) {
         uni.navigateBack()
       }
+    }).finally(() => {
+      loading.close()
     })
   }
 }
@@ -247,25 +255,17 @@ function handleAccountSelectConfirm(account: IBillAccount) {
 }
 
 function handleAddressEditShow() {
-  addressInput.value = bill.value.address
   showAddressEdit.value = true
 }
 
-function handleAddressEditConfirm() {
-  bill.value.address = addressInput.value
-  showAddressEdit.value = false
+function handleRemarkEditShow() {
+  showRemarkEdit.value = true
 }
 
 function handleTagSelectConfirm(items: ITag[]) {
   // console.log(items, 'tags')
   showTags.value = false
   bill.value.tags = items
-}
-
-function handleKeyBoardHeightChange(e: any) {
-  console.log(e, 'handleKeyBoardHeightChange')
-  const height = e.height || 0
-  inputBottom.value = height
 }
 </script>
 
@@ -330,10 +330,10 @@ function handleKeyBoardHeightChange(e: any) {
         <view class="bill-attr-box-item" @tap="handleAddressEditShow">
           <!-- 地点 -->
           <wd-icon name="location" size="16" />
-          <text class="address-truncate-start">{{ bill.address || '地址' }}</text>
+          <text class="truncate-start truncate">{{ bill.address || '地址' }}</text>
         </view>
 
-        <view class="bill-attr-box-item" @tap="handleAddressEditShow">
+        <view class="bill-attr-box-item" @tap="handleRemarkEditShow">
           <!-- 备注 -->
           <wd-icon name="message" size="16" />
           <text class="truncate">{{ bill.remark || '备注' }}</text>
@@ -343,7 +343,6 @@ function handleKeyBoardHeightChange(e: any) {
 
     <!-- 金额键盘 -->
     <keyboard v-model="bill.amount" :input="amountInput" :type="bill.type" @press="handlePressKeyboard" />
-    <!-- <view class="pb-safe" /> -->
   </view>
 
   <!-- 账本弹窗 -->
@@ -354,33 +353,21 @@ function handleKeyBoardHeightChange(e: any) {
   <account-picker v-model="showAccounts" :account="bill.account.accountId" @confirm="handleAccountSelectConfirm" />
   <!-- 标签弹窗 -->
   <tag-list-picker v-model="tagIds" v-model:visible="showTags" @confirm="handleTagSelectConfirm" />
-  <!-- 地点弹窗 -->
-  <view v-if="showAddressEdit" class="absolute inset-x-0 bg-white" :style="{ bottom: `${inputBottom}px` }">
-    <wd-input
-      v-model="addressInput"
-      type="text"
-      placeholder="地址"
-      suffix-icon="check"
-      :focus="showAddressEdit"
-      :adjust-position="false"
-      @keyboardheightchange="handleKeyBoardHeightChange"
-    />
-  </view>
+  <!-- 备注输入 -->
+  <abs-input v-model="showRemarkEdit" v-model:input="bill.remark" placeholder="备注" />
+  <!-- 地址输入 -->
+  <abs-input v-model="showAddressEdit" v-model:input="bill.address" placeholder="地址" />
 </template>
 
 <style lang="scss" scoped>
 .bill-attr-box {
   @apply: flex items-center gap-2 whitespace-nowrap;
   &-item {
-    @apply: flex items-center justify-center py-1.5 px-2.5 bg-indigo-200/40 rounded-full;
+    @apply: flex items-center justify-center py-1.5 px-2.5 bg-indigo-200/40 rounded-full gap-0.5 max-w-50;
   }
 }
-.address-truncate-start {
+
+.truncate-start {
   direction: rtl; /* 文本从右向左排列 */
-  text-overflow: ellipsis;
-  overflow: hidden;
-  white-space: nowrap;
-  max-width: 200px;
-  margin-left: 2px;
 }
 </style>

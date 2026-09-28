@@ -28,7 +28,7 @@ defineExpose({
       <KuRootView />
       <wd-dialog />
       <wd-toast />
-      <!-- <global-loading /> -->
+      <global-loading />
       <global-toast />
       <global-dialog />
     </wd-config-provider>

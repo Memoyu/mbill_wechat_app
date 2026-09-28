@@ -88,31 +88,34 @@ const typeTitle = computed(() => settingsStore.index.charts.type === 0 ? '支出
 const charts = computed(() => indexBillStore.charts)
 
 watch(() => charts.value, (data) => {
+  console.log('ewewadada ')
+  nextTick(() => {
   // 数据源变更后构造数据
-  const categories: string[] = []
-  const expendSeries: number[] = []
-  const incomeSeries: number[] = []
-  data.items.forEach((it) => {
-    const item = it.summary
-    const date = dayjs(item.date)
-    categories.push(date.date().toString())
-    expendSeries.push(item.expend)
-    incomeSeries.push(item.income)
-  })
+    const categories: string[] = []
+    const expendSeries: number[] = []
+    const incomeSeries: number[] = []
+    data.items.forEach((it) => {
+      const item = it.summary
+      const date = dayjs(item.date)
+      categories.push(date.date().toString())
+      expendSeries.push(item.expend)
+      incomeSeries.push(item.income)
+    })
 
-  chartData.value.categories = categories
-  if (innerType.value === 0) {
-    chartOpts.value.color = [billColors[0]]
-    chartData.value.series = [{ name: '日支出', data: expendSeries }]
-  }
-  else if (innerType.value === 1) {
-    chartOpts.value.color = [billColors[1]]
-    chartData.value.series = [{ name: '日收入', data: incomeSeries }]
-  }
-  else {
-    chartOpts.value.color = [...billColors]
-    chartData.value.series = [{ name: '日支出', data: expendSeries }, { name: '日收入', data: incomeSeries }]
-  }
+    chartData.value.categories = categories
+    if (innerType.value === 0) {
+      chartOpts.value.color = [billColors[0]]
+      chartData.value.series = [{ name: '日支出', data: expendSeries }]
+    }
+    else if (innerType.value === 1) {
+      chartOpts.value.color = [billColors[1]]
+      chartData.value.series = [{ name: '日收入', data: incomeSeries }]
+    }
+    else {
+      chartOpts.value.color = [...billColors]
+      chartData.value.series = [{ name: '日支出', data: expendSeries }, { name: '日收入', data: incomeSeries }]
+    }
+  })
 }, { deep: true })
 </script>
 

@@ -8,6 +8,7 @@ let refreshing = false // 防止重复刷新 token 标识
 let taskQueue: (() => void)[] = [] // 刷新 token 请求队列
 
 export function http<T>(options: CustomRequestOptions) {
+  const toast = useGlobalToast()
   // 1. 返回 Promise 对象
   return new Promise<T>((resolve, reject) => {
     uni.request({
@@ -46,11 +47,8 @@ export function http<T>(options: CustomRequestOptions) {
               refreshing = false
               nextTick(() => {
                 // 关闭其他弹窗
-                uni.hideToast()
-                uni.showToast({
-                  title: 'token 刷新成功',
-                  icon: 'none',
-                })
+                toast.close()
+                toast.success('token 刷新成功')
               })
               // 将任务队列的所有任务重新请求
               taskQueue.forEach(task => task())
@@ -61,11 +59,8 @@ export function http<T>(options: CustomRequestOptions) {
               // 刷新 token 失败，跳转到登录页
               nextTick(() => {
                 // 关闭其他弹窗
-                uni.hideToast()
-                uni.showToast({
-                  title: '登录已过期，请重新登录',
-                  icon: 'none',
-                })
+                toast.close()
+                toast.error('登录已过期，请重新登录')
               })
               // 清除用户信息
               await tokenStore.logout()
@@ -83,10 +78,7 @@ export function http<T>(options: CustomRequestOptions) {
         if (res.statusCode >= 200 && res.statusCode < 300) {
           // 处理业务逻辑错误
           if (code !== ResultEnum.Success1 && code !== ResultEnum.Success200) {
-            uni.showToast({
-              icon: 'none',
-              title: responseData.msg || responseData.message || '请求错误',
-            })
+            toast.error(responseData.msg || responseData.message || '请求错误')
             return reject(responseData.data)
           }
           return resolve(responseData.data)
@@ -94,18 +86,12 @@ export function http<T>(options: CustomRequestOptions) {
 
         // 处理其他错误
         !options.hideErrorToast
-        && uni.showToast({
-          icon: 'none',
-          title: (res.data as any).msg || '请求错误',
-        })
+        && toast.error((res.data as any).msg || '请求错误')
         reject(res)
       },
       // 响应失败
       fail(err) {
-        uni.showToast({
-          icon: 'none',
-          title: '网络错误，换个网络试试',
-        })
+        toast.error('网络错误，换个网络试试')
         reject(err)
       },
     })

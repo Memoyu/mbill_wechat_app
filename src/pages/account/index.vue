@@ -310,10 +310,10 @@ function handleDeleteAction() {
   <!-- 编辑账户 -->
   <bottom-popup v-model="editShow" :title="editTitle" confirm-text="确认" show-cancel @confirm="handleEditConfirm">
     <template #title>
-      <view class="flex items-center pb-2 pt-4">
+      <view class="flex items-center gap-2 px-2 pb-2 pt-4">
         <!-- <wd-img :width="32" :height="32" :src="editCategory.icon" round :lazy-load="true" :show-error="false" :show-loading="false" /> -->
         <bill-icon :icon="editAccount.icon" :text="editAccount.name" />
-        <wd-input v-model="editAccount.name" custom-class="ml-2 w-full" type="text" placeholder="账户名称" />
+        <wd-input v-model="editAccount.name" custom-class="w-full" type="text" placeholder="账户名称" />
       </view>
     </template>
 

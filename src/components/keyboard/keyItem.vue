@@ -1,7 +1,4 @@
 <script lang="ts" setup>
-import { useTouch } from '@wot-ui/ui/composables/useTouch'
-import { computed, ref } from 'vue'
-
 export interface Key {
   key: string | number // key值
   text?: string // key文本
@@ -20,30 +17,10 @@ const props = defineProps<{
   small?: boolean
   value: Key
 }>()
-const emit = defineEmits(['press'])
+const emit = defineEmits(['press', 'longpress'])
 
-const touch = useTouch()
-const active = ref<boolean>(false)
-
-const keyClass = computed(() => `keyboard-key ${props.value.emphasize ? 'keyboard-key-emphasize' : ''}`)
-
-function handleTouchStart(event: TouchEvent) {
-  touch.touchStart(event)
-  active.value = true
-}
-
-function handleTouchMove(event: TouchEvent) {
-  touch.touchMove(event)
-  if (touch.direction.value) {
-    active.value = false
-  }
-}
-
-function handleTouchEnd() {
-  if (active.value) {
-    active.value = false
-    emit('press', props.value.key)
-  }
+function handleTap() {
+  emit('press', props.value.key)
 }
 </script>
 
@@ -51,11 +28,15 @@ function handleTouchEnd() {
   <view
     class="keyboard-key-box"
     :class="[small ? 'keyboard-key-box-small' : '']"
-    @touchstart="handleTouchStart"
-    @touchmove="handleTouchMove"
-    @touchend="handleTouchEnd"
+    @tap="handleTap"
   >
-    <view :class="keyClass">
+    <view
+      class="h-12 flex items-center justify-center rounded-lg bg-white text-lg font-semibold dark:bg-[var(--wot-dark-background3)]"
+      :class="[props.value.emphasize ? 'keyboard-key-emphasize' : '']"
+      hover-class="!bg-indigo-400 !dark:bg-indigo-600 !scale-94 transform-origin-center"
+      :hover-start-time="0"
+      :hover-stay-time="200"
+    >
       <template v-if="value.icon">
         <wd-icon custom-class="keyboard-key-icon" :name="value.icon" :size="`${(value.key === 'delete' ? 22 : 17)}px`" />
       </template>
@@ -77,22 +58,6 @@ function handleTouchEnd() {
 
 .keyboard-key-box-small {
   flex-basis: 50%;
-}
-
-.keyboard-key {
-  @apply: bg-white dark:bg-[var(--wot-dark-background3)]
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 48px;
-  font-size: 17px;
-  font-weight: bold;
-  line-height: 1.5;
-  border-radius: 8px;
-
-  &:active {
-    @apply: bg-indigo-400 dark:bg-indigo-600;
-  }
 }
 
 .keyboard-key-emphasize {

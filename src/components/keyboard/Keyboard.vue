@@ -199,8 +199,10 @@ function handleKeyPress(key: string | number) {
   const value = input.value
   // console.log(props.cursor, 'cursor')
 
+  const data = { key, input: value, amount: amount.value }
+
   if (key === 'custom' || key === 'confirm') {
-    emit('press', key, value)
+    emit('press', data)
     return
   }
 
@@ -223,14 +225,17 @@ function handleKeyPress(key: string | number) {
 
   // console.log(props.cursor, 'props.cursor')
   amount.value = calcExpression(input.value)
-  emit('press', { key, input: input.value, amount: amount.value })
+  data.input = input.value
+  data.amount = amount.value
+  emit('press', data)
 }
 
 function handleDelLongPress() {
-  console.log('长按删除')
+  // console.log('长按删除')
   input.value = ''
   cursor.value = 0
-  // emit('press', key, input.value)
+  amount.value = 0
+  emit('press', { key: 'delete', input: input.value, amount: amount.value })
 }
 </script>
 
@@ -250,13 +255,16 @@ function handleDelLongPress() {
         <key-item v-for="value in keys" :key="value.key" :value="value" @press="handleKeyPress" />
       </view>
       <view class="keyboard-sidebar">
-        <key-item :key="delKey.key" :value="delKey" @press="handleKeyPress" @long-press="handleDelLongPress" />
+        <key-item :key="delKey.key" :value="delKey" @press="handleKeyPress" @longpress="handleDelLongPress" />
         <view class="keyboard-op-keys">
           <key-item v-for="value in opKeys" :key="value.key" small :value="value" @press="handleKeyPress" />
         </view>
         <key-item :key="confirmKey.key" :value="confirmKey" @press="handleKeyPress" />
       </view>
     </view>
+
+    <!-- 底部安全区 -->
+    <view class="h-5" />
   </view>
 </template>
 

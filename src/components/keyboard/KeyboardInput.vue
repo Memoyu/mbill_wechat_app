@@ -21,18 +21,14 @@ const cursorPosition = ref(0) // 光标位置
 const scroll = ref(0)
 
 watch(() => props.input, (newInput) => {
-  if (!newInput && newInput.length < 1)
-    return
-
   nextTick(() => {
     uni
       .createSelectorQuery()
       .in(proxy)
       .selectAll('.INPUT-CHAR-ITEM')
-      .boundingClientRect((views: any) => {
+      .boundingClientRect((viewItems: any) => {
         // console.log(views, 'INPUT-CHAR-ITEM')
-        if (!views)
-          return
+        const views = viewItems || []
         let left = 0
         charNodes.value = views.map((view: any) => {
           const n = {
@@ -51,8 +47,7 @@ watch(() => props.input, (newInput) => {
 
 function updateCursorPosition(event?: any) {
   // console.log(cursor.value, charNodes.value, 'updateCursorPosition')
-  if (!charNodes.value || charNodes.value.length < 1)
-    return
+  const items = charNodes.value || []
 
   if (event) {
     // 点击字符节点
@@ -66,7 +61,7 @@ function updateCursorPosition(event?: any) {
           return
 
         const x = event.detail.x
-        const node = charNodes.value[index]
+        const node = items[index]
         let left = node.left
         if (x > view.left + node.width / 2) {
           left = node.left + node.width
@@ -79,8 +74,12 @@ function updateCursorPosition(event?: any) {
   }
   else {
     // 输入内容变化
-    const node = charNodes.value[cursor.value - 1]
-    setCursorPosition(node.left + node.width)
+    let offset = 0
+    if (cursor.value > 0) {
+      const node = items[cursor.value - 1]
+      offset = node.left + node.width
+    }
+    setCursorPosition(offset)
   }
 }
 
