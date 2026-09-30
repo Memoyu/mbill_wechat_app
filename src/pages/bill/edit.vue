@@ -277,9 +277,9 @@ function handleTagSelectConfirm(items: ITag[]) {
     <template #title>
       <view class="w-full flex justify-between">
         <!-- 账本按钮 -->
-        <view class="flex items-center" @tap="showLedgers = true">
+        <view class="flex items-baseline" @tap="showLedgers = true">
+          <text class="mr-2">{{ bill.ledger.name }}</text>
           <wd-icon class="flex-shrink-0" name="caret-down" />
-          <text class="line-clamp-1 ml-2">{{ bill.ledger.name }}</text>
         </view>
       </view>
     </template>
@@ -295,7 +295,7 @@ function handleTagSelectConfirm(items: ITag[]) {
     v-model="bill.category.categoryId"
     v-model:type="bill.type"
     show-top
-    :height="cpHeight"
+    :height="`${cpHeight}px`"
     @change="handleCategoryChange"
   />
 
@@ -303,7 +303,7 @@ function handleTagSelectConfirm(items: ITag[]) {
     <!-- 标签 -->
     <view v-if="bill.tags && bill.tags.length > 0" class="hide-view-scrollbar overflow-x-auto px-1 pt-2">
       <view class="min-w-max flex items-center gap-1 whitespace-nowrap">
-        <view v-for="tag in bill.tags" :key="tag.tagId" class="flex-shrink-0 rounded-full bg-indigo-100/40 px-2 py-1 text-sm" @tap="showTags = true">
+        <view v-for="tag in bill.tags" :key="tag.tagId" class="flex-shrink-0 rounded-md bg-indigo-100/40 px-2 py-1 text-sm" @tap="showTags = true">
           {{ tag.name }}
         </view>
       </view>
@@ -322,11 +322,13 @@ function handleTagSelectConfirm(items: ITag[]) {
           <bill-icon size="20" :icon="bill.account.icon" :text="bill.account.name" />
           <text class="ml-1">{{ bill.account.name }}</text>
         </view>
+
         <view class="bill-attr-box-item" @tap="showTags = true">
           <!-- 标签 -->
           <wd-icon name="tag" size="16" />
           <text class="ml-1">标签</text>
         </view>
+
         <view class="bill-attr-box-item" @tap="handleAddressEditShow">
           <!-- 地点 -->
           <wd-icon name="location" size="16" />
@@ -363,7 +365,7 @@ function handleTagSelectConfirm(items: ITag[]) {
 .bill-attr-box {
   @apply: flex items-center gap-2 whitespace-nowrap;
   &-item {
-    @apply: flex items-center justify-center py-1.5 px-2.5 bg-indigo-200/40 rounded-full gap-0.5 max-w-50;
+    @apply: flex items-center justify-center py-1.5 px-2.5 bg-indigo-200/40 rounded-full gap-0.5 max-w-30;
   }
 }
 

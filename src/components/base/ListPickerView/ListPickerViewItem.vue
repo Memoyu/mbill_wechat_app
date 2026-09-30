@@ -35,7 +35,7 @@ const isSelected = computed(() => selecteds.value.includes(props.item[props.valu
     </view>
     <view
       class="absolute inset-0 z-10 overflow-hidden rounded-md transition-all duration-200"
-      :class="[isSelected ? 'bg-indigo-500/10 ring-2 ring-indigo-500' : 'bg-transparent']"
+      :class="[isSelected ? 'ring-2 ring-indigo-500' : 'bg-transparent']"
     >
       <view
         v-if=" isSelected"

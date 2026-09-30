@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { billTypes, dateTypes } from '@/constants/billIcons'
 import { useIndexBillStore, useSettingsStore } from '@/store'
 
 defineOptions({
@@ -12,31 +13,6 @@ defineOptions({
 const props = defineProps<{
 }>()
 const show = defineModel({ default: false })
-
-const types = [
-  {
-    label: '支出',
-    value: 0,
-  },
-  {
-    label: '收入',
-    value: 1,
-  },
-]
-const dateTypes = [
-  {
-    label: '本周',
-    value: 0,
-  },
-  {
-    label: '近7天',
-    value: 1,
-  },
-  {
-    label: '近15天',
-    value: 2,
-  },
-]
 
 const indexBillStore = useIndexBillStore()
 const settingsStore = useSettingsStore()
@@ -72,7 +48,7 @@ function handleConfirm() {
           账单类型
         </view>
         <wd-radio-group v-model="innerType" allow-uncheck type="button">
-          <wd-radio v-for=" t in types" :key="t.value" :value="t.value">
+          <wd-radio v-for=" t in billTypes" :key="t.value" :value="t.value">
             {{ t.label }}
           </wd-radio>
         </wd-radio-group>

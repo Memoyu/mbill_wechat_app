@@ -21,6 +21,7 @@ const customStatisRef = ref()
 const { proxy } = getCurrentInstance() as any
 const active = ref(0)
 const contentHeight = ref(0)
+const showMore = ref(false)
 
 watch(() => active.value, (val) => {
   initComponent(val)
@@ -58,12 +59,30 @@ function initComponent(tabIdx: number) {
 
   initializedTabs.push(tabIdx)
 }
+
+function handleMoreConfirm() {
+  const tabIdx = active.value
+  if (tabIdx === 0)
+    monthlyStatisRef.value.reload()
+  else if (tabIdx === 1)
+    annualStatisRef.value.reload()
+  else if (tabIdx === 2)
+    customStatisRef.value.reload()
+}
 </script>
 
 <template>
   <draw-background2 />
   <!-- 导航栏 -->
-  <nav-bar id="TOP_NAVBAR" title="数据统计">
+  <nav-bar id="TOP_NAVBAR" title="">
+    <template #title>
+      <view class="w-full flex items-center justify-between">
+        <text>数据统计</text>
+        <action-btn @tap="showMore = true">
+          <view class="iconfont icon-book" />
+        </action-btn>
+      </view>
+    </template>
     <template #prefix-action>
       <view class="mt-4 max-w-max rounded-full bg-gray-200/50 px-2 py-1">
         <mbill-segmented v-model="active" :gap="6" :options="options" />
@@ -86,6 +105,9 @@ function initComponent(tabIdx: number) {
       </wd-tab>
     </wd-tabs>
   </view>
+
+  <!-- 更多筛选条件 -->
+  <statis-more v-model="showMore" @confirm="handleMoreConfirm" />
 </template>
 
 <style lang="scss" scoped>

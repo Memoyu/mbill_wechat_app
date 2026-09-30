@@ -23,7 +23,7 @@ function handleNavigateTo(path: string) {
 <template>
   <view class="fixed bottom-8 left-0 right-0 z-2 mx-auto w-90% flex animate-fade-in-up animate-duration-400 animate-ease-out">
     <view
-      class="flex flex-1 items-center justify-between rounded-full bg-white px-3.5 py-2.5 shadow-lg"
+      class="flex flex-1 items-center justify-between rounded-full bg-white p-2 shadow-lg"
       :style="{ boxShadow: '0 8px 24px -6px rgba(0,0,0,0.12), 0 4px 8px -4px rgba(0,0,0,0.08)' }"
     >
       <view class="flex items-center gap-3">
@@ -52,7 +52,7 @@ function handleNavigateTo(path: string) {
       </view>
 
       <view
-        class="flex items-center gap-2 rounded-full bg-indigo-500/10 px-3 py-1.5 transition-colors"
+        class="index-navbar-action !bg-indigo-500/10"
         hover-class="bg-indigo-500/15 scale-95"
         :hover-start-time="0"
         :hover-stay-time="200"
@@ -67,7 +67,7 @@ function handleNavigateTo(path: string) {
 
 <style lang="scss" scoped>
 .index-navbar-action {
-  @apply: flex items-center gap-2 rounded-full bg-gray-50 px-3 py-1.5 transition-colors;
+  @apply: flex items-center gap-2 rounded-full bg-gray-50 px-3 py-2 transition-colors;
 }
 .index-navbar-action-hover {
   @apply: bg-gray-100/80 scale-95;

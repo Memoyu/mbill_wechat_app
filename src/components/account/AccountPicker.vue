@@ -39,7 +39,7 @@ function handleConfirm() {
 </script>
 
 <template>
-  <bottom-popup v-model="show" title="选择账户" @after-enter="handleAfterEnter" @confirm="handleConfirm">
+  <bottom-popup v-model="show" auto-height title="选择账户" @after-enter="handleAfterEnter" @confirm="handleConfirm">
     <account-view v-if="init" v-model="accountId" show-top @change="(ac: IBillAccount) => account = ac" />
   </bottom-popup>
 </template>

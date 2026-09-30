@@ -48,6 +48,7 @@ watch (() => ledgerPickerStore.selecteds, () => {
 
 onLoad(() => {
   indexBillStore.loadYearSummary()
+  indexBillStore.loadIndexSummary()
 })
 
 function handleDateChange(e: any) {
@@ -66,7 +67,6 @@ function handleCalendarClick() {
  * z-paging 查询
  */
 function handleQuery(page: number) {
-  indexBillStore.loadIndexSummary()
   // console.log('handleQuery page', page)
   indexBillStore.loadBills(page).then((res) => {
     // console.log('complete')
@@ -130,10 +130,8 @@ function handleQuery(page: number) {
     <view class="w-screen flex flex-col gap-3">
       <!-- 日期栏 -->
       <view class="flex justify-between px-5">
-        <view class="flex items-center" @tap="dateSelectShow = true">
-          <view class="mr-1 font-bold">
-            {{ dateText }}
-          </view>
+        <view class="flex items-baseline" @tap="dateSelectShow = true">
+          <text class="mr-1 font-bold">{{ dateText }}</text>
           <wd-icon size="16" name="caret-down" />
         </view>
         <action-btn @tap="handleCalendarClick">
@@ -142,13 +140,13 @@ function handleQuery(page: number) {
       </view>
 
       <!-- 账单金额汇总 -->
-      <view class="mx-3 rounded-xl bg-indigo-300/20 p-3">
+      <view class="mx-3 rounded-xl bg-indigo-200/20 p-3">
         <amount-summary />
       </view>
 
       <!-- 账单金额汇总统计 -->
-      <view v-if="dayjs(indexBillStore.date).isSame(dayjs(), 'month')" class="mx-3 rounded-xl bg-indigo-300/20 px-2 py-3">
-        <summary-charts v-model="chartSettingShow" />
+      <view v-if="dayjs(indexBillStore.date).isSame(dayjs(), 'month')" class="mx-3 rounded-xl bg-indigo-200/20 px-2 py-3">
+        <summary-charts @more="chartSettingShow = true" />
       </view>
     </view>
 

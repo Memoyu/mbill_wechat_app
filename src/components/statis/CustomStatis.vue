@@ -2,13 +2,15 @@
 import type { IBillQuery, IBillSummaryAccount, IBillSummaryAmount, IBillSummaryCategory, IBillSummaryTag } from '@/api/types/bill'
 import dayjs from 'dayjs'
 import { summaryAccountBill, summaryAmountBill, summaryCategoryBill, summaryTagBill } from '@/api/bill'
-import { useFilterBillStore } from '@/store'
+import { useFilterBillStore, useSettingsStore } from '@/store'
 
 defineExpose({
   init,
+  reload,
 })
 
 const filterBillStore = useFilterBillStore()
+const settingsStore = useSettingsStore()
 
 const mounted = ref(false)
 const contentHeight = ref(0)
@@ -21,7 +23,7 @@ const query = computed(() => {
   return {
     beginDate: filter.value.beginDate,
     endDate: filter.value.endDate,
-    ledgerIds: filter.value.ledgers,
+    ledgerIds: settingsStore.statis.ledgers,
     categoryIds: filter.value.categories,
     accountIds: filter.value.accounts,
     tagIds: filter.value.tags,
@@ -62,6 +64,10 @@ const tag = ref<IBillSummaryTag>({
 function init(height: number) {
   mounted.value = true
   contentHeight.value = height
+  loadData()
+}
+
+function reload() {
   loadData()
 }
 
@@ -121,7 +127,7 @@ function handleQuery() {
   <view v-if="mounted" :style="{ height: `${contentHeight}px` }" class="w-full">
     <z-paging ref="paging" :fixed="false" refresher-only @query="handleQuery">
       <template #top>
-        <view class="z-5 bg-white/70 px-4 py-3 backdrop-blur-md">
+        <view class="z-5 bg-white/70 px-5 py-3 backdrop-blur-md">
           <view class="flex items-center justify-between">
             <text class="font-semibold">{{ dateText }}</text>
             <wd-icon name="filter" size="20px" @tap="showFilter = true" />
@@ -154,7 +160,7 @@ function handleQuery() {
   </view>
 
   <!-- 筛选弹窗 -->
-  <bill-filter-popup v-model="showFilter" :no-show="[0, 6]" @confirm="handleFilterConfirm" />
+  <bill-filter-popup v-model="showFilter" height="50vh" :no-show="[0, 2, 6]" @confirm="handleFilterConfirm" />
 </template>
 
 <style lang="scss" scoped>

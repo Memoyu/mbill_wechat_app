@@ -12,10 +12,10 @@ defineOptions({
 })
 
 const props = withDefaults(defineProps<{
-  height?: number
+  height?: string
   showTop?: boolean
 }>(), {
-  height: 400,
+  height: '40vh',
 })
 const emit = defineEmits(['change'])
 const selected = defineModel<string>()

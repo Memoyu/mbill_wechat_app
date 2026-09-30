@@ -12,7 +12,7 @@ defineOptions({
 })
 
 const props = defineProps<{
-  height: number
+  height: string
   showTop?: boolean
 }>()
 const emit = defineEmits(['change'])
@@ -120,15 +120,11 @@ function handleCategoryChange(item: any) {
 <template>
   <wd-tabs v-model="type" animated swipeable @change="handleTabChange">
     <wd-tab key="expend">
-      <view class="overflow-y-auto" :style="{ height: `${height}px` }">
-        <grid-picker-view v-if="initTypes.includes(0)" v-model="selectedExpend" :list="expends" :tops="expendTops" @change="handleCategoryChange" />
-      </view>
+      <grid-picker-view v-if="initTypes.includes(0)" v-model="selectedExpend" :scroll-height="height" :list="expends" :tops="expendTops" @change="handleCategoryChange" />
     </wd-tab>
 
     <wd-tab key="income">
-      <view class="overflow-y-auto" :style="{ height: `${height}px` }">
-        <grid-picker-view v-if="initTypes.includes(1)" v-model="selectedIncome" :list="incomes" :tops="incomeTops" @change="handleCategoryChange" />
-      </view>
+      <grid-picker-view v-if="initTypes.includes(1)" v-model="selectedIncome" :scroll-height="height" :list="incomes" :tops="incomeTops" @change="handleCategoryChange" />
     </wd-tab>
   </wd-tabs>
 </template>

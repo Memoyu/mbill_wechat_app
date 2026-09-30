@@ -18,6 +18,9 @@ interface State {
     ledgers: string[]
     heatMap: number
   }
+  statis: {
+    ledgers: string[]
+  }
 }
 
 const initState: State = {
@@ -34,6 +37,9 @@ const initState: State = {
   calendar: {
     ledgers: [],
     heatMap: -1,
+  },
+  statis: {
+    ledgers: [],
   },
 }
 
@@ -54,10 +60,15 @@ export const useSettingsStore = defineStore(
       state.calendar.heatMap = heatMap
     }
 
+    const updateStatis = (ledgers: string[]) => {
+      state.statis.ledgers = ledgers
+    }
+
     return {
       ...toRefs(state),
       updateIndexCharts,
       updateCalendar,
+      updateStatis,
       version: import.meta.env.VITE_APP_VERSION,
     }
   },

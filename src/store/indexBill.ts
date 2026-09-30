@@ -157,10 +157,10 @@ export const useIndexBillStore = defineStore(
         endDate = dayjs().endOf('week').add(1, 'day').format('YYYY-MM-DD')
       }
       else if (dt === 1) {
-        beginDate = dayjs().subtract(7, 'day').format('YYYY-MM-DD')
+        beginDate = dayjs().subtract(6, 'day').format('YYYY-MM-DD')
       }
       else if (dt === 2) {
-        beginDate = dayjs().subtract(15, 'day').format('YYYY-MM-DD')
+        beginDate = dayjs().subtract(14, 'day').format('YYYY-MM-DD')
       }
 
       const res = await summaryAmountBill({

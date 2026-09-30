@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import dayjs from 'dayjs'
-import { billColors } from '@/constants/billIcons'
+import { billColors, dateTypes } from '@/constants/billIcons'
 import { useIndexBillStore, useSettingsStore } from '@/store'
 import { amountFormat, getBillColor } from '@/utils'
 
@@ -14,7 +14,7 @@ defineOptions({
 
 const props = defineProps<{
 }>()
-const settingShow = defineModel({ default: false })
+const emit = defineEmits(['more'])
 
 const chartOpts = ref({
   color: [...billColors],
@@ -44,25 +44,9 @@ const chartOpts = ref({
   },
 })
 
-const dateTypes = [
-  {
-    label: '本周',
-    value: 0,
-  },
-  {
-    label: '近7天',
-    value: 1,
-  },
-  {
-    label: '近15天',
-    value: 2,
-  },
-]
-
 const indexBillStore = useIndexBillStore()
 const settingsStore = useSettingsStore()
 
-const innerType = ref()
 const chartData = ref<{
   categories: string[]
   series: {
@@ -87,27 +71,35 @@ const dateTitle = computed(() => dateTypes[settingsStore.index.charts.date].labe
 const typeTitle = computed(() => settingsStore.index.charts.type === 0 ? '支出' : settingsStore.index.charts.type === 1 ? '收入' : '')
 const charts = computed(() => indexBillStore.charts)
 
+watch(() => settingsStore.index.charts.date, (date) => {
+  const today = dayjs()
+  chartData.value.categories = date === 0
+    ? Array.from({ length: 7 }, (_, i) => today.day(1).add(i, 'day').format('D'))
+    : date === 1
+      ? Array.from({ length: 7 }, (_, i) => today.subtract(6 - i, 'day').format('D'))
+      : Array.from({ length: 15 }, (_, i) => today.subtract(14 - i, 'day').format('D'))
+}, { immediate: true })
+
 watch(() => charts.value, (data) => {
-  console.log('ewewadada ')
-  nextTick(() => {
+  if (!data.items.length)
+    return
+
+  setTimeout(() => {
   // 数据源变更后构造数据
-    const categories: string[] = []
     const expendSeries: number[] = []
     const incomeSeries: number[] = []
     data.items.forEach((it) => {
       const item = it.summary
-      const date = dayjs(item.date)
-      categories.push(date.date().toString())
       expendSeries.push(item.expend)
       incomeSeries.push(item.income)
     })
 
-    chartData.value.categories = categories
-    if (innerType.value === 0) {
+    const type = settingsStore.index.charts.type
+    if (type === 0) {
       chartOpts.value.color = [billColors[0]]
       chartData.value.series = [{ name: '日支出', data: expendSeries }]
     }
-    else if (innerType.value === 1) {
+    else if (type === 1) {
       chartOpts.value.color = [billColors[1]]
       chartData.value.series = [{ name: '日收入', data: incomeSeries }]
     }
@@ -115,7 +107,8 @@ watch(() => charts.value, (data) => {
       chartOpts.value.color = [...billColors]
       chartData.value.series = [{ name: '日支出', data: expendSeries }, { name: '日收入', data: incomeSeries }]
     }
-  })
+    // console.log(chartData.value.series, ' chartData.value.series')
+  }, 500)
 }, { deep: true })
 </script>
 
@@ -141,10 +134,11 @@ watch(() => charts.value, (data) => {
           </view>
         </view>
       </view>
-      <action-btn @tap="settingShow = true">
+      <action-btn @tap="emit('more')">
         <view class="iconfont icon-more" />
       </action-btn>
     </view>
+
     <view class="col-amount-summary-box">
       <qiun-data-charts
         type="column"

@@ -22,21 +22,19 @@ const mounted = ref(false)
 const showLedgerPicker = ref(false)
 const ledgerName = ref<string>('')
 const innerLedgers = ref<string[]>([])
-const innerHeatMap = ref<number>(-1)
 
-const config = computed(() => settingsStore.calendar)
+const config = computed(() => settingsStore.statis)
 
 watch(() => show.value, (newVal) => {
   if (newVal) {
     mounted.value = true
     innerLedgers.value = config.value.ledgers
-    innerHeatMap.value = config.value.heatMap
     formatLedgerName(config.value.ledgers)
   }
 })
 
 function handleConfirm() {
-  settingsStore.updateCalendar(innerLedgers.value, innerHeatMap.value)
+  settingsStore.updateStatis(innerLedgers.value)
   show.value = false
   emit('confirm', config.value)
 }
@@ -52,9 +50,8 @@ function formatLedgerName(ledgers: string[]) {
 </script>
 
 <template>
-  <bottom-popup v-model="show" height="50vh" title="更多配置" @confirm="handleConfirm">
+  <!-- <bottom-popup v-model="show" height="40vh" title="更多配置" @confirm="handleConfirm">
     <view class="mb-3 flex flex-col p-3 space-y-2">
-      <!-- 所属账本 -->
       <view>
         <view class="more-content-title">
           所属账本
@@ -64,32 +61,11 @@ function formatLedgerName(ledgers: string[]) {
           <text v-else class="line-clamp-1">{{ ledgerName }}</text>
         </view>
       </view>
-
-      <!-- 热力图 -->
-      <view>
-        <view class="more-content-title">
-          热力背景
-        </view>
-        <wd-radio-group v-model="innerHeatMap" allow-uncheck type="button">
-          <wd-radio :value="-1">
-            关闭
-          </wd-radio>
-          <wd-radio :value="0">
-            支出
-          </wd-radio>
-          <wd-radio :value="1">
-            收入
-          </wd-radio>
-          <wd-radio :value="2">
-            结余
-          </wd-radio>
-        </wd-radio-group>
-      </view>
     </view>
-  </bottom-popup>
+  </bottom-popup> -->
 
   <!-- 账本选择器 -->
-  <ledger-list-picker v-if="mounted" v-model="innerLedgers" v-model:visible="showLedgerPicker" height="40vh" @confirm="handleLedgerConfirm" />
+  <ledger-list-picker v-if="mounted" v-model="innerLedgers" v-model:visible="show" height="50vh" @confirm="handleConfirm" />
 </template>
 
 <style lang="scss" scoped>

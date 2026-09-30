@@ -1,8 +1,8 @@
 <script lang="ts" setup>
-import type { IBillSummaryAccount, IBillSummaryAmount, IBillSummaryCategory, IBillSummaryTag } from '@/api/types/bill'
+import type { IBillQuery, IBillSummaryAccount, IBillSummaryAmount, IBillSummaryCategory, IBillSummaryTag } from '@/api/types/bill'
 import dayjs from 'dayjs'
 import { summaryAccountBill, summaryAmountBill, summaryCategoryBill, summaryTagBill } from '@/api/bill'
-import { useLedgerPickerStore } from '@/store'
+import { useSettingsStore } from '@/store'
 
 defineOptions({
   options: {
@@ -15,9 +15,10 @@ const props = defineProps<{
 }>()
 defineExpose({
   init,
+  reload,
 })
 
-const ledgerPickerStore = useLedgerPickerStore()
+const settingsStore = useSettingsStore()
 
 const mounted = ref(false)
 const contentHeight = ref(0)
@@ -56,12 +57,13 @@ const tag = ref<IBillSummaryTag>({
   tags: [],
 })
 
-const dateRange = computed(() => {
+const query = computed(() => {
   const date = dayjs(options.value[active.value])
   return {
     beginDate: date.startOf('month').format('YYYY-MM-DD 00:00:00'),
     endDate: date.endOf('month').format('YYYY-MM-DD 23:59:59'),
-  }
+    ledgerIds: settingsStore.statis.ledgers,
+  } as IBillQuery
 })
 
 watch(() => active.value, () => {
@@ -75,6 +77,10 @@ function init(height: number) {
   loadData()
 }
 
+function reload() {
+  loadData()
+}
+
 function loadData() {
   getSummaryAmountBill()
   getSummaryCategoryBill()
@@ -84,9 +90,8 @@ function loadData() {
 
 function getSummaryAmountBill() {
   summaryAmountBill({
-    ...dateRange.value,
+    ...query.value,
     series: 2,
-    ledgerIds: ledgerPickerStore.selecteds,
   }).then((res) => {
     summary.value = res
   })
@@ -94,8 +99,7 @@ function getSummaryAmountBill() {
 
 function getSummaryCategoryBill() {
   summaryCategoryBill({
-    ...dateRange.value,
-    ledgerIds: ledgerPickerStore.selecteds,
+    ...query.value,
   }).then((res) => {
     category.value = res
   })
@@ -103,8 +107,7 @@ function getSummaryCategoryBill() {
 
 function getSummaryAccountBill() {
   summaryAccountBill({
-    ...dateRange.value,
-    ledgerIds: ledgerPickerStore.selecteds,
+    ...query.value,
   }).then((res) => {
     account.value = res
   })
@@ -112,8 +115,7 @@ function getSummaryAccountBill() {
 
 function getSummaryTagBill() {
   summaryTagBill({
-    ...dateRange.value,
-    ledgerIds: ledgerPickerStore.selecteds,
+    ...query.value,
   }).then((res) => {
     tag.value = res
   })

@@ -20,7 +20,9 @@ const charNodes = ref<ICharNodeItem[]>([]) // 字符节点
 const cursorPosition = ref(0) // 光标位置
 const scroll = ref(0)
 
-watch(() => props.input, (newInput) => {
+watch(() => props.input, (n) => {
+  if (!n)
+    return
   nextTick(() => {
     uni
       .createSelectorQuery()

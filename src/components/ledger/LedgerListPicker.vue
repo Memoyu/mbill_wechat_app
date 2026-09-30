@@ -91,7 +91,7 @@ function handleLedgerClick(ledger: ILedger) {
         <view class="p-2 space-y-3">
           <view
             v-for="ledger in ledgers" :key="ledger.ledgerId"
-            class="relative flex items-center gap-3 border rounded-xl p-3 transition-all"
+            class="relative flex items-center gap-3 border rounded-md bg-indigo-500/10 p-3 transition-all"
             @tap="handleLedgerClick(ledger)"
           >
             <view class="flex flex-1 items-center gap-3">
@@ -106,7 +106,7 @@ function handleLedgerClick(ledger: ILedger) {
             <!-- 选中遮罩层 -->
             <view
               class="absolute inset-0 z-3 overflow-hidden rounded-md transition-all duration-200"
-              :class="[isSelected(ledger) ? 'bg-indigo-500/10 ring-2 ring-indigo-500' : 'bg-transparent']"
+              :class="[isSelected(ledger) ? 'ring-2 ring-indigo-500' : 'bg-transparent']"
             >
               <view
                 v-if=" isSelected(ledger)"

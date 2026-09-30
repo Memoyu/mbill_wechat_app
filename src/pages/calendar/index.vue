@@ -179,10 +179,8 @@ function handleListQuery(page: number, size: number) {
   <nav-bar id="TOP_NAVBAR">
     <template #title>
       <view class="w-full flex items-center justify-between">
-        <view class="flex items-center" @tap="showDateSelect = true">
-          <text class="mr-2">
-            {{ monthText }}
-          </text>
+        <view class="flex items-baseline" @tap="showDateSelect = true">
+          <text class="mr-2">{{ monthText }}</text>
           <wd-icon name="caret-down" />
         </view>
         <view class="flex gap-2">

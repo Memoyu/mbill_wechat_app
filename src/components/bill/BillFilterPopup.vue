@@ -19,7 +19,9 @@ defineOptions({
 
 const props = withDefaults(defineProps<{
   noShow?: number[]
+  height?: string
 }>(), {
+  height: '70vh',
 })
 const emit = defineEmits(['confirm'])
 const show = defineModel<boolean>()
@@ -142,7 +144,7 @@ function showItem(index: number) {
 
 <template>
   <!-- 筛选条件 -->
-  <bottom-popup v-model="show" height="70vh" title="筛选条件" :actions="actions" @confirm="handleConfirm">
+  <bottom-popup v-model="show" :height="height" title="筛选条件" :actions="actions" @confirm="handleConfirm">
     <view class="mb-3 flex flex-col p-3 space-y-2">
       <!-- 账单类型 -->
       <view v-if="showItem(0)">
@@ -264,6 +266,9 @@ function showItem(index: number) {
 </template>
 
 <style lang="scss" scoped>
+:deep(.wd-radio.is-button) {
+  margin: 0px 8px 0px 0px;
+}
 .filter-content-title {
   @apply font-bold pb-2;
 }
