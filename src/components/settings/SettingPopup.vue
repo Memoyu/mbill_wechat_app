@@ -1,6 +1,14 @@
 <script setup lang="ts">
 import { useSettingsStore } from '@/store'
 
+defineOptions({
+  options: {
+    addGlobalClass: true,
+    virtualHost: true,
+    styleIsolation: 'shared',
+  },
+})
+
 const show = defineModel<boolean>()
 
 const settingsStore = useSettingsStore()

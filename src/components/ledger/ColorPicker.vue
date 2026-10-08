@@ -4,6 +4,14 @@ import { useDialog } from '@wot-ui/ui'
 import { colorSystems, getColorSystem, getSystemName, gradients } from '@/constants/gradients'
 import { useLedgerStore } from '@/store'
 
+defineOptions({
+  options: {
+    addGlobalClass: true,
+    virtualHost: true,
+    styleIsolation: 'shared',
+  },
+})
+
 const props = defineProps<{
   ledgerId: string
 }>()

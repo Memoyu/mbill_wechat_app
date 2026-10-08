@@ -1,4 +1,12 @@
 <script setup lang="ts">
+defineOptions({
+  options: {
+    addGlobalClass: true,
+    virtualHost: true,
+    styleIsolation: 'shared',
+  },
+})
+
 const props = withDefaults(defineProps<{
   options: string[]
   gap?: number

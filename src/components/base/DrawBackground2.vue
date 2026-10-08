@@ -1,3 +1,13 @@
+<script lang="ts" setup>
+defineOptions({
+  options: {
+    addGlobalClass: true,
+    virtualHost: true,
+    styleIsolation: 'shared',
+  },
+})
+</script>
+
 <template>
   <view class="relative w-screen bg-white transition-all -z-10">
     <view class="pointer-events-none fixed inset-0 overflow-hidden">

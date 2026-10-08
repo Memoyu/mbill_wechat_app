@@ -3,6 +3,13 @@ import { useToast } from '@wot-ui/ui'
 import { storeToRefs } from 'pinia'
 import { getCurrentPath } from '@/utils'
 
+defineOptions({
+  options: {
+    addGlobalClass: true,
+    virtualHost: true,
+    styleIsolation: 'shared',
+  },
+})
 const { toastOptions, currentPage } = storeToRefs(useGlobalToast())
 
 const { close: closeGlobalToast } = useGlobalToast()
@@ -20,16 +27,6 @@ watch(() => toastOptions.value, (newVal) => {
     toast.close()
   }
 })
-</script>
-
-<script lang="ts">
-export default {
-  options: {
-    virtualHost: true,
-    addGlobalClass: true,
-    styleIsolation: 'shared',
-  },
-}
 </script>
 
 <template>

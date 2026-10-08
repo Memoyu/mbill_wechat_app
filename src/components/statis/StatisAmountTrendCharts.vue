@@ -3,6 +3,14 @@ import type { IBillSummaryAmount } from '@/api/types/bill'
 import dayjs from 'dayjs'
 import { billColors } from '@/constants/billIcons'
 
+defineOptions({
+  options: {
+    addGlobalClass: true,
+    virtualHost: true,
+    styleIsolation: 'shared',
+  },
+})
+
 const props = defineProps<{
   dateType: 'date' | 'month' | 'custom'
   data: IBillSummaryAmount []

@@ -4,6 +4,14 @@ import { uploadAvatar } from '@/api/common'
 import { useIndexBillStore, useUserStore } from '@/store'
 import { amountFormat, getBillColor } from '@/utils'
 
+defineOptions({
+  options: {
+    addGlobalClass: true,
+    virtualHost: true,
+    styleIsolation: 'shared',
+  },
+})
+
 const show = defineModel<boolean>()
 const actions = [{
   title: '账本管理',

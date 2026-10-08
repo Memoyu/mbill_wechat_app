@@ -3,6 +3,14 @@ import type { IBillSummaryTag } from '@/api/types/bill'
 import { billOptions } from '@/typings'
 import { getBillColor } from '@/utils'
 
+defineOptions({
+  options: {
+    addGlobalClass: true,
+    virtualHost: true,
+    styleIsolation: 'shared',
+  },
+})
+
 const props = defineProps<{
   data: IBillSummaryTag
 }>()

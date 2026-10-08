@@ -4,6 +4,13 @@ import { storeToRefs } from 'pinia'
 import { useGlobalLoading } from '@/hooks/useGlobalLoading'
 import { getCurrentPath } from '@/utils'
 
+defineOptions({
+  options: {
+    addGlobalClass: true,
+    virtualHost: true,
+    styleIsolation: 'shared',
+  },
+})
 const { loadingOptions, currentPage } = storeToRefs(useGlobalLoading())
 
 const { close: closeGlobalLoading } = useGlobalLoading()
@@ -29,16 +36,6 @@ watch(() => loadingOptions.value, (newVal) => {
     loading.close()
   }
 })
-</script>
-
-<script lang="ts">
-export default {
-  options: {
-    virtualHost: true,
-    addGlobalClass: true,
-    styleIsolation: 'shared',
-  },
-}
 </script>
 
 <template>

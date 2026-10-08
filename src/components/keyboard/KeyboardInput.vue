@@ -6,6 +6,14 @@ interface ICharNodeItem {
   left: number
 }
 
+defineOptions({
+  options: {
+    addGlobalClass: true,
+    virtualHost: true,
+    styleIsolation: 'shared',
+  },
+})
+
 const props = defineProps<{
   input: string
   type: BillTypeEnum

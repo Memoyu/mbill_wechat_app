@@ -4,6 +4,13 @@ import { deepClone, isFunction } from '@wot-ui/ui/common/util'
 import { storeToRefs } from 'pinia'
 import { getCurrentPath } from '@/utils'
 
+defineOptions({
+  options: {
+    addGlobalClass: true,
+    virtualHost: true,
+    styleIsolation: 'shared',
+  },
+})
 const { dialogOptions, currentPage } = storeToRefs(useGlobalDialog())
 
 const dialog = useDialog('globalDialog')
@@ -28,16 +35,6 @@ watch(() => dialogOptions.value, (newVal) => {
     dialog.close()
   }
 })
-</script>
-
-<script lang="ts">
-export default {
-  options: {
-    virtualHost: true,
-    addGlobalClass: true,
-    styleIsolation: 'shared',
-  },
-}
 </script>
 
 <template>

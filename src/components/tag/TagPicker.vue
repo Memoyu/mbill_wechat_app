@@ -2,6 +2,14 @@
 import type { ITag } from '@/api/types/tag'
 import { useTagStore } from '@/store'
 
+defineOptions({
+  options: {
+    addGlobalClass: true,
+    virtualHost: true,
+    styleIsolation: 'shared',
+  },
+})
+
 const props = withDefaults(defineProps<{
   tags: string[]
 }>(), {

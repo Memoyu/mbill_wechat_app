@@ -4,6 +4,14 @@ import dayjs from 'dayjs'
 import { summaryAccountBill, summaryAmountBill, summaryCategoryBill, summaryTagBill } from '@/api/bill'
 import { useSettingsStore } from '@/store'
 
+defineOptions({
+  options: {
+    addGlobalClass: true,
+    virtualHost: true,
+    styleIsolation: 'shared',
+  },
+})
+
 const props = defineProps<{
 
 }>()

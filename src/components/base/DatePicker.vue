@@ -2,6 +2,14 @@
 import type { DateTimeType } from '@wot-ui/ui/components/wd-datetime-picker-view/types'
 import dayjs from 'dayjs'
 
+defineOptions({
+  options: {
+    addGlobalClass: true,
+    virtualHost: true,
+    styleIsolation: 'shared',
+  },
+})
+
 const props = withDefaults(defineProps<{
   date: number
   type: DateTimeType

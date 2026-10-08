@@ -1,6 +1,13 @@
 <script setup lang="ts">
 import dayjs from 'dayjs'
 
+defineOptions({
+  options: {
+    addGlobalClass: true,
+    virtualHost: true,
+    styleIsolation: 'shared',
+  },
+})
 const props = withDefaults(defineProps<{
   date: number
 }>(), {

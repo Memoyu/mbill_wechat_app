@@ -2,6 +2,14 @@
 import type { IBillSummaryAmountItem } from '@/api/types/bill'
 import { getBillColor } from '@/utils'
 
+defineOptions({
+  options: {
+    addGlobalClass: true,
+    virtualHost: true,
+    styleIsolation: 'shared',
+  },
+})
+
 const props = defineProps<{
   data: IBillSummaryAmountItem
 }>()

@@ -10,6 +10,14 @@ interface CalendarMonthItem {
   month: number
 }
 
+defineOptions({
+  options: {
+    addGlobalClass: true,
+    virtualHost: true,
+    styleIsolation: 'shared',
+  },
+})
+
 const props = withDefaults(defineProps<{
   year: number
   data: IBillSummaryAmount

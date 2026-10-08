@@ -2,6 +2,14 @@
 import type { ILedger } from '@/api/types/ledger'
 import { gradients } from '@/constants/gradients'
 
+defineOptions({
+  options: {
+    addGlobalClass: true,
+    virtualHost: true,
+    styleIsolation: 'shared',
+  },
+})
+
 const props = defineProps<{
   data: ILedger
 }>()

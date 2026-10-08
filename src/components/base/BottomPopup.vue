@@ -51,11 +51,10 @@ function handleConfirm() {
 <template>
   <wd-popup
     v-model="show"
-    position="bottom"
-    :hide-when-close="false"
-    :close-on-click-modal="true"
-    :safe-area-inset-bottom="true"
+    lock-scroll
     lazy-render
+    position="bottom"
+    :close-on-click-modal="true"
     custom-class="rounded-t-3xl relative"
     :custom-style="(height && !autoHeight ? `height: ${height}` : '')"
     @close="() => show = false"
