@@ -63,7 +63,7 @@ function handleActionClick(item: any) {
           </view>
           <view class="grid grid-cols-4 gap-6 px-6">
             <view
-              v-for="action in item.actions"
+              v-for="action in item.actions.filter(a => !a.hide)"
               :key="action.text"
               class="flex flex-col items-center gap-2"
               hover-class="opacity-60"

@@ -85,12 +85,12 @@ function handleToday() {
 }
 
 function handleMonthChange(m: number) {
-  console.log('月份切换', m)
+  // console.log('月份切换', m)
   getSummaryAmountBill()
 }
 
 function handleDateChange(d: number) {
-  console.log('日期切换', d)
+  // console.log('日期切换', d)
   listPaging.value.reload()
 }
 
@@ -118,7 +118,7 @@ function handleCalendarQuery() {
 async function getSummaryAmountBill(forced: boolean = false) {
   const dm = dayjs(month.value)
   const cache = summaryCache.find(c => dayjs(c.date).isSame(dm, 'month'))
-  console.log(cache, 'cache')
+  // console.log(cache, 'cache')
   let data = cache?.data
   if (!data || forced) {
     data = await summaryAmountBill({
@@ -134,7 +134,7 @@ async function getSummaryAmountBill(forced: boolean = false) {
 }
 
 function handleListQuery(page: number, size: number) {
-  console.log(page, size, 'handleQuery')
+  // console.log(page, size, 'handleQuery')
   if (page === 1) {
     groups.value = []
   }

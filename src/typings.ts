@@ -27,6 +27,7 @@ export interface ActionItem {
   value?: string
   type?: 'default' | 'warning' | 'danger'
   action: () => void
+  hide?: boolean
 }
 
 export interface ActionGroup {

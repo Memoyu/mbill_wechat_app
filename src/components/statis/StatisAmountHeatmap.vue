@@ -53,7 +53,7 @@ function initCalendar(data: IBillSummaryAmount) {
 }
 function getHeats(data: IBillSummaryAmount) {
   return data.items.map((i) => {
-    return calcHeat(type.value, props.data.summary, i.summary)
+    return calcHeat(type.value, data.summary, i.summary)
   })
 }
 function handleMonthTap(m: number) {
@@ -89,7 +89,7 @@ function handleMonthTap(m: number) {
   </view>
 
   <!-- 热力图日历弹窗 -->
-  <statis-amount-heatmap-popup v-model="showPopup" :year="year" :month="month" :data="data" />
+  <statis-amount-heatmap-popup v-model="showPopup" :year="year" :month="month" :data="data" :type="type" />
 </template>
 
 <style lang="scss" scoped>

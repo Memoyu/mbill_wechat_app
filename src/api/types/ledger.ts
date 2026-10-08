@@ -7,6 +7,7 @@ export interface ILedgerBase {
   users: IUserBase[]
   color: number
   sort: number
+  default: boolean
 }
 
 export interface ILedger extends ILedgerBase {

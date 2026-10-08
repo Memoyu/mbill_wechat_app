@@ -2,7 +2,6 @@
 import type { IBillSummaryAmount } from '@/api/types/bill'
 import dayjs from 'dayjs'
 import { billColors } from '@/constants/billIcons'
-import { billOptions } from '@/typings'
 
 const props = defineProps<{
   dateType: 'date' | 'month' | 'custom'
@@ -60,15 +59,9 @@ const chartData = ref({
   ],
 })
 
-const type = ref(0)
-
 watch(() => props.data, () => {
   changeAmountSummary()
 }, { deep: true })
-
-watch(() => type.value, () => {
-  changeAmountSummary()
-})
 
 function changeAmountSummary() {
   const categories: string[] = []
@@ -132,9 +125,6 @@ function dateTypeFunc(date?: () => void, month?: () => void, custom?: () => void
     <text class="font-semibold">
       收支趋势
     </text>
-    <view>
-      <mbill-segmented v-model="type" :options="billOptions" />
-    </view>
   </view>
   <view class="h-160px">
     <qiun-data-charts

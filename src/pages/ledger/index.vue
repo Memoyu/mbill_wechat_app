@@ -25,7 +25,22 @@ const navActions: ActionItem[] = [
     action: handleScanAction,
   },
 ]
-const ledgerActions: ActionGroup[] = [
+
+const dialog = useDialog()
+const toast = useToast()
+const ledgerStore = useLedgerStore()
+
+const ledgers = computed(() => ledgerStore.ledgers)
+
+const editShow = ref(false)
+const shareShow = ref(false)
+const editTitle = ref('新增账本')
+const scrollHeight = ref(300)
+
+const actionShow = ref(false)
+const colorPickerShow = ref(false)
+const currentLedger = ref<ILedger>()
+const ledgerActions = ref<ActionGroup[]>([
   {
     title: '账本样式',
     actions: [
@@ -68,22 +83,7 @@ const ledgerActions: ActionGroup[] = [
       },
     ],
   },
-]
-
-const dialog = useDialog()
-const toast = useToast()
-const ledgerStore = useLedgerStore()
-
-const ledgers = computed(() => ledgerStore.ledgers)
-
-const editShow = ref(false)
-const shareShow = ref(false)
-const editTitle = ref('新增账本')
-const scrollHeight = ref(300)
-
-const actionShow = ref(false)
-const colorPickerShow = ref(false)
-const currentLedger = ref<ILedger>()
+])
 
 const editLedger = ref<{
   isCreate: boolean
@@ -138,6 +138,8 @@ function handleScanAction() {
 
 function handleLedgerActions(ledger: any) {
   currentLedger.value = ledger
+  // 默认账单，不显示共享
+  ledgerActions.value[1].actions[1].hide = currentLedger.value.default
   actionShow.value = true
 }
 

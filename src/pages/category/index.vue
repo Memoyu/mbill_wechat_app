@@ -48,6 +48,7 @@ const dialog = useGlobalDialog()
 const categoryStore = useCategoryStore()
 
 const editShow = ref(false)
+const editMounted = ref(false)
 const editTitle = ref('创建分类')
 const scrollHeight = ref(300)
 const actionShow = ref(false)
@@ -67,6 +68,11 @@ const editCategory = ref<{
 
 watch(() => type.value, (val) => {
   initCategoryComponent()
+})
+
+watch(() => editShow.value, (val) => {
+  if (val)
+    editMounted.value = true
 })
 
 onMounted(() => {
@@ -309,16 +315,13 @@ function handleDeleteAction() {
   <bottom-popup v-model="editShow" :title="editTitle" confirm-text="确认" show-cancel @confirm="handleEditConfirm">
     <template #title>
       <view class="flex items-center gap-2 px-2 pb-2 pt-4">
-        <!-- <wd-img :width="32" :height="32" :src="editCategory.icon" round :lazy-load="true" :show-error="false" :show-loading="false" /> -->
         <bill-icon :icon="editCategory.icon" :text="editCategory.name" />
         <wd-input v-model="editCategory.name" custom-class="w-full" type="text" placeholder="分类名称" />
       </view>
     </template>
 
-    <view>
-      <icon-picker
-        @selected="handleIconSelected"
-      />
+    <view v-if="editMounted">
+      <icon-picker @selected="handleIconSelected" />
     </view>
   </bottom-popup>
 </template>

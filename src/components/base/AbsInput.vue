@@ -20,7 +20,7 @@ const input = defineModel<string>('input', { default: '' })
 const inputBottom = ref(0)
 
 function handleKeyBoardHeightChange(event: any) {
-  console.log(event, 'handleKeyBoardHeightChange')
+  // console.log(event, 'handleKeyBoardHeightChange')
   const height = event.height ?? 0
   inputBottom.value = height
   uni
@@ -28,7 +28,8 @@ function handleKeyBoardHeightChange(event: any) {
     .in(proxy)
     .select('#ABS-INPUT-TRIGGER')
     .boundingClientRect((view: any) => {
-      console.log(view, 'ABS-INPUT-TRIGGER')
+      // console.log(view, 'ABS-INPUT-TRIGGER')
+      // TODO 暂未使用，没有完善
     })
     .exec()
 }

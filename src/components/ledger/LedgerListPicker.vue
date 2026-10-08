@@ -88,7 +88,7 @@ function handleLedgerClick(ledger: ILedger) {
     <!-- 账单列表 -->
     <view class="px-2">
       <scroll-view scroll-y class="h-full">
-        <view class="p-2 space-y-3">
+        <view class="p-2 space-y-1.5">
           <view
             v-for="ledger in ledgers" :key="ledger.ledgerId"
             class="relative flex items-center gap-3 border rounded-md bg-indigo-500/10 p-3 transition-all"

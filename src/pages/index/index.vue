@@ -145,7 +145,7 @@ function handleQuery(page: number) {
       </view>
 
       <!-- 账单金额汇总统计 -->
-      <view v-if="dayjs(indexBillStore.date).isSame(dayjs(), 'month')" class="mx-3 rounded-xl bg-indigo-200/20 px-2 py-3">
+      <view v-if="indexBillStore.dateType === 'year-month' && dayjs(indexBillStore.date).isSame(dayjs(), 'month')" class="mx-3 rounded-xl bg-indigo-200/20 px-2 py-3">
         <summary-charts @more="chartSettingShow = true" />
       </view>
     </view>

@@ -15,16 +15,15 @@ export function getBillColor(type: number) {
 }
 
 export function calcHeat(type: number, summary: IBillSummaryAmountItem, item: IBillSummaryAmountItem) {
-  const s = item
   let heat = 0
-  if (type === 0 && s.expend !== 0) {
-    heat = s.expend / summary.expend
+  if (type === 0 && item.expend !== 0) {
+    heat = item.expend / summary.expend
   }
-  else if (type === 1 && s.income !== 0) {
-    heat = s.income / summary.income
+  else if (type === 1 && item.income !== 0) {
+    heat = item.income / summary.income
   }
-  else if (type === 2 && s.income - s.expend !== 0) {
-    heat = (s.income - s.expend) / summary.surplus
+  else if (type === 2 && item.income - item.expend !== 0) {
+    heat = (item.income - item.expend) / summary.surplus
   }
   return heat === 0 ? 0 : Number.parseFloat((heat + 0.2).toFixed(2))
 }

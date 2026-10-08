@@ -95,7 +95,7 @@ function calcFixedHeight() {
       const topHeight = top.height
       uni.createSelectorQuery().select('#BOTTOM_INPUT').boundingClientRect((bottom: any) => {
         cpHeight.value = systemInfo.windowHeight - (topHeight + bottom.height)
-        console.log(topHeight, bottom.height, cpHeight.value, 'cpHeight')
+        // console.log(topHeight, bottom.height, cpHeight.value, 'cpHeight')
       }).exec()
     }).exec()
   })
@@ -118,7 +118,7 @@ function getAddress() {
     uni.getLocation({
       type: 'gcj02', // 返回可以用于wx.openLocation的经纬度
       success: (res: any) => {
-        console.log(res, 'res')
+        // console.log(res, 'res')
         // bill.value.address = res.address
         bill.value.location = `${res.longitude},${res.latitude}`
         getAddressInfo(res.longitude, res.latitude).then((res) => {
@@ -236,7 +236,7 @@ function handleLedgerChange(ledger: ILedger) {
  * 分类选择
  */
 function handleCategoryChange(category: IBillCategory) {
-  console.log(category, 'handleCategoryChange')
+  // console.log(category, 'handleCategoryChange')
   bill.value.category = category
 }
 
@@ -250,7 +250,7 @@ function handleDateTimeConfirm(datetime: number) {
 }
 
 function handleAccountSelectConfirm(account: IBillAccount) {
-  console.log(account, 'handleAccountSelectConfirm')
+  // console.log(account, 'handleAccountSelectConfirm')
   bill.value.account = account
 }
 

@@ -140,15 +140,14 @@ function getHeatmapColor(type: number) {
             <view class="font-semibold">
               {{ item.text }}
             </view>
-            <view class="h-8">
-              <view v-if="item.expend !== 0 || item.income !== 0" class="flex flex-col items-center text-xs">
-                <text :style="{ color: getBillColor(0) }">
-                  {{ getFormatAmount(item.expend) }}
-                </text>
-                <text :style="{ color: getBillColor(1) }">
-                  {{ getFormatAmount(item.income) }}
-                </text>
-              </view>
+
+            <view class="h-8 flex flex-col items-center justify-center text-xs">
+              <text v-if="item.expend !== 0" :style="{ color: getBillColor(0) }">
+                {{ getFormatAmount(item.expend) }}
+              </text>
+              <text v-if="item.income !== 0" :style="{ color: getBillColor(1) }">
+                {{ getFormatAmount(item.income) }}
+              </text>
             </view>
           </view>
           <view class="absolute inset-0 z--1 rounded-lg" :style="{ opacity: item.heat, backgroundColor: getHeatmapColor(hmType) }" />

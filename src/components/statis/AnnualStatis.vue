@@ -165,11 +165,11 @@ function handleQuery() {
         </view>
 
         <view class="mon-statis-block">
-          <statis-amount-charts date-type="month" :data="summary.items" />
+          <statis-amount-trend-charts date-type="month" :data="summary.items" />
         </view>
 
         <view class="mon-statis-block">
-          <statis-amount-trend-charts date-type="month" :data="summary.items" />
+          <statis-amount-charts date-type="month" :data="summary.items" />
         </view>
 
         <view class="mon-statis-block">

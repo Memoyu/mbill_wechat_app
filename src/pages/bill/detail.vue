@@ -88,7 +88,6 @@ onLoad((options: any) => {
 })
 
 onShow(() => {
-  console.log('onShow')
   getBill(bill.value.billId).then((res) => {
     bill.value = res
 

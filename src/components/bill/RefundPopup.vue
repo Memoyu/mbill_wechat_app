@@ -44,7 +44,7 @@ const actions: ActionItem[] = [
     icon: 'delete',
     type: 'danger',
     action: () => {
-      console.log('删除退款账单')
+      // console.log('删除退款账单')
       handleDelete()
     },
   },
@@ -215,8 +215,7 @@ function updateRefundList(dto: IRefundBill) {
       <!-- 账户 -->
       <view class="p-3">
         <text>退款账户</text>
-        <!-- :height="240" -->
-        <account-view v-if="show" v-model="accountId" :height="240" />
+        <account-view v-if="show" v-model="accountId" height="240px" />
       </view>
     </view>
   </bottom-popup>

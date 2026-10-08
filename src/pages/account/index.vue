@@ -47,6 +47,7 @@ const dialog = useGlobalDialog()
 const accountStore = useAccountStore()
 
 const editShow = ref(false)
+const editMounted = ref(false)
 const editTitle = ref('创建账户')
 const scrollHeight = ref(300)
 const actionShow = ref(false)
@@ -61,6 +62,11 @@ const editAccount = ref<{
   accountId?: string
   parentId?: string
 }>({ isCreate: true, name: '', icon: '' })
+
+watch(() => editShow.value, (val) => {
+  if (val)
+    editMounted.value = true
+})
 
 onMounted(() => {
   // 进入管理页面重新加载一下数据
@@ -311,13 +317,12 @@ function handleDeleteAction() {
   <bottom-popup v-model="editShow" :title="editTitle" confirm-text="确认" show-cancel @confirm="handleEditConfirm">
     <template #title>
       <view class="flex items-center gap-2 px-2 pb-2 pt-4">
-        <!-- <wd-img :width="32" :height="32" :src="editCategory.icon" round :lazy-load="true" :show-error="false" :show-loading="false" /> -->
         <bill-icon :icon="editAccount.icon" :text="editAccount.name" />
         <wd-input v-model="editAccount.name" custom-class="w-full" type="text" placeholder="账户名称" />
       </view>
     </template>
 
-    <view>
+    <view v-if="editMounted">
       <icon-picker @selected="handleIconSelected" />
     </view>
   </bottom-popup>

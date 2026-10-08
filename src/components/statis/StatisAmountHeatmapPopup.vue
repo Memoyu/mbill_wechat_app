@@ -3,7 +3,7 @@ import type { CalendarDataItem } from '../calendar/CalendarView.vue'
 import type { IBillSummaryAmount } from '@/api/types/bill'
 import dayjs from 'dayjs'
 import { billOptions } from '@/typings'
-import { calcHeat, systemInfo } from '@/utils'
+import { calcHeat } from '@/utils'
 
 interface CalendarMonthItem {
   label: string
@@ -13,6 +13,7 @@ interface CalendarMonthItem {
 const props = withDefaults(defineProps<{
   year: number
   data: IBillSummaryAmount
+  type: number
   month?: number
 }>(), {
   month: 1,
@@ -41,14 +42,21 @@ watch(() => show.value, (newVal) => {
 })
 
 watch(() => props.data, (newData) => {
-  if (newData) {
-    initCalendar(newData)
+  if (newData)
+    initCalendar()
     // console.log(months.value, 'months')
-  }
 }, { deep: true })
 
 watch(() => props.month, (m) => {
   targetScroll.value = monthTops.value[m - 1]
+})
+
+watch(() => props.type, (t) => {
+  type.value = t
+})
+
+watch(() => type.value, () => {
+  initCalendar()
 })
 
 function handleAfterEnter() {
@@ -75,7 +83,8 @@ function handleAfterEnter() {
   }
 }
 
-function initCalendar(data: IBillSummaryAmount) {
+function initCalendar() {
+  const data = props.data
   const year = dayjs(data.summary.date).year()
   const ms = []
   for (let i = 0; i < 12; i++) {
@@ -93,7 +102,7 @@ function initCalendar(data: IBillSummaryAmount) {
 function getBillData(data: IBillSummaryAmount) {
   return data.items.map((item) => {
     const { date, expend, income } = item.summary
-    const heat = calcHeat(type.value, props.data.summary, item.summary)
+    const heat = calcHeat(type.value, data.summary, item.summary)
     return { date, expend, income, heat } as CalendarDataItem
   })
 }
