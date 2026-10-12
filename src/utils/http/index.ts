@@ -28,16 +28,13 @@ export function http<T>(options: CustomRequestOptions) {
         if (isTokenExpired) {
           const tokenStore = useTokenStore()
 
-          /* -------- 无感刷新 token ----------- */
           const { refreshToken } = tokenStore.tokenInfo
-          // token 失效的，且有刷新 token 的，才放到请求队列里
           if (refreshToken) {
             taskQueue.push(() => {
               resolve(http<T>(options))
             })
           }
 
-          // 如果有 refreshToken 且未在刷新中，发起刷新 token 请求
           if (refreshToken && !refreshing) {
             refreshing = true
             try {
@@ -45,49 +42,38 @@ export function http<T>(options: CustomRequestOptions) {
               await tokenStore.refreshToken()
               // 刷新 token 成功
               refreshing = false
-              nextTick(() => {
-                // 关闭其他弹窗
-                toast.close()
-                toast.success('token 刷新成功')
-              })
               // 将任务队列的所有任务重新请求
               taskQueue.forEach(task => task())
             }
             catch (refreshErr) {
               console.error('刷新 token 失败:', refreshErr)
               refreshing = false
-              // 刷新 token 失败，跳转到登录页
+              // 提示用户
               nextTick(() => {
-                // 关闭其他弹窗
                 toast.close()
                 toast.error('登录已过期，请重新登录')
               })
-              // 清除用户信息
-              await tokenStore.logout()
             }
             finally {
               // 不管刷新 token 成功与否，都清空任务队列
               taskQueue = []
             }
           }
-
-          return reject(res)
         }
 
         // 处理其他成功状态（HTTP状态码200-299）
         if (res.statusCode >= 200 && res.statusCode < 300) {
           // 处理业务逻辑错误
           if (code !== ResultEnum.Success1 && code !== ResultEnum.Success200) {
-            toast.error(responseData.msg || responseData.message || '请求错误')
+            !options.hideErrorToast && toast.error(responseData.msg || responseData.message || '请求错误')
             return reject(responseData.data)
           }
           return resolve(responseData.data)
         }
-
-        // 处理其他错误
-        !options.hideErrorToast
-        && toast.error((res.data as any).msg || '请求错误')
-        reject(res)
+        else if (!isTokenExpired) {
+          !options.hideErrorToast && toast.error((res.data as any).msg || '请求错误')
+          reject(res)
+        }
       },
       // 响应失败
       fail(err) {

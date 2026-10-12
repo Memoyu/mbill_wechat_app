@@ -147,9 +147,10 @@ function handleLedgerTap(ledger: any) {
   if (!ledger)
     return
 
-  uni.navigateTo({
-    url: `/pages/ledger/detail?ledgerId=${ledger.ledgerId}`,
-  })
+  // TODO 开发账本详情页后开放
+  // uni.navigateTo({
+  //   url: `/pages/ledger/detail?ledgerId=${ledger.ledgerId}`,
+  // })
 }
 
 function handleChangeColorAction() {

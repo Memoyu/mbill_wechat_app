@@ -48,13 +48,11 @@ watch (() => ledgerPickerStore.selecteds, () => {
 
 onLoad(() => {
   indexBillStore.loadYearSummary()
-  indexBillStore.loadIndexSummary()
 })
 
 function handleDateChange(e: any) {
   indexBillStore.setDate(e)
   paging.value.reload()
-  indexBillStore.loadIndexSummary()
 }
 
 function handleCalendarClick() {
@@ -72,6 +70,7 @@ function handleQuery(page: number) {
     // console.log('complete')
     paging.value.completeByNoMore(res.items, res.noMore)
   }).catch((res) => {
+    console.log('handleQuery error', res)
     paging.value.complete(false)
   })
 }
@@ -81,6 +80,7 @@ function handleQuery(page: number) {
   <!-- 处理滚动穿透 -->
   <page-meta :page-style="`overflow:${ledgersShow || userShow || settingsShow || chartSettingShow || dateSelectShow ? 'hidden' : 'visible'};`" />
   <draw-background1 />
+
   <z-paging ref="paging" v-model="indexBillStore.groups" :default-page-size="15" @query="handleQuery">
     <template #top>
       <!-- 顶部操作 -->
@@ -145,7 +145,7 @@ function handleQuery(page: number) {
       </view>
 
       <!-- 账单金额汇总统计 -->
-      <view v-if="indexBillStore.dateType === 'year-month' && dayjs(indexBillStore.date).isSame(dayjs(), 'month')" class="mx-3 rounded-xl bg-indigo-200/20 px-2 py-3">
+      <view v-if="indexBillStore.showChart" class="mx-3 rounded-xl bg-indigo-200/20 px-2 py-3">
         <summary-charts @more="chartSettingShow = true" />
       </view>
     </view>

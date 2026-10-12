@@ -83,6 +83,8 @@ export const useIndexBillStore = defineStore(
     const state = reactive({ ...initState })
     const pageSize = 15
 
+    const showChart = computed(() => state.dateType === 'year-month' && dayjs(state.date).isSame(dayjs(), 'month'))
+
     const getDateRange = () => {
       const date = dayjs(state.date)
       let beginDate = date.startOf('date')
@@ -99,54 +101,17 @@ export const useIndexBillStore = defineStore(
       return { beginDate: beginDate.format('YYYY-MM-DD 00:00:00'), endDate: endDate.format('YYYY-MM-DD 23:59:59') }
     }
 
-    /**
-     * 加载账单
-     * @param query 查询参数
-     */
-    const loadBills = async (page: number) => {
-      if (page === 1) {
-        state.groups = []
-      }
-
-      const res = await pageBill({
-        ...getDateRange(),
-        ledgerIds: ledgerPickerStore.selecteds,
-        size: pageSize,
-        page,
-      })
-      // 组合数据
-      // 新增组交给z-paging处理
-      let items: IBillDateGroup[] = []
-      if (state.groups.length === 0) {
-        items = res.items
-      }
-      else {
-        for (let i = 0; i < res.items.length; i++) {
-          const g = res.items[i]
-          const target = state.groups.find(i => dayjs(i.date).isSame(dayjs(g.date), 'date'))
-          if (target) {
-            target.items.push(...g.items)
-            target.items.sort((a, b) => dayjs(a.date).isBefore(dayjs(b.date)) ? 1 : -1)
-          }
-          else {
-            items.push(g)
-          }
-        }
-      }
-
-      return { items, noMore: page * pageSize >= res.total }
-    }
-
-    const loadSummary = async () => {
-      const res = await summaryAmountBill({
+    const loadSummary = () => {
+      summaryAmountBill({
         ...getDateRange(),
         series: 0,
         ledgerIds: ledgerPickerStore.selecteds,
+      }).then((res) => {
+        state.summary = res.summary
       })
-      state.summary = res.summary
     }
 
-    const loadCharts = async () => {
+    const loadCharts = () => {
       const dt = settingsStore.index.charts.date
       const type = settingsStore.index.charts.type
 
@@ -163,17 +128,69 @@ export const useIndexBillStore = defineStore(
         beginDate = dayjs().subtract(14, 'day').format('YYYY-MM-DD')
       }
 
-      const res = await summaryAmountBill({
+      summaryAmountBill({
         beginDate,
         endDate,
         type,
         series: 2,
         ledgerIds: ledgerPickerStore.selecteds,
+      }).then((res) => {
+        state.charts = {
+          summary: { income: res.summary.income, expend: res.summary.expend },
+          items: res.items,
+        }
       })
-      state.charts = {
-        summary: { income: res.summary.income, expend: res.summary.expend },
-        items: res.items,
-      }
+    }
+
+    /**
+     * 加载账单
+     * @param query 查询参数
+     */
+    const loadBills = (page: number) => {
+      return new Promise<{ items: IBillDateGroup[], noMore: boolean }>((resolve, reject) => {
+        if (page === 1) {
+          state.groups = []
+          loadSummary()
+          // 展示chart时才加载数据
+          if (showChart.value)
+            loadCharts()
+        }
+
+        pageBill({
+          ...getDateRange(),
+          ledgerIds: ledgerPickerStore.selecteds,
+          size: pageSize,
+          page,
+        }).then((res) => {
+          // 组合数据
+          // 新增组交给z-paging处理
+          let items: IBillDateGroup[] = []
+          if (state.groups.length === 0) {
+            items = res.items
+          }
+          else {
+            for (let i = 0; i < res.items.length; i++) {
+              const g = res.items[i]
+              const target = state.groups.find(i => dayjs(i.date).isSame(dayjs(g.date), 'date'))
+              if (target) {
+                // 去重：过滤掉已存在的账单，避免同一日期组内出现重复 billId
+                const existingIds = new Set(target.items.map(item => item.billId))
+                const newItems = g.items.filter(item => !existingIds.has(item.billId))
+                if (newItems.length > 0) {
+                  target.items.push(...newItems)
+                  target.items.sort((a, b) => dayjs(a.date).isBefore(dayjs(b.date)) ? 1 : -1)
+                }
+              }
+              else {
+                items.push(g)
+              }
+            }
+          }
+          resolve({ items, noMore: page * pageSize >= res.total })
+        }).catch((err) => {
+          reject(err)
+        })
+      })
     }
 
     const loadYearSummary = async () => {
@@ -185,14 +202,6 @@ export const useIndexBillStore = defineStore(
         ledgerIds: [], // 所有账本
       })
       state.yearSummary = res.summary
-    }
-
-    /**
-     * 初始化加载首页数据
-     */
-    const loadIndexSummary = () => {
-      loadSummary()
-      loadCharts()
     }
 
     /**
@@ -429,7 +438,7 @@ export const useIndexBillStore = defineStore(
 
     return {
       ...toRefs(state),
-      loadIndexSummary,
+      showChart,
       loadBills,
       loadSummary,
       loadCharts,

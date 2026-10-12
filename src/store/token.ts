@@ -9,6 +9,9 @@ import {
 } from '@/api/auth'
 import { useUserStore } from './user'
 
+// 登录锁，防止并发重复调用
+let loginLock: Promise<any> | null = null
+
 // 初始化状态
 const tokenInfoState = {
   accessToken: '',
@@ -111,40 +114,75 @@ export const useTokenStore = defineStore(
     })
 
     /**
-     * 微信登录
-     * 有的时候后端会用一个接口返回token和用户信息，有的时候会分开2个接口，一个获取token，一个获取用户信息
-     * （各有利弊，看业务场景和系统复杂度），这里使用2个接口返回的来模拟
-     * @returns 登录结果
+     * 静默登录（启动时使用）
+     * 失败不弹提示，仅打印日志；通过 loginLock 防止并发重复调用
      */
-    const wxLogin = async () => {
-      try {
-        if (hasValidLogin.value)
-          return
+    const silentLogin = async () => {
+      // 如果已有登录锁，等待锁完成
+      if (loginLock) {
+        await loginLock
+        return
+      }
 
-        // 获取微信小程序登录的code
-        const code = await getWxCode()
-        console.log('微信登录-code: ', code)
-        const res = await fetchWxLogin(code)
-        console.log('微信登录-res: ', res)
-        await afterLogin(res)
-        // uni.showToast({
-        //   title: '登录成功',
-        //   icon: 'success',
-        // })
-        return res
-      }
-      catch (error) {
-        console.error('微信登录失败:', error)
-        uni.showToast({
-          title: '微信登录失败，请重试',
-          icon: 'error',
-        })
-        throw error
-      }
-      finally {
-        updateNowTime()
-      }
+      // 已登录则直接返回
+      if (hasValidLogin.value)
+        return
+
+      loginLock = (async () => {
+        try {
+          console.log('静默登录开始')
+          const code = await getWxCode()
+          const res = await fetchWxLogin(code)
+          await afterLogin(res)
+          return res
+        }
+        catch (error) {
+          console.error('静默登录失败:', error)
+          throw error
+        }
+        finally {
+          console.log('静默登录结束')
+          updateNowTime()
+          loginLock = null
+        }
+      })()
+
+      return loginLock
     }
+
+    // /**
+    //  * 微信登录
+    //  * 有的时候后端会用一个接口返回token和用户信息，有的时候会分开2个接口，一个获取token，一个获取用户信息
+    //  * （各有利弊，看业务场景和系统复杂度），这里使用2个接口返回的来模拟
+    //  * @returns 登录结果
+    //  */
+    // const wxLogin = async () => {
+    //   try {
+    //     console.log('微信登录开始')
+    //     if (hasValidLogin.value)
+    //       return
+
+    //     // 获取微信小程序登录的code
+    //     const code = await getWxCode()
+    //     console.log('微信登录-code: ', code)
+    //     const res = await fetchWxLogin(code)
+    //     console.log('微信登录-res: ', res)
+    //     await afterLogin(res)
+    //     return res
+    //   }
+    //   catch (error) {
+    //     console.error('微信登录失败:', error)
+    //     uni.showToast({
+    //       title: '微信登录失败，请重试',
+    //       icon: 'error',
+    //     })
+    //     throw error
+    //   }
+    //   finally {
+    //     console.log('微信登录结束')
+    //     updateNowTime()
+    //   }
+    // }
 
     /**
      * 退出登录 并 删除用户信息
@@ -152,7 +190,7 @@ export const useTokenStore = defineStore(
     const logout = async () => {
       try {
         // TODO 实现自己的退出登录逻辑
-        await fetchLogout()
+        // await fetchLogout()
       }
       catch (error) {
         console.error('退出登录失败:', error)
@@ -174,6 +212,7 @@ export const useTokenStore = defineStore(
 
     /**
      * 刷新token
+     * 刷新失败时自动清除旧凭据并尝试静默登录恢复
      * @returns 刷新结果
      */
     const refreshToken = async () => {
@@ -191,7 +230,15 @@ export const useTokenStore = defineStore(
       }
       catch (error) {
         console.error('刷新token失败:', error)
-        throw error
+        // 刷新失败，清除旧凭据并尝试静默登录恢复
+        await logout()
+        try {
+          await silentLogin()
+        }
+        catch (loginErr) {
+          console.error('静默登录恢复失败:', loginErr)
+          throw loginErr
+        }
       }
       finally {
         updateNowTime()
@@ -234,7 +281,8 @@ export const useTokenStore = defineStore(
 
     return {
       // 核心API方法
-      wxLogin,
+      silentLogin,
+      // wxLogin,
       logout,
 
       // 认证状态判断（最常用的）

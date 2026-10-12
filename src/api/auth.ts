@@ -36,5 +36,5 @@ export function wxLogin(data: { code: string }) {
  * @param refreshToken 刷新token
  */
 export function refreshToken(refreshToken: string) {
-  return http.post<IAuthLoginRes>('auth/refresh-token', { refreshToken })
+  return http.post<IAuthLoginRes>('auth/refresh-token', { refreshToken }, null, null, { hideErrorToast: true })
 }

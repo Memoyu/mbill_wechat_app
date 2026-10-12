@@ -26,12 +26,12 @@ function handleBillTap() {
 <template>
   <view class="text-sm" @tap="handleBillTap">
     <view class="mb-2 flex items-center justify-between">
-      <!-- 分类 -->
+      <!-- 账本、分类 -->
       <view class="flex items-center">
         <bill-icon :icon="bill.category.icon" :text="bill.category.name" size="36" />
         <view class="ml-2 flex flex-col gap-0.5">
-          <text>{{ bill.ledger.name }}</text>
-          <text>{{ bill.category.name }}</text>
+          <text class="font-semibold">{{ bill.ledger.name }}</text>
+          <text class="text-gray-500">{{ bill.category.name }}</text>
         </view>
       </view>
       <!-- 金额 -->
