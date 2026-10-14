@@ -25,6 +25,8 @@ const props = defineProps<{
   data: IBillSummaryAmount
 }>()
 
+const options = [...billOptions, '结余']
+
 const type = ref(0)
 const months = ref<CalendarMonthItem[]>([])
 const bgColor = ref<string>(billSecColors[0])
@@ -65,8 +67,8 @@ function getHeats(data: IBillSummaryAmount) {
   })
 }
 function handleMonthTap(m: number) {
-  showPopup.value = true
   month.value = m
+  showPopup.value = true
 }
 </script>
 
@@ -76,7 +78,7 @@ function handleMonthTap(m: number) {
       收支热力图
     </text>
     <view>
-      <mbill-segmented v-model="type" :options="[...billOptions, '结余']" />
+      <mbill-segmented v-model="type" :options="options" />
     </view>
   </view>
   <view class="grid grid-cols-4 gap-2 px-1 py-3">

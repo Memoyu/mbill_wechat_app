@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { GridSelectItem } from '../base/GridPickerView/GridPickerView.vue'
+import type { GridPickerOption, GridPickerOptionItem } from '../base/GridPickerView/GridPickerView.vue'
 import { getCategoryTop } from '@/api/category'
 import { useCategoryStore } from '@/store'
 
@@ -25,63 +25,14 @@ const initTypes: number[] = []
 
 const selectedExpend = ref('')
 const selectedIncome = ref('')
-const expends = ref<GridSelectItem[]>([])
-const incomes = ref<GridSelectItem[]>([])
-const expendTops = ref<GridSelectItem[]>([])
-const incomeTops = ref<GridSelectItem[]>([])
+const expendOption = ref<GridPickerOption>({ list: [] })
+const incomeOption = ref<GridPickerOption>({ list: [] })
 
 onMounted(() => {
-  if (props.showTop) {
-    getCategoryTop().then((res) => {
-      expendTops.value = (res.expends ?? []).map((a) => {
-        return {
-          id: a.categoryId,
-          name: a.name,
-          icon: a.icon,
-        } as GridSelectItem
-      })
-      incomeTops.value = (res.incomes ?? []).map((a) => {
-        return {
-          id: a.categoryId,
-          name: a.name,
-          icon: a.icon,
-        } as GridSelectItem
-      })
-    })
-  }
 })
 
 watch(() => type.value, (t) => {
-  // 是否已初始化过
-  if (initTypes.includes(t))
-    return
-
-  const categories = (t === 0 ? categoryStore.expends : categoryStore.incomes) || []
-  let list: GridSelectItem[] = []
-
-  // 分类列表
-  list = categories.map((a) => {
-    return {
-      id: a.categoryId,
-      name: a.name,
-      icon: a.icon,
-      childs: (a.childs ?? []).map((c) => {
-        return {
-          id: c.categoryId,
-          name: c.name,
-          icon: c.icon,
-        }
-      }),
-    } as GridSelectItem
-  })
-
-  if (t === 0) {
-    expends.value = list
-  }
-  else {
-    incomes.value = list
-  }
-  initTypes.push(t)
+  initCategories(t)
   // console.log('分类初始化完成', t)
 }, { immediate: true })
 
@@ -94,6 +45,57 @@ watch(() => selected.value, (s) => {
   else
     selectedIncome.value = s
 })
+
+function initCategories(t: number) {
+// 是否已初始化过
+  if (initTypes.includes(t))
+    return
+
+  const categories = (t === 0 ? categoryStore.expends : categoryStore.incomes) || []
+  // 分类列表
+  const list = categories.map((a) => {
+    return {
+      id: a.categoryId,
+      name: a.name,
+      icon: a.icon,
+      childs: (a.childs ?? []).map((c) => {
+        return {
+          id: c.categoryId,
+          name: c.name,
+          icon: c.icon,
+        }
+      }),
+    } as GridPickerOptionItem
+  })
+  initOption(list)
+
+  // 常用分类
+  if (props.showTop) {
+    getCategoryTop(t).then((res) => {
+      const tops = (res ?? []).map((a) => {
+        return {
+          id: a.categoryId,
+          name: a.name,
+          icon: a.icon,
+        } as GridPickerOptionItem
+      })
+      initOption(list, tops)
+    })
+  }
+
+  initTypes.push(t)
+}
+
+function initOption(list: GridPickerOptionItem[], tops?: GridPickerOptionItem[]) {
+  if (type.value === 0) {
+    expendOption.value = { list, tops }
+    selectedExpend.value = tops?.[0]?.id || list[0]?.id || ''
+  }
+  else {
+    incomeOption.value = { list, tops }
+    selectedIncome.value = tops?.[0]?.id || list[0]?.id || ''
+  }
+}
 
 function handleTabChange(change: any) {
   const { index } = change
@@ -120,11 +122,11 @@ function handleCategoryChange(item: any) {
 <template>
   <wd-tabs v-model="type" animated swipeable @change="handleTabChange">
     <wd-tab key="expend">
-      <grid-picker-view v-if="initTypes.includes(0)" v-model="selectedExpend" :scroll-height="height" :list="expends" :tops="expendTops" @change="handleCategoryChange" />
+      <grid-picker-view v-if="initTypes.includes(0)" v-model="selectedExpend" :scroll-height="height" :option="expendOption" @change="handleCategoryChange" />
     </wd-tab>
 
     <wd-tab key="income">
-      <grid-picker-view v-if="initTypes.includes(1)" v-model="selectedIncome" :scroll-height="height" :list="incomes" :tops="incomeTops" @change="handleCategoryChange" />
+      <grid-picker-view v-if="initTypes.includes(1)" v-model="selectedIncome" :scroll-height="height" :option="incomeOption" @change="handleCategoryChange" />
     </wd-tab>
   </wd-tabs>
 </template>

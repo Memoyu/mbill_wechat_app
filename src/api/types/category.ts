@@ -5,11 +5,6 @@ export interface IGroupCategory {
   incomes: ICategory[]
 }
 
-export interface ITopCategory {
-  expends: ICategory[]
-  incomes: ICategory[]
-}
-
 export interface ICategory {
   categoryId: string
   name: string

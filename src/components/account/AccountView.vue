@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { GridSelectItem } from '../base/GridPickerView/GridPickerView.vue'
+import type { GridPickerOption, GridPickerOptionItem } from '../base/GridPickerView/GridPickerView.vue'
 import { getAccountTop } from '@/api/account'
 import { useAccountStore } from '@/store'
 
@@ -22,27 +22,16 @@ const selected = defineModel<string>()
 
 const accountStore = useAccountStore()
 
-const tops = ref<GridSelectItem[]>([])
-const list = ref<GridSelectItem[]>([])
+const option = ref<GridPickerOption>({ list: [] })
 
 onMounted(() => {
-  initSelectItem()
+  initAccount()
 })
 
-function initSelectItem() {
-  if (props.showTop) {
-    getAccountTop().then((res) => {
-      tops.value = (res ?? []).map((a) => {
-        return {
-          id: a.accountId,
-          name: a.name,
-          icon: a.icon,
-        } as GridSelectItem
-      })
-    })
-  }
-
-  const accounts = accountStore.accounts.map((a) => {
+function initAccount() {
+  const op: GridPickerOption = { list: [] }
+  // 账户列表
+  op.list = accountStore.accounts.map((a) => {
     return {
       id: a.accountId,
       name: a.name,
@@ -52,11 +41,25 @@ function initSelectItem() {
           id: c.accountId,
           name: c.name,
           icon: c.icon,
-        } as GridSelectItem
+        } as GridPickerOptionItem
       }),
     }
   })
-  list.value = accounts
+  // 常用账户
+  if (props.showTop) {
+    getAccountTop().then((res) => {
+      op.tops = (res ?? []).map((a) => {
+        return {
+          id: a.accountId,
+          name: a.name,
+          icon: a.icon,
+        } as GridPickerOptionItem
+      })
+      option.value = { ...op }
+    })
+  }
+
+  option.value = op
 }
 
 function handleAccountItemTap(item: any) {
@@ -77,7 +80,7 @@ function handleAccountItemTap(item: any) {
 </script>
 
 <template>
-  <grid-picker-view v-model="selected" :list="list" :tops="tops" :scroll-height="height" @change="handleAccountItemTap" />
+  <grid-picker-view v-model="selected" :option="option" :scroll-height="height" @change="handleAccountItemTap" />
 </template>
 
 <style lang="scss" scoped>

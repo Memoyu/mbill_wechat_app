@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { GridSelectItem } from './GridPickerView.vue'
+import type { GridPickerOptionItem } from './GridPickerView.vue'
 
 defineOptions({
   options: {
@@ -10,7 +10,7 @@ defineOptions({
 })
 
 const props = defineProps<{
-  item: GridSelectItem
+  item: GridPickerOptionItem
   selected: string
   height: number
   expand?: boolean

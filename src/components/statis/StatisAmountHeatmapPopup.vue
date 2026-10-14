@@ -29,6 +29,7 @@ const props = withDefaults(defineProps<{
 
 const { proxy } = getCurrentInstance() as any
 const scrollHeight = 70
+const options = [...billOptions, '结余']
 
 const show = defineModel<boolean>()
 
@@ -55,10 +56,6 @@ watch(() => props.data, (newData) => {
     // console.log(months.value, 'months')
 }, { deep: true })
 
-watch(() => props.month, (m) => {
-  targetScroll.value = monthTops.value[m - 1]
-})
-
 watch(() => props.type, (t) => {
   type.value = t
 })
@@ -68,7 +65,7 @@ watch(() => type.value, () => {
 })
 
 function handleAfterEnter() {
-  // console.log(months.value, 'months')
+  // console.log(months.value, monthTops.value, 'months')
   segMounted.value = true
   if (monthTops.value.length < 1) {
     uni
@@ -89,6 +86,9 @@ function handleAfterEnter() {
       })
       .exec()
   }
+  else {
+    targetScroll.value = monthTops.value[props.month - 1]
+  }
 }
 
 function initCalendar() {
@@ -107,6 +107,7 @@ function initCalendar() {
 
   // console.log(caleData.value, 'caleData')
 }
+
 function getBillData(data: IBillSummaryAmount) {
   return data.items.map((item) => {
     const { date, expend, income } = item.summary
@@ -121,7 +122,7 @@ function getBillData(data: IBillSummaryAmount) {
     <template #action>
       <view class="flex items-center justify-between">
         <view class="max-w-max rounded-full bg-gray-200/50 px-3 py-1">
-          <mbill-segmented v-if="segMounted" v-model="type" :options="[...billOptions, '结余']" />
+          <mbill-segmented v-if="segMounted" v-model="type" :options="options" />
         </view>
       </view>
     </template>

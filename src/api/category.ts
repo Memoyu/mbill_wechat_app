@@ -1,4 +1,4 @@
-import type { ICategory, ICreateCategory, IGroupCategory, ITopCategory, IUpdateCategory, IUpdateCategorySort } from './types/category'
+import type { ICategory, ICreateCategory, IGroupCategory, IUpdateCategory, IUpdateCategorySort } from './types/category'
 import { http } from '@/utils/http'
 
 /**
@@ -39,6 +39,6 @@ export function getCategoryGroup() {
 /**
  * 获取常用账单分类列表
  */
-export function getCategoryTop() {
-  return http.get<ITopCategory>('category/list/top')
+export function getCategoryTop(type: number) {
+  return http.get<ICategory[]>('category/list/top', { type })
 }

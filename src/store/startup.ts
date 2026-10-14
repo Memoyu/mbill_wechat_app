@@ -1,14 +1,13 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import {
-  useAccountStore,
-  useCategoryStore,
-  useLedgerPickerStore,
-  useLedgerStore,
-  useTagStore,
-  useTokenStore,
-} from '@/store'
-import { useIconStore } from '@/store/icon'
+
+import { useAccountStore } from './account'
+import { useCategoryStore } from './category'
+import { useIconStore } from './icon'
+import { useLedgerStore } from './ledger'
+import { useLedgerPickerStore } from './ledgerPicker'
+import { useTagStore } from './tag'
+import { useTokenStore } from './token'
 
 export const useStartupStore = defineStore('startup', () => {
   const loading = ref(true)
