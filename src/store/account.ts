@@ -11,9 +11,12 @@ import {
 
 // 初始化状态
 const initState: {
-  accounts: IAccount[]
+  tops: IAccount[]
+  list: IAccount[]
+
 } = {
-  accounts: [],
+  tops: [],
+  list: [],
 }
 
 export const useAccountStore = defineStore(
@@ -26,7 +29,8 @@ export const useAccountStore = defineStore(
      */
     const loadAccounts = async () => {
       const res = await getAccountGroup()
-      state.accounts = res.items
+      state.tops = res.tops
+      state.list = res.list
     }
 
     /**
@@ -40,7 +44,7 @@ export const useAccountStore = defineStore(
       account.childs = []
 
       if (parentId) {
-        const parent = state.accounts.find(item => item.accountId === parentId)
+        const parent = state.list.find(item => item.accountId === parentId)
         if (parent) {
           parent.childs = parent.childs || []
           parent.childs.push(account)
@@ -48,7 +52,7 @@ export const useAccountStore = defineStore(
       }
       else {
         // 添加到根账户下
-        state.accounts.push(account)
+        state.list.push(account)
       }
     }
 
@@ -66,14 +70,14 @@ export const useAccountStore = defineStore(
       })
       fetchSortAccount(sorts).then(() => {
         if (parentId) {
-          const parent = state.accounts.find(item => item.accountId === parentId)
+          const parent = state.list.find(item => item.accountId === parentId)
           if (parent) {
             parent.childs = accounts
           }
         }
         else {
           // 覆盖根账户
-          state.accounts = accounts
+          state.list = accounts
         }
       })
     }
@@ -87,7 +91,7 @@ export const useAccountStore = defineStore(
       // 更新数据
       await fetchUpdateAccount(update)
 
-      let list = state.accounts
+      let list = state.list
       // 添加子账户到指定父类下
       if (parentId) {
         const parent = list.find(item => item.accountId === parentId)
@@ -113,7 +117,7 @@ export const useAccountStore = defineStore(
      */
     const deleteAccount = async (accountId: string, parentId?: string) => {
       await fetchDeleteAccount(accountId)
-      let list = state.accounts
+      let list = state.list
       // 添加子账户到指定父类下
       if (parentId) {
         const parent = list.find(item => item.accountId === parentId)

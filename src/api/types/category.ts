@@ -1,8 +1,13 @@
 import type { BillTypeEnum } from '@/typings'
 
 export interface IGroupCategory {
-  expends: ICategory[]
-  incomes: ICategory[]
+  expends: IGroupCategoryItem
+  incomes: IGroupCategoryItem
+}
+
+export interface IGroupCategoryItem {
+  tops: ICategory[]
+  list: ICategory[]
 }
 
 export interface ICategory {

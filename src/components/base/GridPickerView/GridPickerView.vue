@@ -1,16 +1,4 @@
 <script setup lang="ts">
-export interface GridPickerOption {
-  list: GridPickerOptionItem[]
-  tops?: GridPickerOptionItem[]
-}
-
-export interface GridPickerOptionItem {
-  id: string
-  name: string
-  icon?: string
-  childs: GridPickerOptionItem[]
-}
-
 defineOptions({
   options: {
     addGlobalClass: true,
@@ -19,17 +7,22 @@ defineOptions({
   },
 })
 const props = withDefaults(defineProps<{
-  option: GridPickerOption
+  option: {
+    list: any[]
+    tops?: any[]
+  }
+  value: string
+  idKey?: string
   scrollHeight?: string
   itmeHeight?: number
   column?: number
 }>(), {
+  idKey: 'id',
   column: 5,
   itmeHeight: 68,
   scrollHeight: '40vh',
 })
-const emit = defineEmits(['change'])
-const selected = defineModel<string>()
+const emit = defineEmits(['change', 'update:value'])
 
 const { proxy } = getCurrentInstance() as any
 
@@ -39,13 +32,13 @@ const scrollTarget = ref(0)
 const itemMaps: any = {}
 
 const itmeHeight = ref(70)
-const rows = ref<GridPickerOptionItem[][]>([])
+const rows = ref<any[][]>([])
 const rowIndex = ref(-1)
-const rowChilds = ref<GridPickerOptionItem[][]>([])
+const rowChilds = ref<any[][]>([])
 const rowChildHeights = ref<number[]>([])
+const tops = ref<any[]>([])
 
-const tops = ref<GridPickerOptionItem[]>([])
-const currentId = ref()
+const currentId = ref(props.value)
 const currentParentId = ref()
 
 const itemsBoxStyle = computed(() => {
@@ -62,24 +55,24 @@ watch(() => props.itmeHeight, (nh) => {
   itmeHeight.value = nh
 }, { immediate: true })
 
-watch(() => props.option, (option) => {
-  console.log(option)
-  if (!option)
+watch(() => props.option, (op) => {
+  // console.log(op)
+  if (!op || !op.list || op.list.length === 0)
     return
-  // 常用
-  tops.value = option.tops || []
 
+  // 常用
+  tops.value = op.tops
   // 全部
-  const list = option.list || []
-  const rs: GridPickerOptionItem[][] = []
+  const dataList = op.list
+  const rs: any[][] = []
   let ridx = 0
   // 构建行列数据，以及选中项
-  for (let i = 0; i < list.length; i += props.column) {
-    const ris = list.slice(i, i + props.column)
+  for (let i = 0; i < dataList.length; i += props.column) {
+    const ris = dataList.slice(i, i + props.column)
     ris.forEach((ri) => {
-      itemMaps[ri.id] = { ridx, item: ri }
+      itemMaps[ri[props.idKey]] = { ridx, item: ri }
       ri.childs.forEach((ric) => {
-        itemMaps[ric.id] = { ridx, item: ric, parent: ri }
+        itemMaps[ric[props.idKey]] = { ridx, item: ric, parent: ri }
       })
     })
     ridx++
@@ -89,32 +82,37 @@ watch(() => props.option, (option) => {
     rowChildHeights.value.push(0)
   }
   rows.value = rs
+
+  initSelected()
 }, { immediate: true, deep: true })
 
-watch(() => selected.value, (newValue) => {
-  // console.log(newValue, 'base picker watch selected')
+watch(() => props.value, (newValue) => {
+  if (!newValue)
+    return
+
   selectedItem(newValue)
-  scrollToTarget(selected.value)
+  scrollToTarget(newValue)
 }, { immediate: true })
 
 /**
  * 初始化选中项, 默认选中第一项
  */
 function initSelected() {
-  if (selected.value)
+  if (props.value)
     return
 
+  let selected = props.value
   if (hasTop.value) {
-    selected.value = tops.value[0].id
+    selected = tops.value[0][props.idKey]
   }
   else {
     const list = props.option.list ?? []
     if (!list.length)
       return
-    selected.value = list[0].id
-    // 初始化，且为非常用项时才需要滚动到位置
-    scrollToTarget(selected.value)
+    selected = list[0][props.idKey]
   }
+  console.log('initSelected', selected)
+  selectedItem(selected)
 }
 
 function scrollToTarget(id: string) {
@@ -134,16 +132,16 @@ function scrollToTarget(id: string) {
  * 常用项点击
  * @param item 常用项
  */
-function handleTopItemTap(item: GridPickerOptionItem) {
-  selected.value = item.id
+function handleTopItemTap(item: any) {
+  selectedItem(item[props.idKey])
 }
 
 /**
  * 列表项点击
  * @param item 列表项
  */
-function handleListItemTap(item: GridPickerOptionItem) {
-  selected.value = item.id
+function handleListItemTap(item: any) {
+  selectedItem(item[props.idKey])
 }
 
 /**
@@ -170,9 +168,10 @@ function selectedItem(id: string) {
   }
   rowIndex.value = rowIdx
   currentId.value = id
-  currentParentId.value = currentParent.id
+  currentParentId.value = currentParent[props.idKey]
 
   // console.log(id, item, parent, 'base picker selected')
+  emit('update:value', id)
   emit('change', { id, select: item, parent })
 }
 
@@ -181,7 +180,7 @@ function selectedItem(id: string) {
  * @param rowIdx 行索引
  * @returns 子项内容高度
  */
-function calcChildContentHeight(childs: GridPickerOptionItem[]) {
+function calcChildContentHeight(childs: any[]) {
   // console.log(rowIdx, rowIndex.value, childs.value, 'getChildContentHeight')
   if (!childs || childs.length < 1)
     return 0
@@ -189,7 +188,7 @@ function calcChildContentHeight(childs: GridPickerOptionItem[]) {
   const row = Math.ceil(childs.length / props.column)
   let ih = row * itmeHeight.value + 16 // 16 为padding(p-2)
   ih = ih + ((row - 1) * 8) // 加上行间隔
-  console.log(row, ih, 'row')
+  // console.log(row, ih, 'row')
   return ih
 }
 </script>
@@ -203,8 +202,12 @@ function calcChildContentHeight(childs: GridPickerOptionItem[]) {
           常用
         </view>
         <view :style="itemsBoxStyle">
-          <view v-for="top in tops" :key="`top-${top.id}`" @tap="handleTopItemTap(top)">
-            <grid-picker-view-item :height="itmeHeight" :item="top" :selected="currentId" />
+          <view v-for="top in tops" :key="`top-${top[props.idKey]}`" @tap="handleTopItemTap(top)">
+            <grid-picker-view-item
+              :height="itmeHeight"
+              :item="top"
+              :is-selected="top[props.idKey] === currentId"
+            />
           </view>
         </view>
         <view class="mt-3 pb-2 font-semibold">
@@ -215,15 +218,24 @@ function calcChildContentHeight(childs: GridPickerOptionItem[]) {
       <view class="space-y-3">
         <view v-for="(items, rowIdx) in rows" :key="rowIdx" class="flex flex-col space-y-3">
           <view :style="itemsBoxStyle">
-            <view v-for="item in items" :id="`ITEM-${item.id}`" :key="item.id" @tap="handleListItemTap(item)">
-              <grid-picker-view-item :height="itmeHeight" :expand="item.id === currentParentId" :item="item" :selected="currentId" />
+            <view v-for="item in items" :id="`ITEM-${item[props.idKey]}`" :key="item[props.idKey]" @tap="handleListItemTap(item)">
+              <grid-picker-view-item
+                :height="itmeHeight"
+                :expand="item[props.idKey] === currentParentId"
+                :is-selected="item[props.idKey] === currentId"
+                :item="item"
+              />
             </view>
           </view>
 
           <view class="transition-all duration-300 ease-in-out">
             <view v-if="rowIdx === rowIndex" class="rounded-lg bg-gray-200 p-2" :style="{ ...itemsBoxStyle, height: `${rowChildHeights[rowIdx]}px` }">
-              <view v-for="child in rowChilds[rowIdx]" :id="`ITEM-${child.id}`" :key="child.id" @tap="handleListItemTap(child)">
-                <grid-picker-view-item :height="itmeHeight" :item="child" :selected="currentId" />
+              <view v-for="child in rowChilds[rowIdx]" :id="`ITEM-${child[props.idKey]}`" :key="child[props.idKey]" @tap="handleListItemTap(child)">
+                <grid-picker-view-item
+                  :height="itmeHeight"
+                  :is-selected="child[props.idKey] === currentId"
+                  :item="child"
+                />
               </view>
             </view>
           </view>

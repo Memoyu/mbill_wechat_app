@@ -1,5 +1,6 @@
 export interface IGroupAccount {
-  items: IAccount[]
+  tops: IAccount[]
+  list: IAccount[]
 }
 
 export interface IAccount {

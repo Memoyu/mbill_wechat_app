@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import type { GridPickerOption, GridPickerOptionItem } from '../base/GridPickerView/GridPickerView.vue'
-import { getAccountTop } from '@/api/account'
 import { useAccountStore } from '@/store'
 
 defineOptions({
@@ -22,45 +20,10 @@ const selected = defineModel<string>()
 
 const accountStore = useAccountStore()
 
-const option = ref<GridPickerOption>({ list: [] })
-
-onMounted(() => {
-  initAccount()
-})
-
-function initAccount() {
-  const op: GridPickerOption = { list: [] }
-  // 账户列表
-  op.list = accountStore.accounts.map((a) => {
-    return {
-      id: a.accountId,
-      name: a.name,
-      icon: a.icon,
-      childs: (a.childs ?? []).map((c) => {
-        return {
-          id: c.accountId,
-          name: c.name,
-          icon: c.icon,
-        } as GridPickerOptionItem
-      }),
-    }
-  })
-  // 常用账户
-  if (props.showTop) {
-    getAccountTop().then((res) => {
-      op.tops = (res ?? []).map((a) => {
-        return {
-          id: a.accountId,
-          name: a.name,
-          icon: a.icon,
-        } as GridPickerOptionItem
-      })
-      option.value = { ...op }
-    })
-  }
-
-  option.value = op
-}
+const option = computed(() => ({
+  list: accountStore.list,
+  tops: props.showTop ? accountStore.tops : [],
+}))
 
 function handleAccountItemTap(item: any) {
   // console.log('账户选中', item)
@@ -71,16 +34,18 @@ function handleAccountItemTap(item: any) {
     name = `${parent.name}-${name}`
   }
 
-  emit('change', {
-    accountId: select.id,
-    name,
-    icon: select.icon,
-  })
+  emit('change', select)
 }
 </script>
 
 <template>
-  <grid-picker-view v-model="selected" :option="option" :scroll-height="height" @change="handleAccountItemTap" />
+  <grid-picker-view
+    :value="selected"
+    :option="option"
+    :scroll-height="height"
+    id-key="accountId"
+    @change="handleAccountItemTap"
+  />
 </template>
 
 <style lang="scss" scoped>

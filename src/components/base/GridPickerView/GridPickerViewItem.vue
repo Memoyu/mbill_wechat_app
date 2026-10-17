@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import type { GridPickerOptionItem } from './GridPickerView.vue'
-
 defineOptions({
   options: {
     addGlobalClass: true,
@@ -10,21 +8,21 @@ defineOptions({
 })
 
 const props = defineProps<{
-  item: GridPickerOptionItem
-  selected: string
+  item: any
+  isSelected: boolean
   height: number
   expand?: boolean
 }>()
 
-const isSelected = computed(() => props.selected === props.item.id)
-const hasChilds = computed(() => props.item.childs && props.item.childs.length > 0)
+// const isSelected = computed(() => props.selected === props.item.id)
+const hasChild = computed(() => props.item.childs && props.item.childs.length > 0)
 </script>
 
 <template>
   <view class="relative" :style="{ height: `${height}px` }">
     <view class="h-full flex flex-col justify-center gap-1 px-1">
       <view class="flex justify-center">
-        <view class="relative" :class="[hasChilds ? 'grid-select-item-has-more' : '']">
+        <view class="relative" :class="[hasChild ? 'grid-select-item-has-more' : '']">
           <bill-icon :icon="item.icon" :text="item.name" />
         </view>
       </view>
@@ -49,7 +47,7 @@ const hasChilds = computed(() => props.item.childs && props.item.childs.length >
 
     <!-- 父项展开下标 -->
     <wd-icon
-      v-if="expand && hasChilds"
+      v-if="expand && hasChild"
       name="caret-up"
       size="21"
       custom-class="text-gray-200 absolute bottom-0 left-1/2 z-10 flex translate-y-full items-center justify-center -translate-x-1/2"

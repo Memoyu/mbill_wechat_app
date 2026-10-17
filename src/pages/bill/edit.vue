@@ -236,7 +236,7 @@ function handleLedgerChange(ledger: ILedger) {
  * 分类选择
  */
 function handleCategoryChange(category: IBillCategory) {
-  // console.log(category, 'handleCategoryChange')
+  console.log(category, 'handleCategoryChange')
   bill.value.category = category
 }
 
@@ -292,8 +292,8 @@ function handleTagSelectConfirm(items: ITag[]) {
 
   <!-- 账单分类 -->
   <category-view
-    v-model="bill.category.categoryId"
     v-model:type="bill.type"
+    :value="bill.category.categoryId"
     show-top
     :height="`${cpHeight}px`"
     @change="handleCategoryChange"
