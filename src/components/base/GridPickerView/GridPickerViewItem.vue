@@ -12,6 +12,7 @@ const props = defineProps<{
   isSelected: boolean
   height: number
   expand?: boolean
+  cssIcon?: boolean
 }>()
 
 // const isSelected = computed(() => props.selected === props.item.id)
@@ -23,7 +24,7 @@ const hasChild = computed(() => props.item.childs && props.item.childs.length > 
     <view class="h-full flex flex-col justify-center gap-1 px-1">
       <view class="flex justify-center">
         <view class="relative" :class="[hasChild ? 'grid-select-item-has-more' : '']">
-          <bill-icon :icon="item.icon" :text="item.name" />
+          <bill-icon :icon="item.icon" :text="item.name" :css-icon="cssIcon" />
         </view>
       </view>
       <view class="truncate text-center text-xs">

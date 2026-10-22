@@ -75,6 +75,15 @@ watch(() => editShow.value, (val) => {
     editMounted.value = true
 })
 
+onLoad((options: any) => {
+  if (options?.type !== undefined) {
+    const t = Number(options.type)
+    if (t === BillTypeEnum.Expend || t === BillTypeEnum.Income) {
+      type.value = t
+    }
+  }
+})
+
 onMounted(() => {
   // 进入管理页面重新加载一下数据
   categoryStore.loadCategories()

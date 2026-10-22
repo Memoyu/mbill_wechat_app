@@ -15,6 +15,7 @@ const props = withDefaults(defineProps<{
   text?: string
   color?: string
   size?: string
+  cssIcon?: boolean
 }>(), {
   color: 'inherit',
   size: '32px',
@@ -37,12 +38,13 @@ const style = computed(() => {
   return `${objToStyle(style)}`
 })
 
-const isImage = computed(() => props.icon && props.icon.length > 0)
+const isImage = computed(() => !props.cssIcon && props.icon && props.icon.length > 0)
 </script>
 
 <template>
   <view :style="style" class="category-icon-box" :class="[isImage ? '' : 'bg-indigo-300/40']">
     <image v-if="isImage" mode="aspectFill" :src="icon" :style="style" :lazy-load="true" />
+    <text v-else-if="cssIcon" class="iconfont text-white font-semibold" :class="[icon]" />
     <text v-else class="text-white font-semibold">{{ (text && text.length > 0) ? text.substring(0, 1) : '' }}</text>
   </view>
 </template>

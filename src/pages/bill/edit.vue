@@ -236,7 +236,7 @@ function handleLedgerChange(ledger: ILedger) {
  * 分类选择
  */
 function handleCategoryChange(category: IBillCategory) {
-  console.log(category, 'handleCategoryChange')
+  // console.log(category, 'handleCategoryChange')
   bill.value.category = category
 }
 
@@ -292,8 +292,8 @@ function handleTagSelectConfirm(items: ITag[]) {
 
   <!-- 账单分类 -->
   <category-view
+    v-model="bill.category.categoryId"
     v-model:type="bill.type"
-    :value="bill.category.categoryId"
     show-top
     :height="`${cpHeight}px`"
     @change="handleCategoryChange"
@@ -323,19 +323,19 @@ function handleTagSelectConfirm(items: ITag[]) {
           <text class="ml-1">{{ bill.account.name }}</text>
         </view>
 
-        <view class="bill-attr-box-item" @tap="showTags = true">
+        <view class="bill-attr-box-item-max" @tap="showTags = true">
           <!-- 标签 -->
           <wd-icon name="tag" size="16" />
           <text class="ml-1">标签</text>
         </view>
 
-        <view class="bill-attr-box-item" @tap="handleAddressEditShow">
+        <view class="bill-attr-box-item-max" @tap="handleAddressEditShow">
           <!-- 地点 -->
           <wd-icon name="location" size="16" />
           <text class="truncate-start truncate">{{ bill.address || '地址' }}</text>
         </view>
 
-        <view class="bill-attr-box-item" @tap="handleRemarkEditShow">
+        <view class="bill-attr-box-item-max" @tap="handleRemarkEditShow">
           <!-- 备注 -->
           <wd-icon name="message" size="16" />
           <text class="truncate">{{ bill.remark || '备注' }}</text>
@@ -365,6 +365,10 @@ function handleTagSelectConfirm(items: ITag[]) {
 .bill-attr-box {
   @apply: flex items-center gap-2 whitespace-nowrap;
   &-item {
+    @apply: flex items-center justify-center py-1.5 px-2.5 bg-indigo-200/40 rounded-full gap-0.5;
+  }
+
+  &-item-max {
     @apply: flex items-center justify-center py-1.5 px-2.5 bg-indigo-200/40 rounded-full gap-0.5 max-w-30;
   }
 }

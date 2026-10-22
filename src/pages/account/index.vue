@@ -53,7 +53,7 @@ const scrollHeight = ref(300)
 const actionShow = ref(false)
 const currentAccount = ref<IAccount>()
 
-const accounts = computed(() => accountStore.accounts)
+const accounts = computed(() => accountStore.list)
 
 const editAccount = ref<{
   isCreate: boolean

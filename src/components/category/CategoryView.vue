@@ -10,25 +10,33 @@ defineOptions({
 })
 
 const props = defineProps<{
-  value: string
   height: string
   showTop?: boolean
 }>()
-const emit = defineEmits(['change', 'update:value'])
+const emit = defineEmits(['change'])
+const model = defineModel<string>({ default: '' })
 const type = defineModel<number>('type', { default: 0 })
 
 const categoryStore = useCategoryStore()
 
-const expend = ref('')
-const income = ref('')
+const expend = ref<string>('')
+const income = ref<string>('')
 const expendOption = computed(() => ({ list: categoryStore.expends, tops: props.showTop ? categoryStore.expTops : [] }))
 const incomeOption = computed(() => ({ list: categoryStore.incomes, tops: props.showTop ? categoryStore.incTops : [] }))
 
 // const currentId = computed(() => type.value === 0 ? selectedExpend.value : selectedIncome.value)
 
+watch(() => model.value, (newValue) => {
+  if (type.value === 0)
+    expend.value = newValue
+  else
+    income.value = newValue
+})
+
 function handleTabChange(change: any) {
   const { index } = change
   type.value = index
+  model.value = index === 0 ? expend.value : income.value // 设置当前选中分类
 }
 
 function handleCategoryChange(item: any) {
@@ -44,9 +52,16 @@ function handleCategoryChange(item: any) {
     name = `${parent.name}-${name}`
   }
 
-  // emit('update:value', select.categoryId)
-  emit('change', select)
-  console.log('选中分类', item, expend.value, income.value)
+  if (select.type === type.value) {
+    emit('change', { ...select, name })
+  }
+  // console.log('选中分类', item, expend.value, income.value)
+}
+
+function handleManage() {
+  uni.navigateTo({
+    url: `/pages/category/index?type=${type.value}`,
+  })
 }
 </script>
 
@@ -54,21 +69,23 @@ function handleCategoryChange(item: any) {
   <wd-tabs v-model="type" animated swipeable @change="handleTabChange">
     <wd-tab key="expend">
       <grid-picker-view
-        :value="expend"
+        v-model="expend"
         :scroll-height="height"
         :option="expendOption"
         id-key="categoryId"
         @change="handleCategoryChange"
+        @manage="handleManage"
       />
     </wd-tab>
 
     <wd-tab key="income">
       <grid-picker-view
-        :value="income"
+        v-model="income"
         :scroll-height="height"
         :option="incomeOption"
         id-key="categoryId"
         @change="handleCategoryChange"
+        @manage="handleManage"
       />
     </wd-tab>
   </wd-tabs>

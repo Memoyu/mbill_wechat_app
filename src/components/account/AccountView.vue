@@ -34,13 +34,13 @@ function handleAccountItemTap(item: any) {
     name = `${parent.name}-${name}`
   }
 
-  emit('change', select)
+  emit('change', { ...select, name })
 }
 </script>
 
 <template>
   <grid-picker-view
-    :value="selected"
+    v-model="selected"
     :option="option"
     :scroll-height="height"
     id-key="accountId"
