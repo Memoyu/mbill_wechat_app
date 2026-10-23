@@ -46,6 +46,7 @@ const toast = useGlobalToast()
 const dialog = useGlobalDialog()
 const accountStore = useAccountStore()
 
+const iconPickerRef = ref()
 const editShow = ref(false)
 const editMounted = ref(false)
 const editTitle = ref('创建账户')
@@ -202,7 +203,7 @@ function createChildAccount(parent: IAccount) {
 /**
  * 分类图标选择
  */
-function handleIconSelected(icon: IIcon) {
+function handleIconChange(icon: IIcon) {
   editAccount.value.icon = icon.url
   // console.log('handleIconSelected', icon, editCategory.value)
 }
@@ -314,17 +315,23 @@ function handleDeleteAction() {
   />
 
   <!-- 编辑账户 -->
-  <bottom-popup v-model="editShow" :title="editTitle" confirm-text="确认" show-cancel @confirm="handleEditConfirm">
+  <bottom-popup
+    v-model="editShow"
+    auto-height
+    show-cancel
+    :title="editTitle"
+    confirm-text="确认"
+    @confirm="handleEditConfirm"
+    @after-enter="iconPickerRef.scrollIntoView()"
+  >
     <template #title>
-      <view class="flex items-center gap-2 px-2 pb-2 pt-4">
+      <view class="flex items-center gap-2 px-2">
         <bill-icon :icon="editAccount.icon" :text="editAccount.name" />
         <wd-input v-model="editAccount.name" custom-class="w-full" type="text" placeholder="账户名称" />
       </view>
     </template>
 
-    <view v-if="editMounted">
-      <icon-picker @selected="handleIconSelected" />
-    </view>
+    <icon-picker ref="iconPickerRef" :path="editAccount.icon" @change="handleIconChange" />
   </bottom-popup>
 </template>
 

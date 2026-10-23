@@ -47,6 +47,7 @@ const toast = useGlobalToast()
 const dialog = useGlobalDialog()
 const categoryStore = useCategoryStore()
 
+const iconPickerRef = ref()
 const editShow = ref(false)
 const editMounted = ref(false)
 const editTitle = ref('创建分类')
@@ -223,7 +224,7 @@ function createChildCategory(parent: ICategory) {
 /**
  * 分类图标选择
  */
-function handleIconSelected(icon: IIcon) {
+function handleIconChange(icon: IIcon) {
   editCategory.value.icon = icon.url
   // console.log('handleIconSelected', icon, editCategory.value)
 }
@@ -277,7 +278,7 @@ function handleDeleteAction() {
   <page-meta :page-style="`overflow:${editShow ? 'hidden' : 'visible'};`" />
   <draw-background2 />
   <nav-bar id="TOP_NAVBAR" :actions="navActions" title="分类管理">
-    <template #prefix-action>
+    <template #suffix-action>
       <view class="mt-4 max-w-max rounded-full bg-gray-200/50 px-2 py-1">
         <mbill-segmented v-model="type" :gap="6" :options="typeActions" />
       </view>
@@ -321,17 +322,22 @@ function handleDeleteAction() {
   />
 
   <!-- 编辑分类 -->
-  <bottom-popup v-model="editShow" :title="editTitle" confirm-text="确认" show-cancel @confirm="handleEditConfirm">
+  <bottom-popup
+    v-model="editShow"
+    auto-height show-cancel
+    :title="editTitle"
+    confirm-text="确认"
+    @confirm="handleEditConfirm"
+    @after-enter="iconPickerRef.scrollIntoView()"
+  >
     <template #title>
-      <view class="flex items-center gap-2 px-2 pb-2 pt-4">
+      <view class="flex items-center gap-2 px-2">
         <bill-icon :icon="editCategory.icon" :text="editCategory.name" />
         <wd-input v-model="editCategory.name" custom-class="w-full" type="text" placeholder="分类名称" />
       </view>
     </template>
 
-    <view v-if="editMounted">
-      <icon-picker @selected="handleIconSelected" />
-    </view>
+    <icon-picker ref="iconPickerRef" :path="editCategory.icon" @change="handleIconChange" />
   </bottom-popup>
 </template>
 

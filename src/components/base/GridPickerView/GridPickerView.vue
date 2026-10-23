@@ -26,7 +26,7 @@ const props = withDefaults(defineProps<{
   scrollHeight: '40vh',
 })
 const emit = defineEmits(['change', 'manage'])
-const model = defineModel({ default: '' })
+const model = defineModel<string>({ default: '' })
 
 const $manage = 'manage'
 const { proxy } = getCurrentInstance() as any

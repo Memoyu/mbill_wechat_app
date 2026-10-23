@@ -59,9 +59,7 @@ function handleCategoryChange(item: any) {
 }
 
 function handleManage() {
-  uni.navigateTo({
-    url: `/pages/category/index?type=${type.value}`,
-  })
+  uni.navigateTo({ url: `/pages/category/index?type=${type.value}` })
 }
 </script>
 

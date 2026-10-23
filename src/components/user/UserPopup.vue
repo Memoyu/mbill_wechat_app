@@ -77,140 +77,133 @@ function handleSummaryRefresh() {
 </script>
 
 <template>
-  <wd-popup
+  <bottom-popup
     v-model="show"
-    position="bottom"
-    :close-on-click-modal="true"
-    :safe-area-inset-bottom="true"
-    custom-class="rounded-t-3xl relative h-60vh"
-    lock-scroll
+    :show-btn="false"
   >
-    <view class="h-full overflow-auto">
-      <!-- 标题栏 -->
-      <view class="sticky left-0 right-0 top-0 z-10 flex items-center justify-between border-b border-gray-100 bg-white px-4 py-3">
-        <view class="flex items-center">
-          <button class="avatar-box" open-type="chooseAvatar" @chooseavatar="handleChooseAvatar">
-            <wd-avatar :size="40" :src="user.avatar" />
-          </button>
-          <view class="ml-3 flex flex-col">
-            <text class="text-base font-semibold" @tap="handelNicknameInput">{{ user.nickname || '未登录' }}</text>
-            <text class="text-xs text-gray-400 font-bold">已坚持记账{{ user.billDay }}天，共{{ user.billCount }}条账单</text>
+    <template #title>
+      <view class="flex items-center px-4">
+        <button class="avatar-box" open-type="chooseAvatar" @chooseavatar="handleChooseAvatar">
+          <wd-avatar :size="40" :src="user.avatar" />
+        </button>
+        <view class="ml-3 flex flex-col">
+          <text class="text-base font-semibold" @tap="handelNicknameInput">{{ user.nickname || '未登录' }}</text>
+          <text class="text-xs text-gray-400 font-bold">已坚持记账{{ user.billDay }}天，共{{ user.billCount }}条账单</text>
+        </view>
+      </view>
+    </template>
+
+    <!-- 用户信息 -->
+    <view class="flex flex-col gap-5 px-4">
+      <view class="user-block">
+        <view class="user-block-title">
+          用户信息
+        </view>
+        <view class="flex flex-col gap-3">
+          <view class="flex justify-between">
+            <text>ID</text>
+            <text class="text-gray-500">
+              {{ user.userId || '-' }}
+            </text>
+          </view>
+
+          <view class="flex justify-between">
+            <text>注册</text>
+            <text class="text-gray-500">
+              {{ dayjs(user.createTime).format('YYYY-MM-DD') || '-' }}
+            </text>
           </view>
         </view>
       </view>
 
-      <!-- 用户信息 -->
-      <view class="flex flex-col gap-5 px-4">
-        <view class="user-block">
-          <view class="user-block-title">
-            用户信息
-          </view>
-          <view class="flex flex-col gap-3">
-            <view class="flex justify-between">
-              <text>ID</text>
-              <text class="text-gray-500">
-                {{ user.userId || '-' }}
-              </text>
-            </view>
+      <!-- 年汇总统计 -->
+      <view class="user-block">
+        <view class="user-block-title flex items-center justify-between">
+          <text>年汇总统计</text>
 
-            <view class="flex justify-between">
-              <text>注册</text>
-              <text class="text-gray-500">
-                {{ dayjs(user.createTime).format('YYYY-MM-DD') || '-' }}
-              </text>
-            </view>
-          </view>
+          <action-btn @tap="handleSummaryRefresh">
+            <wd-icon name="refresh" size="16" />
+          </action-btn>
         </view>
+        <view class="flex flex-col gap-3 text-gray-500">
+          <view class="flex justify-between">
+            <view class="flex flex-col">
+              <text>结余</text>
+              <text class="text-xl text-indigo font-semibold">
+                {{ amountFormat(summary.surplus) }}
+              </text>
+            </view>
 
-        <!-- 年汇总统计 -->
-        <view class="user-block">
-          <view class="user-block-title flex items-center justify-between">
-            <text>年汇总统计</text>
-
-            <action-btn @tap="handleSummaryRefresh">
-              <wd-icon name="refresh" size="16" />
-            </action-btn>
-          </view>
-          <view class="flex flex-col gap-3 text-gray-500">
-            <view class="flex justify-between">
-              <view class="flex flex-col">
-                <text>结余</text>
-                <text class="text-xl text-indigo font-semibold">
-                  {{ amountFormat(summary.surplus) }}
+            <!-- 总金额 -->
+            <view class="flex flex-col gap-3">
+              <view class="flex gap-1">
+                <text>支</text>
+                <text class="font-bold" :style="{ color: getBillColor(0) }">
+                  {{ amountFormat(summary.expend) }}
                 </text>
               </view>
+              <view class="flex gap-1">
+                <text>收</text>
+                <text class="font-bold" :style="{ color: getBillColor(1) }">
+                  {{ amountFormat(summary.income) }}
+                </text>
+              </view>
+            </view>
+          </view>
 
-              <!-- 总金额 -->
-              <view class="flex flex-col gap-3">
-                <view class="flex gap-1">
-                  <text>支</text>
-                  <text class="font-bold" :style="{ color: getBillColor(0) }">
-                    {{ amountFormat(summary.expend) }}
-                  </text>
-                </view>
-                <view class="flex gap-1">
-                  <text>收</text>
-                  <text class="font-bold" :style="{ color: getBillColor(1) }">
-                    {{ amountFormat(summary.income) }}
-                  </text>
-                </view>
+          <view class="flex justify-between">
+            <view class="flex flex-col justify-end gap-3">
+              <view class="flex gap-1">
+                <text>日均支出</text>
+                <text class="font-bold" :style="{ color: getBillColor(0) }">
+                  {{ amountFormat(summary.expendAvg) }}
+                </text>
+              </view>
+              <view class="flex gap-1">
+                <text>日均收入</text>
+                <text class="font-bold" :style="{ color: getBillColor(0) }">
+                  {{ amountFormat(summary.incomeAvg) }}
+                </text>
               </view>
             </view>
 
-            <view class="flex justify-between">
-              <view class="flex flex-col justify-end gap-3">
-                <view class="flex gap-1">
-                  <text>日均支出</text>
-                  <text class="font-bold" :style="{ color: getBillColor(0) }">
-                    {{ amountFormat(summary.expendAvg) }}
-                  </text>
-                </view>
-                <view class="flex gap-1">
-                  <text>日均收入</text>
-                  <text class="font-bold" :style="{ color: getBillColor(0) }">
-                    {{ amountFormat(summary.incomeAvg) }}
-                  </text>
-                </view>
+            <view class="flex flex-col justify-end gap-3">
+              <view class="flex gap-1">
+                <text>最高支出</text>
+                <text class="font-bold" :style="{ color: getBillColor(0) }">
+                  {{ amountFormat(summary.expendHighest) }}
+                </text>
               </view>
-
-              <view class="flex flex-col justify-end gap-3">
-                <view class="flex gap-1">
-                  <text>最高支出</text>
-                  <text class="font-bold" :style="{ color: getBillColor(0) }">
-                    {{ amountFormat(summary.expendHighest) }}
-                  </text>
-                </view>
-                <view class="flex gap-1">
-                  <text>最高收入</text>
-                  <text class="font-bold" :style="{ color: getBillColor(0) }">
-                    {{ amountFormat(summary.incomeHighest) }}
-                  </text>
-                </view>
+              <view class="flex gap-1">
+                <text>最高收入</text>
+                <text class="font-bold" :style="{ color: getBillColor(0) }">
+                  {{ amountFormat(summary.incomeHighest) }}
+                </text>
               </view>
             </view>
           </view>
         </view>
+      </view>
 
-        <view class="user-block">
-          <wd-grid :column="4">
-            <wd-grid-item v-for="item in actions" :key="item.title" @tap="item.action">
-              <view class="flex flex-col items-center">
-                <text class="my-icons text-3xl" :class="[item.icon]" />
-                <text class="text-xs">{{ item.title }}</text>
-              </view>
-            </wd-grid-item>
-          </wd-grid>
-        </view>
+      <view class="user-block">
+        <wd-grid :column="4">
+          <wd-grid-item v-for="item in actions" :key="item.title" @tap="item.action">
+            <view class="flex flex-col items-center">
+              <text class="my-icons text-3xl" :class="[item.icon]" />
+              <text class="text-xs">{{ item.title }}</text>
+            </view>
+          </wd-grid-item>
+        </wd-grid>
+      </view>
 
-        <!-- 暂不支持退出登录 -->
-        <!-- <view class="user-block">
+      <!-- 暂不支持退出登录 -->
+      <!-- <view class="user-block">
           <wd-button type="danger" custom-class="custom-shadow">
             退出登录
           </wd-button>
         </view> -->
-      </view>
     </view>
-  </wd-popup>
+  </bottom-popup>
 
   <!-- 编辑标签 -->
   <center-popup v-model="editShow" title="修改昵称" @confirm="handleEditConfirm">
@@ -233,7 +226,10 @@ function handleSummaryRefresh() {
 
 .avatar-box {
   background: transparent;
-  padding: 0;
+  padding-left: 0;
+  padding-right: 0;
+  margin-left: 0;
+  margin-right: 0;
   &:after {
     border: none;
   }

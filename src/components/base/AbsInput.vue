@@ -10,14 +10,17 @@ defineOptions({
 const props = withDefaults(defineProps<{
   trigger?: boolean
   placeholder?: string
+  suffixIcon?: string
 }>(), { placeholder: '' })
 
+const emit = defineEmits(['suffix-click'])
 const { proxy } = getCurrentInstance() as any
-
 const show = defineModel<boolean>()
 const input = defineModel<string>('input', { default: '' })
 
 const inputBottom = ref(0)
+let blurTimer: ReturnType<typeof setTimeout> | null = null
+let suffixClicked = false
 
 function handleKeyBoardHeightChange(event: any) {
   // console.log(event, 'handleKeyBoardHeightChange')
@@ -35,7 +38,28 @@ function handleKeyBoardHeightChange(event: any) {
 }
 
 function handleBlur() {
+  // 延时关闭，给 clicksuffixicon 事件留出取消窗口
+  blurTimer = setTimeout(() => {
+    if (!suffixClicked) {
+      show.value = false
+    }
+    suffixClicked = false
+  }, 50)
+}
+
+function handleSuffixClick() {
+  // 取消 blur 的延时关闭
+  if (blurTimer) {
+    clearTimeout(blurTimer)
+    blurTimer = null
+  }
+  suffixClicked = true
+  emit('suffix-click')
+  // 强制 :focus 值变化以重新聚焦，保持键盘不收起
   show.value = false
+  nextTick(() => {
+    show.value = true
+  })
 }
 </script>
 
@@ -57,8 +81,10 @@ function handleBlur() {
         :placeholder="placeholder"
         :focus="show"
         :adjust-position="false"
+        :suffix-icon="suffixIcon"
         @keyboardheightchange="handleKeyBoardHeightChange"
         @blur="handleBlur"
+        @clicksuffixicon="handleSuffixClick"
       />
     </view>
   </view>

@@ -36,6 +36,10 @@ function handleAccountItemTap(item: any) {
 
   emit('change', { ...select, name })
 }
+
+function handleManage() {
+  uni.navigateTo({ url: '/pages/account/index' })
+}
 </script>
 
 <template>
@@ -45,6 +49,7 @@ function handleAccountItemTap(item: any) {
     :scroll-height="height"
     id-key="accountId"
     @change="handleAccountItemTap"
+    @manage="handleManage"
   />
 </template>
 

@@ -2,7 +2,6 @@
 import type { IBillAccount, IBillCategory, IEditBill } from '@/api/types/bill'
 import type { ILedger } from '@/api/types/ledger'
 import type { ITag } from '@/api/types/tag'
-import { useToast } from '@wot-ui/ui'
 import dayjs from 'dayjs'
 import { getAddressInfo } from '@/api/aggregation'
 import { getBill } from '@/api/bill'
@@ -16,7 +15,7 @@ definePage({
   },
 })
 
-const toast = useToast()
+const toast = useGlobalToast()
 const loading = useGlobalLoading()
 const ledgerStore = useLedgerStore()
 const settingsStore = useSettingsStore()
@@ -314,7 +313,7 @@ function handleTagSelectConfirm(items: ITag[]) {
       <view class="bill-attr-box min-w-max">
         <view class="bill-attr-box-item" @tap="showDateTime = true">
           <!-- 日期 -->
-          <wd-icon name="calendar-line" size="16" />
+          <wd-icon name="calendar-line" size="20" />
           <text class="ml-1">{{ `${formatDate(billDate)} ${dayjs(billDate).format('HH:mm')}` }}</text>
         </view>
         <view class="bill-attr-box-item" @tap="showAccounts = true">
@@ -325,19 +324,19 @@ function handleTagSelectConfirm(items: ITag[]) {
 
         <view class="bill-attr-box-item-max" @tap="showTags = true">
           <!-- 标签 -->
-          <wd-icon name="tag" size="16" />
+          <wd-icon name="tag" size="20" />
           <text class="ml-1">标签</text>
         </view>
 
         <view class="bill-attr-box-item-max" @tap="handleAddressEditShow">
           <!-- 地点 -->
-          <wd-icon name="location" size="16" />
+          <wd-icon name="location" size="20" />
           <text class="truncate-start truncate">{{ bill.address || '地址' }}</text>
         </view>
 
         <view class="bill-attr-box-item-max" @tap="handleRemarkEditShow">
           <!-- 备注 -->
-          <wd-icon name="message" size="16" />
+          <wd-icon name="message" size="20" />
           <text class="truncate">{{ bill.remark || '备注' }}</text>
         </view>
       </view>
@@ -358,7 +357,7 @@ function handleTagSelectConfirm(items: ITag[]) {
   <!-- 备注输入 -->
   <abs-input v-model="showRemarkEdit" v-model:input="bill.remark" placeholder="备注" />
   <!-- 地址输入 -->
-  <abs-input v-model="showAddressEdit" v-model:input="bill.address" placeholder="地址" />
+  <abs-input v-model="showAddressEdit" v-model:input="bill.address" placeholder="地址" suffix-icon="location" @suffix-click="getAddress()" />
 </template>
 
 <style lang="scss" scoped>

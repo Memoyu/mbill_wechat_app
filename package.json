@@ -18,7 +18,6 @@
       "ucharts": true
     }
   },
-  "packageManager": "pnpm@10.10.0",
   "description": "memo bill 个人记账项目",
   "author": {
     "name": "memoyu",

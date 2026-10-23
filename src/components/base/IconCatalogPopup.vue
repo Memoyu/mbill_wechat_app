@@ -15,117 +15,83 @@ const props = defineProps<{
 const emit = defineEmits(['selected'])
 const show = defineModel<boolean>()
 
-const { proxy } = getCurrentInstance() as any
-
 const iconStore = useIconStore()
 
 const catalogs = ref<IIconCatalog[]>([])
-const active = ref<string[]>([])
-const activeIcon = ref('')
+const active = ref<number>(0)
+const activeIcon = ref<string>('')
 
-watch(() => show.value, (show) => {
-  if (show && iconStore.catalogs.length > 0) {
-    catalogs.value = iconStore.catalogs.map((catalog, index) => {
-      if (index === 0)
-        return { ...catalog, count: catalog.icons.length }
-      return { ...catalog, count: catalog.icons.length, icons: [] }
-    })
-    active.value.push(iconStore.catalogs[0].code)
-  }
-})
+const input = ref('')
+const scrollTop = ref(0)
 
-/**
- * 关闭按钮触发
- */
-function handleCancelClick() {
+function handleAfterEnter() {
+  catalogs.value = iconStore.catalogs || []
+}
+
+function handleConfirm() {
   show.value = false
 }
 
+function handleChange(value: number) {
+  console.log(value)
+}
+
 function handleIconClick(icon: IIcon) {
-  // console.log(item)
-  // show.value = false
   activeIcon.value = icon.path
   emit('selected', icon)
 }
-
-function handleBeforeExpend(data: any) {
-  const codes = data.value as string[]
-  console.log(codes)
-
-  catalogs.value.map((catalog, index) => {
-    if (codes.includes(catalog.code)) {
-      catalog.icons = iconStore.catalogs[index].icons
-    }
-    return catalog
-  })
-}
+const activeTranslateY = computed(() => `-${Number(active.value) * 100}%`)
 </script>
 
 <template>
-  <wd-popup
-    v-model="show"
-    position="bottom"
-    :close-on-click-modal="true"
-    :safe-area-inset-bottom="true"
-    custom-class="rounded-t-3xl relative  h-40vh"
-    lock-scroll
-    lazy-render
-    root-portal
-    @close="handleCancelClick"
-  >
-    <view class="h-full overflow-auto">
-      <!-- 标题栏 -->
-      <view
-        class="sticky left-0 right-0 top-0 z-10 flex items-center justify-between border-b border-gray-100 bg-white px-4 py-3"
-      >
-        <text class="line-clamp-1 text-base font-semibold">图标库</text>
-        <view
-          class="flex-shrink-0 rounded-full px-3 py-1 text-sm text-gray-400"
-          hover-class="bg-gray-50"
-          :hover-start-time="0"
-          :hover-stay-time="200"
-          @tap="handleCancelClick"
-        >
-          关闭
-        </view>
+  <bottom-popup v-model="show" title="图标库" confirm-text="确认" show-cancel @confirm="handleConfirm" @after-enter="handleAfterEnter">
+    <template #title>
+      <view class="flex items-center gap-2 px-2 pb-2 pt-4">
+        <wd-input v-model="input" custom-class="w-full" type="text" placeholder="账户名称" />
       </view>
-
-      <!-- 图标 -->
-      <view>
-        <wd-collapse v-model="active" @change="handleBeforeExpend">
-          <wd-collapse-item v-for="catalog in catalogs" :key="catalog.code" :title="catalog.name" :name="catalog.code">
-            <template #title="{ expanded }">
-              <view class="flex items-center justify-between">
-                <text class="text-base font-semibold">{{ catalog.name }}</text>
-                <view>
-                  <text class="mr-3">共{{ catalog.count }}个图标</text>
-                  <wd-icon v-if="expanded" name="caret-down" />
-                  <wd-icon v-else name="caret-right" />
-                </view>
-              </view>
-            </template>
-            <view class="grid grid-cols-7 gap-6">
+    </template>
+    <view class="flex overflow-hidden" :style="{ height: '300px' }">
+      <wd-sidebar v-model="active" @change="handleChange">
+        <wd-sidebar-item
+          v-for="(item, index) in catalogs"
+          :key="index"
+          :value="index"
+          :label="item.name"
+        />
+      </wd-sidebar>
+      <view class="flex-1 transition-transform duration-300 ease-in-out" :style="`transform: translateY(${activeTranslateY})`">
+        <scroll-view
+          v-for="(catalog, index) in catalogs"
+          :key="index"
+          class="box-border h-full"
+          scroll-y
+          scroll-with-animation
+          :show-scrollbar="false"
+          :scroll-top="scrollTop"
+          :throttle="false"
+        >
+          <view class="grid grid-cols-5 gap-2 px-1 py-2">
+            <view
+              v-for="icon in catalog.icons"
+              :key="icon.path"
+              class="flex items-center justify-center"
+            >
               <view
-                v-for="icon in catalog.icons"
-                :key="icon.path"
+                class="h-32px rounded-full shadow-sm transition-all duration-200"
+                :class="[activeIcon === icon.path ? 'ring-2 ring-indigo-500 ring-offset-2' : '']"
+                hover-class="scale-95 shadow-md"
+                :hover-start-time="0"
+                :hover-stay-time="200"
+                @tap="handleIconClick(icon)"
               >
-                <view
-                  class="flex items-center justify-center rounded-full shadow-sm transition-all duration-200"
-                  :class="[activeIcon === icon.path ? 'ring-2 ring-indigo-500 ring-offset-2' : '']"
-                  hover-class="scale-95 shadow-md"
-                  :hover-start-time="0"
-                  :hover-stay-time="200"
-                  @tap="handleIconClick(icon)"
-                >
-                  <wd-img :width="32" :height="32" :src="icon.url" round :lazy-load="true" />
-                </view>
+                <wd-img :width="32" :height="32" :src="icon.url" round :lazy-load="true" />
               </view>
             </view>
-          </wd-collapse-item>
-        </wd-collapse>
+          </view>
+        </scroll-view>
       </view>
     </view>
-  </wd-popup>
+  </bottom-popup>
 </template>
 
 <style lang="scss" scoped>

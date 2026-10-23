@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import type { ILedger } from '@/api/types/ledger'
 import type { ActionGroup, ActionItem } from '@/typings'
-import { useDialog, useToast } from '@wot-ui/ui'
 import dayjs from 'dayjs'
 import { getColorByName, gradients } from '@/constants/gradients'
 import { useLedgerStore } from '@/store'
@@ -26,8 +25,7 @@ const navActions: ActionItem[] = [
   },
 ]
 
-const dialog = useDialog()
-const toast = useToast()
+const toast = useGlobalToast()
 const ledgerStore = useLedgerStore()
 
 const ledgers = computed(() => ledgerStore.ledgers)
@@ -128,7 +126,7 @@ function handleScanAction() {
     success(res) {
       // console.log(`条码类型：${res.scanType}`)
       // console.log(`条码内容：${res.result}`)
-      ledgerStore.joinLedger(dialog, toast, res.result)
+      ledgerStore.joinLedger(res.result)
     },
     fail(e) {
       console.log(`扫码错误：${e}`)

@@ -55,6 +55,7 @@ function handleConfirm() {
     lazy-render
     position="bottom"
     :close-on-click-modal="true"
+    :safe-area-inset-bottom="true"
     custom-class="rounded-t-3xl relative"
     :custom-style="(height && !autoHeight ? `height: ${height}` : '')"
     @close="() => show = false"
@@ -111,6 +112,7 @@ function handleConfirm() {
       <slot name="title" />
     </view>
     <slot />
+    <!-- 安全区域 -->
   </wd-popup>
 </template>
 

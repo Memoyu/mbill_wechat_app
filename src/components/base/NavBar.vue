@@ -30,7 +30,7 @@ function back() {
           <slot v-else name="title" />
         </view>
         <!-- 操作按钮 -->
-        <view class="w-full flex items-center justify-between space-x-2">
+        <view class="w-full flex items-center justify-start space-x-2">
           <slot name="prefix-action" />
 
           <view v-if="actions && actions.length > 0" class="mt-3 flex items-center space-x-2">

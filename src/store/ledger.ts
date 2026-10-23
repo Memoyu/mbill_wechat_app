@@ -53,7 +53,11 @@ export const useLedgerStore = defineStore(
      * 加入账本
      * @param ledgerId 账本id
      */
-    const joinLedger = (dialog: Dialog, toast: Toast, ledgerId: string) => {
+    const joinLedger = (ledgerId: string) => {
+      const dialog = useGlobalDialog()
+      const toast = useGlobalToast()
+      const loading = useGlobalLoading()
+
       getLedger(ledgerId).then((ledger) => {
         dialog
           .confirm({
@@ -62,22 +66,20 @@ export const useLedgerStore = defineStore(
             theme: 'text',
             confirmButtonText: '确认加入',
             cancelButtonText: '取消',
-          })
-          .then(() => {
-            toast.loading('加入中...')
-            return new Promise((resolve) => {
-              fetchJoinLedger(ledger.ledgerId).then((res) => {
-                toast.success('加入成功')
-                state.ledgers.push(res)
-                resolve(true)
-              }).catch(() => {
-                resolve(false)
-              }).finally (() => {
-                toast.close()
+            success: () => {
+              loading.loading('加入中...')
+              return new Promise((resolve) => {
+                fetchJoinLedger(ledger.ledgerId).then((res) => {
+                  toast.success('加入成功')
+                  state.ledgers.push(res)
+                  resolve(true)
+                }).catch(() => {
+                  resolve(false)
+                }).finally (() => {
+                  loading.close()
+                })
               })
-            })
-          })
-          .catch(() => {
+            },
           })
       }).catch(() => {
         toast.error('账本不存在')

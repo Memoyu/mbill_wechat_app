@@ -1,4 +1,5 @@
 export interface IIcon {
+  id: string
   catalog: string
   path: string
   url: string
