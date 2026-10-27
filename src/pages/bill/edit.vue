@@ -26,8 +26,6 @@ const showLedgers = ref(false)
 const showDateTime = ref(false)
 const showAccounts = ref(false)
 const showTags = ref(false)
-const showRemarkEdit = ref(false)
-const showAddressEdit = ref(false)
 const cpHeight = ref(0)
 
 const isCreate = ref(true)
@@ -46,6 +44,8 @@ const bill = ref<IEditBill>({
 const billDate = ref(dayjs(bill.value.date).valueOf())
 const tagIds = ref<string[]>([])
 const amountInput = ref('')
+
+const hasTag = computed(() => bill.value.tags && bill.value.tags.length > 0)
 
 watch(() => bill.value.tags, () => {
   calcFixedHeight()
@@ -139,7 +139,11 @@ function getAddress() {
                 // console.log(res);
                   if (res.authSetting['scope.userLocation']) {
                     // 重新获取地址
-                    return getAddress()
+                    getAddress().then(() => {
+                      resolve(res)
+                    }).catch((err) => {
+                      reject(err)
+                    })
                   }
                   else {
                     toast.error('授权失败，请检查设置')
@@ -253,18 +257,17 @@ function handleAccountSelectConfirm(account: IBillAccount) {
   bill.value.account = account
 }
 
-function handleAddressEditShow() {
-  showAddressEdit.value = true
-}
-
-function handleRemarkEditShow() {
-  showRemarkEdit.value = true
-}
-
 function handleTagSelectConfirm(items: ITag[]) {
   // console.log(items, 'tags')
   showTags.value = false
   bill.value.tags = items
+}
+
+function handleAddressPrefixIcon() {
+  loading.loading('获取位置中...')
+  getAddress().finally(() => {
+    loading.close()
+  })
 }
 </script>
 
@@ -298,9 +301,9 @@ function handleTagSelectConfirm(items: ITag[]) {
     @change="handleCategoryChange"
   />
 
-  <view id="BOTTOM_INPUT" class="absolute bottom-0 left-0 right-0">
+  <view id="BOTTOM_INPUT" class="absolute bottom-0 left-0 right-0 pt-2 space-y-2">
     <!-- 标签 -->
-    <view v-if="bill.tags && bill.tags.length > 0" class="hide-view-scrollbar overflow-x-auto px-1 pt-2">
+    <view v-if="hasTag" class="hide-view-scrollbar overflow-x-auto px-1">
       <view class="min-w-max flex items-center gap-1 whitespace-nowrap">
         <view v-for="tag in bill.tags" :key="tag.tagId" class="flex-shrink-0 rounded-md bg-indigo-100/40 px-2 py-1 text-sm" @tap="showTags = true">
           {{ tag.name }}
@@ -309,7 +312,7 @@ function handleTagSelectConfirm(items: ITag[]) {
     </view>
 
     <!-- 账单属性 -->
-    <view class="hide-view-scrollbar overflow-x-auto px-1 py-2">
+    <view class="hide-view-scrollbar overflow-x-auto px-1">
       <view class="bill-attr-box min-w-max">
         <view class="bill-attr-box-item" @tap="showDateTime = true">
           <!-- 日期 -->
@@ -327,19 +330,12 @@ function handleTagSelectConfirm(items: ITag[]) {
           <wd-icon name="tag" size="20" />
           <text class="ml-1">标签</text>
         </view>
-
-        <view class="bill-attr-box-item-max" @tap="handleAddressEditShow">
-          <!-- 地点 -->
-          <wd-icon name="location" size="20" />
-          <text class="truncate-start truncate">{{ bill.address || '地址' }}</text>
-        </view>
-
-        <view class="bill-attr-box-item-max" @tap="handleRemarkEditShow">
-          <!-- 备注 -->
-          <wd-icon name="message" size="20" />
-          <text class="truncate">{{ bill.remark || '备注' }}</text>
-        </view>
       </view>
+    </view>
+
+    <view class="flex gap-2 px-2">
+      <wd-input v-model="bill.remark" compact prefix-icon="message" placeholder="备注" />
+      <wd-input v-model="bill.address" compact prefix-icon="location" placeholder="地址" @clickprefixicon="handleAddressPrefixIcon" />
     </view>
 
     <!-- 金额键盘 -->
@@ -354,21 +350,21 @@ function handleTagSelectConfirm(items: ITag[]) {
   <account-picker v-model="showAccounts" :account="bill.account.accountId" @confirm="handleAccountSelectConfirm" />
   <!-- 标签弹窗 -->
   <tag-list-picker v-model="tagIds" v-model:visible="showTags" @confirm="handleTagSelectConfirm" />
-  <!-- 备注输入 -->
-  <abs-input v-model="showRemarkEdit" v-model:input="bill.remark" placeholder="备注" />
-  <!-- 地址输入 -->
-  <abs-input v-model="showAddressEdit" v-model:input="bill.address" placeholder="地址" suffix-icon="location" @suffix-click="getAddress()" />
 </template>
 
 <style lang="scss" scoped>
+:deep(.wd-button__loading) {
+  margin-right: 0px !important;
+}
+
 .bill-attr-box {
   @apply: flex items-center gap-2 whitespace-nowrap;
   &-item {
-    @apply: flex items-center justify-center py-1.5 px-2.5 bg-indigo-200/40 rounded-full gap-0.5;
+    @apply: flex items-center justify-center py-1 px-2 bg-indigo-200/40 rounded-full gap-0.5;
   }
 
   &-item-max {
-    @apply: flex items-center justify-center py-1.5 px-2.5 bg-indigo-200/40 rounded-full gap-0.5 max-w-30;
+    @apply: flex items-center justify-center py-1 px-2 bg-indigo-200/40 rounded-full gap-0.5 max-w-30;
   }
 }
 

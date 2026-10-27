@@ -8,7 +8,7 @@ defineOptions({
 })
 
 const props = withDefaults(defineProps<{
-  title: string
+  title?: string
   showBtn?: boolean
   showCancel?: boolean
   confirmText?: string
@@ -20,7 +20,6 @@ const props = withDefaults(defineProps<{
   confirmText: '完成',
   cancelText: '取消',
 })
-
 const emit = defineEmits<{
   (e: 'after-enter'): void
   (e: 'confirm'): void
@@ -30,7 +29,9 @@ const show = defineModel<boolean>()
 
 function handleCancel() {
   emit('cancel')
-  show.value = false
+  // 为取消时，才需要关闭弹窗
+  if (props.cancelText === '取消')
+    show.value = false
 }
 
 function handleConfirm() {
@@ -53,7 +54,7 @@ function handleConfirm() {
     <view class="h-full">
       <view class="sticky left-0 right-0 top-0 z-10 bg-white py-3">
         <!-- 标题 -->
-        <view class="text-center">
+        <view v-if="title && title.length > 0" class="text-center">
           <text class="line-clamp-1 text-base font-semibold">{{ title }}</text>
         </view>
         <!-- 标题插槽 -->

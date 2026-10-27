@@ -81,11 +81,13 @@ function handleSuffixClick() {
         :placeholder="placeholder"
         :focus="show"
         :adjust-position="false"
-        :suffix-icon="suffixIcon"
         @keyboardheightchange="handleKeyBoardHeightChange"
         @blur="handleBlur"
-        @clicksuffixicon="handleSuffixClick"
-      />
+      >
+        <template #suffix>
+          <wd-button size="mini" :icon="suffixIcon" custom-class="ml-2" @click="handleSuffixClick" />
+        </template>
+      </wd-input>
     </view>
   </view>
 </template>
