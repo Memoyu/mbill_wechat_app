@@ -71,7 +71,7 @@ function handleChildItemTap(parent: any, data: any) {
             <wd-icon v-if="listItem.expand" name="caret-down" />
             <wd-icon v-else name="caret-right" />
           </view>
-          <bill-icon size="22" :icon="listItem.icon" :text="listItem.name" />
+          <bill-icon size="28" :icon="listItem.icon" :text="listItem.name" />
           <view class="ml-1 flex-1 font-bold">
             {{ listItem.name }}
           </view>
@@ -98,7 +98,6 @@ function handleChildItemTap(parent: any, data: any) {
         >
           <template #content="{ gridItem }">
             <view class="flex flex-col items-center p-2">
-              <!-- <wd-img :width="32" :height="32" :src="gridItem.icon" round :lazy-load="true" :show-error="false" :show-loading="false" /> -->
               <bill-icon :icon="gridItem.icon" :text="gridItem.name" />
               <view class="category-item-title line-clamp-1 mt-1 text-nowrap">
                 {{ gridItem.name }}

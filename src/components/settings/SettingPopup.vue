@@ -33,7 +33,7 @@ function handleCancelClick() {
         </view>
         <wd-cell-group insert>
           <!-- 深色模式 -->
-          <wd-cell center>
+          <wd-cell clickable center @click="() => settingsStore.dark = !settingsStore.dark">
             <template #title>
               <view class="cell-title">
                 <view class="title">
@@ -42,9 +42,8 @@ function handleCancelClick() {
                 </view>
               </view>
             </template>
-            <view class="custom-value" style="height: 32px">
-              <wd-switch v-model="settingsStore.dark" size="20px" />
-            </view>
+
+            <wd-switch :model-value="settingsStore.dark" size="20px" />
           </wd-cell>
         </wd-cell-group>
       </view>
@@ -60,7 +59,7 @@ function handleCancelClick() {
         </view>
         <wd-cell-group insert>
           <!-- 天气 -->
-          <wd-cell center>
+          <wd-cell clickable center @click="() => settingsStore.weather = !settingsStore.weather">
             <template #title>
               <view class="cell-title title">
                 <view class="title">
@@ -69,13 +68,12 @@ function handleCancelClick() {
                 </view>
               </view>
             </template>
-            <view class="custom-value" style="height: 32px">
-              <wd-switch v-model="settingsStore.weather" size="20px" />
-            </view>
+
+            <wd-switch :model-value="settingsStore.weather" size="20px" />
           </wd-cell>
 
           <!-- 账单地址 -->
-          <wd-cell center>
+          <wd-cell clickable center @click="() => settingsStore.address = !settingsStore.address">
             <template #title>
               <view class="cell-title">
                 <view class="title">
@@ -87,9 +85,8 @@ function handleCancelClick() {
                 </text>
               </view>
             </template>
-            <view class="custom-value" style="height: 32px">
-              <wd-switch v-model="settingsStore.address" size="20px" />
-            </view>
+
+            <wd-switch :model-value="settingsStore.address" size="20px" />
           </wd-cell>
         </wd-cell-group>
       </view>
@@ -102,7 +99,7 @@ function handleCancelClick() {
         </view>
         <wd-cell-group insert>
           <!-- 震动反馈 -->
-          <wd-cell center>
+          <wd-cell clickable center @click="() => settingsStore.vibration = !settingsStore.vibration">
             <template #title>
               <view class="cell-title">
                 <view class="title">
@@ -111,31 +108,25 @@ function handleCancelClick() {
                 </view>
               </view>
             </template>
-            <view class="custom-value" style="height: 32px">
-              <wd-switch v-model="settingsStore.vibration" size="20px" />
-            </view>
+
+            <wd-switch :model-value="settingsStore.vibration" size="20px" />
           </wd-cell>
 
           <!-- 联系作者 -->
-          <wd-cell center>
-            <template #title>
-              <view class="cell-title">
-                <view class="title">
-                  <text class="iconfont icon-chat icon" />
-                  <text>联系作者</text>
+          <view class="relative">
+            <wd-cell is-link center>
+              <template #title>
+                <view class="cell-title">
+                  <view class="title">
+                    <text class="iconfont icon-chat icon" />
+                    <text>联系开发者</text>
+                  </view>
                 </view>
-              </view>
-            </template>
-            <view class="custom-value" style="height: 32px">
-              <wd-button
-                variant="text"
-                icon="caret-right"
-                custom-class="!text-gray-4"
-                size="small"
-                open-type="contact"
-              />
-            </view>
-          </wd-cell>
+              </template>
+            </wd-cell>
+            <!-- 透明 button 覆盖整个 cell，触发微信客服 -->
+            <button open-type="contact" class="contact-btn" />
+          </view>
         </wd-cell-group>
       </view>
       <!-- 版本号 -->
@@ -168,6 +159,19 @@ function handleCancelClick() {
 
   .desc {
     @apply: text-gray-400 text-xs;
+  }
+}
+
+.contact-btn {
+  @apply absolute inset-0 opacity-0;
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
+  line-height: inherit;
+  font-size: inherit;
+  &::after {
+    display: none;
   }
 }
 </style>
