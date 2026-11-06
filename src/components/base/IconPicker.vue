@@ -48,7 +48,7 @@ watch(() => props.path, (newValue) => {
       break
     }
   }
-  console.log(active.value, selected.value, catalogs.value)
+  // console.log(active.value, selected.value, catalogs.value)
 })
 
 onMounted(() => {

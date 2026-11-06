@@ -337,7 +337,7 @@ function handleDeleteAction() {
       </view>
     </template>
 
-    <icon-picker ref="iconPickerRef" :path="editCategory.icon" @change="handleIconChange" />
+    <icon-picker v-if="editMounted" ref="iconPickerRef" :path="editCategory.icon" @change="handleIconChange" />
   </bottom-popup>
 </template>
 

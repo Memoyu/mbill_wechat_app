@@ -70,7 +70,7 @@ function handleQuery(page: number) {
     // console.log('complete')
     paging.value.completeByNoMore(res.items, res.noMore)
   }).catch((res) => {
-    console.log('handleQuery error', res)
+    // console.log('handleQuery error', res)
     paging.value.complete(false)
   })
 }
