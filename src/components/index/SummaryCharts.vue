@@ -135,7 +135,7 @@ watch(() => charts.value, (data) => {
         </view>
       </view>
       <action-btn @tap="emit('more')">
-        <view class="iconfont icon-more" />
+        <text class="i-lucide-ellipsis" />
       </action-btn>
     </view>
 

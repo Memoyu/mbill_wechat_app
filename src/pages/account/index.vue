@@ -23,17 +23,17 @@ const accountActions: ActionGroup[] = [
   {
     actions: [
       {
-        icon: 'i-carbon-edit',
+        icon: 'i-lucide-edit',
         text: '编辑账户',
         action: handleEditAction,
       },
       {
-        icon: 'i-carbon-package',
+        icon: 'i-lucide-package',
         text: '新增子账户',
         action: handleCreateChildAction,
       },
       {
-        icon: 'i-carbon-trash-can',
+        icon: 'i-lucide-trash',
         text: '删除账户',
         type: 'danger',
         action: handleDeleteAction,

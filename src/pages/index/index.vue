@@ -1,6 +1,8 @@
 <script lang="ts" setup>
+import type { INotice } from '@/api/types/notice'
 import dayjs from 'dayjs'
-import { useIndexBillStore, useLedgerPickerStore, useUserStore } from '@/store'
+import { getNoticeList } from '@/api/notice'
+import { useIndexBillStore, useLedgerPickerStore, useStartupStore, useUserStore } from '@/store'
 import { safeAreaInsets } from '@/utils'
 
 defineOptions({
@@ -19,16 +21,23 @@ definePage({
 const userStore = useUserStore()
 const indexBillStore = useIndexBillStore()
 const ledgerPickerStore = useLedgerPickerStore()
+const startupStore = useStartupStore()
 
 const userShow = ref(false)
 const ledgersShow = ref(false)
 const settingsShow = ref(false)
+const noticeShow = ref(false)
 const dateSelectShow = ref(false)
 const chartSettingShow = ref(false)
 const paging = ref()
 
-const user = computed(() => userStore.userInfo)
+const notices = ref<INotice[]>([])
 
+const user = computed(() => userStore.state.userInfo)
+const hasNotice = computed(() => {
+  const readSet = new Set(userStore.state.notices)
+  return notices.value.some(n => !readSet.has(n.id))
+})
 const dateText = computed(() => {
   const date = dayjs(indexBillStore.date)
   let text = date.format('YYYY年MM月')
@@ -41,14 +50,32 @@ const dateText = computed(() => {
   return text
 })
 
+onLoad(() => {
+  console.log('Index onLoad')
+  // 本地缓存数据变更时回调
+  indexBillStore.localChangeCallback = (items, noMore) => {
+    paging.value.completeByNoMore(items, noMore)
+  }
+})
+
 // 监听账本选中
 watch (() => ledgerPickerStore.selecteds, () => {
-  paging.value.reload()
+  // paging.value.reload()
 }, { deep: true })
 
-onLoad(() => {
-  indexBillStore.loadYearSummary()
-})
+// 启动页完成后加载数据
+watch(() => startupStore.loading, (loading) => {
+  if (!loading) {
+    console.log('Index startup done, loading data')
+    // 加载数据
+    paging.value.reload()
+    indexBillStore.loadYearSummary()
+    // 公告列表
+    getNoticeList().then((res) => {
+      notices.value = res
+    })
+  }
+}, { immediate: true })
 
 function handleDateChange(e: any) {
   indexBillStore.setDate(e)
@@ -81,7 +108,7 @@ function handleQuery(page: number) {
   <page-meta :page-style="`overflow:${ledgersShow || userShow || settingsShow || chartSettingShow || dateSelectShow ? 'hidden' : 'visible'};`" />
   <draw-background1 />
 
-  <z-paging ref="paging" v-model="indexBillStore.groups" :default-page-size="15" @query="handleQuery">
+  <z-paging ref="paging" v-model="indexBillStore.groups" :auto="false" :default-page-size="15" @query="handleQuery">
     <template #top>
       <!-- 顶部操作 -->
       <!-- <view
@@ -104,38 +131,40 @@ function handleQuery(page: number) {
           <!-- 设置按钮 -->
           <view
             class="sticky-item p-2 px-3"
-            hover-class="bg-gray-50 !scale-97 transform-origin-center"
+            hover-class="sticky-item-hover"
             :hover-start-time="0"
             :hover-stay-time="200"
             @tap="settingsShow = true"
           >
-            <text class="i-carbon-settings text-sm" />
+            <text class="i-lucide-settings text-sm" />
             <text class="whitespace-nowrap text-xs">设置</text>
           </view>
 
-          <!-- 天气信息 -->
-          <view
-            class="sticky-item p-2 px-3"
-            hover-class="bg-gray-50 !scale-97 transform-origin-center"
-            :hover-start-time="0"
-            :hover-stay-time="200"
-          >
-            <text class="iconfont icon-qing text-sm" />
-            <text class="whitespace-nowrap text-xs">晴</text>
-          </view>
+          <!-- 通知 -->
+          <wd-badge custom-class="badge" is-dot :hidden="!hasNotice" right="5" top="5">
+            <view
+              class="sticky-item p-2"
+              hover-class="sticky-item-hover"
+              :hover-start-time="0"
+              :hover-stay-time="200"
+              @tap="noticeShow = true"
+            >
+              <text class="i-lucide-bell text-sm" />
+            </view>
+          </wd-badge>
         </view>
       </view>
     </template>
 
     <view class="w-screen flex flex-col gap-3">
       <!-- 日期栏 -->
-      <view class="flex justify-between px-5">
-        <view class="flex items-baseline" @tap="dateSelectShow = true">
+      <view class="flex items-center justify-between px-5">
+        <view class="flex items-center" @tap="dateSelectShow = true">
           <text class="mr-1 font-bold">{{ dateText }}</text>
           <wd-icon size="16" name="caret-down" />
         </view>
         <action-btn @tap="handleCalendarClick">
-          <view class="iconfont icon-calendar" />
+          <text class="i-lucide-calendar-1" />
         </action-btn>
       </view>
 
@@ -176,6 +205,9 @@ function handleQuery(page: number) {
   <!-- 设置弹窗 -->
   <setting-popup v-model="settingsShow" />
 
+  <!-- 通知 -->
+  <notice-popup v-model="noticeShow" :notices="notices" />
+
   <!-- 账单金额汇总统计设置 -->
   <summary-chart-setting v-model="chartSettingShow" />
 
@@ -188,6 +220,6 @@ function handleQuery(page: number) {
   @apply: w-fit flex items-center gap-1.5  rounded-full bg-gray-100/80 text-gray-600 backdrop-blur-sm transition-all;
 }
 .sticky-item-hover {
-  @apply: bg-gray-200/80 !scale-97 transform-origin-center;
+  @apply: bg-gray-50 !scale-97 transform-origin-center;
 }
 </style>

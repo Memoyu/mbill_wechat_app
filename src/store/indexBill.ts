@@ -36,6 +36,7 @@ const initState: {
   }
   /** 用户弹窗年度账单金额汇总 */
   yearSummary: IBillSummaryAmountItem
+  localChangeCallback: (items: IBillDateGroup[], noMore: boolean) => void
 } = {
   date: dayjs().valueOf(),
   dateType: 'year-month',
@@ -73,6 +74,7 @@ const initState: {
     incomeHighest: 0,
     incomeLowst: 0,
   },
+  localChangeCallback: () => { },
 }
 
 export const useIndexBillStore = defineStore(
@@ -261,6 +263,11 @@ export const useIndexBillStore = defineStore(
       if (!dayjs(bill.date).isSame(dayjs(state.date), dt as OpUnitType))
         return
 
+      let empty = false
+      if (state.groups.length === 0) {
+        empty = true
+      }
+
       // 维护本地bills数据
       // 查找是否已存在这天的分组
       let group = state.groups.find(b => dayjs(b.date).isSame(dayjs(bill.date), 'date'))
@@ -282,6 +289,11 @@ export const useIndexBillStore = defineStore(
         }
         state.groups.push(group)
         state.groups.sort((a, b) => dayjs(a.date).isBefore(dayjs(b.date)) ? 1 : -1)
+      }
+
+      // 如果处理数据前是空数据，则立即通知回调
+      if (empty) {
+        state.localChangeCallback(state.groups, false)
       }
 
       updateLocalDiffAmount(bill.date, bill.type, bill.amount)
@@ -345,6 +357,7 @@ export const useIndexBillStore = defineStore(
       if (group.items.length === 0) {
         // 如果没有账单，则删除该分组
         state.groups.splice(groupIdx, 1)
+        state.localChangeCallback(state.groups, false)
       }
 
       updateLocalDiffAmount(bill.date, bill.type, -bill.amount)

@@ -12,6 +12,12 @@ defineOptions({
 const show = defineModel<boolean>()
 
 const settingsStore = useSettingsStore()
+const {
+  followSystem,
+  isDark,
+  toggleTheme,
+  setFollowSystem,
+} = useTheme()
 
 function handleCancelClick() {
   show.value = false
@@ -24,7 +30,7 @@ function handleCancelClick() {
     :show-btn="false"
     title="设置"
   >
-    <view>
+    <view class="space-y-4">
       <view>
         <view class="cell-group-title">
           <text class="title">
@@ -32,18 +38,32 @@ function handleCancelClick() {
           </text>
         </view>
         <wd-cell-group insert>
-          <!-- 深色模式 -->
-          <wd-cell clickable center @click="() => settingsStore.dark = !settingsStore.dark">
+          <!-- 跟随系统 -->
+          <wd-cell clickable center @click="() => setFollowSystem(!followSystem)">
             <template #title>
               <view class="cell-title">
                 <view class="title">
-                  <text class="iconfont icon-dark-mode icon" />
+                  <text class="i-lucide-contrast icon" />
+                  <text>跟随系统</text>
+                </view>
+              </view>
+            </template>
+
+            <wd-switch :model-value="followSystem" size="20px" />
+          </wd-cell>
+
+          <!-- 深色模式 -->
+          <wd-cell :clickable="!followSystem" center @click="toggleTheme">
+            <template #title>
+              <view class="cell-title">
+                <view class="title">
+                  <text class="i-lucide-moon icon" />
                   <text>深色模式</text>
                 </view>
               </view>
             </template>
 
-            <wd-switch :model-value="settingsStore.dark" size="20px" />
+            <wd-switch :model-value="isDark" size="20px" />
           </wd-cell>
         </wd-cell-group>
       </view>
@@ -63,7 +83,7 @@ function handleCancelClick() {
             <template #title>
               <view class="cell-title title">
                 <view class="title">
-                  <text class="iconfont icon-weather icon" />
+                  <text class="i-lucide-cloud-sun icon" />
                   <text>天气</text>
                 </view>
               </view>
@@ -77,7 +97,7 @@ function handleCancelClick() {
             <template #title>
               <view class="cell-title">
                 <view class="title">
-                  <text class="iconfont icon-address icon" />
+                  <text class="i-lucide-map-pinned icon" />
                   <text>账单地址</text>
                 </view>
                 <text class="desc">
@@ -103,7 +123,7 @@ function handleCancelClick() {
             <template #title>
               <view class="cell-title">
                 <view class="title">
-                  <text class="iconfont icon-vibration icon" />
+                  <text class="i-lucide-waves-horizontal icon" />
                   <text>震动反馈</text>
                 </view>
               </view>
@@ -118,7 +138,7 @@ function handleCancelClick() {
               <template #title>
                 <view class="cell-title">
                   <view class="title">
-                    <text class="iconfont icon-chat icon" />
+                    <text class="i-lucide-message-circle-more icon" />
                     <text>联系开发者</text>
                   </view>
                 </view>

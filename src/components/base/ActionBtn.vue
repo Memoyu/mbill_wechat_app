@@ -26,6 +26,7 @@ const rootClass = computed(() => {
 <template>
   <view
     :class="rootClass"
+    class="container"
     hover-class="bg-gray-50 !scale-97 transform-origin-center"
     :hover-start-time="0"
     :hover-stay-time="200"
@@ -35,4 +36,7 @@ const rootClass = computed(() => {
 </template>
 
 <style lang="scss" scoped>
+.container {
+  display: inherit;
+}
 </style>

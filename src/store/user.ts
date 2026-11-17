@@ -1,35 +1,43 @@
 import type { IUpdateUser, IUserInfo } from '@/api/types/user'
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
 import {
   getUser,
   updateUser,
 } from '@/api/user'
 
+interface State {
+  userInfo: IUserInfo
+  notices: string[]
+}
+
 // 初始化状态
-const userInfoState: IUserInfo = {
-  userId: '',
-  username: '',
-  nickname: '',
-  avatar: '/static/images/default-avatar.png',
-  roles: [],
-  billDay: 0,
-  billCount: 0,
+const initState: State = {
+  userInfo: {
+    userId: '',
+    username: '',
+    nickname: '',
+    avatar: '/static/images/default-avatar.png',
+    roles: [],
+    billDay: 0,
+    billCount: 0,
+  },
+  notices: [], // 已读通知
 }
 
 export const useUserStore = defineStore(
   'user',
   () => {
     // 定义用户信息
-    const userInfo = ref<IUserInfo>({ ...userInfoState })
+    const state = reactive({ ...initState })
+
     // 设置用户信息
     const setUserInfo = (val: IUserInfo) => {
       console.log('设置用户信息', val)
       // 若头像为空 则使用默认头像
       if (!val.avatar) {
-        val.avatar = userInfoState.avatar
+        val.avatar = state.userInfo.avatar
       }
-      userInfo.value = val
+      state.userInfo = val
     }
 
     const updateUserInfo = async (val: IUserInfo) => {
@@ -37,18 +45,19 @@ export const useUserStore = defineStore(
     }
 
     const setUserAvatar = (avatar: string) => {
-      userInfo.value.avatar = avatar
-      updateUserInfo(userInfo.value)
+      state.userInfo.avatar = avatar
+      updateUserInfo(state.userInfo)
     }
 
     const setUserNickname = (nickname: string) => {
-      userInfo.value.nickname = nickname
-      updateUserInfo(userInfo.value)
+      state.userInfo.nickname = nickname
+      updateUserInfo(state.userInfo)
     }
 
     // 删除用户信息
     const clearUserInfo = () => {
-      userInfo.value = { ...userInfoState }
+      state.userInfo = { ...initState.userInfo }
+      state.notices = initState.notices
       uni.removeStorageSync('user')
     }
 
@@ -61,12 +70,16 @@ export const useUserStore = defineStore(
       return res
     }
 
+    const setNotices = (notices: string[]) => {
+      state.notices = notices
+    }
     return {
-      userInfo,
+      state,
       clearUserInfo,
       fetchUserInfo,
       setUserAvatar,
       setUserNickname,
+      setNotices,
     }
   },
   {

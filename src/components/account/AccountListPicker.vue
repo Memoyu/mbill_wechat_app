@@ -15,11 +15,11 @@ const props = defineProps<{
   showSelectAll?: boolean
 }>()
 const emit = defineEmits(['confirm'])
-const selecteds = defineModel<string[]>({ default: [] })
+const selecteds = defineModel<string[]>({ default: () => [] })
 const visible = defineModel<boolean>('visible')
 
 const accountStore = useAccountStore()
-const accounts = computed(() => accountStore.accounts)
+const accounts = computed(() => accountStore.list)
 
 const accountPickerRef = ref()
 const isAllSelected = ref()

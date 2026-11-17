@@ -32,13 +32,6 @@ defineExpose({
     </wd-config-provider>
 
     <!-- 启动加载页 -->
-    <startup-loading
-      v-if="startupStore.loading"
-      :progress="startupStore.progress"
-      :status-text="startupStore.statusText"
-      :failed="startupStore.failed"
-      :error-msg="startupStore.errorMsg"
-      @retry="() => startupStore.startApp()"
-    />
+    <startup-loading v-if="startupStore.showStartup" />
   </view>
 </template>

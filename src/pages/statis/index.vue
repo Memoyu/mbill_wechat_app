@@ -79,7 +79,7 @@ function handleMoreConfirm() {
       <view class="w-full flex items-center justify-between">
         <text>数据统计</text>
         <action-btn @tap="showMore = true">
-          <view class="iconfont icon-book" />
+          <text class="i-lucide-notebook-text" />
         </action-btn>
       </view>
     </template>

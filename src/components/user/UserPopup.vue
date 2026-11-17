@@ -38,7 +38,7 @@ const editShow = ref(false)
 const nickname = ref()
 
 const summary = computed(() => indexBillStore.yearSummary)
-const user = computed(() => userStore.userInfo)
+const user = computed(() => userStore.state.userInfo)
 
 /**
  * 选择头像

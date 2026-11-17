@@ -43,7 +43,7 @@ const ledgerActions = ref<ActionGroup[]>([
     title: '账本样式',
     actions: [
       {
-        icon: 'i-carbon-color-palette',
+        icon: 'i-lucide-palette',
         text: '更换颜色',
         action: handleChangeColorAction,
       },
@@ -53,17 +53,17 @@ const ledgerActions = ref<ActionGroup[]>([
     title: '账本管理',
     actions: [
       {
-        icon: 'i-carbon-edit',
+        icon: 'i-lucide-edit',
         text: '编辑账本',
         action: handleEditAction,
       },
       {
-        icon: 'i-carbon-share',
+        icon: 'i-lucide-share',
         text: '共享账本',
         action: handleShareAction,
       },
       {
-        icon: 'i-carbon-arrows-horizontal',
+        icon: 'i-lucide-arrow-right-left',
         text: '账单迁移',
         action: handleMigrateAction,
       },
@@ -74,7 +74,7 @@ const ledgerActions = ref<ActionGroup[]>([
       //   action: handleHideAction,
       // },
       {
-        icon: 'i-carbon-trash-can',
+        icon: 'i-lucide-trash',
         text: '删除账本',
         type: 'danger',
         action: handleDeleteAction,

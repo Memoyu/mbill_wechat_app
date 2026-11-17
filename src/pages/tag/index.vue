@@ -23,17 +23,17 @@ const tagActions: ActionGroup[] = [
   {
     actions: [
       {
-        icon: 'i-carbon-edit',
+        icon: 'i-lucide-edit',
         text: '编辑标签',
         action: handleEditAction,
       },
       {
-        icon: 'i-carbon-package',
+        icon: 'i-lucide-package',
         text: '新增子标签',
         action: handleCreateChildAction,
       },
       {
-        icon: 'i-carbon-trash-can',
+        icon: 'i-lucide-trash',
         text: '删除标签',
         type: 'danger',
         action: handleDeleteAction,

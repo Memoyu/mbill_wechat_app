@@ -42,7 +42,7 @@ const hasChild = computed(() => props.item.childs && props.item.childs.length > 
         v-if="isSelected"
         class="absolute h-7 w-7 flex animate-fade-in animate-duration-200 items-end justify-end rounded-full bg-indigo-500 shadow-sm -left-2.5 -top-2.5"
       >
-        <text class="iconfont icon-check pb-0.5 pr-1 text-xs text-white" />
+        <text class="i-lucide-check pb-0.5 pr-1 text-xs text-white" />
       </view>
     </view>
 

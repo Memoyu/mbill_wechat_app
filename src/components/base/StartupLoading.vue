@@ -1,48 +1,32 @@
 <script lang="ts" setup>
-defineOptions({
-  name: 'StartupLoading',
-})
+import { useStartupStore } from '@/store'
 
-defineProps<{
-  /** 进度百分比 0~100 */
-  progress: number
-  /** 当前加载状态文字 */
-  statusText: string
-  /** 是否加载失败 */
-  failed: boolean
-  /** 错误信息 */
-  errorMsg: string
-}>()
-
-const emit = defineEmits(['retry'])
+const startupStore = useStartupStore()
 </script>
 
 <template>
-  <view class="startup-loading">
+  <view class="startup-loading" :class="[!startupStore.loading ? 'fading' : '']">
     <!-- Logo / 应用名 -->
     <view class="startup-logo">
       <view class="logo-icon">
-        <text class="i-carbon-wallet text-4xl text-indigo-500" />
+        <text class="i-lucide-wallet text-4xl text-indigo-500" />
       </view>
       <text class="logo-text">记账本</text>
     </view>
 
     <!-- 加载中状态 -->
-    <view v-if="!failed" class="startup-progress">
-      <wd-progress :percentage="progress" />
-      <text class="status-text">{{ statusText }}</text>
+    <view v-if="!startupStore.failed" class="startup-progress">
+      <wd-progress :percentage="startupStore.progress" />
+      <text class="status-text">{{ startupStore.statusText }}</text>
     </view>
 
     <!-- 加载失败状态 -->
     <view v-else class="startup-error">
-      <view class="error-icon">
-        <text class="i-carbon-warning-alt text-3xl text-red-400" />
-      </view>
-      <text class="error-msg">{{ errorMsg || '加载失败，请重试' }}</text>
+      <text class="error-msg text-red-400">{{ startupStore.errorMsg || '加载失败，请重试' }}</text>
       <wd-button
         block
         custom-class="retry-btn"
-        @click="emit('retry')"
+        @click="() => startupStore.startApp()"
       >
         重新登录
       </wd-button>
@@ -63,6 +47,13 @@ const emit = defineEmits(['retry'])
   align-items: center;
   justify-content: center;
   background: linear-gradient(180deg, #ffffff 0%, #f5f3ff 100%);
+  opacity: 1;
+  transition: opacity 0.4s ease-out;
+
+  &.fading {
+    opacity: 0;
+    pointer-events: none;
+  }
 }
 
 .startup-logo {
@@ -110,20 +101,8 @@ const emit = defineEmits(['retry'])
   align-items: center;
   gap: 24rpx;
 
-  .error-icon {
-    width: 100rpx;
-    height: 100rpx;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    background: rgba(248, 113, 113, 0.1);
-    margin-bottom: 8rpx;
-  }
-
   .error-msg {
     font-size: 28rpx;
-    color: #6b7280;
     text-align: center;
     line-height: 1.5;
   }

@@ -120,7 +120,7 @@ function isSelected(ledger: ILedger) {
                 v-if="isSelected(leg)"
                 class="absolute bottom-3 right-3 h-5 w-5 flex animate-fade-in animate-duration-200 items-center justify-center rounded-full bg-indigo-500 shadow-sm"
               >
-                <text class="iconfont icon-check text-xs text-white" />
+                <text class="i-lucide-check text-xs text-white" />
               </view>
             </view>
           </template>

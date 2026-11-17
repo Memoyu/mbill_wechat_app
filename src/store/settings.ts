@@ -4,7 +4,6 @@ import { useLedgerPickerStore } from './ledgerPicker'
 
 interface State {
   vibration: boolean
-  dark: boolean
   weather: boolean
   address: boolean
   index: {
@@ -25,7 +24,6 @@ interface State {
 
 const initState: State = {
   vibration: true,
-  dark: false,
   weather: false,
   address: false,
   index: {

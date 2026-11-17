@@ -185,11 +185,11 @@ function handleListQuery(page: number, size: number) {
         </view>
         <view class="flex gap-2">
           <action-btn @tap="handleToday">
-            <view class="iconfont icon-today" />
+            <text class="i-lucide-calendar-check" />
           </action-btn>
 
           <action-btn @tap="showMore = true">
-            <view class="iconfont icon-more" />
+            <text class="i-lucide-ellipsis" />
           </action-btn>
         </view>
       </view>

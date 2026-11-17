@@ -35,7 +35,7 @@ function handleNavigateTo(path: string) {
           :hover-stay-time="200"
           @tap="emit('showLedgers')"
         >
-          <text class="iconfont icon-book text-gray-600" />
+          <text class="i-lucide-notebook-text text-gray-600" />
           <text class="max-w-[80px] truncate text-sm text-gray-600"> {{ ledgerName }} </text>
         </view>
 
@@ -46,7 +46,7 @@ function handleNavigateTo(path: string) {
           :hover-stay-time="200"
           @tap="handleNavigateTo('/pages/statis/index')"
         >
-          <text class="iconfont icon-statis text-gray-600" />
+          <text class="i-lucide-chart-pie text-gray-600" />
           <text class="text-sm text-gray-600">统计</text>
         </view>
       </view>
@@ -58,7 +58,7 @@ function handleNavigateTo(path: string) {
         :hover-stay-time="200"
         @tap="handleNavigateTo('/pages/bill/edit')"
       >
-        <text class="i-carbon-add text-indigo-500" />
+        <text class="i-lucide-plus text-indigo-500" />
         <text class="text-sm text-indigo-500 font-medium">添加</text>
       </view>
     </view>

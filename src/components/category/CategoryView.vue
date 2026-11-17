@@ -33,6 +33,10 @@ watch(() => model.value, (newValue) => {
     income.value = newValue
 })
 
+onMounted(() => {
+  categoryStore.loadCategories()
+})
+
 function handleTabChange(change: any) {
   const { index } = change
   type.value = index

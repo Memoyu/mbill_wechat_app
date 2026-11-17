@@ -25,6 +25,10 @@ const option = computed(() => ({
   tops: props.showTop ? accountStore.tops : [],
 }))
 
+onMounted(() => {
+  accountStore.loadAccounts()
+})
+
 function handleAccountItemTap(item: any) {
   // console.log('账户选中', item)
   const { select, parent } = item

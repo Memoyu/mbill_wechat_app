@@ -29,6 +29,7 @@ const emit = defineEmits<{
   (e: 'after-enter'): void
   (e: 'confirm'): void
   (e: 'cancel'): void
+  (e: 'close'): void
 }>()
 const show = defineModel<boolean>()
 
@@ -46,6 +47,11 @@ function handleCancel() {
 function handleConfirm() {
   emit('confirm')
 }
+
+function handleClose() {
+  show.value = false
+  emit('close')
+}
 </script>
 
 <template>
@@ -58,7 +64,7 @@ function handleConfirm() {
     :safe-area-inset-bottom="true"
     custom-class="rounded-t-3xl relative"
     :custom-style="(height && !autoHeight ? `height: ${height}` : '')"
-    @close="() => show = false"
+    @close="handleClose"
     @after-enter="emit('after-enter')"
   >
     <view

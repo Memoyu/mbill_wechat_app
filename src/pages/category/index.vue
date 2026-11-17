@@ -24,17 +24,17 @@ const categoryActions: ActionGroup[] = [
   {
     actions: [
       {
-        icon: 'i-carbon-edit',
+        icon: 'i-lucide-edit',
         text: '编辑分类',
         action: handleEditAction,
       },
       {
-        icon: 'i-carbon-package',
+        icon: 'i-lucide-package',
         text: '新增子分类',
         action: handleCreateChildAction,
       },
       {
-        icon: 'i-carbon-trash-can',
+        icon: 'i-lucide-trash',
         text: '删除分类',
         type: 'danger',
         action: handleDeleteAction,

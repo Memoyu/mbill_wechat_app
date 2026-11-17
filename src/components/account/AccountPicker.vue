@@ -17,11 +17,11 @@ const show = defineModel<boolean>()
 
 const account = ref<IBillAccount>()
 const accountId = ref()
-const init = ref(false)
+const mounted = ref(false)
 
 watch(() => show.value, (val) => {
   if (val) {
-    init.value = true
+    mounted.value = true
   }
 })
 
@@ -40,7 +40,7 @@ function handleConfirm() {
 
 <template>
   <bottom-popup v-model="show" auto-height title="选择账户" @after-enter="handleAfterEnter" @confirm="handleConfirm">
-    <account-view v-if="init" v-model="accountId" show-top @change="(ac: IBillAccount) => account = ac" />
+    <account-view v-if="mounted" v-model="accountId" show-top @change="(ac: IBillAccount) => account = ac" />
   </bottom-popup>
 </template>
 

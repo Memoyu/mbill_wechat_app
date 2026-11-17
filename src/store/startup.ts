@@ -11,6 +11,7 @@ import { useTokenStore } from './token'
 
 export const useStartupStore = defineStore('startup', () => {
   const loading = ref(true)
+  const showStartup = ref(true)
   const progress = ref(0)
   const statusText = ref('正在初始化...')
   const failed = ref(false)
@@ -90,9 +91,12 @@ export const useStartupStore = defineStore('startup', () => {
       // 全部成功或部分成功（降级展示）
       progress.value = 100
       statusText.value = '加载完成'
+      loading.value = false
+
+      // 等待淡出动画完成后通知父组件移除
       setTimeout(() => {
-        loading.value = false
-      }, 300)
+        showStartup.value = false
+      }, 450)
     }
     catch (error) {
       console.error('启动应用异常:', error)
@@ -103,6 +107,7 @@ export const useStartupStore = defineStore('startup', () => {
 
   return {
     loading,
+    showStartup,
     progress,
     statusText,
     failed,

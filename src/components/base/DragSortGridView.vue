@@ -345,7 +345,7 @@ function getListIndex(dragId: string, list = sortList.value) {
           <slot name="content" :grid-item="{ ...item }" />
         </view>
         <view v-else class="drag-add-item" @tap.stop="handleItemTap(item, 'add')">
-          <text class="iconfont icon-plus" :style="{ fontSize: addIconSize }" />
+          <text class="i-lucide-plus" :style="{ fontSize: addIconSize }" />
         </view>
       </movable-view>
     </movable-area>

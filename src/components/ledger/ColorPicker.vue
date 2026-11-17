@@ -108,7 +108,7 @@ function handleUnifyAll() {
               :hover-stay-time="200"
             >
               <text
-                class="i-carbon-split-discard text-lg"
+                class="i-lucide-swatch-book text-lg"
                 :class="[currentSystem === 'warm' ? 'text-amber-500' : 'text-blue-500']"
               />
             </view>
@@ -122,7 +122,7 @@ function handleUnifyAll() {
               :hover-start-time="0"
               :hover-stay-time="200"
             >
-              <text class="i-carbon-color-palette text-lg text-gray-500" />
+              <text class="i-lucide-palette text-lg text-gray-500" />
             </view>
             <text class="text-xs text-gray-700">彩虹色</text>
           </view>
@@ -134,7 +134,7 @@ function handleUnifyAll() {
               :hover-start-time="0"
               :hover-stay-time="200"
             >
-              <text class="i-carbon-circle-solid text-lg text-gray-500" />
+              <text class="i-lucide-paint-bucket text-lg text-gray-500" />
             </view>
             <text class="text-xs text-gray-700">统一颜色</text>
           </view>
@@ -162,7 +162,7 @@ function handleUnifyAll() {
             v-if="currentColor === index"
             class="absolute bottom-1 right-1 h-4 w-4 flex items-center justify-center rounded-full bg-indigo-500"
           >
-            <text class="iconfont icon-check text-xs text-white" />
+            <text class="i-lucide-check text-xs text-white" />
           </view>
         </view>
       </view>

@@ -1,74 +1,134 @@
-import type { SystemThemeState, ThemeMode } from '@/hooks/types/theme'
+import type { ThemeColorOption, ThemeMode, ThemeState } from '@/hooks/types/theme'
 import { defineStore } from 'pinia'
 import { themeColorOptions } from '@/hooks/types/theme'
+import { getSystemTheme } from '@/utils/systemTheme'
+
+function buildThemeVars(color: ThemeColorOption) {
+  return {
+    ...color.primaryShades,
+  }
+}
 
 /**
- * 简化版系统主题状态管理
- * 仅支持跟随系统主题，不提供手动切换功能
- * 导航栏颜色通过 theme.json 自动处理
+ * 完整版主题状态管理
+ * 支持手动切换主题、主题色选择、跟随系统主题等完整功能
  */
-export const useThemeStore = defineStore('theme', {
-  state: (): SystemThemeState => ({
-    theme: 'light',
-    themeVars: {
-      darkBackground: '#0f0f0f',
-      darkBackground2: '#1a1a1a',
-      darkBackground3: '#242424',
-      darkBackground4: '#2f2f2f',
-      darkBackground5: '#3d3d3d',
-      darkBackground6: '#4a4a4a',
-      darkBackground7: '#606060',
-      darkColor: '#ffffff',
-      darkColor2: '#e0e0e0',
-      darkColor3: '#a0a0a0',
-      colorTheme: themeColorOptions[0].primary,
-    },
-  }),
+export const useThemeStore = defineStore('theme', () => {
+  // state
+  const theme = ref<ThemeState['theme']>('light')
+  const followSystem = ref(true)
+  const hasUserSet = ref(false)
+  const currentThemeColor = ref<ThemeColorOption>(themeColorOptions[1])
+  const themeVars = ref<ThemeState['themeVars']>(buildThemeVars(themeColorOptions[1]))
 
-  getters: {
-    isDark: state => state.theme === 'dark',
-  },
+  // getters
+  const isDark = computed(() => theme.value === 'dark')
 
-  actions: {
-    /**
-     * 获取系统主题
-     * @returns 系统主题模式
-     */
-    getSystemTheme(): ThemeMode {
-      // #ifdef MP-WEIXIN
-      // 微信小程序使用 getAppBaseInfo
-      const appBaseInfo = uni.getAppBaseInfo()
-      if (appBaseInfo && appBaseInfo.theme) {
-        return appBaseInfo.theme as ThemeMode
+  // actions
+
+  /**
+   * 手动切换主题
+   * @param mode 指定主题模式，不传则自动切换
+   * @param isFollowSystem 是否是跟随系统
+   */
+  function toggleTheme(mode?: ThemeMode, isFollowSystem: boolean = false) {
+    theme.value = mode || (theme.value === 'light' ? 'dark' : 'light')
+    if (!isFollowSystem) {
+      hasUserSet.value = true
+      followSystem.value = false
+    }
+    setNavigationBarColor()
+  }
+
+  /**
+   * 设置是否跟随系统主题
+   * @param follow 是否跟随系统
+   */
+  function setFollowSystem(follow: boolean) {
+    followSystem.value = follow
+    if (follow) {
+      hasUserSet.value = false
+      initTheme()
+    }
+    else {
+      hasUserSet.value = true
+      setNavigationBarColor()
+    }
+  }
+
+  /**
+   * 设置导航栏颜色
+   */
+  function setNavigationBarColor() {
+    uni.setNavigationBarColor({
+      frontColor: theme.value === 'light' ? '#000000' : '#ffffff',
+      backgroundColor: theme.value === 'light' ? '#ffffff' : '#000000',
+    })
+  }
+
+  /**
+   * 设置主题色
+   * @param color 主题色选项
+   */
+  function setCurrentThemeColor(color: ThemeColorOption) {
+    currentThemeColor.value = color
+    themeVars.value = {
+      ...themeVars.value,
+      ...buildThemeVars(color),
+    }
+  }
+
+  /**
+   * 获取系统主题
+   * @returns 系统主题模式
+   */
+  function getSystemThemeMode(): ThemeMode {
+    return getSystemTheme()
+  }
+
+  /**
+   * 初始化主题
+   */
+  function initTheme() {
+    // 如果用户已手动设置且不跟随系统，保持当前主题
+    if (hasUserSet.value && !followSystem.value) {
+      console.log('使用用户设置的主题:', theme.value)
+      setNavigationBarColor()
+      return
+    }
+
+    // 获取系统主题
+    const systemTheme = getSystemThemeMode()
+
+    // 如果是首次启动或跟随系统，使用系统主题
+    if (!hasUserSet.value || followSystem.value) {
+      theme.value = systemTheme
+      if (!hasUserSet.value) {
+        followSystem.value = true
+        console.log('首次启动，使用系统主题:', theme.value)
       }
-      // #endif
-
-      // #ifndef MP-WEIXIN
-      // 其他平台使用 getSystemInfoSync
-      const systemInfo = uni.getSystemInfoSync()
-      if (systemInfo && systemInfo.theme) {
-        return systemInfo.theme as ThemeMode
+      else {
+        console.log('跟随系统主题:', theme.value)
       }
-      // #endif
+    }
 
-      return 'light' // 默认返回 light
-    },
+    setNavigationBarColor()
+  }
 
-    /**
-     * 设置主题（仅内部使用）
-     * @param theme 主题模式
-     */
-    setTheme(theme: ThemeMode) {
-      this.theme = theme
-    },
-
-    /**
-     * 初始化系统主题
-     */
-    initSystemTheme() {
-      const systemTheme = this.getSystemTheme()
-      this.theme = systemTheme
-      console.log('初始化系统主题:', this.theme)
-    },
-  },
+  return {
+    theme,
+    followSystem,
+    hasUserSet,
+    currentThemeColor,
+    themeVars,
+    isDark,
+    toggleTheme,
+    setFollowSystem,
+    setNavigationBarColor,
+    setCurrentThemeColor,
+    getSystemThemeMode,
+    initTheme,
+  }
+}, {
+  persist: true,
 })

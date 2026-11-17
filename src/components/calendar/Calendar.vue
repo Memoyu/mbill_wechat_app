@@ -176,7 +176,9 @@ function getBills(month: number) {
     @animationfinish="handleSwiperAnimationFinish"
   >
     <swiper-item v-for="item in monthList" :key="item">
-      <calendar-view :id="`calendar-view-${item}`" v-model="date" :month="item" :hm-type="config.heatMap" :data="getBills(item)" @change="handleDateChange" />
+      <view :id="`calendar-view-${item}`">
+        <calendar-view v-model="date" :month="item" :hm-type="config.heatMap" :data="getBills(item)" @change="handleDateChange" />
+      </view>
     </swiper-item>
   </swiper>
 </template>
