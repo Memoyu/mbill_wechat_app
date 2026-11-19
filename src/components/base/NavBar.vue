@@ -50,6 +50,6 @@ function back() {
 <style lang="scss" scoped>
 .page-nav-bar {
   box-shadow: 0 3px 3px 0px rgba(0, 0, 0, 0.02);
-  @apply: sticky top-0 z-9 bg-white/90 pb-3 backdrop-blur-sm w-screen;
+  @apply: sticky top-0 z-9 bg-[var(--wot-filled-zero)] pb-3 backdrop-blur-sm w-screen;
 }
 </style>

@@ -18,8 +18,8 @@ export const useThemeStore = defineStore('theme', () => {
   const theme = ref<ThemeState['theme']>('light')
   const followSystem = ref(true)
   const hasUserSet = ref(false)
-  const currentThemeColor = ref<ThemeColorOption>(themeColorOptions[1])
-  const themeVars = ref<ThemeState['themeVars']>(buildThemeVars(themeColorOptions[1]))
+  const currentThemeColor = ref<ThemeColorOption>(themeColorOptions[4])
+  const themeVars = ref<ThemeState['themeVars']>(buildThemeVars(themeColorOptions[4]))
 
   // getters
   const isDark = computed(() => theme.value === 'dark')

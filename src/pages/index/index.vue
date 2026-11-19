@@ -111,11 +111,7 @@ function handleQuery(page: number) {
   <z-paging ref="paging" v-model="indexBillStore.groups" :auto="false" :default-page-size="15" @query="handleQuery">
     <template #top>
       <!-- 顶部操作 -->
-      <!-- <view
-        class="sticky left-0 top-0 z-5 w-screen bg-white/70 pb-2 backdrop-blur-md"
-        :style="{ paddingTop: `${Math.max(safeAreaInsets.top, 28)}px` }"
-      > -->
-      <view class="z-5 w-screen bg-white/70 pb-2 backdrop-blur-md" :style="{ paddingTop: `${Math.max(safeAreaInsets.top, 28)}px` }">
+      <view class="z-5 w-screen bg-[var(--wot-filled-zero)] pb-2 backdrop-blur-sm" :style="{ paddingTop: `${Math.max(safeAreaInsets.top, 28)}px` }">
         <view class="flex items-center gap-2 px-2">
           <!-- 用户信息按钮 -->
           <view
@@ -156,7 +152,7 @@ function handleQuery(page: number) {
       </view>
     </template>
 
-    <view class="w-screen flex flex-col gap-3">
+    <view class="w-screen flex flex-col gap-3 pt-3">
       <!-- 日期栏 -->
       <view class="flex items-center justify-between px-5">
         <view class="flex items-center" @tap="dateSelectShow = true">
@@ -169,12 +165,12 @@ function handleQuery(page: number) {
       </view>
 
       <!-- 账单金额汇总 -->
-      <view class="mx-3 rounded-xl bg-indigo-200/20 p-3">
+      <view class="bg-primary-1 mx-3 rounded-lg p-3">
         <amount-summary />
       </view>
 
       <!-- 账单金额汇总统计 -->
-      <view v-if="indexBillStore.showChart" class="mx-3 rounded-xl bg-indigo-200/20 px-2 py-3">
+      <view v-if="indexBillStore.showChart" class="bg-primary-1 mx-3 rounded-lg px-2 py-3">
         <summary-charts @more="chartSettingShow = true" />
       </view>
     </view>

@@ -44,7 +44,7 @@ const props = defineProps<{
           </view>
         </view>
       </view>
-      <view class="mt-2 flex flex-col gap-2 list-item-box rounded-lg">
+      <view class="bg-primary-1 mt-2 flex flex-col gap-2 rounded-lg p-2">
         <view v-for="b in g.items" :key="b.billId">
           <bill-item :bill="b" />
         </view>

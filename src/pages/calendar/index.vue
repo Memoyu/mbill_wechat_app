@@ -57,9 +57,9 @@ const config = computed(() => settingsStore.calendar)
 watch(() => [navbarHeight.value, calendarHeight.value], ([nav, cal]) => {
   // console.log(nav, cal, 'initNavbarHeight')
   // 更新组件高度
-  contentHeight.value = systemInfo.windowHeight - nav
-  floatingHeight.value = contentHeight.value - cal - 16 // 留点间隙
-  anchors.value = [floatingHeight.value, systemInfo.windowHeight * 0.8]
+  contentHeight.value = systemInfo.windowHeight - nav - 12 // 容器顶部pt
+  floatingHeight.value = contentHeight.value - cal - 12 // 日历与浮窗之间的间隙
+  anchors.value = [floatingHeight.value, systemInfo.windowHeight * 0.78]
 })
 
 // onLoad(() => {
@@ -96,6 +96,7 @@ function handleDateChange(d: number) {
 
 function handleCalHeightChange(height: number) {
   // console.log(height, 'handleCalHeightChange')
+  // 16：p-2
   calendarHeight.value = height + 16
 }
 
@@ -219,7 +220,7 @@ function handleListQuery(page: number, size: number) {
     </template>
   </nav-bar>
 
-  <view :style="{ height: `${contentHeight}px` }" class="w-full">
+  <view :style="{ height: `${contentHeight}px` }" class="w-full pt-3">
     <z-paging ref="calendarPaging" :fixed="false" refresher-only @query="handleCalendarQuery">
       <!-- 日历组件 -->
       <view class="mx-3 rounded-3xl bg-white p-2">

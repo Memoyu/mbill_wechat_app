@@ -68,7 +68,7 @@ function handleClose() {
     @after-enter="emit('after-enter')"
   >
     <view
-      class="sticky left-0 right-0 top-0 z-10 border-b border-gray-100 bg-white py-3"
+      class="sticky left-0 right-0 top-0 z-10 border-b border-gray-100 py-3"
     >
       <view class="flex items-center justify-between px-4">
         <text class="line-clamp-1 text-base font-semibold">

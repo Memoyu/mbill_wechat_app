@@ -5,6 +5,7 @@ import { FileSystemIconLoader } from '@iconify/utils/lib/loader/node-loaders'
 import { presetUni } from '@uni-helper/unocss-preset-uni'
 // @see https://unocss.dev/presets/legacy-compat
 import { presetLegacyCompat } from '@unocss/preset-legacy-compat'
+import { presetWot } from '@wot-ui/unocss-preset'
 import {
   defineConfig,
   presetIcons,
@@ -16,6 +17,9 @@ export default defineConfig({
   presets: [
     presetUni({
       attributify: false,
+    }),
+    presetWot({
+      preflight: false,
     }),
     presetIcons({
       scale: 1.2,
@@ -68,7 +72,8 @@ export default defineConfig({
     transformerVariantGroup(),
   ],
   shortcuts: [
-    ['list-item-box', 'bg-gray-100 rounded-lg p-3'],
+    // bg-[var(--neon-green)]/90
+    // ['mb-bg-filled-1', 'bg-[color-mix(in_srgb,var(--wot-primary-1)_60%,transparent)] rounded-lg'],
     ['center', 'flex justify-center items-center'],
   ],
   // 动态图标需要在这里配置，或者写在vue页面中注释掉
@@ -90,7 +95,7 @@ export default defineConfig({
   theme: {
     colors: {
       /** 主题色，用法如: text-primary */
-      primary: 'var(--wot-color-theme,#0957DE)',
+      'primary-1': 'var(--wot-primary-1)',
     },
     fontSize: {
       /** 提供更小号的字体，用法如：text-2xs */

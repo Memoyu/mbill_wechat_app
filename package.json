@@ -123,6 +123,7 @@
     "@qiun/ucharts": "2.5.0-20230101",
     "@types/lodash": "^4.17.24",
     "@wot-ui/ui": "^2.3.2",
+    "@wot-ui/unocss-preset": "^1.0.0",
     "abortcontroller-polyfill": "^1.7.8",
     "dayjs": "1.11.10",
     "decimal.js": "^10.6.0",

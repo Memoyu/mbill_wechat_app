@@ -9,8 +9,8 @@ defineOptions({
 </script>
 
 <template>
-  <view class="relative w-screen bg-white transition-all -z-10">
-    <view class="pointer-events-none fixed inset-0 overflow-hidden">
+  <view class="relative w-screen transition-all -z-10">
+    <view class="pointer-events-none fixed inset-0 overflow-hidden bg-[var(--wot-filled-content)]">
       <view
         v-for="i in 3"
         :key="`${i}-bg1`"
@@ -23,10 +23,10 @@ defineOptions({
           transform: `translate(-50%, -50%) rotate(${i * 45}deg)`,
           background:
             i === 1
-              ? 'linear-gradient(135deg, rgba(0,0,0,0.02), rgba(0,0,0,0.01))'
+              ? 'linear-gradient(135deg, rgba(0,0,0,0.03), rgba(0,0,0,0.02))'
               : i === 2
-                ? 'linear-gradient(225deg, rgba(0,0,0,0.02), rgba(0,0,0,0.01))'
-                : 'linear-gradient(45deg, rgba(0,0,0,0.02), rgba(0,0,0,0.01))',
+                ? 'linear-gradient(225deg, rgba(0,0,0,0.03), rgba(0,0,0,0.02))'
+                : 'linear-gradient(45deg, rgba(0,0,0,0.03), rgba(0,0,0,0.02))',
         }"
       />
     </view>
