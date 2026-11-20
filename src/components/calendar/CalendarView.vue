@@ -157,8 +157,17 @@ function getHeatmapColor(type: number) {
   </view>
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
 .calendar-selected-day {
-  @apply: text-white bg-indigo-200;
+  @apply: relative text-[var(--wot-primary-4)];
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--wot-primary-4);
+    border-radius: inherit;
+    z-index: -1;
+    opacity: 0.3;
+  }
 }
 </style>

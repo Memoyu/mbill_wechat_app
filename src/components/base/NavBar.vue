@@ -15,17 +15,13 @@ function back() {
   <view class="page-nav-bar" :style="{ paddingTop: `${Math.max(safeAreaInsets.top, 28)}px` }">
     <view class="flex items-center gap-3 px-3 pt-3">
       <!-- 返回按钮 -->
-      <view
-        class="h-8 w-8 flex items-center justify-center rounded-lg bg-gray-50/80"
-        hover-class="bg-gray-100/80 scale-95" :hover-start-time="0" :hover-stay-time="200"
-        @tap="back"
-      >
-        <wd-icon name="left" size="18px" class="text-gray-500" />
+      <view class="mb-action-bg h-8 w-8 flex items-center justify-center rounded-lg" @tap="back">
+        <wd-icon name="left" size="18px" />
       </view>
       <!-- 标题/操作栏  -->
       <view class="w-full">
         <!-- 标题 -->
-        <view class="w-[55vw] flex items-center justify-between text-16px text-gray-800 font-semibold">
+        <view class="w-[55vw] flex items-center justify-between text-16px font-semibold">
           <text v-if="title && title.length > 0"> {{ title }} </text>
           <slot v-else name="title" />
         </view>

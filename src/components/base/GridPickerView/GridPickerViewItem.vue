@@ -23,7 +23,7 @@ const hasChild = computed(() => props.item.childs && props.item.childs.length > 
   <view class="relative" :style="{ height: `${height}px` }">
     <view class="h-full flex flex-col justify-center gap-1 px-1">
       <view class="flex justify-center">
-        <view class="relative" :class="[hasChild ? 'grid-select-item-has-more' : '']">
+        <view class="relative z-1" :class="[hasChild ? 'grid-select-item-has-more' : '']">
           <bill-icon :icon="item.icon" :text="item.name" :css-icon="cssIcon" />
         </view>
       </view>

@@ -272,12 +272,9 @@ function handleDeleteAction() {
                 {{ listItem.name }}
               </view>
 
-              <view
-                class="h-6 w-6 flex items-center justify-center rounded-full bg-white/40 shadow-[0_4px_8px_rgba(0,0,0,0.04)]"
-                @tap.stop="handleAccountActions(listItem)"
-              >
-                <wd-icon name="more" />
-              </view>
+              <action-btn @tap.stop="handleAccountActions(listItem)">
+                <wd-icon size="10" name="more" />
+              </action-btn>
             </view>
           </view>
         </template>
@@ -338,12 +335,12 @@ function handleDeleteAction() {
 <style lang="scss" scoped>
 .account-title-box {
   box-sizing: border-box;
-  padding: 0.9rem;
-  @apply bg-indigo-50/60;
+  padding: 0.7rem;
+  @apply mb-content-bg;
 }
 
 .account-content-box {
-  @apply bg-indigo-50/60 p-2;
+  @apply mb-content-bg p-2;
 }
 .account-item-title {
   font-size: 12px;

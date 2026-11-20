@@ -64,7 +64,7 @@ function changeAccountSummary() {
   <view class="mb-4 flex items-center justify-between">
     <text class="font-semibold">账户数据</text>
     <view>
-      <mbill-segmented v-model="type" :options="billOptions" />
+      <segmented v-model="type" :options="billOptions" />
     </view>
   </view>
   <view class="h-250px">

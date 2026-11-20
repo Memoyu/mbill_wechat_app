@@ -1,4 +1,5 @@
 import type { ThemeColorOption, ThemeMode, ThemeState } from '@/hooks/types/theme'
+import lodash from 'lodash'
 import { defineStore } from 'pinia'
 import { themeColorOptions } from '@/hooks/types/theme'
 import { getSystemTheme } from '@/utils/systemTheme'
@@ -15,11 +16,12 @@ function buildThemeVars(color: ThemeColorOption) {
  */
 export const useThemeStore = defineStore('theme', () => {
   // state
+  const initColor = lodash.cloneDeep(themeColorOptions[0])
   const theme = ref<ThemeState['theme']>('light')
   const followSystem = ref(true)
   const hasUserSet = ref(false)
-  const currentThemeColor = ref<ThemeColorOption>(themeColorOptions[4])
-  const themeVars = ref<ThemeState['themeVars']>(buildThemeVars(themeColorOptions[4]))
+  const currentThemeColor = ref<ThemeColorOption>(initColor)
+  const themeVars = ref<ThemeState['themeVars']>(buildThemeVars(initColor))
 
   // getters
   const isDark = computed(() => theme.value === 'dark')

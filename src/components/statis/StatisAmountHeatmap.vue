@@ -78,7 +78,7 @@ function handleMonthTap(m: number) {
       收支热力图
     </text>
     <view>
-      <mbill-segmented v-model="type" :options="options" />
+      <segmented v-model="type" :options="options" />
     </view>
   </view>
   <view class="grid grid-cols-4 gap-2 px-1 py-3">
@@ -88,7 +88,7 @@ function handleMonthTap(m: number) {
         <view class="grid grid-cols-7 mt-2 gap-0.5">
           <view
             v-for="(d, didx) in m.days" :key="`day-${m.month}-${d}`"
-            class="relative h-2.5 w-2.5 rounded bg-gray-200/50"
+            class="relative h-2.5 w-2.5 rounded mb-action-bg"
             :style="didx === 0 ? { gridColumnStart: `${m.offset}` } : {}"
           >
             <view class="absolute inset-0 rounded" :style="`background-color:${bgColor};opacity:${m.heats[didx]}`" />

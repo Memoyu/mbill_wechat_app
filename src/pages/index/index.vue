@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import type { INotice } from '@/api/types/notice'
 import dayjs from 'dayjs'
+import { clamp } from 'lodash'
 import { getNoticeList } from '@/api/notice'
 import { useIndexBillStore, useLedgerPickerStore, useStartupStore, useUserStore } from '@/store'
 import { safeAreaInsets } from '@/utils'
@@ -66,14 +67,16 @@ watch (() => ledgerPickerStore.selecteds, () => {
 // 启动页完成后加载数据
 watch(() => startupStore.loading, (loading) => {
   if (!loading) {
-    console.log('Index startup done, loading data')
-    // 加载数据
-    paging.value.reload()
-    indexBillStore.loadYearSummary()
-    // 公告列表
-    getNoticeList().then((res) => {
-      notices.value = res
-    })
+    setTimeout(() => {
+      console.log('Index startup done, loading data')
+      // 加载数据
+      paging.value.reload()
+      indexBillStore.loadYearSummary()
+      // 公告列表
+      getNoticeList().then((res) => {
+        notices.value = res
+      })
+    }, 0)
   }
 }, { immediate: true })
 
@@ -132,7 +135,7 @@ function handleQuery(page: number) {
             :hover-stay-time="200"
             @tap="settingsShow = true"
           >
-            <text class="i-lucide-settings text-sm" />
+            <text class="i-lucide-settings" />
             <text class="whitespace-nowrap text-xs">设置</text>
           </view>
 
@@ -145,7 +148,7 @@ function handleQuery(page: number) {
               :hover-stay-time="200"
               @tap="noticeShow = true"
             >
-              <text class="i-lucide-bell text-sm" />
+              <text class="i-lucide-bell" />
             </view>
           </wd-badge>
         </view>
@@ -165,18 +168,20 @@ function handleQuery(page: number) {
       </view>
 
       <!-- 账单金额汇总 -->
-      <view class="bg-primary-1 mx-3 rounded-lg p-3">
+      <view class="mb-content-bg mx-3 rounded-lg p-3">
         <amount-summary />
       </view>
 
       <!-- 账单金额汇总统计 -->
-      <view v-if="indexBillStore.showChart" class="bg-primary-1 mx-3 rounded-lg px-2 py-3">
+      <view v-if="indexBillStore.showChart" class="mb-content-bg mx-3 rounded-lg px-2 py-3">
         <summary-charts @more="chartSettingShow = true" />
       </view>
     </view>
 
     <!-- 账单列表 -->
-    <bill-list-view :groups="indexBillStore.groups" />
+    <view class="mt-5">
+      <bill-list-view :groups="indexBillStore.groups" />
+    </view>
 
     <template #loadingMoreNoMore>
       <view class="pb-3">
@@ -213,9 +218,9 @@ function handleQuery(page: number) {
 
 <style lang="scss" scoped>
 .sticky-item {
-  @apply: w-fit flex items-center gap-1.5  rounded-full bg-gray-100/80 text-gray-600 backdrop-blur-sm transition-all;
+  @apply: w-fit flex items-center gap-1.5 mb-action-bg rounded-full backdrop-blur-sm transition-all text-sm;
 }
 .sticky-item-hover {
-  @apply: bg-gray-50 !scale-97 transform-origin-center;
+  @apply: !scale-97 transform-origin-center;
 }
 </style>

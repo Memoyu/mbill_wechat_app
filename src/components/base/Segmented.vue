@@ -116,7 +116,7 @@ function calcLineLeft(idx: number) {
         </view>
         <!-- 底部条 -->
         <view
-          class="absolute bottom-1 z--1 h-2 rounded-full bg-indigo-300 transition-all duration-300"
+          class="absolute bottom-1 z--1 h-2 rounded-full bg-[var(--wot-primary-3)] opacity-100 transition-all duration-300 dark:opacity-50"
           :style="{ width: `${lineWidth}px`, left: `${lineLeft}px` }"
         />
       </view>

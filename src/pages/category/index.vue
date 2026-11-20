@@ -279,8 +279,8 @@ function handleDeleteAction() {
   <draw-background2 />
   <nav-bar id="TOP_NAVBAR" :actions="navActions" title="分类管理">
     <template #suffix-action>
-      <view class="mt-4 max-w-max rounded-full bg-gray-200/50 px-2 py-1">
-        <mbill-segmented v-model="type" :gap="6" :options="typeActions" />
+      <view class="mb-action-bg mt-4 max-w-max rounded-full px-2 py-1">
+        <segmented v-model="type" :gap="6" :options="typeActions" />
       </view>
     </template>
   </nav-bar>

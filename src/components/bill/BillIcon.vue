@@ -42,7 +42,7 @@ const isImage = computed(() => !props.cssIcon && props.icon && props.icon.length
 </script>
 
 <template>
-  <view :style="style" class="category-icon-box bg-indigo-300/40">
+  <view :style="style" class="category-icon-box">
     <image v-if="isImage" mode="aspectFill" :src="icon" :style="style" :lazy-load="true" />
     <text v-else-if="cssIcon" class="iconfont text-white font-semibold" :class="[icon]" />
     <text v-else class="text-white font-semibold">{{ (text && text.length > 0) ? text.substring(0, 1) : '' }}</text>
@@ -51,6 +51,15 @@ const isImage = computed(() => !props.cssIcon && props.icon && props.icon.length
 
 <style lang="scss" scoped>
 .category-icon-box {
-  @apply shrink-0 flex justify-center items-center;
+  @apply relative shrink-0 flex justify-center items-center;
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--wot-primary-3);
+    border-radius: inherit;
+    z-index: -1;
+    opacity: 0.4;
+  }
 }
 </style>

@@ -145,12 +145,12 @@ function handleQuery() {
   <view v-if="mounted" :style="{ height: `${contentHeight}px` }" class="w-full">
     <z-paging ref="paging" :fixed="false" refresher-only @query="handleQuery">
       <template #top>
-        <view class="z-5 bg-white/70 py-3 backdrop-blur-md">
+        <view class="z-5 py-3 backdrop-blur-md">
           <!-- 月份选择器 -->
           <view class="px-2">
-            <mbill-segmented v-model="active" :gap="8" :options="options" @scrolltolower="handleScrollToLower">
+            <segmented v-model="active" :gap="8" :options="options" @scrolltolower="handleScrollToLower">
               <template #content="{ option }">
-                <view class="flex flex-col justify-center rounded-xl bg-indigo-300/20 px-3 py-4">
+                <view class="mb-action-bg flex flex-col justify-center rounded-xl px-3 py-4">
                   <view class="flex items-end">
                     <text class="text-base font-semibold">
                       {{ option.value.substring(5) }}
@@ -160,7 +160,7 @@ function handleQuery() {
                   <text class="text-12px">{{ option.value.substring(0, 4) }}</text>
                 </view>
               </template>
-            </mbill-segmented>
+            </segmented>
           </view>
         </view>
       </template>
@@ -202,6 +202,6 @@ function handleQuery() {
 
 <style lang="scss" scoped>
 .mon-statis-block {
-  @apply: rounded-lg bg-indigo-200/20 p-2;
+  @apply: mb-content-bg rounded-lg p-2;
 }
 </style>

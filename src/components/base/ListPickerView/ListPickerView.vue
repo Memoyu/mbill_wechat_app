@@ -26,7 +26,7 @@ const props = withDefaults(defineProps<{
 })
 
 const emit = defineEmits(['change'])
-const selecteds = defineModel<string[]>({ default: [] })
+const selecteds = defineModel<string[]>({ default: () => [] })
 defineExpose({
   toggleAll,
   selectAll,

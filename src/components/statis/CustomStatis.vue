@@ -135,7 +135,7 @@ function handleQuery() {
   <view v-if="mounted" :style="{ height: `${contentHeight}px` }" class="w-full">
     <z-paging ref="paging" :fixed="false" refresher-only @query="handleQuery">
       <template #top>
-        <view class="z-5 bg-white/70 px-5 py-3 backdrop-blur-md">
+        <view class="z-5 px-5 py-3 backdrop-blur-md">
           <view class="flex items-center justify-between">
             <text class="font-semibold">{{ dateText }}</text>
             <wd-icon name="filter" size="20px" @tap="showFilter = true" />
@@ -173,6 +173,6 @@ function handleQuery() {
 
 <style lang="scss" scoped>
 .cust-statis-block {
-  @apply: rounded-lg bg-indigo-200/20 p-2;
+  @apply: mb-content-bg rounded-lg p-2;
 }
 </style>

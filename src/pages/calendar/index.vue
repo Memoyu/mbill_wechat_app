@@ -223,7 +223,7 @@ function handleListQuery(page: number, size: number) {
   <view :style="{ height: `${contentHeight}px` }" class="w-full pt-3">
     <z-paging ref="calendarPaging" :fixed="false" refresher-only @query="handleCalendarQuery">
       <!-- 日历组件 -->
-      <view class="mx-3 rounded-3xl bg-white p-2">
+      <view class="mb-content-bg mx-3 rounded-3xl p-2">
         <calendar v-model="date" v-model:month="month" :data="monthSummary" @change="handleMonthChange" @selected="handleDateChange" @heightchange="handleCalHeightChange" />
       </view>
     </z-paging>
@@ -244,15 +244,4 @@ function handleListQuery(page: number, size: number) {
 </template>
 
 <style lang="scss" scoped>
-:deep(.wd-floating-panel) {
-  z-index: 6;
-}
-
-// :deep(.wd-floating-panel__header) {
-//   background-color: var(--wot-avatar-bg);
-// }
-
-// :deep(.wd-floating-panel__content) {
-//   background-color: var(--wot-avatar-bg);
-// }
 </style>

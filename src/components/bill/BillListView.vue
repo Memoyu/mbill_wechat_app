@@ -18,7 +18,7 @@ const props = defineProps<{
 
 <template>
   <view class="p-3">
-    <view v-for="g in groups" :key="g.date" class="mt-5">
+    <view v-for="g in groups" :key="g.date">
       <view class="flex items-center justify-between">
         <view class="flex">
           <view class="font-bold">
@@ -44,7 +44,7 @@ const props = defineProps<{
           </view>
         </view>
       </view>
-      <view class="bg-primary-1 mt-2 flex flex-col gap-2 rounded-lg p-2">
+      <view class="bill-list-view">
         <view v-for="b in g.items" :key="b.billId">
           <bill-item :bill="b" />
         </view>
@@ -54,4 +54,7 @@ const props = defineProps<{
 </template>
 
 <style lang="scss" scoped>
+.bill-list-view {
+  @apply z-1 mb-content-bg mt-2 flex flex-col gap-2 rounded-lg py-3 px-2;
+}
 </style>

@@ -20,14 +20,14 @@ const props = withDefaults(defineProps<{
   iconKey: 'icon',
 })
 const emit = defineEmits(['tap'])
-const selecteds = defineModel<string[]>({ default: [] })
+const selecteds = defineModel<string[]>({ default: () => [] })
 
 const isSelected = computed(() => selecteds.value.includes(props.item[props.valueKey]) || false)
 </script>
 
 <template>
   <view class="relative flex items-center rounded-md bg-indigo-500/10 px-3 py-2" @tap.stop="emit('tap', item)">
-    <view v-if="shoeIcon" class="mr-1">
+    <view v-if="shoeIcon" class="z-1 mr-2">
       <bill-icon size="23" :icon="item[iconKey]" :text="item[labelKey]" />
     </view>
     <view class="flex-1 truncate text-sm">

@@ -23,7 +23,7 @@ function handleNavigateTo(path: string) {
 <template>
   <view class="fixed bottom-8 left-0 right-0 z-2 mx-auto w-90% flex animate-fade-in-up animate-duration-400 animate-ease-out">
     <view
-      class="flex flex-1 items-center justify-between rounded-full bg-white p-2 shadow-lg"
+      class="flex flex-1 items-center justify-between rounded-full bg-[var(--wot-filled-zero)] p-2 shadow-lg backdrop-blur-sm"
       :style="{ boxShadow: '0 8px 24px -6px rgba(0,0,0,0.12), 0 4px 8px -4px rgba(0,0,0,0.08)' }"
     >
       <view class="flex items-center gap-3">
@@ -35,8 +35,8 @@ function handleNavigateTo(path: string) {
           :hover-stay-time="200"
           @tap="emit('showLedgers')"
         >
-          <text class="i-lucide-notebook-text text-gray-600" />
-          <text class="max-w-[80px] truncate text-sm text-gray-600"> {{ ledgerName }} </text>
+          <text class="i-lucide-notebook-text" />
+          <text class="max-w-[80px] truncate text-sm"> {{ ledgerName }} </text>
         </view>
 
         <view
@@ -46,20 +46,20 @@ function handleNavigateTo(path: string) {
           :hover-stay-time="200"
           @tap="handleNavigateTo('/pages/statis/index')"
         >
-          <text class="i-lucide-chart-pie text-gray-600" />
-          <text class="text-sm text-gray-600">统计</text>
+          <text class="i-lucide-chart-pie" />
+          <text class="text-sm">统计</text>
         </view>
       </view>
 
       <view
-        class="index-navbar-action !bg-indigo-500/10"
-        hover-class="bg-indigo-500/15 scale-95"
+        class="index-navbar-action index-navbar-add-action"
+        hover-class="index-navbar-action-hover"
         :hover-start-time="0"
         :hover-stay-time="200"
         @tap="handleNavigateTo('/pages/bill/edit')"
       >
-        <text class="i-lucide-plus text-indigo-500" />
-        <text class="text-sm text-indigo-500 font-medium">添加</text>
+        <text class="i-lucide-plus" />
+        <text class="text-sm font-medium">添加</text>
       </view>
     </view>
   </view>
@@ -67,9 +67,23 @@ function handleNavigateTo(path: string) {
 
 <style lang="scss" scoped>
 .index-navbar-action {
-  @apply: flex items-center gap-2 rounded-full bg-gray-50 px-3 py-2 transition-colors;
+  @apply: flex items-center gap-2 rounded-full mb-action-bg px-3 py-2 transition-colors;
 }
+
+.index-navbar-add-action {
+  @apply relative text-[var(--wot-primary-5)];
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--wot-primary-3);
+    border-radius: inherit;
+    z-index: -1;
+    opacity: 0.1;
+  }
+}
+
 .index-navbar-action-hover {
-  @apply: bg-gray-100/80 scale-95;
+  @apply: !scale-95 transform-origin-center;
 }
 </style>

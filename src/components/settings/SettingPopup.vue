@@ -10,17 +10,24 @@ defineOptions({
 })
 
 const show = defineModel<boolean>()
+const showThemeColor = ref<boolean>(false)
 
 const settingsStore = useSettingsStore()
 const {
   followSystem,
   isDark,
+  currentThemeColor,
   toggleTheme,
   setFollowSystem,
+  selectThemeColor,
 } = useTheme()
 
 function handleCancelClick() {
   show.value = false
+}
+
+function handleThemeColorSelect(index: number) {
+  selectThemeColor(themeColorOptions[index])
 }
 </script>
 
@@ -64,6 +71,20 @@ function handleCancelClick() {
             </template>
 
             <wd-switch :model-value="isDark" size="20px" />
+          </wd-cell>
+
+          <!-- 主题颜色 -->
+          <wd-cell clickable center @click="showThemeColor = true">
+            <template #title>
+              <view class="cell-title">
+                <view class="title">
+                  <text class="i-lucide-palette icon" />
+                  <text>主题颜色</text>
+                </view>
+              </view>
+            </template>
+
+            <text>{{ currentThemeColor.name }}</text>
           </wd-cell>
         </wd-cell-group>
       </view>
@@ -152,6 +173,34 @@ function handleCancelClick() {
       <!-- 版本号 -->
       <view class="flex items-center justify-center py-6">
         <text class="text-xs text-gray-400">版本号 {{ settingsStore.version }}</text>
+      </view>
+    </view>
+  </bottom-popup>
+
+  <bottom-popup v-model="showThemeColor" title="主题颜色" height="40vh" :show-btn="false">
+    <!-- 颜色网格 -->
+    <view class="p-4">
+      <!-- 颜色网格 -->
+      <view class="grid grid-cols-3 gap-4">
+        <view
+          v-for="(tc, i) in themeColorOptions"
+          :key="i"
+          class="relative aspect-square overflow-hidden rounded-xl shadow-sm transition-all duration-200"
+          :class="[currentThemeColor.value === tc.value ? 'ring-2 ring-indigo-500 ring-offset-2' : '']"
+          :style="{ background: tc.primary }"
+          hover-class="scale-95 shadow-md"
+          :hover-start-time="0"
+          :hover-stay-time="200"
+          @tap="handleThemeColorSelect(i)"
+        >
+          <!-- 选中标记 -->
+          <view
+            v-if="currentThemeColor.value === tc.value"
+            class="absolute bottom-1 right-1 h-4 w-4 flex items-center justify-center rounded-full bg-indigo-500"
+          >
+            <text class="i-lucide-check text-xs text-white" />
+          </view>
+        </view>
       </view>
     </view>
   </bottom-popup>
