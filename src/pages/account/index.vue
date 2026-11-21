@@ -336,11 +336,11 @@ function handleDeleteAction() {
 .account-title-box {
   box-sizing: border-box;
   padding: 0.7rem;
-  @apply mb-content-bg;
+  @apply mb-filled-bg;
 }
 
 .account-content-box {
-  @apply mb-content-bg p-2;
+  @apply mb-filled-bg p-2;
 }
 .account-item-title {
   font-size: 12px;

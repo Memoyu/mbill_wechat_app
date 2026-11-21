@@ -110,18 +110,11 @@ function isSelected(bill: IBillPageItem) {
     </template>
     <view class="h-[60vh] w-full">
       <z-paging v-if="showPaging" ref="paging" v-model="bills" :fixed="false" :default-page-size="15" :refresher-enabled="false" @query="handleQuery">
-        <view class="px-2 space-y-2">
-          <view v-for="b in bills" :key="b.billId" class="relative list-item-box rounded-lg" @tap.stop="handleSelectBill(b)">
+        <view class="p-2 space-y-2">
+          <view v-for="b in bills" :key="b.billId" class="relative z-1 rounded-lg p-2" @tap.stop="handleSelectBill(b)">
             <bill-item :bill="b" />
-            <view
-              class="absolute inset-0 z-2 overflow-hidden rounded-md transition-all duration-200"
-              :class="[isSelected(b) ? 'bg-indigo-500/10 ring-2 ring-indigo-500' : 'bg-transparent']"
-            >
-              <view
-                v-if="isSelected(b)"
-                class="absolute h-5 w-5 flex animate-fade-in animate-duration-200 items-end justify-end rounded-full bg-indigo-500 shadow-sm -left-2 -top-2"
-              />
-            </view>
+
+            <checked-mask :value="isSelected(b)" />
           </view>
         </view>
       </z-paging>

@@ -73,8 +73,10 @@ export default defineConfig({
   ],
   shortcuts: [
     // bg-[var(--neon-green)]/90
-    ['mb-content-bg', 'relative before:content-[\'\'] before:absolute before:inset-0 before:bg-[var(--wot-primary-1)] before:rounded-[inherit] before:z-[-1] before:opacity-50 before:dark:opacity-10'],
-    ['mb-action-bg', 'relative before:content-[\'\'] before:absolute before:inset-0 before:bg-[var(--wot-primary-2)] before:rounded-[inherit] before:z-[-1] before:opacity-50 before:dark:opacity-10'],
+    ['mb-content-bg', 'relative before:content-[\'\'] before:absolute before:inset-0 before:bg-[var(--wot-primary-1)] before:rounded-[inherit] before:z-[-1] before:opacity-60 before:dark:opacity-10'],
+    ['mb-filled-bg', 'relative before:content-[\'\'] before:absolute before:inset-0 before:bg-[var(--wot-primary-2)] before:rounded-[inherit] before:z-[-1] before:opacity-60 before:dark:opacity-20'],
+    ['mb-action-bg', 'relative before:content-[\'\'] before:absolute before:inset-0 before:bg-[var(--wot-primary-3)] before:rounded-[inherit] before:z-[-1] before:opacity-20 before:dark:opacity-10'],
+    ['mb-selected-ring', 'ring-[var(--wot-primary-3)]'],
     ['center', 'flex justify-center items-center'],
   ],
   // 动态图标需要在这里配置，或者写在vue页面中注释掉

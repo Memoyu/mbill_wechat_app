@@ -290,11 +290,11 @@ function handleDeleteAction() {
 .tag-title-box {
   box-sizing: border-box;
   padding: 0.7rem;
-  @apply mb-content-bg;
+  @apply mb-filled-bg;
 }
 
 .tag-content-box {
-  @apply mb-content-bg p-2;
+  @apply mb-filled-bg p-2;
 }
 
 .tag-item-title {

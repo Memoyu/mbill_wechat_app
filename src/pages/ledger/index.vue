@@ -39,18 +39,18 @@ const actionShow = ref(false)
 const colorPickerShow = ref(false)
 const currentLedger = ref<ILedger>()
 const ledgerActions = ref<ActionGroup[]>([
+  // {
+  //   title: '账本样式',
+  //   actions: [
+  //     {
+  //       icon: 'i-lucide-palette',
+  //       text: '更换颜色',
+  //       action: handleChangeColorAction,
+  //     },
+  //   ],
+  // },
   {
-    title: '账本样式',
-    actions: [
-      {
-        icon: 'i-lucide-palette',
-        text: '更换颜色',
-        action: handleChangeColorAction,
-      },
-    ],
-  },
-  {
-    title: '账本管理',
+    // title: '账本管理',
     actions: [
       {
         icon: 'i-lucide-edit',
@@ -62,11 +62,11 @@ const ledgerActions = ref<ActionGroup[]>([
         text: '共享账本',
         action: handleShareAction,
       },
-      {
-        icon: 'i-lucide-arrow-right-left',
-        text: '账单迁移',
-        action: handleMigrateAction,
-      },
+      // {
+      //   icon: 'i-lucide-arrow-right-left',
+      //   text: '账单迁移',
+      //   action: handleMigrateAction,
+      // },
       // {
       //   icon: 'view-off',
       //   text: '隐藏账单',
@@ -137,7 +137,7 @@ function handleScanAction() {
 function handleLedgerActions(ledger: any) {
   currentLedger.value = ledger
   // 默认账单，不显示共享
-  ledgerActions.value[1].actions[1].hide = currentLedger.value.default
+  ledgerActions.value[0].actions[1].hide = currentLedger.value.default
   actionShow.value = true
 }
 
@@ -239,20 +239,21 @@ function handleSortChange(list: ILedger[]) {
         <template #content="{ listItem }">
           <view class="relative overflow-hidden transition-all duration-200" @tap.stop="handleLedgerTap(listItem)">
             <!-- 账簿封面 -->
-            <view class="bg-gradient-to-br" :style="{ background: gradients[listItem.color] }">
+            <view class="mb-filled-bg bg-gradient-to-br p-3">
               <!-- 装饰元素容器 -->
               <view class="pointer-events-none absolute inset-0">
-                <!-- 大圆形装饰 -->
-                <view class="absolute right-0 top-0 z-[1] h-48 w-48 rounded-full bg-black/2" />
                 <!-- 小圆形装饰 -->
                 <view class="absolute bottom-0 left-0 z-[1] h-32 w-32 translate-y-16 rounded-full bg-black/3 -translate-x-16" />
-                <view class="absolute left-20 top-16 z-[2] h-20 w-20">
-                  <view class="absolute inset-0 border-[3px] border-white/8 rounded-full" />
-                </view>
+
+                <!-- 上下左右居中的大圆 -->
+                <view class="absolute inset-0 left-0 top-0 h-35 w-35 translate-x-10 rounded-full bg-black/2 -translate-y-22" />
+
+                <!-- 大圆形装饰 -->
+                <view class="absolute right-0 top-0 z-[1] h-48 w-48 translate-x-25 rounded-full bg-black/2 -translate-y-15" />
               </view>
 
-              <view class="ledger-item-box">
-                <view class="ledger-item-content">
+              <view class="flex rounded-2xl">
+                <view class="flex flex-1 flex-col">
                   <text class="line-clamp-1 font-semibold">{{ listItem.name }}</text>
                   <view class="mt-3 flex items-center text-xs">
                     <text>
@@ -268,23 +269,24 @@ function handleSortChange(list: ILedger[]) {
                       {{ listItem.expend }}
                     </text>
                   </view>
-                  <view class="mt-3 h-25px flex items-center justify-between">
-                    <wd-avatar-group :max-count="9" size="25">
-                      <wd-avatar
-                        v-for="user in listItem.users" :key="user.userId"
-                        :text="user.nickname.slice(0, 1)"
-                        :src="user.avatar"
-                        bg-color="#a5b4fc"
-                      />
-                    </wd-avatar-group>
-                    <text class="text-xs">{{ dayjs(listItem.createTime).format('YYYY-MM-DD HH:mm') }}</text>
-                  </view>
                 </view>
-                <view class="ledger-item-more">
+
+                <view class="flex flex-shrink-0 flex-col justify-items-start">
                   <action-btn @tap.stop="handleLedgerActions(listItem)">
                     <wd-icon size="10" name="more" />
                   </action-btn>
                 </view>
+              </view>
+              <view class="mt-3 h-25px flex items-center justify-between">
+                <wd-avatar-group :max-count="9" size="25">
+                  <wd-avatar
+                    v-for="user in listItem.users" :key="user.userId"
+                    :text="user.nickname.slice(0, 1)"
+                    :src="user.avatar"
+                    bg-color="#a5b4fc"
+                  />
+                </wd-avatar-group>
+                <text class="text-xs">{{ dayjs(listItem.createTime).format('YYYY-MM-DD HH:mm') }}</text>
               </view>
             </view>
           </view>
@@ -297,20 +299,20 @@ function handleSortChange(list: ILedger[]) {
   <center-popup v-model="editShow" :title="editTitle" @confirm="handleEditConfirm">
     <view class="px-3">
       <wd-input v-model="editLedger.name" type="text" placeholder="账本名称" />
-      <view v-if="editLedger.isCreate">
+      <!-- <view v-if="editLedger.isCreate">
         <view class="mt-2">
           <wd-checkbox v-model="editLedger.randomColor">
             随机颜色
           </wd-checkbox>
         </view>
-        <!-- 颜色网格 -->
+
         <view v-if="!editLedger.randomColor" class="mt-2 h-50 overflow-y-auto p-2">
           <view class="grid grid-cols-4 gap-4">
             <view
               v-for="(gradient, index) in gradients"
               :key="index + gradient"
               class="relative aspect-square overflow-hidden rounded-xl shadow-sm transition-all duration-200"
-              :class="[editLedger.color === index ? 'ring-2 ring-indigo-500 ring-offset-2' : '']"
+              :class="[editLedger.color === index ? 'ring-2 mb-selected-ring ring-offset-2' : '']"
               :style="{ background: gradient }"
               hover-class="scale-95 shadow-md"
               :hover-start-time="0"
@@ -319,7 +321,7 @@ function handleSortChange(list: ILedger[]) {
             />
           </view>
         </view>
-      </view>
+      </view> -->
     </view>
   </center-popup>
 
@@ -330,7 +332,7 @@ function handleSortChange(list: ILedger[]) {
     :items="ledgerActions"
   />
   <!-- 颜色选择器 -->
-  <color-picker v-model="colorPickerShow" :ledger-id="currentLedger?.ledgerId ?? ''" />
+  <!-- <color-picker v-model="colorPickerShow" :ledger-id="currentLedger?.ledgerId ?? ''" /> -->
 
   <!-- 分享二维码 -->
   <center-popup v-model="shareShow" title="扫码加入" :show-btn="false">
@@ -341,28 +343,5 @@ function handleSortChange(list: ILedger[]) {
 </template>
 
 <style lang="scss" scoped>
-.ledger-item-box {
-  display: flex;
-  border-radius: 19px;
-  box-sizing: border-box;
-  padding: 0.5rem 0;
-  // border-bottom: 1px solid #f0f0f0;
-}
 
-.ledger-item-content {
-  margin-left: 0.9rem;
-  flex: 1;
-  width: calc(100% - 48px);
-  display: flex;
-  flex-direction: column;
-}
-.ledger-item-more {
-  display: flex;
-  flex-direction: column;
-  justify-content: start;
-  height: 100%;
-  flex-shrink: 0;
-  color: #999;
-  padding: 0 0.9rem;
-}
 </style>

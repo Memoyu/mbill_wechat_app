@@ -111,11 +111,11 @@ function handleChildItemTap(parent: any, data: any) {
 .category-title-box {
   box-sizing: border-box;
   padding: 0.7rem;
-  @apply mb-content-bg;
+  @apply mb-filled-bg;
 }
 
 .category-content-box {
-  @apply mb-content-bg p-2;
+  @apply mb-filled-bg p-2;
 }
 
 .category-item-title {

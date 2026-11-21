@@ -19,7 +19,7 @@ defineOptions({
           width: `${300 + i * 100}px`,
           height: `${300 + i * 100}px`,
           left: i === 1 ? '-10%' : i === 2 ? '110%' : '50%',
-          top: i === 1 ? '-10%' : i === 2 ? '110%' : '50%',
+          top: i === 1 ? '-10%' : i === 2 ? '115%' : '50%',
           transform: `translate(-50%, -50%) rotate(${i * 45}deg)`,
         }"
       />

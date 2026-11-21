@@ -78,7 +78,7 @@ const activeTranslateY = computed(() => `-${Number(active.value) * 100}%`)
             >
               <view
                 class="h-32px rounded-full shadow-sm transition-all duration-200"
-                :class="[activeIcon === icon.path ? 'ring-2 ring-indigo-500 ring-offset-2' : '']"
+                :class="[activeIcon === icon.path ? 'ring-2 mb-selected-ring ring-offset-2' : '']"
                 hover-class="scale-95 shadow-md"
                 :hover-start-time="0"
                 :hover-stay-time="200"

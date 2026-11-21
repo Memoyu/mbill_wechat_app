@@ -56,6 +56,15 @@ const itemsBoxStyle = computed(() => {
 
 const hasTop = computed(() => tops.value && tops.value.length > 0)
 
+// 当前父类在所在行中的列索引，用于定位三角指示器
+const parentColIndex = computed(() => {
+  const map = itemMaps[currentParentId.value]
+  if (!map)
+    return 0
+  const parentId = (map.parent || map.item)[props.idKey]
+  return rows.value?.[map.ridx]?.findIndex((i: any) => i[props.idKey] === parentId) ?? 0
+})
+
 watch(() => props.itmeHeight, (nh) => {
   itmeHeight.value = nh
 }, { immediate: true })
@@ -248,13 +257,12 @@ function calcChildContentHeight(childs: any[]) {
         </view>
       </view>
       <!-- 列表项 -->
-      <view class="space-y-3">
+      <view>
         <view v-for="(items, rowIdx) in rows" :key="rowIdx" class="flex flex-col space-y-3">
           <view :style="itemsBoxStyle">
             <view v-for="item in items" :id="`ITEM-${item[props.idKey]}`" :key="`parent-${item[props.idKey]}`" @tap="handleItemTap(item)">
               <grid-picker-view-item
                 :height="itmeHeight"
-                :expand="item[props.idKey] === currentParentId"
                 :is-selected="item[props.idKey] === currentId"
                 :item="item"
                 :css-icon="item[props.idKey] === $manage"
@@ -263,13 +271,17 @@ function calcChildContentHeight(childs: any[]) {
           </view>
 
           <view class="transition-all duration-300 ease-in-out">
-            <view v-if="rowIdx === rowIndex" class="rounded-lg bg-gray-200 p-2" :style="{ ...itemsBoxStyle, height: `${calcChildContentHeight(rowChilds)}px` }">
-              <view v-for="child in rowChilds" :id="`ITEM-${child[props.idKey]}`" :key="`child-${child[props.idKey]}`" @tap="handleItemTap(child)">
-                <grid-picker-view-item
-                  :height="itmeHeight"
-                  :is-selected="child[props.idKey] === currentId"
-                  :item="child"
-                />
+            <view v-if="rowIdx === rowIndex" class="relative">
+              <!-- 向上三角指示器，标识子类所属父类 -->
+              <view class="child-arrow" :style="{ left: `${(parentColIndex + 0.5) / props.column * 100}%` }" />
+              <view class="mb-content-bg rounded-lg p-2" :style="{ ...itemsBoxStyle, height: `${calcChildContentHeight(rowChilds)}px` }">
+                <view v-for="child in rowChilds" :id="`ITEM-${child[props.idKey]}`" :key="`child-${child[props.idKey]}`" @tap="handleItemTap(child)">
+                  <grid-picker-view-item
+                    :height="itmeHeight"
+                    :is-selected="child[props.idKey] === currentId"
+                    :item="child"
+                  />
+                </view>
               </view>
             </view>
           </view>
@@ -280,4 +292,18 @@ function calcChildContentHeight(childs: any[]) {
 </template>
 
 <style lang="scss" scoped>
+.child-arrow {
+  position: absolute;
+  top: -8px;
+  transform: translateX(calc(-50% - 2px));
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  // 颜色与 mb-content-bg 保持一致：--wot-primary-1 + opacity 0.6/0.1
+  border-bottom: 8px solid var(--wot-primary-1);
+  z-index: 1;
+  transition: left 0.3s ease;
+  @apply opacity-60 dark:opacity-10;
+}
 </style>

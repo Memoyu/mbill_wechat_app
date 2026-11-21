@@ -11,7 +11,6 @@ const props = defineProps<{
   item: any
   isSelected: boolean
   height: number
-  expand?: boolean
   cssIcon?: boolean
 }>()
 
@@ -20,10 +19,10 @@ const hasChild = computed(() => props.item.childs && props.item.childs.length > 
 </script>
 
 <template>
-  <view class="relative" :style="{ height: `${height}px` }">
+  <view class="relative z-1" :style="{ height: `${height}px` }">
     <view class="h-full flex flex-col justify-center gap-1 px-1">
       <view class="flex justify-center">
-        <view class="relative z-1" :class="[hasChild ? 'grid-select-item-has-more' : '']">
+        <view class="relative" :class="[hasChild ? 'grid-select-item-has-more' : '']">
           <bill-icon :icon="item.icon" :text="item.name" :css-icon="cssIcon" />
         </view>
       </view>
@@ -32,27 +31,7 @@ const hasChild = computed(() => props.item.childs && props.item.childs.length > 
       </view>
     </view>
 
-    <!-- 选中遮罩层 -->
-    <view
-      class="absolute inset-0 z-10 overflow-hidden rounded-md transition-all duration-200"
-      :class="[isSelected ? 'bg-indigo-500/10 ring-2 ring-indigo-500' : 'bg-transparent']"
-    >
-      <!-- 选中状态的 check 图标 -->
-      <view
-        v-if="isSelected"
-        class="absolute h-7 w-7 flex animate-fade-in animate-duration-200 items-end justify-end rounded-full bg-indigo-500 shadow-sm -left-2.5 -top-2.5"
-      >
-        <text class="i-lucide-check pb-0.5 pr-1 text-xs text-white" />
-      </view>
-    </view>
-
-    <!-- 父项展开下标 -->
-    <wd-icon
-      v-if="expand && hasChild"
-      name="caret-up"
-      size="21"
-      custom-class="text-gray-200 absolute bottom-0 left-1/2 z-10 flex translate-y-full items-center justify-center -translate-x-1/2"
-    />
+    <checked-mask :value="isSelected" position="lt" />
   </view>
 </template>
 

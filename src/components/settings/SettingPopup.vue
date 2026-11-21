@@ -186,7 +186,7 @@ function handleThemeColorSelect(index: number) {
           v-for="(tc, i) in themeColorOptions"
           :key="i"
           class="relative aspect-square overflow-hidden rounded-xl shadow-sm transition-all duration-200"
-          :class="[currentThemeColor.value === tc.value ? 'ring-2 ring-indigo-500 ring-offset-2' : '']"
+          :class="[currentThemeColor.value === tc.value ? 'ring-2 mb-selected-ring ring-offset-2' : '']"
           :style="{ background: tc.primary }"
           hover-class="scale-95 shadow-md"
           :hover-start-time="0"

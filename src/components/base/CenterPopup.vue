@@ -51,8 +51,8 @@ function handleConfirm() {
     @close="show = false"
     @after-enter="emit('after-enter')"
   >
-    <view class="h-full">
-      <view class="sticky left-0 right-0 top-0 z-10 bg-white py-3">
+    <view class="h-full bg-[var(--wot-filled-oppo)]">
+      <view class="sticky left-0 right-0 top-0 z-10 py-3">
         <!-- 标题 -->
         <view v-if="title && title.length > 0" class="text-center">
           <text class="line-clamp-1 text-base font-semibold">{{ title }}</text>
@@ -67,20 +67,20 @@ function handleConfirm() {
       </view>
 
       <!-- 按钮组 -->
-      <view class="sticky bottom-0 left-0 right-0 z-10 bg-white">
+      <view class="sticky bottom-0 left-0 right-0 z-10">
         <view v-if="showBtn" class="mt-3 flex">
           <view
             v-if="showCancel"
-            class="flex-1 border-t border-gray-100 py-4 text-center text-base text-gray-600 transition-colors hover:bg-gray-50"
+            class="flex-1 border-t border-gray-100 py-4 text-center text-base transition-colors"
             :hover-start-time="0"
             :hover-stay-time="200"
             @tap="handleCancel()"
           >
             {{ cancelText }}
           </view>
-          <view v-if="showCancel" class="w-[1px] bg-gray-100" />
+          <view v-if="showCancel" class="w-[1px] bg-gray-100 dark:bg-gray-100/20" />
           <view
-            class="flex-1 border-t border-gray-100 py-4 text-center text-base text-indigo-500 font-medium transition-colors"
+            class="flex-1 border-t py-4 text-center text-base text-indigo-500 font-medium transition-colors"
             :hover-start-time="0"
             :hover-stay-time="200"
             @tap="handleConfirm()"

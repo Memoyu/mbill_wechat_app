@@ -111,7 +111,7 @@ function isSelected(ledger: ILedger) {
               class="absolute inset-0 z-10 rounded-2xl transition-all duration-200"
               :class="[
                 isSelected(leg)
-                  ? 'bg-indigo-500/10 ring-2 ring-indigo-500'
+                  ? 'bg-indigo-500/10 ring-2 mb-selected-ring'
                   : 'bg-transparent',
               ]"
             >

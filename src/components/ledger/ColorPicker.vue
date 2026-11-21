@@ -150,7 +150,7 @@ function handleUnifyAll() {
           v-for="(gradient, index) in gradients"
           :key="index + gradient"
           class="relative aspect-square overflow-hidden rounded-xl shadow-sm transition-all duration-200"
-          :class="[currentColor === index ? 'ring-2 ring-indigo-500 ring-offset-2' : '']"
+          :class="[currentColor === index ? 'ring-2 mb-selected-ring ring-offset-2' : '']"
           :style="{ background: gradient }"
           hover-class="scale-95 shadow-md"
           :hover-start-time="0"

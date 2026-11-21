@@ -91,28 +91,20 @@ function handleLedgerClick(ledger: ILedger) {
         <view class="p-2 space-y-1.5">
           <view
             v-for="ledger in ledgers" :key="ledger.ledgerId"
-            class="relative flex items-center gap-3 border rounded-md bg-indigo-500/10 p-3 transition-all"
+            class="mb-filled-bg relative flex items-center gap-3 border rounded-md p-3 transition-all"
             @tap="handleLedgerClick(ledger)"
           >
             <view class="flex flex-1 items-center gap-3">
               <view
                 class="truncate text-sm"
-                :class="[isSelected(ledger) ? 'text-indigo-500 font-medium' : 'text-gray-700']"
+                :class="[isSelected(ledger) ? 'text-[var(--wot-primary-6)] font-medium' : 'text-gray-700']"
               >
                 {{ ledger.name }}
               </view>
             </view>
 
             <!-- 选中遮罩层 -->
-            <view
-              class="absolute inset-0 z-3 overflow-hidden rounded-md transition-all duration-200"
-              :class="[isSelected(ledger) ? 'ring-2 ring-indigo-500' : 'bg-transparent']"
-            >
-              <view
-                v-if=" isSelected(ledger)"
-                class="absolute h-5 w-5 flex animate-fade-in animate-duration-200 items-end justify-end rounded-full bg-indigo-500 shadow-sm -left-2 -top-2"
-              />
-            </view>
+            <checked-mask :value="isSelected(ledger)" />
           </view>
         </view>
       </scroll-view>

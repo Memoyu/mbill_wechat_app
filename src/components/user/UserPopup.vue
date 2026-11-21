@@ -185,23 +185,23 @@ function handleSummaryRefresh() {
         </view>
       </view>
 
-      <view class="user-block">
-        <wd-grid :column="4">
-          <wd-grid-item v-for="item in actions" :key="item.title" @tap="item.action">
-            <view class="flex flex-col items-center">
-              <text class="my-icons text-3xl" :class="[item.icon]" />
-              <text class="text-xs">{{ item.title }}</text>
-            </view>
-          </wd-grid-item>
-        </wd-grid>
-      </view>
-
       <!-- 暂不支持退出登录 -->
       <!-- <view class="user-block">
           <wd-button type="danger" custom-class="custom-shadow">
             退出登录
           </wd-button>
         </view> -->
+    </view>
+
+    <view class="user-block">
+      <wd-grid :column="4">
+        <wd-grid-item v-for="item in actions" :key="item.title" @tap="item.action">
+          <view class="mb-filled-bg z-1 flex flex-col items-center rounded-2xl p-2">
+            <text class="my-icons text-3xl" :class="[item.icon]" />
+            <text class="text-xs">{{ item.title }}</text>
+          </view>
+        </wd-grid-item>
+      </wd-grid>
     </view>
   </bottom-popup>
 

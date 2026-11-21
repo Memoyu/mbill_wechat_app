@@ -58,7 +58,7 @@ function handleConfirm() {
             <view
               v-for="tag in tagGroup.childs" :key="tag.tagId"
               class="tag-picker-item-box"
-              :class="[isSelected(tag) ? 'ring-2 ring-indigo-500 ring-offset-1' : '']"
+              :class="[isSelected(tag) ? 'ring-2 mb-selected-ring ring-offset-1' : '']"
               @tap="handleTagItemTap(tag)"
             >
               <view class="tag-picker-item-title">

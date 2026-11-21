@@ -37,12 +37,11 @@ function handleActionClick(item: any) {
     custom-class="rounded-t-3xl relative"
     lock-scroll
     lazy-render
-    root-portal
     @close="handleCancelClick"
   >
-    <view class="overflow-hidden">
+    <view class="bg-[var(--wot-filled-oppo)]">
       <!-- 标题栏 -->
-      <view class="flex items-center justify-between border-b border-gray-100 px-4 py-3">
+      <view class="flex items-center justify-between px-4 py-3">
         <text class="line-clamp-1 text-base font-semibold">{{ title }}</text>
         <view
           class="flex-shrink-0 rounded-full px-3 py-1 text-sm text-gray-400"
@@ -59,7 +58,7 @@ function handleActionClick(item: any) {
       <view class="py-4">
         <view v-for="(item, index) in items" :key="index + (item.title ?? '')" class="mb-6">
           <view v-if="item.title && item.title.length > 0" class="mb-2 px-6">
-            <text class="text-sm text-gray-400">{{ item.title }}</text>
+            <text class="text-sm text-gray-400 dark:text-gray-300">{{ item.title }}</text>
           </view>
           <view class="grid grid-cols-4 gap-6 px-6">
             <view
@@ -73,13 +72,13 @@ function handleActionClick(item: any) {
             >
               <view
                 class="h-12 w-12 flex items-center justify-center rounded-3"
-                :class="[action.type === 'danger' ? 'bg-red-50' : action.type === 'warning' ? 'bg-yellow-50' : 'bg-gray-50']"
+                :class="[action.type === 'danger' ? 'bg-red-50 dark:bg-red-200/30' : action.type === 'warning' ? 'bg-yellow-50 dark:bg-yellow-200/30' : 'bg-gray-50 dark:bg-gray-50/30']"
               >
-                <view class="text-xl" :class="[action.icon, action.type === 'danger' ? 'text-red-500' : action.type === 'warning' ? 'text-yellow-500' : 'text-gray-500']" />
+                <view class="text-xl" :class="[action.icon, action.type === 'danger' ? 'text-red-500' : action.type === 'warning' ? 'text-yellow-500' : 'text-gray-500 dark:text-gray-200']" />
               </view>
               <text
                 class="whitespace-nowrap text-xs"
-                :class="[action.type === 'danger' ? 'text-red-700' : action.type === 'warning' ? 'text-yellow-700' : 'text-gray-700']"
+                :class="[action.type === 'danger' ? 'text-red-700' : action.type === 'warning' ? 'text-yellow-700' : 'text-gray-700 dark:text-gray-300']"
               >
                 {{ action.text }}
               </text>
