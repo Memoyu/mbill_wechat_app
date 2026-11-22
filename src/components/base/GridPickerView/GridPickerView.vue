@@ -75,7 +75,7 @@ watch(() => props.option, (op) => {
     return
 
   // 常用
-  tops.value = [...op.tops]
+  tops.value = [...op.tops || []]
   // 全部
   const dataList = [...op.list]
   if (props.showManage)
@@ -87,7 +87,7 @@ watch(() => props.option, (op) => {
     const ris = dataList.slice(i, i + props.column)
     ris.forEach((ri) => {
       itemMaps[ri[props.idKey]] = { ridx, item: ri }
-      ri.childs?.forEach((ric) => {
+      ri.childs?.forEach((ric: any) => {
         itemMaps[ric[props.idKey]] = { ridx, item: ric, parent: ri }
       })
     })
@@ -149,8 +149,8 @@ function scrollIntoView() {
         getRect(`#ITEM-${currentId.value}`, false, proxy),
       ]).then(([containerRect, itemRect]) => {
         // item 相对于父容器的 top
-        const relativeTop = itemRect.top - containerRect.top
-        scrollTop.value = relativeTop - itemRect.height / 2
+        const relativeTop = (itemRect.top ?? 0) - (containerRect.top ?? 0)
+        scrollTop.value = relativeTop - (itemRect.height ?? 0) / 2
         // console.log('容器rect:', containerRect, 'item rect:', itemRect, '相对容器top:', relativeTop)
       })
     }, 800)

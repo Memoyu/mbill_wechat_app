@@ -135,9 +135,11 @@ function handleScanAction() {
 }
 
 function handleLedgerActions(ledger: any) {
+  if (!ledger)
+    return
   currentLedger.value = ledger
   // 默认账单，不显示共享
-  ledgerActions.value[0].actions[1].hide = currentLedger.value.default
+  ledgerActions.value[0].actions[1].hide = currentLedger.value!.default
   actionShow.value = true
 }
 

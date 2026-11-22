@@ -33,7 +33,7 @@ function showMore() {
 <template>
   <view id="BOTTOM_ACTION" class="fixed bottom-5 left-0 right-0 z-4 mx-auto max-w-2xl w-[90vw]">
     <view
-      class="relative flex flex-1 items-center justify-between overflow-hidden rounded-2xl bg-white p-2 shadow-lg"
+      class="relative flex flex-1 items-center justify-between overflow-hidden rounded-2xl bg-white/10 p-2 shadow-lg backdrop-blur-sm dark:bg-black/10"
       :style="{ boxShadow: '0 8px 24px -6px rgba(0,0,0,0.12), 0 4px 8px -4px rgba(0,0,0,0.08)' }"
     >
       <scroll-view
@@ -51,23 +51,23 @@ function showMore() {
           <view
             v-for="(action, index) in actions" :key="index + action.text"
             class="w-13 flex flex-col items-center justify-center gap-1.5 rounded-xl px-0.5 py-2"
-            :hover-class="`${action.type === 'danger' ? 'bg-red-50' : action.type === 'warning' ? 'bg-yellow-50' : 'bg-gray-50'} scale-95 origin-center transition-all`"
+            :hover-class="`${action.type === 'danger' ? 'bg-red-50 dark:bg-red-200/30' : action.type === 'warning' ? 'bg-yellow-50 dark:bg-yellow-200/30' : 'bg-gray-50 dark:bg-gray-50/30'} scale-95 origin-center transition-all`"
             :hover-start-time="0"
             :hover-stay-time="200"
             @tap="action.action()"
           >
             <text
               v-if="action.icon.startsWith('icon-')" class="text-[17px]"
-              :class="[action.icon, action.type === 'danger' ? 'text-red-500' : action.type === 'warning' ? 'text-yellow-500' : 'text-gray-500']"
+              :class="[action.icon, action.type === 'danger' ? 'text-red-500' : action.type === 'warning' ? 'text-yellow-500' : 'text-gray-500 dark:text-gray-200']"
             />
             <wd-icon
               v-else :name="action.icon"
-              :custom-class="`${action.type === 'danger' ? 'text-red-500' : action.type === 'warning' ? 'text-yellow-500' : 'text-gray-500'}`"
+              :custom-class="`${action.type === 'danger' ? 'text-red-500' : action.type === 'warning' ? 'text-yellow-500' : 'text-gray-500 dark:text-gray-200'}`"
               size="17px"
             />
             <text
               class="text-[10px] leading-none"
-              :class="[action.type === 'danger' ? 'text-red-700' : action.type === 'warning' ? 'text-yellow-700' : 'text-gray-700']"
+              :class="[action.type === 'danger' ? 'text-red-700' : action.type === 'warning' ? 'text-yellow-700' : 'text-gray-700 dark:text-gray-300']"
             >
               {{ action.text }}
             </text>

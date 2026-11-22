@@ -258,7 +258,7 @@ function handleDeleteAction() {
               @tap="data => handleChildItemTap(listItem, data)"
             >
               <template #content="{ gridItem }">
-                <view class="flex items-center justify-center bg-indigo-500/10 px-1.5 py-2">
+                <view class="mb-action-bg flex items-center justify-center px-1.5 py-2">
                   <view class="tag-item-title line-clamp-1 text-nowrap">
                     {{ gridItem.name }}
                   </view>

@@ -79,9 +79,9 @@ function scrollIntoView() {
       getRect(`#ICON-CATALOG-${active.value}`, false, proxy),
       getRect(`#ICON-ITEM-${selected.value}`, false, proxy),
     ]).then(([conRect, itemRect]) => {
-      const relativeTop = itemRect.top - conRect.top
+      const relativeTop = (itemRect.top ?? 0) - (conRect.top ?? 0)
       // 先重置 scrollTop 确保 scroll-view 响应变化
-      scrollTop.value = relativeTop - conRect.height / 2 + itemRect.height / 2
+      scrollTop.value = relativeTop - (conRect.height ?? 0) / 2 + (itemRect.height ?? 0) / 2
     })
   })
 }
@@ -124,14 +124,14 @@ defineExpose({ scrollIntoView })
           >
             <view
               :id="`ICON-ITEM-${icon.id}`"
-              class="h-32px rounded-full shadow-sm transition-all duration-200"
-              :class="[selected === icon.id ? 'ring-2 mb-selected-ring ring-offset-2' : '']"
+              class="relative h-32px rounded-full shadow-sm transition-all duration-200"
               hover-class="scale-95 shadow-md"
               :hover-start-time="0"
               :hover-stay-time="200"
               @tap="handleIconClick(icon)"
             >
               <wd-img :width="32" :height="32" :src="icon.url" round :lazy-load="true" />
+              <checked-mask :value="selected === icon.id" :show-check="false" :show-bg="false" />
             </view>
           </view>
         </view>

@@ -31,9 +31,9 @@ function handleTap() {
     @tap="handleTap"
   >
     <view
-      class="h-12 flex items-center justify-center rounded-lg bg-white text-lg font-semibold dark:bg-[var(--wot-dark-background3)]"
+      class="h-12 flex items-center justify-center rounded-lg bg-white text-lg font-semibold dark:bg-black/10"
       :class="[props.value.emphasize ? 'keyboard-key-emphasize' : '']"
-      hover-class="!bg-indigo-400 !dark:bg-indigo-600 !scale-94 transform-origin-center"
+      hover-class="!dark:bg-[var(--wot-primary-8)] !bg-[var(--wot-primary-4)] !scale-94 transform-origin-center"
       :hover-start-time="0"
       :hover-stay-time="200"
     >
@@ -61,7 +61,7 @@ function handleTap() {
 }
 
 .keyboard-key-emphasize {
-  @apply: bg-indigo-300 dark:bg-indigo-500;
+  @apply: dark:bg-[var(--wot-primary-9)] bg-[var(--wot-primary-3)];
   font-weight: 400;
 }
 

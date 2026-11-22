@@ -286,7 +286,7 @@ function handleAddressPrefixIcon() {
       </view>
     </template>
     <template #prefix-action>
-      <view class="mt-4 max-w-max rounded-full mb-action-bg px-2 py-1">
+      <view class="mb-action-bg mt-4 max-w-max rounded-full px-2 py-1">
         <segmented v-model="bill.type" :gap="6" :options="typeOptions" />
       </view>
     </template>
@@ -305,7 +305,7 @@ function handleAddressPrefixIcon() {
     <!-- 标签 -->
     <view v-if="hasTag" class="hide-view-scrollbar overflow-x-auto px-1">
       <view class="min-w-max flex items-center gap-1 whitespace-nowrap">
-        <view v-for="tag in bill.tags" :key="tag.tagId" class="flex-shrink-0 rounded-md bg-indigo-100/40 px-2 py-1 text-sm" @tap="showTags = true">
+        <view v-for="tag in bill.tags" :key="tag.tagId" class="mb-action-bg flex-shrink-0 rounded-md px-2 py-1 text-sm" @tap="showTags = true">
           {{ tag.name }}
         </view>
       </view>
@@ -325,7 +325,7 @@ function handleAddressPrefixIcon() {
           <text class="ml-1">{{ bill.account.name }}</text>
         </view>
 
-        <view class="bill-attr-box-item-max" @tap="showTags = true">
+        <view class="bill-attr-box-item" @tap="showTags = true">
           <!-- 标签 -->
           <wd-icon name="tag" size="20" />
           <text class="ml-1">标签</text>
@@ -360,11 +360,7 @@ function handleAddressPrefixIcon() {
 .bill-attr-box {
   @apply: flex items-center gap-2 whitespace-nowrap;
   &-item {
-    @apply: flex items-center justify-center py-1 px-2 bg-indigo-200/40 rounded-full gap-0.5;
-  }
-
-  &-item-max {
-    @apply: flex items-center justify-center py-1 px-2 bg-indigo-200/40 rounded-full gap-0.5 max-w-30;
+    @apply: flex items-center justify-center py-1.5 px-2.5 mb-action-bg rounded-full gap-0.5;
   }
 }
 

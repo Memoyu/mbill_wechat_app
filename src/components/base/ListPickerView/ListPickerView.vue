@@ -9,7 +9,9 @@ defineOptions({
 
 const props = withDefaults(defineProps<{
   list: any[]
-  shoeIcon?: boolean
+  showIcon?: boolean
+  showCheck?: boolean
+  checkPosition?: 'lt' | 'lc' | 'rc'
   valueKey?: string
   labelKey?: string
   iconKey?: string
@@ -17,7 +19,9 @@ const props = withDefaults(defineProps<{
   customClass?: string
   expandeds?: string[]
 }>(), {
-  shoeIcon: true,
+  showIcon: true,
+  showCheck: true,
+  checkPosition: 'rc',
   valueKey: 'id',
   labelKey: 'name',
   iconKey: 'icon',
@@ -88,8 +92,10 @@ function hasChilds(item: any) {
               <view class="flex flex-1 items-center justify-between gap-3 px-2">
                 <list-picker-view-item
                   v-model="selecteds"
-                  :shoe-icon="shoeIcon"
                   :item="item"
+                  :show-icon="showIcon"
+                  :show-check="showCheck"
+                  :check-position="checkPosition"
                   :value-key="valueKey"
                   :label-key="labelKey"
                   :icon-key="iconKey"
@@ -110,8 +116,10 @@ function hasChilds(item: any) {
             <list-picker-view-item
               v-for="child in item[props.childrenKey]" :key="child[props.valueKey]"
               v-model="selecteds"
-              :shoe-icon="shoeIcon"
               :item="child"
+              :show-icon="showIcon"
+              :show-check="showCheck"
+              :check-position="checkPosition"
               :value-key="valueKey"
               :label-key="labelKey"
               :icon-key="iconKey"

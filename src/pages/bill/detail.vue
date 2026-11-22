@@ -225,7 +225,7 @@ function handleRelatedBillTap(bill: IBill) {
           <text class="bill-bottom-box-item-title">标签</text>
           <view class="relative overflow-hidden">
             <view class="hide-view-scrollbar flex overflow-x-auto space-x-2">
-              <view v-for="tag in bill.tags" :key="tag.tagId" class="flex-shrink-0 rounded-md bg-indigo-300/40 px-2 py-1 text-xs">
+              <view v-for="tag in bill.tags" :key="tag.tagId" class="mb-action-bg z-1 flex-shrink-0 rounded-md px-2 py-1 text-xs">
                 {{ tag.name }}
               </view>
             </view>
@@ -291,7 +291,7 @@ function handleRelatedBillTap(bill: IBill) {
               </view>
               <view v-if="item.tags && item.tags.length > 0" class="bill-related-box-item">
                 <view class="hide-view-scrollbar flex overflow-x-auto space-x-2">
-                  <view v-for="tag in item.tags" :key="tag.tagId" class="flex-shrink-0 rounded-md bg-indigo-300/40 px-2 py-1 text-xs">
+                  <view v-for="tag in item.tags" :key="tag.tagId" class="mb-action-bg z-1 flex-shrink-0 rounded-md px-2 py-1 text-xs">
                     {{ tag.name }}
                   </view>
                 </view>
@@ -332,7 +332,7 @@ function handleRelatedBillTap(bill: IBill) {
     content: '';
     position: absolute;
     left: 0;
-    bottom: -6px;
+    bottom: -12px;
     width: 100%;
     height: 12px;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='23' height='12' viewBox='0 0 23 12'%3E%3Ccircle cx='12' cy='0' r='12' fill='%23f3f4f6'/%3E%3C/svg%3E");
@@ -342,7 +342,7 @@ function handleRelatedBillTap(bill: IBill) {
 }
 
 .bill-header-box {
-  @apply: flex flex-col items-center bg-gray-100 rounded-t-lg pt-15 pb-5 space-y-2;
+  @apply: flex flex-col items-center bg-gray-100 dark:bg-black/10 rounded-t-lg pt-15 pb-5 space-y-2;
 }
 .bill-mid-box {
   position: relative;
@@ -376,8 +376,9 @@ function handleRelatedBillTap(bill: IBill) {
     border-top: none;
   }
 }
+
 .bill-bottom-box {
-  @apply: bg-gray-100 rounded-b-lg p-3;
+  @apply: bg-gray-100 dark:bg-black/10 p-3;
 
   &-item {
     @apply: flex items-center justify-between py-3;
@@ -388,10 +389,18 @@ function handleRelatedBillTap(bill: IBill) {
 }
 
 .bill-related-box {
-  @apply: flex flex-col bg-gray-100 rounded-t-lg p-3;
+  @apply: flex flex-col bg-gray-100 dark:bg-black/10 rounded-t-lg p-3;
 
   &-item {
     @apply: flex items-center justify-between py-2;
+  }
+}
+.dark .bill-mid-box {
+  background: rgba(0, 0, 0, 0.1);
+}
+.dark .bill-detail-box {
+  &::after {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='23' height='12' viewBox='0 0 23 12'%3E%3Ccircle cx='12' cy='0' r='12' fill='%230000001a'/%3E%3C/svg%3E");
   }
 }
 </style>

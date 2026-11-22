@@ -9,12 +9,16 @@ defineOptions({
 
 const props = withDefaults(defineProps<{
   item: any
-  shoeIcon?: boolean
+  showIcon?: boolean
+  showCheck?: boolean
+  checkPosition?: 'lt' | 'lc' | 'rc'
   valueKey?: string
   labelKey?: string
   iconKey?: string
 }>(), {
   shoeIcon: true,
+  showCheck: true,
+  checkPosition: 'rc',
   valueKey: 'id',
   labelKey: 'name',
   iconKey: 'icon',
@@ -26,15 +30,15 @@ const isSelected = computed(() => selecteds.value.includes(props.item[props.valu
 </script>
 
 <template>
-  <view class="mb-filled-bg relative flex items-center rounded-md px-3 py-2" @tap.stop="emit('tap', item)">
-    <view v-if="shoeIcon" class="z-1 mr-2">
+  <view class="mb-content-bg relative z-1 flex items-center rounded-md px-3 py-2" @tap.stop="emit('tap', item)">
+    <view v-if="showIcon" class="mr-2">
       <bill-icon size="23" :icon="item[iconKey]" :text="item[labelKey]" />
     </view>
     <view class="flex-1 truncate text-sm">
       {{ item[labelKey] }}
     </view>
 
-    <checked-mask :value="isSelected" />
+    <checked-mask :value="isSelected" :show-check="showCheck" :position="checkPosition" />
   </view>
 </template>
 

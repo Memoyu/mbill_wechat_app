@@ -104,27 +104,67 @@ function isSelected(ledger: ILedger) {
 
     <view class="relative p-3">
       <view class="grid grid-cols-2 gap-3">
-        <ledger-box v-for="leg in ledgers" :key="leg.ledgerId" :data="leg" @tap="handleLedgerItemClick(leg)">
-          <!-- 选中效果遮罩 -->
-          <template #action>
-            <view
-              class="absolute inset-0 z-10 rounded-2xl transition-all duration-200"
-              :class="[
-                isSelected(leg)
-                  ? 'bg-indigo-500/10 ring-2 mb-selected-ring'
-                  : 'bg-transparent',
-              ]"
-            >
-              <!-- 选中状态的 check 图标 -->
-              <view
-                v-if="isSelected(leg)"
-                class="absolute bottom-3 right-3 h-5 w-5 flex animate-fade-in animate-duration-200 items-center justify-center rounded-full bg-indigo-500 shadow-sm"
-              >
-                <text class="i-lucide-check text-xs text-white" />
+        <view v-for="leg in ledgers" :key="leg.ledgerId" class="relative rounded-xl" @tap="handleLedgerItemClick(leg)">
+          <view class="mb-filled-bg relative overflow-hidden rounded-xl transition-all duration-200">
+            <!-- 账簿封面 -->
+            <view class="aspect-[5/4] bg-gradient-to-br">
+              <!-- 装饰元素容器 -->
+              <view class="pointer-events-none absolute inset-0">
+                <!-- 大圆形装饰 -->
+                <view class="absolute right-0 top-0 z-[1] h-48 w-48 rounded-full bg-black/2" />
+                <!-- 小圆形装饰 -->
+                <view class="absolute bottom-0 left-0 z-[1] h-32 w-32 translate-y-16 rounded-full bg-black/3 -translate-x-16" />
+                <view class="absolute left-20 top-16 z-[2] h-20 w-20">
+                  <view class="absolute inset-0 border-[3px] border-white/8 rounded-full" />
+                </view>
               </view>
             </view>
-          </template>
-        </ledger-box>
+
+            <view class="absolute inset-0 flex flex-col p-3">
+              <!-- 账本内容区域 -->
+              <view class="relative h-full flex flex-col overflow-hidden">
+                <!-- 账本名称 -->
+                <text class="line-clamp-1 w-85% text-base text-gray-800 font-semibold">
+                  {{ leg.name }}
+                </text>
+
+                <view class="mt-2">
+                  <view class="flex items-baseline">
+                    <view class="text-xs">
+                      收入
+                    </view>
+                    <view class="ml-2 text-emerald font-bold">
+                      {{ leg.income }}
+                    </view>
+                  </view>
+
+                  <view class="flex items-baseline">
+                    <view class="text-xs">
+                      支出
+                    </view>
+                    <view class="ml-2 text-rose font-bold">
+                      {{ leg.expend }}
+                    </view>
+                  </view>
+                </view>
+              </view>
+
+              <!-- 底部内容区域 -->
+              <view class="absolute bottom-3 left-3">
+                <wd-avatar-group :max-count="3" size="25">
+                  <wd-avatar
+                    v-for="user in leg.users" :key="user.userId"
+                    :text="user.nickname.slice(0, 1)"
+                    :src="user.avatar"
+                    bg-color="#eef2ff"
+                  />
+                </wd-avatar-group>
+              </view>
+            </view>
+          </view>
+
+          <checked-mask :value="isSelected(leg)" position="lt" />
+        </view>
       </view>
     </view>
   </bottom-popup>

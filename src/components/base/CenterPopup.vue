@@ -80,7 +80,7 @@ function handleConfirm() {
           </view>
           <view v-if="showCancel" class="w-[1px] bg-gray-100 dark:bg-gray-100/20" />
           <view
-            class="flex-1 border-t py-4 text-center text-base text-indigo-500 font-medium transition-colors"
+            class="dark:text-[var(--wot-primary-9)])] flex-1 border-t py-4 text-center text-base text-[var(--wot-primary-5)] font-medium transition-colors"
             :hover-start-time="0"
             :hover-stay-time="200"
             @tap="handleConfirm()"

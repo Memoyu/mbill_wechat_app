@@ -93,6 +93,7 @@ function handleAllSelectClick() {
         ref="accountPickerRef"
         v-model="innerSelecteds"
         :list="accounts"
+        check-position="lt"
         value-key="accountId"
         custom-class="h-[50vh]"
         @change="handleChange"

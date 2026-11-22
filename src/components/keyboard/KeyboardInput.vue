@@ -134,7 +134,7 @@ function handleCharItemTap(index: number, event: any) {
 
       <!-- 光标 -->
       <view
-        class="blink absolute bottom-0 top-0 my-0.5 rounded-sm bg-indigo-200"
+        class="blink dark:text-[var(--wot-primary-9)])] absolute bottom-0 top-0 my-0.5 rounded-sm bg-[var(--wot-primary-5)]"
         :style="{ left: `${cursorPosition}px`, width: `${CW}px` }"
       />
     </view>

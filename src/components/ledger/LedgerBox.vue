@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import type { ILedger } from '@/api/types/ledger'
-import { gradients } from '@/constants/gradients'
 
 defineOptions({
   options: {
@@ -28,10 +27,10 @@ const emit = defineEmits(['tap'])
     />
 
     <view
-      class="relative overflow-hidden rounded-xl bg-white transition-all duration-200"
+      class="mb-filled-bg relative overflow-hidden transition-all duration-200"
     >
       <!-- 账簿封面 -->
-      <view class="aspect-[5/4] bg-gradient-to-br" :style="{ background: gradients[props.data.color] }">
+      <view class="aspect-[5/4] bg-gradient-to-br">
         <!-- 装饰元素容器 -->
         <view class="pointer-events-none absolute inset-0">
           <!-- 大圆形装饰 -->
@@ -42,47 +41,47 @@ const emit = defineEmits(['tap'])
             <view class="absolute inset-0 border-[3px] border-white/8 rounded-full" />
           </view>
         </view>
+      </view>
 
-        <view class="absolute inset-0 flex flex-col p-3">
-          <!-- 账本内容区域 -->
-          <view class="relative h-full flex flex-col overflow-hidden">
-            <!-- 账本名称 -->
-            <text class="line-clamp-1 w-85% text-base text-gray-800 font-semibold">
-              {{ data.name }}
-            </text>
+      <view class="absolute inset-0 flex flex-col p-3">
+        <!-- 账本内容区域 -->
+        <view class="relative h-full flex flex-col overflow-hidden">
+          <!-- 账本名称 -->
+          <text class="line-clamp-1 w-85% text-base text-gray-800 font-semibold">
+            {{ data.name }}
+          </text>
 
-            <view class="mt-2">
-              <view class="flex items-baseline">
-                <view class="text-xs">
-                  收入
-                </view>
-                <view class="ml-2 text-emerald font-bold">
-                  {{ data.income }}
-                </view>
+          <view class="mt-2">
+            <view class="flex items-baseline">
+              <view class="text-xs">
+                收入
               </view>
+              <view class="ml-2 text-emerald font-bold">
+                {{ data.income }}
+              </view>
+            </view>
 
-              <view class="flex items-baseline">
-                <view class="text-xs">
-                  支出
-                </view>
-                <view class="ml-2 text-rose font-bold">
-                  {{ data.expend }}
-                </view>
+            <view class="flex items-baseline">
+              <view class="text-xs">
+                支出
+              </view>
+              <view class="ml-2 text-rose font-bold">
+                {{ data.expend }}
               </view>
             </view>
           </view>
+        </view>
 
-          <!-- 底部内容区域 -->
-          <view class="absolute bottom-3 left-3">
-            <wd-avatar-group :max-count="3" size="25">
-              <wd-avatar
-                v-for="user in data.users" :key="user.userId"
-                :text="user.nickname.slice(0, 1)"
-                :src="user.avatar"
-                bg-color="#eef2ff"
-              />
-            </wd-avatar-group>
-          </view>
+        <!-- 底部内容区域 -->
+        <view class="absolute bottom-3 left-3">
+          <wd-avatar-group :max-count="3" size="25">
+            <wd-avatar
+              v-for="user in data.users" :key="user.userId"
+              :text="user.nickname.slice(0, 1)"
+              :src="user.avatar"
+              bg-color="#eef2ff"
+            />
+          </wd-avatar-group>
         </view>
       </view>
     </view>

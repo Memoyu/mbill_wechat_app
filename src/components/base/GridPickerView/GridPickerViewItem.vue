@@ -19,7 +19,7 @@ const hasChild = computed(() => props.item.childs && props.item.childs.length > 
 </script>
 
 <template>
-  <view class="relative z-1" :style="{ height: `${height}px` }">
+  <view class="relative z-1 rounded-md" :style="{ height: `${height}px` }">
     <view class="h-full flex flex-col justify-center gap-1 px-1">
       <view class="flex justify-center">
         <view class="relative" :class="[hasChild ? 'grid-select-item-has-more' : '']">
@@ -49,7 +49,7 @@ const hasChild = computed(() => props.item.childs && props.item.childs.length > 
     border-radius: 50%;
     z-index: 9;
     border: 3px solid white;
-    @apply: bg-indigo-300;
+    @apply: bg-[var(--wot-primary-5)];
   }
 }
 </style>

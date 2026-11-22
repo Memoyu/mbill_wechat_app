@@ -15,7 +15,7 @@ const props = defineProps<{
   showSelectAll?: boolean
 }>()
 const emit = defineEmits(['confirm'])
-const selecteds = defineModel<string[]>({ default: [] })
+const selecteds = defineModel<string[]>({ default: () => [] })
 const visible = defineModel<boolean>('visible')
 
 const tagStore = useTagStore()
@@ -94,7 +94,8 @@ function handleAllSelectClick() {
         ref="tagPickerRef"
         v-model="innerSelecteds"
         :list="tags"
-        :shoe-icon="false"
+        :show-icon="false"
+        check-position="lt"
         value-key="tagId"
         custom-class="h-[50vh]"
         @change="handleChange"

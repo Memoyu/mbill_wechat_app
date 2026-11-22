@@ -77,14 +77,14 @@ const activeTranslateY = computed(() => `-${Number(active.value) * 100}%`)
               class="flex items-center justify-center"
             >
               <view
-                class="h-32px rounded-full shadow-sm transition-all duration-200"
-                :class="[activeIcon === icon.path ? 'ring-2 mb-selected-ring ring-offset-2' : '']"
+                class="relative h-32px rounded-full shadow-sm transition-all duration-200"
                 hover-class="scale-95 shadow-md"
                 :hover-start-time="0"
                 :hover-stay-time="200"
                 @tap="handleIconClick(icon)"
               >
                 <wd-img :width="32" :height="32" :src="icon.url" round :lazy-load="true" />
+                <checked-mask :value="activeIcon === icon.path" :show-check="false" :show-bg="false" />
               </view>
             </view>
           </view>

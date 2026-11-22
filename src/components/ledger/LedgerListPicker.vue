@@ -91,7 +91,7 @@ function handleLedgerClick(ledger: ILedger) {
         <view class="p-2 space-y-1.5">
           <view
             v-for="ledger in ledgers" :key="ledger.ledgerId"
-            class="mb-filled-bg relative flex items-center gap-3 border rounded-md p-3 transition-all"
+            class="mb-content-bg relative flex items-center gap-3 border rounded-md p-3 transition-all"
             @tap="handleLedgerClick(ledger)"
           >
             <view class="flex flex-1 items-center gap-3">
@@ -103,7 +103,6 @@ function handleLedgerClick(ledger: ILedger) {
               </view>
             </view>
 
-            <!-- 选中遮罩层 -->
             <checked-mask :value="isSelected(ledger)" />
           </view>
         </view>

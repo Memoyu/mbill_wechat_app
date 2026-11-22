@@ -66,12 +66,11 @@ function handleConfirm() {
 
 <template>
   <bottom-popup v-model="show" auto-height @confirm="handleConfirm">
-    <view v-if="chooseType" class="flex items-center justify-between px-7 pb-2">
+    <view v-if="chooseType" class="flex items-center justify-between px-7 pb-3 pt-2">
       <view
         v-for="item in types"
         :key="item.value"
-        class="rounded-lg bg-gray-100/70 px-5 py-1"
-        :class="[innerType === item.value ? 'bg-indigo-300/20' : '']"
+        class="mb-filled-bg relative rounded-lg px-5 py-1"
         @tap="innerType = item.value as DateTimeType"
       >
         <view class="flex flex-col items-center justify-between">
@@ -80,6 +79,7 @@ function handleConfirm() {
             {{ item.label }}
           </view>
         </view>
+        <checked-mask :value="innerType === item.value" position="lt" />
       </view>
     </view>
     <wd-datetime-picker-view v-model="innerDate" :type="innerType" @change="handleDateChange" />

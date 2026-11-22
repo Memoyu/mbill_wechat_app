@@ -149,21 +149,14 @@ function handleUnifyAll() {
         <view
           v-for="(gradient, index) in gradients"
           :key="index + gradient"
-          class="relative aspect-square overflow-hidden rounded-xl shadow-sm transition-all duration-200"
-          :class="[currentColor === index ? 'ring-2 mb-selected-ring ring-offset-2' : '']"
+          class="relative aspect-square overflow-hidden rounded-md rounded-xl shadow-sm transition-all duration-200"
           :style="{ background: gradient }"
           hover-class="scale-95 shadow-md"
           :hover-start-time="0"
           :hover-stay-time="200"
           @tap="handleSelect(index)"
         >
-          <!-- 选中标记 -->
-          <view
-            v-if="currentColor === index"
-            class="absolute bottom-1 right-1 h-4 w-4 flex items-center justify-center rounded-full bg-indigo-500"
-          >
-            <text class="i-lucide-check text-xs text-white" />
-          </view>
+          <checked-mask :value="currentColor === index" position="lt" />
         </view>
       </view>
     </view>

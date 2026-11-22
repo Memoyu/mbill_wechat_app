@@ -66,7 +66,7 @@ function handleBillTap() {
       <view v-if="bill.tags && bill.tags.length > 0" class="relative">
         <scroll-view scroll-x enhanced :show-scrollbar="false" class="relative flex-1" :bounces="false">
           <view class="min-w-max flex items-center gap-2.5 whitespace-nowrap">
-            <view v-for="tag in bill.tags" :key="tag.tagId" class="flex-shrink-0 rounded-md bg-indigo-300/40 px-2 py-1 text-xs">
+            <view v-for="tag in bill.tags" :key="tag.tagId" class="mb-action-bg flex-shrink-0 rounded-md px-2 py-1 text-xs">
               {{ tag.name }}
             </view>
           </view>

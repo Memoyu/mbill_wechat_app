@@ -102,7 +102,7 @@ function handleClose() {
             </view>
             <!-- 确定按钮 -->
             <view
-              class="bottom-popup-action-btn text-indigo-500"
+              class="bottom-popup-action-btn dark:text-[var(--wot-primary-9)])] text-[var(--wot-primary-5)]"
               hover-class="bg-gray-50"
               :hover-start-time="0"
               :hover-stay-time="200"

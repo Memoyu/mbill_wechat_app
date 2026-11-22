@@ -185,21 +185,14 @@ function handleThemeColorSelect(index: number) {
         <view
           v-for="(tc, i) in themeColorOptions"
           :key="i"
-          class="relative aspect-square overflow-hidden rounded-xl shadow-sm transition-all duration-200"
-          :class="[currentThemeColor.value === tc.value ? 'ring-2 mb-selected-ring ring-offset-2' : '']"
+          class="relative aspect-square rounded-xl shadow-sm transition-all duration-200"
           :style="{ background: tc.primary }"
           hover-class="scale-95 shadow-md"
           :hover-start-time="0"
           :hover-stay-time="200"
           @tap="handleThemeColorSelect(i)"
         >
-          <!-- 选中标记 -->
-          <view
-            v-if="currentThemeColor.value === tc.value"
-            class="absolute bottom-1 right-1 h-4 w-4 flex items-center justify-center rounded-full bg-indigo-500"
-          >
-            <text class="i-lucide-check text-xs text-white" />
-          </view>
+          <checked-mask :value="currentThemeColor.value === tc.value" position="lt" />
         </view>
       </view>
     </view>
