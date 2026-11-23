@@ -88,7 +88,7 @@ function handleMonthTap(m: number) {
         <view class="grid grid-cols-7 mt-2 gap-0.5">
           <view
             v-for="(d, didx) in m.days" :key="`day-${m.month}-${d}`"
-            class="relative h-2.5 w-2.5 rounded mb-action-bg"
+            class="relative h-2.5 w-2.5 rounded bg-gray-200/80 dark:bg-black/20"
             :style="didx === 0 ? { gridColumnStart: `${m.offset}` } : {}"
           >
             <view class="absolute inset-0 rounded" :style="`background-color:${bgColor};opacity:${m.heats[didx]}`" />

@@ -33,7 +33,20 @@ const emit = defineEmits<{
 }>()
 const show = defineModel<boolean>()
 
+const { isDark } = useTheme()
+
 const innerActions = ref<ActionItem[]>([])
+
+const popupStyle = computed(() => {
+  const parts: string[] = []
+  if (props.height && !props.autoHeight) {
+    parts.push(`height: ${props.height}`)
+  }
+  if (isDark.value) {
+    parts.push('border: 1px solid #f3f4f6')
+  }
+  return parts.join('; ')
+})
 
 watch(() => props.actions, (val) => {
   innerActions.value = val ?? []
@@ -63,11 +76,11 @@ function handleClose() {
     :close-on-click-modal="true"
     :safe-area-inset-bottom="true"
     custom-class="rounded-t-3xl relative"
-    :custom-style="(height && !autoHeight ? `height: ${height}` : '')"
+    :custom-style="popupStyle"
     @close="handleClose"
     @after-enter="emit('after-enter')"
   >
-    <view class="sticky left-0 right-0 top-0 z-10 border-b border-gray-100 bg-[var(--wot-filled-oppo)] py-3">
+    <view class="sticky left-0 right-0 top-0 z-10 bg-[var(--wot-filled-oppo)] py-3">
       <view class="flex items-center justify-between px-4">
         <text class="line-clamp-1 text-base font-semibold">
           {{ title }}
@@ -116,7 +129,6 @@ function handleClose() {
       <slot name="title" />
     </view>
     <slot />
-    <!-- 安全区域 -->
   </wd-popup>
 </template>
 

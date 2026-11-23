@@ -14,7 +14,7 @@ defineOptions({
       <view
         v-for="i in 3"
         :key="`${i}-bg2`"
-        class="absolute rounded-full bg-black/[0.025]"
+        class="absolute rounded-full bg-black/[0.03] dark:bg-white/[0.02]"
         :style="{
           width: `${300 + i * 100}px`,
           height: `${300 + i * 100}px`,

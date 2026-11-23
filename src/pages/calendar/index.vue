@@ -244,4 +244,7 @@ function handleListQuery(page: number, size: number) {
 </template>
 
 <style lang="scss" scoped>
+:deep(.wd-floating-panel) {
+  z-index: 6;
+}
 </style>

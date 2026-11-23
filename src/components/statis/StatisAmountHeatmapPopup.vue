@@ -28,7 +28,7 @@ const props = withDefaults(defineProps<{
 })
 
 const { proxy } = getCurrentInstance() as any
-const scrollHeight = 70
+const scrollHeight = 60
 const options = [...billOptions, '结余']
 
 const show = defineModel<boolean>()
@@ -121,7 +121,7 @@ function getBillData(data: IBillSummaryAmount) {
   <bottom-popup v-if="mounted" v-model="show" auto-height title="收支热力图" :show-btn="false" @after-enter="handleAfterEnter">
     <template #action>
       <view class="flex items-center justify-between">
-        <view class="max-w-max rounded-full mb-action-bg px-3 py-1">
+        <view class="mb-action-bg max-w-max rounded-full px-3 py-1">
           <segmented v-if="segMounted" v-model="type" :options="options" />
         </view>
       </view>

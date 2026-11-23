@@ -6,6 +6,15 @@ defineOptions({
     styleIsolation: 'shared',
   },
 })
+
+const {
+  isDark,
+} = useTheme()
+
+function getRbga(pre: boolean = true) {
+  const rbg = isDark.value ? '255,255,255' : '0,0,0'
+  return pre ? `rgba(${rbg},0.03)` : `rgba(${rbg},0.02)`
+}
 </script>
 
 <template>
@@ -14,7 +23,7 @@ defineOptions({
       <view
         v-for="i in 3"
         :key="`${i}-bg1`"
-        class="absolute rounded-full bg-gray-900/[0.02]"
+        class="absolute rounded-full bg-gray-900/[0.02] dark:bg-white/[0.05]"
         :style="{
           width: `${350 + i * 100}px`,
           height: `${350 + i * 100}px`,
@@ -23,10 +32,10 @@ defineOptions({
           transform: `translate(-50%, -50%) rotate(${i * 45}deg)`,
           background:
             i === 1
-              ? 'linear-gradient(135deg, rgba(0,0,0,0.03), rgba(0,0,0,0.02))'
+              ? `linear-gradient(135deg, ${getRbga()}, ${getRbga(false)})`
               : i === 2
-                ? 'linear-gradient(225deg, rgba(0,0,0,0.03), rgba(0,0,0,0.02))'
-                : 'linear-gradient(45deg, rgba(0,0,0,0.03), rgba(0,0,0,0.02))',
+                ? `linear-gradient(225deg, ${getRbga()}, ${getRbga(false)})`
+                : `linear-gradient(45deg, ${getRbga()}, ${getRbga(false)})`,
         }"
       />
     </view>
