@@ -17,7 +17,7 @@ const props = defineProps<{
 </script>
 
 <template>
-  <view class="p-3">
+  <view class="p-3 space-y-2">
     <view v-for="g in groups" :key="g.date">
       <view class="flex items-center justify-between">
         <view class="flex">
