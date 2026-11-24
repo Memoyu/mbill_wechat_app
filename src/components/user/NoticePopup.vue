@@ -18,6 +18,10 @@ const props = defineProps<{
 const show = defineModel<boolean>()
 const userStore = useUserStore()
 
+const noticeStyles = ref<Record<string, string>>({
+  'notice-highlight': 'background-color:var(--wot-success-surface);color:var(--wot-success-main);padding:0 4px;',
+})
+
 function handleClose() {
   userStore.setNotices(props.notices.map(n => n.id))
 }
@@ -34,7 +38,10 @@ function handleClose() {
       <view v-for="n in notices" :key="n.id" class="relative w-full">
         <wd-card :title="n.title">
           <view class="content-text">
-            {{ n.content }}
+            <wd-rich-text
+              :class-styles="noticeStyles"
+              :content="n.content"
+            />
           </view>
           <view class="mt-3 text-right text-xs text-gray-500">
             {{ `${dayjs(n.createTime).format('YYYY-MM-DD HH:mm')}` }}
