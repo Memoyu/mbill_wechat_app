@@ -14,11 +14,11 @@ definePage({
 })
 
 const toast = useGlobalToast()
-const dialog = useGlobalDialog()
 const indexBillStore = useIndexBillStore()
 
 const showRefund = ref(false)
 const showBillSelect = ref(false)
+const showDelete = ref(false)
 const bill = ref<IBill>({
   billId: '',
   type: 0,
@@ -74,8 +74,7 @@ const actions: ActionItem[] = [
     icon: 'delete',
     type: 'danger',
     action: () => {
-      // console.log('删除账单')
-      handleDelete()
+      showDelete.value = true
     },
   },
 ]
@@ -99,19 +98,13 @@ onShow(() => {
 
 /** 删除账单 */
 function handleDelete() {
-  dialog
-    .confirm({
-      msg: `确定要删除账单？`,
-      success: () => {
-        indexBillStore.deleteBill(bill.value.billId).then(() => {
-          uni.navigateBack().then(() => {
-            toast.success('删除成功')
-          })
-        }).catch(() => {
-          toast.error('删除失败')
-        })
-      },
+  indexBillStore.deleteBill(bill.value.billId).then(() => {
+    uni.navigateBack().then(() => {
+      toast.success('删除成功')
     })
+  }).catch(() => {
+    toast.error('删除失败')
+  })
 }
 
 function handleChangeRefund(diff: number) {
@@ -145,7 +138,7 @@ function handleRelatedBillTap(bill: IBill) {
 </script>
 
 <template>
-  <page-meta :page-style="`overflow:${showRefund || showBillSelect ? 'hidden' : 'visible'};`" />
+  <page-meta :page-style="`overflow:${showRefund || showBillSelect || showDelete ? 'hidden' : 'visible'};`" />
   <draw-background2 />
   <nav-bar id="TOP_NAVBAR" title="账单详情" />
 
@@ -188,7 +181,7 @@ function handleRelatedBillTap(bill: IBill) {
         <!-- 账单账户 -->
         <view class="bill-bottom-box-item">
           <text class="bill-bottom-box-item-title">账户</text>
-          <view class="flex items-center gap-2 font-bold">
+          <view class="z-1 flex items-center gap-2 font-bold">
             <bill-icon :icon="bill.account.icon" :text="bill.account.name" size="22" />
             <text>{{ bill.account.name }}</text>
           </view>
@@ -225,7 +218,7 @@ function handleRelatedBillTap(bill: IBill) {
           <text class="bill-bottom-box-item-title">标签</text>
           <view class="relative overflow-hidden">
             <view class="hide-view-scrollbar flex overflow-x-auto space-x-2">
-              <view v-for="tag in bill.tags" :key="tag.tagId" class="mb-action-bg z-1 flex-shrink-0 rounded-md px-2 py-1 text-xs">
+              <view v-for="tag in bill.tags" :key="tag.tagId" class="mb-filled-bg flex-shrink-0 rounded-md px-2 py-1 text-xs">
                 {{ tag.name }}
               </view>
             </view>
@@ -291,7 +284,7 @@ function handleRelatedBillTap(bill: IBill) {
               </view>
               <view v-if="item.tags && item.tags.length > 0" class="bill-related-box-item">
                 <view class="hide-view-scrollbar flex overflow-x-auto space-x-2">
-                  <view v-for="tag in item.tags" :key="tag.tagId" class="mb-action-bg z-1 flex-shrink-0 rounded-md px-2 py-1 text-xs">
+                  <view v-for="tag in item.tags" :key="tag.tagId" class="mb-active-bg z-1 flex-shrink-0 rounded-md px-2 py-1 text-xs">
                     {{ tag.name }}
                   </view>
                 </view>
@@ -321,6 +314,9 @@ function handleRelatedBillTap(bill: IBill) {
     :excludes="excludeBills"
     @confirm="handleBillSelectConfirm"
   />
+
+  <!-- 确认删除账单 -->
+  <confirm-popup v-model="showDelete" danger title="删除账单" content="确定要删除账单？" confirm-text="删除" @confirm="handleDelete" />
 </template>
 
 <style lang="scss" scoped>
@@ -335,19 +331,25 @@ function handleRelatedBillTap(bill: IBill) {
     bottom: -12px;
     width: 100%;
     height: 12px;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='23' height='12' viewBox='0 0 23 12'%3E%3Ccircle cx='12' cy='0' r='12' fill='%23f3f4f6'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='23' height='12' viewBox='0 0 23 12'%3E%3Ccircle cx='12' cy='0' r='12' fill='%23ffffff'/%3E%3C/svg%3E");
     background-size: 23px 12px;
     background-repeat: repeat-x;
   }
 }
 
+.dark .bill-detail-box {
+  &::after {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='23' height='12' viewBox='0 0 23 12'%3E%3Ccircle cx='12' cy='0' r='12' fill='%23000000'/%3E%3C/svg%3E");
+  }
+}
+
 .bill-header-box {
-  @apply: flex flex-col items-center bg-gray-100 dark:bg-black/10 rounded-t-lg pt-15 pb-5 space-y-2;
+  @apply: flex flex-col items-center mb-block-bg rounded-t-lg pt-15 pb-5 space-y-2;
 }
 .bill-mid-box {
+  @apply: mb-block-bg
   position: relative;
   height: 20px;
-  background: #f3f4f6;
 
   // 左右透明半圆缺口
   mask:
@@ -378,7 +380,7 @@ function handleRelatedBillTap(bill: IBill) {
 }
 
 .bill-bottom-box {
-  @apply: bg-gray-100 dark:bg-black/10 p-3;
+  @apply: mb-block-bg p-3;
 
   &-item {
     @apply: flex items-center justify-between py-3;
@@ -389,18 +391,10 @@ function handleRelatedBillTap(bill: IBill) {
 }
 
 .bill-related-box {
-  @apply: flex flex-col bg-gray-100 dark:bg-black/10 rounded-t-lg p-3;
+  @apply: flex flex-col mb-block-bg rounded-t-lg p-3;
 
   &-item {
     @apply: flex items-center justify-between py-2;
-  }
-}
-.dark .bill-mid-box {
-  background: rgba(0, 0, 0, 0.1);
-}
-.dark .bill-detail-box {
-  &::after {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='23' height='12' viewBox='0 0 23 12'%3E%3Ccircle cx='12' cy='0' r='12' fill='%230000001a'/%3E%3C/svg%3E");
   }
 }
 </style>

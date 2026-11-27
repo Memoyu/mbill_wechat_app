@@ -12,6 +12,18 @@ definePage({
   },
 })
 
+const toast = useGlobalToast()
+const accountStore = useAccountStore()
+
+const iconPickerRef = ref()
+const editShow = ref(false)
+const editMounted = ref(false)
+const editTitle = ref('创建账户')
+const scrollHeight = ref(300)
+const actionShow = ref(false)
+const showDelete = ref(false)
+const currentAccount = ref<IAccount>()
+
 const navActions: ActionItem[] = [
   {
     text: '创建',
@@ -36,23 +48,13 @@ const accountActions: ActionGroup[] = [
         icon: 'i-lucide-trash',
         text: '删除账户',
         type: 'danger',
-        action: handleDeleteAction,
+        action: () => {
+          showDelete.value = true
+        },
       },
     ],
   },
 ]
-
-const toast = useGlobalToast()
-const dialog = useGlobalDialog()
-const accountStore = useAccountStore()
-
-const iconPickerRef = ref()
-const editShow = ref(false)
-const editMounted = ref(false)
-const editTitle = ref('创建账户')
-const scrollHeight = ref(300)
-const actionShow = ref(false)
-const currentAccount = ref<IAccount>()
 
 const accounts = computed(() => accountStore.list)
 
@@ -234,22 +236,17 @@ async function handleEditConfirm() {
 /**
  * 删除账户Action触发
  */
-function handleDeleteAction() {
+function handleDelete() {
   // console.log('handleEditAction')
   if (!currentAccount.value)
     return
+
   const { accountId, parentId } = currentAccount.value
-  dialog
-    .confirm({
-      msg: `确定要删除账户？`,
-      success: () => {
-        accountStore.deleteAccount(accountId, parentId).then(() => {
-          toast.success('删除成功')
-        }).catch(() => {
-          toast.error('删除失败')
-        })
-      },
-    })
+  accountStore.deleteAccount(accountId, parentId).then(() => {
+    toast.success('删除成功')
+  }).catch(() => {
+    toast.error('删除失败')
+  })
 }
 </script>
 
@@ -330,17 +327,20 @@ function handleDeleteAction() {
 
     <icon-picker v-if="editMounted" ref="iconPickerRef" :path="editAccount.icon" @change="handleIconChange" />
   </bottom-popup>
+
+  <!-- 确认删除账户 -->
+  <confirm-popup v-model="showDelete" danger title="删除账户" content="确定要删除账户？" confirm-text="删除" @confirm="handleDelete" />
 </template>
 
 <style lang="scss" scoped>
 .account-title-box {
   box-sizing: border-box;
   padding: 0.7rem;
-  @apply mb-filled-bg;
+  @apply mb-block-bg;
 }
 
 .account-content-box {
-  @apply mb-filled-bg p-2;
+  @apply mb-block-bg p-2;
 }
 .account-item-title {
   font-size: 12px;

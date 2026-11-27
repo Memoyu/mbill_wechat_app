@@ -286,7 +286,7 @@ function handleAddressPrefixIcon() {
       </view>
     </template>
     <template #prefix-action>
-      <view class="mb-action-bg mt-4 max-w-max rounded-full px-2 py-1">
+      <view class="mb-active-bg max-w-max rounded-full px-2 py-1">
         <segmented v-model="bill.type" :gap="6" :options="typeOptions" />
       </view>
     </template>
@@ -305,7 +305,7 @@ function handleAddressPrefixIcon() {
     <!-- 标签 -->
     <view v-if="hasTag" class="hide-view-scrollbar overflow-x-auto px-1">
       <view class="min-w-max flex items-center gap-1 whitespace-nowrap">
-        <view v-for="tag in bill.tags" :key="tag.tagId" class="mb-action-bg flex-shrink-0 rounded-md px-2 py-1 text-sm" @tap="showTags = true">
+        <view v-for="tag in bill.tags" :key="tag.tagId" class="mb-filled-bg z-1 flex-shrink-0 rounded-md px-2 py-1 text-sm" @tap="showTags = true">
           {{ tag.name }}
         </view>
       </view>
@@ -360,7 +360,7 @@ function handleAddressPrefixIcon() {
 .bill-attr-box {
   @apply: flex items-center gap-2 whitespace-nowrap;
   &-item {
-    @apply: flex items-center justify-center py-1.5 px-2.5 mb-action-bg rounded-full gap-0.5;
+    @apply: flex items-center justify-center py-1.5 px-2.5 mb-filled-bg rounded-full gap-0.5 z-1;
   }
 }
 

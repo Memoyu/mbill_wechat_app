@@ -121,7 +121,7 @@ function getBillData(data: IBillSummaryAmount) {
   <bottom-popup v-if="mounted" v-model="show" auto-height title="收支热力图" :show-btn="false" @after-enter="handleAfterEnter">
     <template #action>
       <view class="flex items-center justify-between">
-        <view class="mb-action-bg max-w-max rounded-full px-3 py-1">
+        <view class="mb-active-bg max-w-max rounded-full px-3 py-1">
           <segmented v-if="segMounted" v-model="type" :options="options" />
         </view>
       </view>

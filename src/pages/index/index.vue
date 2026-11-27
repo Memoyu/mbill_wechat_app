@@ -129,7 +129,7 @@ function handleQuery(page: number) {
 
           <!-- 设置按钮 -->
           <view
-            class="sticky-item p-2 px-3"
+            class="sticky-item p-2.5 px-4"
             hover-class="sticky-item-hover"
             :hover-start-time="0"
             :hover-stay-time="200"
@@ -142,7 +142,7 @@ function handleQuery(page: number) {
           <!-- 通知 -->
           <wd-badge custom-class="badge" is-dot :hidden="!hasNotice" right="5" top="5">
             <view
-              class="sticky-item p-2"
+              class="sticky-item p-2.5"
               hover-class="sticky-item-hover"
               :hover-start-time="0"
               :hover-stay-time="200"
@@ -168,12 +168,12 @@ function handleQuery(page: number) {
       </view>
 
       <!-- 账单金额汇总 -->
-      <view class="mb-content-bg mx-3 rounded-lg p-3">
+      <view class="mb-block-bg mx-3 rounded-lg p-3">
         <amount-summary />
       </view>
 
       <!-- 账单金额汇总统计 -->
-      <view v-if="indexBillStore.showChart" class="mb-content-bg mx-3 rounded-lg px-2 py-3">
+      <view v-if="indexBillStore.showChart" class="mb-block-bg mx-3 rounded-lg px-2 py-3">
         <summary-charts @more="chartSettingShow = true" />
       </view>
     </view>
@@ -218,7 +218,7 @@ function handleQuery(page: number) {
 
 <style lang="scss" scoped>
 .sticky-item {
-  @apply: w-fit flex items-center gap-1.5 mb-action-bg rounded-full backdrop-blur-sm transition-all text-sm;
+  @apply: w-fit flex items-center gap-1.5 mb-active-bg rounded-full transition-all text-sm;
 }
 .sticky-item-hover {
   @apply: !scale-97 transform-origin-center;

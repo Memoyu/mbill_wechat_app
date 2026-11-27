@@ -21,11 +21,11 @@ const show = defineModel<boolean>()
 
 const mounted = ref(false)
 const toast = useGlobalToast()
-const dialog = useGlobalDialog()
 
 const isCreate = ref(true)
 const showEdit = ref(false)
 const showDateTime = ref(false)
+const showDelete = ref(false)
 
 const refundList = ref<IRefundBill[]>([])
 const refund = ref<IEditRefundBill>({
@@ -44,8 +44,7 @@ const actions: ActionItem[] = [
     icon: 'delete',
     type: 'danger',
     action: () => {
-      // console.log('删除退款账单')
-      handleDelete()
+      showDelete.value = true
     },
   },
 ]
@@ -98,20 +97,14 @@ function handleDelete() {
     return
   }
 
-  dialog
-    .confirm({
-      msg: `确定要删除账单退款记录？`,
-      success: () => {
-        deleteRefundBill(refundId).then(() => {
-          emit('changeRefund', refund.value.amount)
-          toast.success('删除成功')
-          // 删除refundList.value中的指定退款
-          refundList.value = refundList.value.filter(item => item.refundId !== refund.value.refundId)
-        }).catch(() => {
-          toast.error('删除失败')
-        })
-      },
-    })
+  deleteRefundBill(refundId).then(() => {
+    emit('changeRefund', refund.value.amount)
+    toast.success('删除成功')
+    // 删除refundList.value中的指定退款
+    refundList.value = refundList.value.filter(item => item.refundId !== refund.value.refundId)
+  }).catch(() => {
+    toast.error('删除失败')
+  })
 }
 
 /**
@@ -176,7 +169,7 @@ function updateRefundList(dto: IRefundBill) {
   <!-- 退款列表 -->
   <center-popup v-model="show" title="退款" confirm-text="新增退款" :show-cancel="false" @confirm="handleAddRefund">
     <view class="min-h-[50vh] flex flex-col px-3 pb-2 space-y-2">
-      <view v-for="item in refundList" :key="item.refundId" class="flex flex-col list-item-box space-y-3" @tap="handleRefundItemTap(item)">
+      <view v-for="item in refundList" :key="item.refundId" class="list-item-box flex flex-col space-y-3" @tap="handleRefundItemTap(item)">
         <view class="flex items-center justify-between font-semibold">
           <text>退款到：{{ item.account.name }}</text>
           <wd-text :text="item.amount" mode="price" :color="getBillColor(1)" />
@@ -222,6 +215,9 @@ function updateRefundList(dto: IRefundBill) {
 
   <!-- 日期弹窗 -->
   <date-time-picker v-if="mounted" v-model="showDateTime" v-model:date="date" />
+
+  <!-- 确认删除账单退款 -->
+  <confirm-popup v-model="showDelete" danger title="删除账单退款" content="确定要删除账单退款？" confirm-text="删除" @confirm="handleDelete" />
 </template>
 
 <style lang="scss" scoped>

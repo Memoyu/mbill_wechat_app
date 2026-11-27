@@ -23,7 +23,7 @@ function handleNavigateTo(path: string) {
 <template>
   <view class="fixed bottom-8 left-0 right-0 z-2 mx-auto w-90% flex animate-fade-in-up animate-duration-400 animate-ease-out">
     <view
-      class="flex flex-1 items-center justify-between rounded-full bg-[var(--wot-filled-zero)] p-2 shadow-lg backdrop-blur-sm"
+      class="mb-backdrop-blur-bg flex flex-1 items-center justify-between rounded-full p-2"
       :style="{ boxShadow: '0 8px 24px -6px rgba(0,0,0,0.12), 0 4px 8px -4px rgba(0,0,0,0.08)' }"
     >
       <view class="flex items-center gap-3">
@@ -67,7 +67,7 @@ function handleNavigateTo(path: string) {
 
 <style lang="scss" scoped>
 .index-navbar-action {
-  @apply: flex items-center gap-2 rounded-full mb-action-bg px-3 py-2 transition-colors;
+  @apply: flex items-center gap-2 rounded-full mb-active-bg px-3 py-2 transition-colors;
 }
 
 .index-navbar-add-action {
@@ -76,10 +76,10 @@ function handleNavigateTo(path: string) {
     content: '';
     position: absolute;
     inset: 0;
-    background: var(--wot-primary-3);
+    background: var(--wot-primary-2);
     border-radius: inherit;
     z-index: -1;
-    opacity: 0.1;
+    opacity: 0.4;
   }
 }
 

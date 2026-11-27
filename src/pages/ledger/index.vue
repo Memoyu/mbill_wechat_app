@@ -239,9 +239,9 @@ function handleSortChange(list: ILedger[]) {
     <view class="px-3 py-2">
       <drag-sort-list-view :list="ledgers" :gap="8" key-prop="ledgerId" :height="scrollHeight" @change="handleSortChange">
         <template #content="{ listItem }">
-          <view class="relative overflow-hidden transition-all duration-200" @tap.stop="handleLedgerTap(listItem)">
+          <view class="mb-block-bg relative overflow-hidden p-3 transition-all duration-200" @tap.stop="handleLedgerTap(listItem)">
             <!-- 账簿封面 -->
-            <view class="mb-filled-bg bg-gradient-to-br p-3">
+            <view class="bg-gradient-to-br">
               <!-- 装饰元素容器 -->
               <view class="pointer-events-none absolute inset-0">
                 <!-- 小圆形装饰 -->
@@ -253,43 +253,43 @@ function handleSortChange(list: ILedger[]) {
                 <!-- 大圆形装饰 -->
                 <view class="absolute right-0 top-0 z-[1] h-48 w-48 translate-x-25 rounded-full bg-black/2 -translate-y-15" />
               </view>
+            </view>
 
-              <view class="flex rounded-2xl">
-                <view class="flex flex-1 flex-col">
-                  <text class="line-clamp-1 font-semibold">{{ listItem.name }}</text>
-                  <view class="mt-3 flex items-center text-xs">
-                    <text>
-                      收入
-                    </text>
-                    <text class="ml-2 text-[var(--mbill-income-color)] font-bold">
-                      {{ listItem.income }}
-                    </text>
-                    <text class="ml-4">
-                      支出
-                    </text>
-                    <text class="ml-2 text-[var(--mbill-expend-color)] font-bold">
-                      {{ listItem.expend }}
-                    </text>
-                  </view>
-                </view>
-
-                <view class="flex flex-shrink-0 flex-col justify-items-start">
-                  <action-btn @tap.stop="handleLedgerActions(listItem)">
-                    <wd-icon size="10" name="more" />
-                  </action-btn>
+            <view class="flex rounded-2xl">
+              <view class="flex flex-1 flex-col">
+                <text class="line-clamp-1 font-semibold">{{ listItem.name }}</text>
+                <view class="mt-3 flex items-center text-xs">
+                  <text>
+                    收入
+                  </text>
+                  <text class="ml-2 text-[var(--mbill-income-color)] font-bold">
+                    {{ listItem.income }}
+                  </text>
+                  <text class="ml-4">
+                    支出
+                  </text>
+                  <text class="ml-2 text-[var(--mbill-expend-color)] font-bold">
+                    {{ listItem.expend }}
+                  </text>
                 </view>
               </view>
-              <view class="mt-3 h-25px flex items-center justify-between">
-                <wd-avatar-group :max-count="9" size="25">
-                  <wd-avatar
-                    v-for="user in listItem.users" :key="user.userId"
-                    :text="user.nickname.slice(0, 1)"
-                    :src="user.avatar"
-                    bg-color="#a5b4fc"
-                  />
-                </wd-avatar-group>
-                <text class="text-xs">{{ dayjs(listItem.createTime).format('YYYY-MM-DD HH:mm') }}</text>
+
+              <view class="flex flex-shrink-0 flex-col justify-items-start">
+                <action-btn @tap.stop="handleLedgerActions(listItem)">
+                  <wd-icon size="10" name="more" />
+                </action-btn>
               </view>
+            </view>
+            <view class="mt-3 h-25px flex items-center justify-between">
+              <wd-avatar-group :max-count="9" size="25">
+                <wd-avatar
+                  v-for="user in listItem.users" :key="user.userId"
+                  :text="user.nickname.slice(0, 1)"
+                  :src="user.avatar"
+                  bg-color="#a5b4fc"
+                />
+              </wd-avatar-group>
+              <text class="text-xs">{{ dayjs(listItem.createTime).format('YYYY-MM-DD HH:mm') }}</text>
             </view>
           </view>
         </template>
@@ -301,29 +301,6 @@ function handleSortChange(list: ILedger[]) {
   <center-popup v-model="editShow" :title="editTitle" @confirm="handleEditConfirm">
     <view class="px-3">
       <wd-input v-model="editLedger.name" type="text" placeholder="账本名称" />
-      <!-- <view v-if="editLedger.isCreate">
-        <view class="mt-2">
-          <wd-checkbox v-model="editLedger.randomColor">
-            随机颜色
-          </wd-checkbox>
-        </view>
-
-        <view v-if="!editLedger.randomColor" class="mt-2 h-50 overflow-y-auto p-2">
-          <view class="grid grid-cols-4 gap-4">
-            <view
-              v-for="(gradient, index) in gradients"
-              :key="index + gradient"
-              class="relative aspect-square overflow-hidden rounded-xl shadow-sm transition-all duration-200"
-              :class="[editLedger.color === index ? 'ring-2 mb-selected-ring ring-offset-2' : '']"
-              :style="{ background: gradient }"
-              hover-class="scale-95 shadow-md"
-              :hover-start-time="0"
-              :hover-stay-time="200"
-              @tap="editLedger.color = index"
-            />
-          </view>
-        </view>
-      </view> -->
     </view>
   </center-popup>
 

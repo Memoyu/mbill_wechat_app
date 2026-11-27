@@ -18,10 +18,6 @@ const show = defineModel<boolean>()
 
 const { isDark } = useTheme()
 
-const popupStyle = computed(() => {
-  return isDark.value ? 'border: 1px solid #f3f4f6' : ''
-})
-
 function handleCancelClick() {
   show.value = false
 }
@@ -41,7 +37,6 @@ function handleActionClick(item: any) {
     :close-on-click-modal="true"
     :safe-area-inset-bottom="true"
     custom-class="rounded-t-3xl relative"
-    :custom-style="popupStyle"
     lock-scroll
     lazy-render
     @close="handleCancelClick"

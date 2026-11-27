@@ -3,6 +3,14 @@ import type { ICategory } from '@/api/types/category'
 import { useCategoryStore } from '@/store'
 import { BillTypeEnum } from '@/typings'
 
+defineOptions({
+  options: {
+    addGlobalClass: true,
+    virtualHost: true,
+    styleIsolation: 'shared',
+  },
+})
+
 const props = defineProps<{
   type: BillTypeEnum
   scrollHeight: number
@@ -111,11 +119,11 @@ function handleChildItemTap(parent: any, data: any) {
 .category-title-box {
   box-sizing: border-box;
   padding: 0.7rem;
-  @apply mb-filled-bg;
+  @apply mb-block-bg;
 }
 
 .category-content-box {
-  @apply mb-filled-bg p-2;
+  @apply mb-block-bg p-2;
 }
 
 .category-item-title {

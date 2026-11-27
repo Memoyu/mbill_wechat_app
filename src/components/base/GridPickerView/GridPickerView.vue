@@ -274,7 +274,7 @@ function calcChildContentHeight(childs: any[]) {
             <view v-if="rowIdx === rowIndex" class="relative">
               <!-- 向上三角指示器，标识子类所属父类 -->
               <view class="child-arrow" :style="{ left: `${(parentColIndex + 0.5) / props.column * 100}%` }" />
-              <view class="mb-content-bg rounded-lg p-2" :style="{ ...itemsBoxStyle, height: `${calcChildContentHeight(rowChilds)}px` }">
+              <view class="rounded-lg bg-[var(--wot-filled-strong)] p-2" :style="{ ...itemsBoxStyle, height: `${calcChildContentHeight(rowChilds)}px` }">
                 <view v-for="child in rowChilds" :id="`ITEM-${child[props.idKey]}`" :key="`child-${child[props.idKey]}`" @tap="handleItemTap(child)">
                   <grid-picker-view-item
                     :height="itmeHeight"
@@ -300,10 +300,7 @@ function calcChildContentHeight(childs: any[]) {
   height: 0;
   border-left: 8px solid transparent;
   border-right: 8px solid transparent;
-  // 颜色与 mb-content-bg 保持一致：--wot-primary-1 + opacity 0.6/0.1
-  border-bottom: 8px solid var(--wot-primary-1);
-  z-index: 1;
+  border-bottom: 8px solid var(--wot-filled-strong);
   transition: left 0.3s ease;
-  @apply opacity-60 dark:opacity-10;
 }
 </style>

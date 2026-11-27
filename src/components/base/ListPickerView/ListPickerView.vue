@@ -133,6 +133,9 @@ function hasChilds(item: any) {
 </template>
 
 <style lang="scss" scoped>
+:deep(.wd-collapse) {
+  background-color: transparent;
+}
 :deep(.wd-collapse-item__header) {
   padding: 0;
   overflow: auto;

@@ -31,9 +31,9 @@ function showMore() {
 </script>
 
 <template>
-  <view id="BOTTOM_ACTION" class="fixed bottom-5 left-0 right-0 z-4 mx-auto max-w-2xl w-[90vw]">
+  <view id="BOTTOM_ACTION" class="fixed bottom-5 left-0 right-0 z-4 mx-auto max-w-2xl w-[95vw]">
     <view
-      class="relative flex flex-1 items-center justify-between overflow-hidden rounded-2xl bg-white/10 p-2 shadow-lg backdrop-blur-sm dark:bg-black/10"
+      class="mb-backdrop-blur-bg relative flex flex-1 items-center justify-between overflow-hidden rounded-2xl p-2"
       :style="{ boxShadow: '0 8px 24px -6px rgba(0,0,0,0.12), 0 4px 8px -4px rgba(0,0,0,0.08)' }"
     >
       <scroll-view

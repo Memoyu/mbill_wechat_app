@@ -2,6 +2,7 @@
 import type { IBillQuery, IBillSummaryAccount, IBillSummaryAmount, IBillSummaryCategory, IBillSummaryTag } from '@/api/types/bill'
 import dayjs from 'dayjs'
 import { summaryAccountBill, summaryAmountBill, summaryCategoryBill, summaryTagBill } from '@/api/bill'
+import { useGlobalLoading } from '@/hooks/useGlobalLoading'
 import { useSettingsStore } from '@/store'
 
 defineOptions({
@@ -20,6 +21,7 @@ defineExpose({
   reload,
 })
 
+const loading = useGlobalLoading()
 const settingsStore = useSettingsStore()
 
 const mounted = ref(false)
@@ -83,44 +85,48 @@ function reload() {
   loadData()
 }
 
-function loadData() {
-  getSummaryAmountBill()
-  getSummaryCategoryBill()
-  getSummaryAccountBill()
-  getSummaryTagBill()
+async function loadData() {
+  loading.loading('数据加载...')
+  try {
+    await Promise.allSettled([
+      getSummaryAmountBill(),
+      getSummaryCategoryBill(),
+      getSummaryAccountBill(),
+      getSummaryTagBill(),
+    ])
+  }
+  finally {
+    loading.close()
+  }
 }
 
-function getSummaryAmountBill() {
-  summaryAmountBill({
+async function getSummaryAmountBill() {
+  const res = await summaryAmountBill({
     ...query.value,
     series: 3,
-  }).then((res) => {
-    summary.value = res
   })
+  summary.value = res
 }
 
-function getSummaryCategoryBill() {
-  summaryCategoryBill({
+async function getSummaryCategoryBill() {
+  const res = await summaryCategoryBill({
     ...query.value,
-  }).then((res) => {
-    category.value = res
   })
+  category.value = res
 }
 
-function getSummaryAccountBill() {
-  summaryAccountBill({
+async function getSummaryAccountBill() {
+  const res = await summaryAccountBill({
     ...query.value,
-  }).then((res) => {
-    account.value = res
   })
+  account.value = res
 }
 
-function getSummaryTagBill() {
-  summaryTagBill({
+async function getSummaryTagBill() {
+  const res = await summaryTagBill({
     ...query.value,
-  }).then((res) => {
-    tag.value = res
   })
+  tag.value = res
 }
 
 function handleScrollToLower() {
@@ -147,11 +153,11 @@ function handleQuery() {
   <view v-if="mounted" :style="{ height: `${contentHeight}px` }" class="w-full">
     <z-paging ref="paging" :fixed="false" refresher-only @query="handleQuery">
       <template #top>
-        <view class="z-5 py-3 backdrop-blur-md">
+        <view class="mb-backdrop-blur-bg z-5 py-3">
           <view class="px-2">
             <segmented v-model="active" :gap="8" :options="options" @scrolltolower="handleScrollToLower">
               <template #content="{ option }">
-                <view class="mb-action-bg flex flex-col justify-center rounded-xl px-3 py-4">
+                <view class="mb-active-bg flex flex-col justify-center rounded-xl px-3 py-4">
                   <view class="flex items-end">
                     <text class="text-base font-semibold">
                       {{ option.value.substring(2) }}
@@ -166,7 +172,7 @@ function handleQuery() {
         </view>
       </template>
 
-      <view class="mx-3 space-y-4">
+      <view class="mx-3 mt-2 space-y-4">
         <!-- 汇总 -->
         <view class="mon-statis-block">
           <statis-amount-summary :data="summary.summary" />
@@ -208,6 +214,6 @@ function handleQuery() {
 
 <style lang="scss" scoped>
 .mon-statis-block {
-  @apply: mb-content-bg rounded-lg p-2;
+  @apply: mb-block-bg rounded-lg p-2;
 }
 </style>

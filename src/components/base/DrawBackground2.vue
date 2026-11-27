@@ -9,12 +9,12 @@ defineOptions({
 </script>
 
 <template>
-  <view class="relative w-screen transition-all -z-10">
-    <view class="pointer-events-none fixed inset-0 overflow-hidden bg-[var(--wot-filled-content)]">
+  <view class="relative w-screen transition-all">
+    <view class="pointer-events-none fixed inset-0 overflow-hidden">
       <view
         v-for="i in 3"
         :key="`${i}-bg2`"
-        class="absolute rounded-full bg-black/[0.03] dark:bg-white/[0.02]"
+        class="absolute rounded-full bg-[var(--wot-primary-2)] opacity-60 dark:opacity-9"
         :style="{
           width: `${300 + i * 100}px`,
           height: `${300 + i * 100}px`,

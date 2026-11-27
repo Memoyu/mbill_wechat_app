@@ -42,25 +42,23 @@ const isImage = computed(() => !props.cssIcon && props.icon && props.icon.length
 </script>
 
 <template>
-  <view :style="style" class="bill-icon-box">
-    <image v-if="isImage" mode="aspectFill" :src="icon" :style="style" :lazy-load="true" />
-    <text v-else-if="cssIcon" class="iconfont bill-icon-text" :class="[icon]" />
-    <text v-else class="bill-icon-text">{{ (text && text.length > 0) ? text.substring(0, 1) : '' }}</text>
+  <view :style="style" class="relative">
+    <view class="bill-icon-box-bg" />
+    <view class="absolute inset-0 flex items-center justify-center">
+      <image v-if="isImage" mode="aspectFill" :src="icon" :style="style" :lazy-load="true" />
+      <text v-else-if="cssIcon" class="iconfont bill-icon-text" :class="[icon]" />
+      <text v-else class="bill-icon-text">{{ (text && text.length > 0) ? text.substring(0, 1) : '' }}</text>
+    </view>
   </view>
 </template>
 
 <style lang="scss" scoped>
-.bill-icon-box {
-  @apply relative shrink-0 flex justify-center items-center;
-  &::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: var(--wot-primary-3);
-    border-radius: inherit;
-    z-index: -1;
-    opacity: 0.4;
-  }
+.bill-icon-box-bg {
+  position: absolute;
+  inset: 0;
+  background: var(--wot-primary-3);
+  border-radius: inherit;
+  opacity: 0.8;
 }
 
 .bill-icon-text {

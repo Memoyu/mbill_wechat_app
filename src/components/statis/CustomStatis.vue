@@ -2,6 +2,7 @@
 import type { IBillQuery, IBillSummaryAccount, IBillSummaryAmount, IBillSummaryCategory, IBillSummaryTag } from '@/api/types/bill'
 import dayjs from 'dayjs'
 import { summaryAccountBill, summaryAmountBill, summaryCategoryBill, summaryTagBill } from '@/api/bill'
+import { useGlobalLoading } from '@/hooks/useGlobalLoading'
 import { useFilterBillStore, useSettingsStore } from '@/store'
 
 defineOptions({
@@ -17,6 +18,7 @@ defineExpose({
   reload,
 })
 
+const loading = useGlobalLoading()
 const filterBillStore = useFilterBillStore()
 const settingsStore = useSettingsStore()
 
@@ -79,44 +81,48 @@ function reload() {
   loadData()
 }
 
-function loadData() {
-  getSummaryAmountBill()
-  getSummaryCategoryBill()
-  getSummaryAccountBill()
-  getSummaryTagBill()
+async function loadData() {
+  loading.loading('数据加载...')
+  try {
+    await Promise.allSettled([
+      getSummaryAmountBill(),
+      getSummaryCategoryBill(),
+      getSummaryAccountBill(),
+      getSummaryTagBill(),
+    ])
+  }
+  finally {
+    loading.close()
+  }
 }
 
-function getSummaryAmountBill() {
-  summaryAmountBill({
+async function getSummaryAmountBill() {
+  const res = await summaryAmountBill({
     ...query.value,
     series: 2,
-  }).then((res) => {
-    summary.value = res
   })
+  summary.value = res
 }
 
-function getSummaryCategoryBill() {
-  summaryCategoryBill({
+async function getSummaryCategoryBill() {
+  const res = await summaryCategoryBill({
     ...query.value,
-  }).then((res) => {
-    category.value = res
   })
+  category.value = res
 }
 
-function getSummaryAccountBill() {
-  summaryAccountBill({
+async function getSummaryAccountBill() {
+  const res = await summaryAccountBill({
     ...query.value,
-  }).then((res) => {
-    account.value = res
   })
+  account.value = res
 }
 
-function getSummaryTagBill() {
-  summaryTagBill({
+async function getSummaryTagBill() {
+  const res = await summaryTagBill({
     ...query.value,
-  }).then((res) => {
-    tag.value = res
   })
+  tag.value = res
 }
 
 function handleFilterConfirm() {
@@ -135,7 +141,7 @@ function handleQuery() {
   <view v-if="mounted" :style="{ height: `${contentHeight}px` }" class="w-full">
     <z-paging ref="paging" :fixed="false" refresher-only @query="handleQuery">
       <template #top>
-        <view class="z-5 px-5 py-3 backdrop-blur-md">
+        <view class="mb-backdrop-blur-bg z-5 px-5 py-3">
           <view class="flex items-center justify-between">
             <text class="font-semibold">{{ dateText }}</text>
             <wd-icon name="filter" size="20px" @tap="showFilter = true" />
@@ -143,7 +149,7 @@ function handleQuery() {
         </view>
       </template>
 
-      <view class="mx-3 space-y-4">
+      <view class="mx-3 mt-2 space-y-4">
         <view class="cust-statis-block">
           <statis-amount-summary :data="summary.summary" />
         </view>
@@ -173,6 +179,6 @@ function handleQuery() {
 
 <style lang="scss" scoped>
 .cust-statis-block {
-  @apply: mb-content-bg rounded-lg p-2;
+  @apply: mb-block-bg rounded-lg p-2;
 }
 </style>

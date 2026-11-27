@@ -17,7 +17,7 @@ const props = withDefaults(defineProps<{
 
 const rootClass = computed(() => {
   const clazz: Record<string, boolean> = {
-    'w-fit rounded-full mb-action-bg p-2 font-semibold backdrop-blur-sm transition-all': true,
+    'w-fit rounded-full mb-active-bg p-2 font-semibold transition-all': true,
   }
   return normalizeClass([clazz, props.customClass])
 })

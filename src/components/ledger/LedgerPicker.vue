@@ -105,7 +105,7 @@ function isSelected(ledger: ILedger) {
     <view class="relative p-3">
       <view class="grid grid-cols-2 gap-3">
         <view v-for="leg in ledgers" :key="leg.ledgerId" class="relative rounded-xl" @tap="handleLedgerItemClick(leg)">
-          <view class="mb-filled-bg relative overflow-hidden rounded-xl transition-all duration-200">
+          <view class="mb-block-bg relative overflow-hidden rounded-xl transition-all duration-200">
             <!-- 账簿封面 -->
             <view class="aspect-[5/4] bg-gradient-to-br">
               <!-- 装饰元素容器 -->

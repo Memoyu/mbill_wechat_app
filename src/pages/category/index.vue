@@ -12,6 +12,22 @@ definePage({
     navigationBarTitleText: '分类管理',
   },
 })
+
+const toast = useGlobalToast()
+const categoryStore = useCategoryStore()
+
+const iconPickerRef = ref()
+const editShow = ref(false)
+const editMounted = ref(false)
+const editTitle = ref('创建分类')
+const scrollHeight = ref(300)
+const actionShow = ref(false)
+const showDelete = ref(false)
+const currentCategory = ref<ICategory>()
+const expendsRef = ref()
+const incomesRef = ref()
+const type = ref(BillTypeEnum.Expend)
+
 const typeActions = ['支出', '收入']
 const navActions: ActionItem[] = [
   {
@@ -37,27 +53,13 @@ const categoryActions: ActionGroup[] = [
         icon: 'i-lucide-trash',
         text: '删除分类',
         type: 'danger',
-        action: handleDeleteAction,
+        action: () => {
+          showDelete.value = true
+        },
       },
     ],
   },
 ]
-
-const toast = useGlobalToast()
-const dialog = useGlobalDialog()
-const categoryStore = useCategoryStore()
-
-const iconPickerRef = ref()
-const editShow = ref(false)
-const editMounted = ref(false)
-const editTitle = ref('创建分类')
-const scrollHeight = ref(300)
-const actionShow = ref(false)
-const currentCategory = ref<ICategory>()
-const expendsRef = ref()
-const incomesRef = ref()
-
-const type = ref(BillTypeEnum.Expend)
 
 const editCategory = ref<{
   isCreate: boolean
@@ -255,22 +257,17 @@ async function handleEditConfirm() {
 /**
  * 删除分类Action触发
  */
-function handleDeleteAction() {
+function handleDelete() {
   // console.log('handleEditAction')
   if (!currentCategory.value)
     return
+
   const { categoryId, parentId } = currentCategory.value
-  dialog
-    .confirm({
-      msg: `确定要删除分类？`,
-      success: () => {
-        categoryStore.deleteCategory(categoryId, type.value, parentId).then(() => {
-          toast.success('删除成功')
-        }).catch(() => {
-          toast.error('删除失败')
-        })
-      },
-    })
+  categoryStore.deleteCategory(categoryId, type.value, parentId).then(() => {
+    toast.success('删除成功')
+  }).catch(() => {
+    toast.error('删除失败')
+  })
 }
 </script>
 
@@ -279,7 +276,7 @@ function handleDeleteAction() {
   <draw-background2 />
   <nav-bar id="TOP_NAVBAR" :actions="navActions" title="分类管理">
     <template #suffix-action>
-      <view class="mb-action-bg mt-4 max-w-max rounded-full px-2 py-1">
+      <view class="mb-active-bg max-w-max rounded-full px-2 py-1">
         <segmented v-model="type" :gap="6" :options="typeActions" />
       </view>
     </template>
@@ -339,6 +336,9 @@ function handleDeleteAction() {
 
     <icon-picker v-if="editMounted" ref="iconPickerRef" :path="editCategory.icon" @change="handleIconChange" />
   </bottom-popup>
+
+  <!-- 确认删除分类 -->
+  <confirm-popup v-model="showDelete" danger title="删除分类" content="确定要删除分类？" confirm-text="删除" @confirm="handleDelete" />
 </template>
 
 <style lang="scss" scoped>

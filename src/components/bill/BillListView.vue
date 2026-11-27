@@ -55,6 +55,6 @@ const props = defineProps<{
 
 <style lang="scss" scoped>
 .bill-list-view {
-  @apply z-1 mb-content-bg mt-2 flex flex-col gap-2 rounded-lg py-3 px-2;
+  @apply mb-block-bg mt-2 flex flex-col gap-2 rounded-lg py-3 px-2;
 }
 </style>

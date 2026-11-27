@@ -203,10 +203,10 @@ function handleThemeColorSelect(index: number) {
 .cell-group-title {
   @apply: pl-3 flex flex-col;
   .title {
-    @apply: font-semibold;
+    @apply: mb-2 font-semibold;
   }
   .desc {
-    @apply: text-gray-400 font-normal;
+    @apply: ml-2 text-gray-400 font-normal;
   }
 }
 

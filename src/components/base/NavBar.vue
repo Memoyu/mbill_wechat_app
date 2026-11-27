@@ -12,10 +12,10 @@ function back() {
 </script>
 
 <template>
-  <view class="page-nav-bar" :style="{ paddingTop: `${Math.max(safeAreaInsets.top, 28)}px` }">
+  <view class="mb-backdrop-blur-bg sticky top-0 z-9 w-screen pb-3" :style="{ paddingTop: `${Math.max(safeAreaInsets.top, 28)}px` }">
     <view class="flex items-center gap-3 px-3 pt-3">
       <!-- 返回按钮 -->
-      <view class="mb-action-bg h-8 w-8 flex items-center justify-center rounded-lg" @tap="back">
+      <view class="mb-active-bg h-8 w-8 flex items-center justify-center rounded-lg" @tap="back">
         <wd-icon name="left" size="18px" />
       </view>
       <!-- 标题/操作栏  -->
@@ -26,10 +26,10 @@ function back() {
           <slot v-else name="title" />
         </view>
         <!-- 操作按钮 -->
-        <view class="w-full flex items-center justify-start space-x-2">
+        <view class="mt-3 w-full flex items-center justify-start space-x-2">
           <slot name="prefix-action" />
 
-          <view v-if="actions && actions.length > 0" class="mt-3 flex items-center space-x-2">
+          <view v-if="actions && actions.length > 0" class="flex items-center space-x-2">
             <view v-for="(item, index) in actions" :key="index + item.text" class="nav-bar-action-icon-box" @tap="item.action">
               <wd-icon :name="item.icon" />
               <text class="ml-2">{{ item.text }}</text>
@@ -44,8 +44,4 @@ function back() {
 </template>
 
 <style lang="scss" scoped>
-.page-nav-bar {
-  box-shadow: 0 3px 3px 0px rgba(0, 0, 0, 0.02);
-  @apply: sticky top-0 z-9 bg-[var(--wot-filled-zero)] pb-3 backdrop-blur-sm w-screen;
-}
 </style>

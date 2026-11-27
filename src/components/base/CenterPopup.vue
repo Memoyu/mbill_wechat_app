@@ -14,11 +14,13 @@ const props = withDefaults(defineProps<{
   confirmText?: string
   cancelText?: string
   height?: string
+  danger?: boolean
 }>(), {
   showBtn: true,
   showCancel: true,
   confirmText: '完成',
   cancelText: '取消',
+  danger: false,
 })
 const emit = defineEmits<{
   (e: 'after-enter'): void
@@ -27,15 +29,10 @@ const emit = defineEmits<{
 }>()
 const show = defineModel<boolean>()
 
-const { isDark } = useTheme()
-
 const popupStyle = computed(() => {
   const parts: string[] = []
   if (props.height) {
     parts.push(`height: ${props.height}`)
-  }
-  if (isDark.value) {
-    parts.push('border: 1px solid #f3f4f6')
   }
   return parts.join('; ')
 })
@@ -94,6 +91,7 @@ function handleConfirm() {
           <view v-if="showCancel" class="w-[1px] bg-gray-100 dark:bg-gray-100/20" />
           <view
             class="dark:text-[var(--wot-primary-9)])] flex-1 border-t py-4 text-center text-base text-[var(--wot-primary-5)] font-medium transition-colors"
+            :class="danger && '!text-[var(--wot-danger-main)]'"
             :hover-start-time="0"
             :hover-stay-time="200"
             @tap="handleConfirm()"

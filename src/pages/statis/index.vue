@@ -84,7 +84,7 @@ function handleMoreConfirm() {
       </view>
     </template>
     <template #prefix-action>
-      <view class="mb-action-bg mt-4 max-w-max rounded-full px-2 py-1">
+      <view class="mb-active-bg max-w-max rounded-full px-2 py-1">
         <segmented v-model="active" :gap="6" :options="options" />
       </view>
     </template>

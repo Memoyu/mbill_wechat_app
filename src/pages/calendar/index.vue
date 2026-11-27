@@ -223,7 +223,7 @@ function handleListQuery(page: number, size: number) {
   <view :style="{ height: `${contentHeight}px` }" class="w-full pt-3">
     <z-paging ref="calendarPaging" :fixed="false" refresher-only @query="handleCalendarQuery">
       <!-- 日历组件 -->
-      <view class="mb-content-bg mx-3 rounded-3xl p-2">
+      <view class="mb-block-bg mx-3 rounded-3xl p-2">
         <calendar v-model="date" v-model:month="month" :data="monthSummary" @change="handleMonthChange" @selected="handleDateChange" @heightchange="handleCalHeightChange" />
       </view>
     </z-paging>

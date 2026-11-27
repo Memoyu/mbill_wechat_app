@@ -27,7 +27,7 @@ const emit = defineEmits(['tap'])
     />
 
     <view
-      class="mb-filled-bg relative overflow-hidden transition-all duration-200"
+      class="mb-block-bg relative overflow-hidden transition-all duration-200"
     >
       <!-- 账簿封面 -->
       <view class="aspect-[5/4] bg-gradient-to-br">

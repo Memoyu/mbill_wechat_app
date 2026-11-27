@@ -12,6 +12,16 @@ definePage({
 })
 
 const tagStore = useTagStore()
+
+const toast = useGlobalToast()
+
+const editShow = ref(false)
+const editTitle = ref('新增标签')
+const scrollHeight = ref(300)
+const actionShow = ref(false)
+const currentTag = ref<ITag>()
+const showDelete = ref(false)
+
 const navActions: ActionItem[] = [
   {
     text: '创建',
@@ -36,20 +46,13 @@ const tagActions: ActionGroup[] = [
         icon: 'i-lucide-trash',
         text: '删除标签',
         type: 'danger',
-        action: handleDeleteAction,
+        action: () => {
+          showDelete.value = true
+        },
       },
     ],
   },
 ]
-
-const toast = useGlobalToast()
-const dialog = useGlobalDialog()
-
-const editShow = ref(false)
-const editTitle = ref('新增标签')
-const scrollHeight = ref(300)
-const actionShow = ref(false)
-const currentTag = ref<ITag>()
 
 const tags = computed(() => tagStore.tags)
 
@@ -202,23 +205,17 @@ async function handleEditConfirm() {
 /**
  * 删除标签Action触发
  */
-function handleDeleteAction() {
+function handleDelete() {
   // console.log('handleEditAction')
   if (!currentTag.value)
     return
 
   const { tagId, parentId } = currentTag.value
-  dialog
-    .confirm({
-      msg: `确定要删除标签？`,
-      success: () => {
-        tagStore.deleteTag(tagId, parentId).then(() => {
-          toast.success('删除成功')
-        }).catch(() => {
-          toast.error('删除失败')
-        })
-      },
-    })
+  tagStore.deleteTag(tagId, parentId).then(() => {
+    toast.success('删除成功')
+  }).catch(() => {
+    toast.error('删除失败')
+  })
 }
 </script>
 
@@ -258,7 +255,7 @@ function handleDeleteAction() {
               @tap="data => handleChildItemTap(listItem, data)"
             >
               <template #content="{ gridItem }">
-                <view class="mb-action-bg flex items-center justify-center px-1.5 py-2">
+                <view class="mb-active-bg flex items-center justify-center px-1.5 py-2">
                   <view class="tag-item-title line-clamp-1 text-nowrap">
                     {{ gridItem.name }}
                   </view>
@@ -284,17 +281,20 @@ function handleDeleteAction() {
       <wd-input v-model="editTag.name" type="text" placeholder="标签名称" />
     </view>
   </center-popup>
+
+  <!-- 确认删除标签 -->
+  <confirm-popup v-model="showDelete" danger title="删除标签" content="确定要删除标签？" confirm-text="删除" @confirm="handleDelete" />
 </template>
 
 <style lang="scss" scoped>
 .tag-title-box {
   box-sizing: border-box;
   padding: 0.7rem;
-  @apply mb-filled-bg;
+  @apply mb-block-bg;
 }
 
 .tag-content-box {
-  @apply mb-filled-bg p-2;
+  @apply mb-block-bg p-2;
 }
 
 .tag-item-title {

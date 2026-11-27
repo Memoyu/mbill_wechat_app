@@ -112,7 +112,7 @@ function handleAllSelectClick() {
   <bottom-popup v-model="visible" title="分类选择" @confirm="handleConfirm" @after-enter="handleAfterEnter">
     <template #action>
       <view class="flex items-center justify-between">
-        <view class="mb-action-bg max-w-max rounded-full px-2 py-1">
+        <view class="mb-active-bg max-w-max rounded-full px-2 py-1">
           <segmented v-model="type" :gap="6" :options="typeActions" />
         </view>
         <view

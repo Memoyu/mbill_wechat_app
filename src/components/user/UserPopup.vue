@@ -188,7 +188,7 @@ function handleSummaryRefresh() {
       <view class="user-block !px-2">
         <wd-grid :column="4">
           <wd-grid-item v-for="item in actions" :key="item.title" @tap="item.action">
-            <view class="mb-filled-bg z-1 flex flex-col items-center rounded-2xl p-2">
+            <view class="mb-active-bg z-1 flex flex-col items-center rounded-2xl p-2">
               <text class="my-icons text-3xl" :class="[item.icon]" />
               <text class="text-xs">{{ item.title }}</text>
             </view>
@@ -215,7 +215,7 @@ function handleSummaryRefresh() {
 
 <style lang="scss" scoped>
 .user-block {
-  @apply: bg-whit py-3 px-4 overflow-hidden border border-gray-100 rounded-2xl;
+  @apply: mb-block-bg py-3 px-4 overflow-hidden border border-gray-100 rounded-2xl;
   box-shadow:
     0 8px 20px -6px rgba(0, 0, 0, 0.06),
     0 4px 12px -4px rgba(0, 0, 0, 0.03);

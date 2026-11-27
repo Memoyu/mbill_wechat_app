@@ -12,18 +12,19 @@ const {
 } = useTheme()
 
 function getRbga(pre: boolean = true) {
-  const rbg = isDark.value ? '255,255,255' : '0,0,0'
-  return pre ? `rgba(${rbg},0.03)` : `rgba(${rbg},0.02)`
+  const pc = isDark.value ? 'var(--wot-primary-10)' : 'var(--wot-primary-1)'
+  const sc = isDark.value ? 'var(--wot-primary-1)' : 'var(--wot-primary-5)'
+  return pre ? pc : sc
 }
 </script>
 
 <template>
-  <view class="relative w-screen transition-all -z-10">
-    <view class="pointer-events-none fixed inset-0 overflow-hidden bg-[var(--wot-filled-content)]">
+  <view class="relative w-screen transition-all">
+    <view class="pointer-events-none fixed inset-0 overflow-hidden">
       <view
         v-for="i in 3"
         :key="`${i}-bg1`"
-        class="absolute rounded-full bg-gray-900/[0.02] dark:bg-white/[0.05]"
+        class="absolute rounded-full opacity-8"
         :style="{
           width: `${350 + i * 100}px`,
           height: `${350 + i * 100}px`,

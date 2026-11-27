@@ -19,7 +19,8 @@ const hasChild = computed(() => props.item.childs && props.item.childs.length > 
 </script>
 
 <template>
-  <view class="relative z-1 rounded-md" :style="{ height: `${height}px` }">
+  <view class="relative rounded-md" :style="{ height: `${height}px` }">
+    <checked-mask :value="isSelected" position="lt" />
     <view class="h-full flex flex-col justify-center gap-1 px-1">
       <view class="flex justify-center">
         <view class="relative" :class="[hasChild ? 'grid-select-item-has-more' : '']">
@@ -30,8 +31,6 @@ const hasChild = computed(() => props.item.childs && props.item.childs.length > 
         {{ item.name }}
       </view>
     </view>
-
-    <checked-mask :value="isSelected" position="lt" />
   </view>
 </template>
 
@@ -41,15 +40,14 @@ const hasChild = computed(() => props.item.childs && props.item.childs.length > 
   &:before {
     content: '';
     position: absolute;
-    color: white;
     right: -6px;
     bottom: 0;
     width: 9px;
     height: 9px;
     border-radius: 50%;
     z-index: 9;
-    border: 3px solid white;
-    @apply: bg-[var(--wot-primary-5)];
+    border: 2px solid white;
+    @apply: dark:bg-[var(--wot-primary-9)] bg-[var(--wot-primary-6)];
   }
 }
 </style>
